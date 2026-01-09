@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -24,6 +24,9 @@ import appleLogo from "../assets/images/apple-logo.png";
 type AuthMode = "login" | "register" | "verify" | "profile";
 type LoginTab = "phone" | "email";
 
+const CODE_LENGTH = 6;
+const RESEND_TIMER = 60;
+
 export default function AuthScreen() {
   const insets = useSafeAreaInsets();
   const { login } = useAuth();
@@ -39,6 +42,43 @@ export default function AuthScreen() {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [timer, setTimer] = useState(RESEND_TIMER);
+  const [codeDigits, setCodeDigits] = useState<string[]>(Array(CODE_LENGTH).fill(""));
+  const inputRefs = useRef<(TextInput | null)[]>([]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (mode === "verify" && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [mode, timer]);
+
+  const formatTimer = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const handleCodeDigitChange = (text: string, index: number) => {
+    const digit = text.replace(/\D/g, "").slice(-1);
+    const newDigits = [...codeDigits];
+    newDigits[index] = digit;
+    setCodeDigits(newDigits);
+    setVerificationCode(newDigits.join(""));
+
+    if (digit && index < CODE_LENGTH - 1) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleCodeKeyPress = (key: string, index: number) => {
+    if (key === "Backspace" && !codeDigits[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
 
   const formatPhone = (text: string) => {
     const cleaned = text.replace(/\D/g, "");
@@ -68,6 +108,27 @@ export default function AuthScreen() {
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       setMode("verify");
+      setTimer(RESEND_TIMER);
+      setCodeDigits(Array(CODE_LENGTH).fill(""));
+      setVerificationCode("");
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (error) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert("Hata", "Kod gönderilirken bir hata oluştu");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    if (timer > 0) return;
+    setIsLoading(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setTimer(RESEND_TIMER);
+      setCodeDigits(Array(CODE_LENGTH).fill(""));
+      setVerificationCode("");
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -185,23 +246,31 @@ export default function AuthScreen() {
               <Image source={appIcon} style={styles.logo} resizeMode="contain" />
             </View>
 
-            <ThemedText style={styles.title}>Doğrulama Kodu</ThemedText>
+            <ThemedText style={styles.title}>Doğrulama Kodunu Giriniz</ThemedText>
             <ThemedText style={styles.subtitle}>
-              +90 {phone} numarasına gönderilen 6 haneli kodu girin
+              Sistemde kayıtlı olan E-postanıza / Telefon numaranıza gönderilmiş olan doğrulama kodunu giriniz.
             </ThemedText>
 
             <View style={styles.formContainer}>
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={[styles.input, styles.codeInput]}
-                  value={verificationCode}
-                  onChangeText={(text) => setVerificationCode(text.replace(/\D/g, "").slice(0, 6))}
-                  placeholder="000000"
-                  placeholderTextColor="#9CA3AF"
-                  keyboardType="number-pad"
-                  maxLength={6}
-                  textAlign="center"
-                />
+              <View style={styles.timerRow}>
+                <Feather name="clock" size={18} color="#6B7280" />
+                <ThemedText style={styles.timerText}>{formatTimer(timer)}</ThemedText>
+              </View>
+
+              <View style={styles.codeBoxContainer}>
+                {Array(CODE_LENGTH).fill(0).map((_, index) => (
+                  <TextInput
+                    key={index}
+                    ref={(ref) => { inputRefs.current[index] = ref; }}
+                    style={styles.codeBox}
+                    value={codeDigits[index]}
+                    onChangeText={(text) => handleCodeDigitChange(text, index)}
+                    onKeyPress={({ nativeEvent }) => handleCodeKeyPress(nativeEvent.key, index)}
+                    keyboardType="number-pad"
+                    maxLength={1}
+                    selectTextOnFocus
+                  />
+                ))}
               </View>
 
               <Pressable
@@ -216,18 +285,24 @@ export default function AuthScreen() {
                 {isLoading ? (
                   <ActivityIndicator color="#FFFFFF" />
                 ) : (
-                  <ThemedText style={styles.submitButtonText}>Doğrula</ThemedText>
+                  <ThemedText style={styles.submitButtonText}>Kodu Onayla</ThemedText>
                 )}
               </Pressable>
 
-              <Pressable style={styles.resendContainer}>
-                <ThemedText style={styles.resendText}>Kod gelmedi mi? </ThemedText>
-                <ThemedText style={styles.resendLink}>Tekrar Gönder</ThemedText>
+              <Pressable 
+                style={[styles.resendButton, timer > 0 && styles.resendButtonDisabled]} 
+                onPress={handleResendCode}
+                disabled={timer > 0}
+              >
+                <ThemedText style={[styles.resendButtonText, timer > 0 && styles.resendButtonTextDisabled]}>
+                  Yeni Kod Gönder
+                </ThemedText>
               </Pressable>
 
-              <Pressable style={styles.backContainer} onPress={resetToRegister}>
-                <Feather name="arrow-left" size={16} color="#9CA3AF" />
-                <ThemedText style={styles.backText}>Numarayı Değiştir</ThemedText>
+              <ThemedText style={styles.orText}>veya</ThemedText>
+
+              <Pressable style={styles.switchContainer} onPress={resetToLogin}>
+                <ThemedText style={styles.switchText}>Giriş Yapın</ThemedText>
               </Pressable>
             </View>
           </ScrollView>
@@ -713,6 +788,51 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 14,
+    color: "#9CA3AF",
+  },
+  timerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginBottom: Spacing.lg,
+  },
+  timerText: {
+    fontSize: 16,
+    color: "#000000",
+    fontWeight: "500",
+  },
+  codeBoxContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: Spacing.sm,
+    marginBottom: Spacing.lg,
+  },
+  codeBox: {
+    flex: 1,
+    height: 56,
+    backgroundColor: "#F9FAFB",
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    fontSize: 24,
+    fontWeight: "600",
+    textAlign: "center",
+    color: "#000000",
+  },
+  resendButton: {
+    alignItems: "center",
+    marginTop: Spacing.lg,
+    paddingVertical: Spacing.sm,
+  },
+  resendButtonDisabled: {
+    opacity: 0.5,
+  },
+  resendButtonText: {
+    fontSize: 16,
+    color: "#000000",
+    fontWeight: "500",
+  },
+  resendButtonTextDisabled: {
     color: "#9CA3AF",
   },
 });
