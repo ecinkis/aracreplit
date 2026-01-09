@@ -313,11 +313,11 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     backgroundColor: "#000000",
-    paddingVertical: Spacing.md,
+    paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
     alignItems: "center",
     marginTop: Spacing.sm,
-    height: 56,
+    height: 48,
     justifyContent: "center",
   },
   loginButtonDisabled: {
