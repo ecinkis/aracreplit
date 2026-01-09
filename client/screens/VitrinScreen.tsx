@@ -209,7 +209,7 @@ export default function VitrinScreen() {
   const mockData = Array.from({ length: 9 }, (_, i) => ({ id: String(i + 1) }));
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { paddingTop: insets.top + Spacing.md }]}>
       {isLoading ? (
         <LoadingState />
       ) : (
