@@ -13,6 +13,17 @@ export const users = pgTable("users", {
   avatarUrl: text("avatar_url"),
   trustScore: integer("trust_score").default(0),
   phoneVerified: boolean("phone_verified").default(false),
+  userType: text("user_type").default("bireysel"),
+  email: text("email"),
+  tcKimlikNo: text("tc_kimlik_no"),
+  birthDate: text("birth_date"),
+  companyName: text("company_name"),
+  taxNumber: text("tax_number"),
+  taxOffice: text("tax_office"),
+  companyAddress: text("company_address"),
+  authorizedPerson: text("authorized_person"),
+  identityVerified: boolean("identity_verified").default(false),
+  companyVerified: boolean("company_verified").default(false),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
