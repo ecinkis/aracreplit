@@ -333,64 +333,63 @@ export default function MatchScreen() {
       ) : showEmptyState ? (
         <EmptyState />
       ) : (
-        <>
-          <View style={styles.cardsContainer}>
-            {remainingListings.slice(0, 2).reverse().map((listing, index) => (
-              <SwipeCard
-                key={listing.id}
-                listing={listing}
-                isFirst={index === remainingListings.slice(0, 2).length - 1}
-                onSwipeLeft={() => handleSwipe("left")}
-                onSwipeRight={() => handleSwipe("right")}
-                onSwipeUp={() => handleSwipe("up")}
-                onDetailPress={() => handleDetailPress(listing.id)}
-              />
-            ))}
-          </View>
-
-          <View style={styles.bottomSection}>
-            <View style={styles.buttonsContainer}>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.actionButton,
-                  styles.rejectButton,
-                  pressed && styles.buttonPressed,
-                ]}
-                onPress={() => handleButtonSwipe("left")}
-              >
-                <Feather name="x" size={26} color="#EF4444" />
-              </Pressable>
-
-              <Pressable
-                style={({ pressed }) => [
-                  styles.actionButton,
-                  styles.likeButton,
-                  pressed && styles.buttonPressed,
-                ]}
-                onPress={() => handleButtonSwipe("right")}
-              >
-                <Feather name="heart" size={28} color="#10B981" />
-              </Pressable>
-              
-              <Pressable
-                style={({ pressed }) => [
-                  styles.actionButton,
-                  styles.superButton,
-                  pressed && styles.buttonPressed,
-                ]}
-                onPress={() => handleButtonSwipe("up")}
-              >
-                <Feather name="star" size={22} color="#F59E0B" />
-              </Pressable>
+        <View style={styles.contentArea}>
+          <View style={styles.topSection}>
+            <View style={styles.cardsContainer}>
+              {remainingListings.slice(0, 2).reverse().map((listing, index) => (
+                <SwipeCard
+                  key={listing.id}
+                  listing={listing}
+                  isFirst={index === remainingListings.slice(0, 2).length - 1}
+                  onSwipeLeft={() => handleSwipe("left")}
+                  onSwipeRight={() => handleSwipe("right")}
+                  onSwipeUp={() => handleSwipe("up")}
+                  onDetailPress={() => handleDetailPress(listing.id)}
+                />
+              ))}
             </View>
-
-            <View style={[styles.tipSection, { paddingBottom: tabBarHeight + Spacing.sm }]}>
+            <View style={styles.tipSection}>
               <ThemedText style={styles.tipText}>
                 Saga kaydir: Begeni | Sola kaydir: Gec | Yukari: Favori
               </ThemedText>
             </View>
           </View>
-        </>
+
+          <View style={[styles.buttonsContainer, { paddingBottom: tabBarHeight + Spacing.md }]}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.actionButton,
+                styles.rejectButton,
+                pressed && styles.buttonPressed,
+              ]}
+              onPress={() => handleButtonSwipe("left")}
+            >
+              <Feather name="x" size={26} color="#EF4444" />
+            </Pressable>
+
+            <Pressable
+              style={({ pressed }) => [
+                styles.actionButton,
+                styles.likeButton,
+                pressed && styles.buttonPressed,
+              ]}
+              onPress={() => handleButtonSwipe("right")}
+            >
+              <Feather name="heart" size={28} color="#10B981" />
+            </Pressable>
+            
+            <Pressable
+              style={({ pressed }) => [
+                styles.actionButton,
+                styles.superButton,
+                pressed && styles.buttonPressed,
+              ]}
+              onPress={() => handleButtonSwipe("up")}
+            >
+              <Feather name="star" size={22} color="#F59E0B" />
+            </Pressable>
+          </View>
+        </View>
       )}
     </View>
   );
@@ -442,8 +441,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  cardsContainer: {
+  contentArea: {
     flex: 1,
+    justifyContent: "space-between",
+  },
+  topSection: {
+    alignItems: "center",
+  },
+  cardsContainer: {
+    width: CARD_WIDTH,
+    height: CARD_HEIGHT,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -614,22 +621,19 @@ const styles = StyleSheet.create({
     color: "#F59E0B",
     letterSpacing: 2,
   },
-  bottomSection: {
-    marginTop: -Spacing.xl,
+  tipSection: {
+    alignItems: "center",
+    marginTop: Spacing.md,
+  },
+  tipText: {
+    fontSize: 11,
+    color: "#9CA3AF",
   },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     gap: Spacing.lg,
-  },
-  tipSection: {
-    alignItems: "center",
-    marginTop: Spacing.sm,
-  },
-  tipText: {
-    fontSize: 11,
-    color: "#9CA3AF",
   },
   actionButton: {
     width: 60,
