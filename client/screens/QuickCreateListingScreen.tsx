@@ -90,11 +90,11 @@ function BottomTabBar() {
       ) : null}
       <View style={styles.tabBarContent}>
         <Pressable style={styles.tabItem} onPress={() => handleTabPress("vitrin")}>
-          <Feather name="home" size={22} color="#9CA3AF" />
+          <Feather name="home" size={22} color="#000000" />
           <ThemedText style={styles.tabLabel}>vitrin</ThemedText>
         </Pressable>
         <Pressable style={styles.tabItem} onPress={() => handleTabPress("arama")}>
-          <Feather name="search" size={22} color="#9CA3AF" />
+          <Feather name="search" size={22} color="#000000" />
           <ThemedText style={styles.tabLabel}>arama</ThemedText>
         </Pressable>
         <View style={styles.tabItemCenter}>
@@ -103,11 +103,11 @@ function BottomTabBar() {
           </View>
         </View>
         <Pressable style={styles.tabItem} onPress={() => handleTabPress("esles")}>
-          <Feather name="repeat" size={22} color="#9CA3AF" />
+          <Feather name="navigation" size={22} color="#000000" />
           <ThemedText style={styles.tabLabel}>esles</ThemedText>
         </Pressable>
         <Pressable style={styles.tabItem} onPress={() => handleTabPress("profil")}>
-          <Feather name="user" size={22} color="#9CA3AF" />
+          <Feather name="user" size={22} color="#000000" />
           <ThemedText style={styles.tabLabel}>profil</ThemedText>
         </Pressable>
       </View>
@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
   },
   tabLabel: {
     fontSize: 11,
-    color: "#9CA3AF",
+    color: "#000000",
     marginTop: 2,
   },
   createButtonActive: {

@@ -122,8 +122,8 @@ export default function MainTabNavigator() {
       <Tab.Navigator
         initialRouteName="VitrinTab"
         screenOptions={{
-          tabBarActiveTintColor: BrandColors.primaryOrange,
-          tabBarInactiveTintColor: theme.tabIconDefault,
+          tabBarActiveTintColor: "#000000",
+          tabBarInactiveTintColor: "#000000",
           tabBarStyle: {
             position: "absolute",
             backgroundColor: Platform.select({
@@ -195,7 +195,7 @@ export default function MainTabNavigator() {
           options={{
             title: "esles",
             tabBarIcon: ({ color, size }) => (
-              <Feather name="repeat" size={size} color={color} />
+              <Feather name="navigation" size={size} color={color} />
             ),
           }}
         />
