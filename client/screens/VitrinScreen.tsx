@@ -23,7 +23,6 @@ import { ThemedText } from "@/components/ThemedText";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
 import { Listing } from "@shared/schema";
-import appIcon from "../assets/images/icon.png";
 import defaultVehicleImage from "../assets/images/default-vehicle.png";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -32,13 +31,14 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_GAP = 8;
 const CARD_WIDTH = (SCREEN_WIDTH - Spacing.lg * 2 - CARD_GAP * 2) / 3;
 
-const CATEGORIES = [
-  { id: "1", name: "Sedan" },
-  { id: "2", name: "SUV" },
-  { id: "3", name: "Hatchback" },
-  { id: "4", name: "Coupe" },
-  { id: "5", name: "Pickup" },
-  { id: "6", name: "Van" },
+const DEMO_STORIES = [
+  { id: "1", username: "TakasApp", isOwn: true, hasNewStory: false },
+  { id: "2", username: "BMW Turkiye", hasNewStory: true, timeAgo: "2s" },
+  { id: "3", username: "Mercedes", hasNewStory: true, timeAgo: "5s" },
+  { id: "4", username: "Audi TR", hasNewStory: true, timeAgo: "8s" },
+  { id: "5", username: "Volkswagen", hasNewStory: false, timeAgo: "12s" },
+  { id: "6", username: "Toyota", hasNewStory: true, timeAgo: "18s" },
+  { id: "7", username: "Honda", hasNewStory: false, timeAgo: "22s" },
 ];
 
 function ListingCard({ item, index, onPress }: { item: Listing; index: number; onPress: () => void }) {
@@ -168,10 +168,6 @@ export default function VitrinScreen() {
 
   const ListHeader = () => (
     <View style={styles.headerContent}>
-      <View style={styles.logoContainer}>
-        <Image source={appIcon} style={styles.logo} resizeMode="contain" />
-      </View>
-
       <View style={styles.searchContainer}>
         <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
         <TextInput
@@ -186,11 +182,31 @@ export default function VitrinScreen() {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.categoriesContainer}
+        contentContainerStyle={styles.storiesContainer}
       >
-        {CATEGORIES.map((cat) => (
-          <Pressable key={cat.id} style={styles.categoryItem}>
-            <View style={styles.categoryCircle} />
+        {DEMO_STORIES.map((story) => (
+          <Pressable key={story.id} style={styles.storyItem}>
+            <View style={[
+              styles.storyRing,
+              story.hasNewStory ? styles.storyRingActive : styles.storyRingInactive,
+              story.isOwn && styles.storyRingOwn,
+            ]}>
+              <View style={styles.storyCircle}>
+                {story.isOwn ? (
+                  <View style={styles.addStoryIcon}>
+                    <Feather name="plus" size={16} color="#FFFFFF" />
+                  </View>
+                ) : (
+                  <Feather name="user" size={20} color="#9CA3AF" />
+                )}
+              </View>
+            </View>
+            <ThemedText style={styles.storyUsername} numberOfLines={1}>
+              {story.isOwn ? "Hikaye Ekle" : story.username}
+            </ThemedText>
+            {story.timeAgo && !story.isOwn ? (
+              <ThemedText style={styles.storyTime}>{story.timeAgo}</ThemedText>
+            ) : null}
           </Pressable>
         ))}
       </ScrollView>
@@ -241,14 +257,6 @@ const styles = StyleSheet.create({
   headerContent: {
     marginBottom: Spacing.lg,
   },
-  logoContainer: {
-    alignItems: "center",
-    marginBottom: Spacing.md,
-  },
-  logo: {
-    width: 40,
-    height: 40,
-  },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -268,19 +276,59 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#000000",
   },
-  categoriesContainer: {
+  storiesContainer: {
     paddingBottom: Spacing.md,
-    gap: Spacing.md,
+    gap: Spacing.sm,
   },
-  categoryItem: {
+  storyItem: {
     alignItems: "center",
-    marginRight: Spacing.sm,
+    width: 72,
+    marginRight: Spacing.xs,
   },
-  categoryCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: "#E5E7EB",
+  storyRing: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    padding: 3,
+    marginBottom: 4,
+  },
+  storyRingActive: {
+    borderWidth: 2,
+    borderColor: "#F87171",
+  },
+  storyRingInactive: {
+    borderWidth: 2,
+    borderColor: "#E5E7EB",
+  },
+  storyRingOwn: {
+    borderWidth: 2,
+    borderColor: "#9CA3AF",
+    borderStyle: "dashed",
+  },
+  storyCircle: {
+    flex: 1,
+    borderRadius: 30,
+    backgroundColor: "#F3F4F6",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  addStoryIcon: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "#000000",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  storyUsername: {
+    fontSize: 10,
+    color: "#374151",
+    textAlign: "center",
+  },
+  storyTime: {
+    fontSize: 9,
+    color: "#9CA3AF",
+    marginTop: 1,
   },
   row: {
     justifyContent: "space-between",
