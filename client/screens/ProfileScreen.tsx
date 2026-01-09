@@ -339,11 +339,16 @@ export default function ProfileScreen() {
           </ThemedText>
           
           <Pressable
-            style={styles.changeTypeButton}
+            style={({ pressed }) => [
+              styles.changeTypeButton,
+              pressed && { opacity: 0.7, backgroundColor: "#FFF7ED" }
+            ]}
             onPress={() => {
+              console.log("Button pressed!");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               handleChangeUserType();
             }}
+            testID="change-user-type-button"
           >
             <ThemedText style={styles.changeTypeButtonText}>
               {isKurumsal ? "Bireysel Uyelige Gec" : "Kurumsal Uyelige Gec"}
