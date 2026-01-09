@@ -21,8 +21,9 @@ import appIcon from "../assets/images/icon.png";
 import googleLogo from "../assets/images/google-logo.png";
 import appleLogo from "../assets/images/apple-logo.png";
 
-type AuthMode = "login" | "register" | "verify" | "profile";
+type AuthMode = "login" | "register" | "verify" | "profile" | "forgotPassword" | "forgotVerify";
 type LoginTab = "phone" | "email";
+type ForgotTab = "email" | "phone";
 
 const CODE_LENGTH = 6;
 const RESEND_TIMER = 60;
@@ -32,6 +33,7 @@ export default function AuthScreen() {
   const { login } = useAuth();
   const [mode, setMode] = useState<AuthMode>("login");
   const [loginTab, setLoginTab] = useState<LoginTab>("phone");
+  const [forgotTab, setForgotTab] = useState<ForgotTab>("email");
   
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -231,6 +233,42 @@ export default function AuthScreen() {
     setPassword("");
   };
 
+  const handleForgotPassword = async () => {
+    if (forgotTab === "email") {
+      if (!email) {
+        Alert.alert("Hata", "Lütfen e-posta adresinizi girin");
+        return;
+      }
+    } else {
+      const cleanedPhone = phone.replace(/\D/g, "");
+      if (cleanedPhone.length !== 10) {
+        Alert.alert("Hata", "Lütfen geçerli bir telefon numarası girin");
+        return;
+      }
+    }
+
+    setIsLoading(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setMode("forgotVerify");
+      setTimer(RESEND_TIMER);
+      setCodeDigits(Array(CODE_LENGTH).fill(""));
+      setVerificationCode("");
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (error) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert("Hata", "Kod gönderilirken bir hata oluştu");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const isForgotValid = forgotTab === "email" 
+    ? email.length > 0 
+    : phone.replace(/\D/g, "").length === 10;
+
   const isLoginValid = loginTab === "phone"
     ? phone.replace(/\D/g, "").length === 10
     : email.length > 0 && password.length > 0;
@@ -369,6 +407,193 @@ export default function AuthScreen() {
                 ) : (
                   <ThemedText style={styles.submitButtonText}>Tamamla</ThemedText>
                 )}
+              </Pressable>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </View>
+    );
+  }
+
+  if (mode === "forgotPassword") {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
+          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+            <View style={styles.logoContainer}>
+              <Image source={appIcon} style={styles.logo} resizeMode="contain" />
+            </View>
+
+            <ThemedText style={styles.title}>Şifremi Unuttum</ThemedText>
+            <ThemedText style={styles.subtitle}>
+              Lütfen sistemde kayıtlı olan e-postanızı yada telefonunuzu giriniz ardından size gönderilecek olan doğrulama kodunu giriniz.
+            </ThemedText>
+
+            <View style={styles.formContainer}>
+              <View style={styles.tabContainer}>
+                <Pressable
+                  style={[styles.tab, forgotTab === "email" && styles.tabActive]}
+                  onPress={() => setForgotTab("email")}
+                >
+                  <ThemedText style={[styles.tabText, forgotTab === "email" && styles.tabTextActive]}>
+                    E-posta
+                  </ThemedText>
+                </Pressable>
+                <Pressable
+                  style={[styles.tab, forgotTab === "phone" && styles.tabActive]}
+                  onPress={() => setForgotTab("phone")}
+                >
+                  <ThemedText style={[styles.tabText, forgotTab === "phone" && styles.tabTextActive]}>
+                    Telefon
+                  </ThemedText>
+                </Pressable>
+              </View>
+
+              {forgotTab === "email" ? (
+                <>
+                  <View style={styles.inputContainer}>
+                    <Feather name="mail" size={20} color="#9CA3AF" style={styles.inputIcon} />
+                    <TextInput
+                      style={styles.input}
+                      value={email}
+                      onChangeText={setEmail}
+                      placeholder="E-posta adresinizi yazınız"
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                    />
+                  </View>
+                  <ThemedText style={styles.hintText}>
+                    Lütfen aktif kullandığınız mailinizi giriniz. Doğrulama kodu gelecektir.
+                  </ThemedText>
+                </>
+              ) : (
+                <>
+                  <View style={styles.inputContainer}>
+                    <View style={styles.countryCode}>
+                      <ThemedText style={styles.countryCodeText}>+90</ThemedText>
+                    </View>
+                    <TextInput
+                      style={[styles.input, styles.phoneInput]}
+                      value={phone}
+                      onChangeText={handlePhoneChange}
+                      placeholder="5XX XXX XX XX"
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="phone-pad"
+                      maxLength={13}
+                    />
+                  </View>
+                  <ThemedText style={styles.hintText}>
+                    Lütfen aktif kullandığınız numaranızı giriniz. Doğrulama kodu gelecektir.
+                  </ThemedText>
+                </>
+              )}
+
+              <Pressable
+                style={({ pressed }) => [
+                  styles.submitButton,
+                  !isForgotValid && styles.submitButtonDisabled,
+                  pressed && isForgotValid && styles.submitButtonPressed,
+                ]}
+                onPress={handleForgotPassword}
+                disabled={!isForgotValid || isLoading}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="#FFFFFF" />
+                ) : (
+                  <ThemedText style={styles.submitButtonText}>Doğrulama Kodu Gönder</ThemedText>
+                )}
+              </Pressable>
+
+              <Pressable style={styles.backLinkContainer} onPress={resetToLogin}>
+                <ThemedText style={styles.backLinkText}>Geri Dön</ThemedText>
+              </Pressable>
+
+              <ThemedText style={styles.orText}>veya</ThemedText>
+
+              <Pressable style={styles.switchContainer} onPress={resetToLogin}>
+                <ThemedText style={styles.switchText}>Giriş Yapın</ThemedText>
+              </Pressable>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </View>
+    );
+  }
+
+  if (mode === "forgotVerify") {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
+          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+            <View style={styles.logoContainer}>
+              <Image source={appIcon} style={styles.logo} resizeMode="contain" />
+            </View>
+
+            <ThemedText style={styles.title}>Doğrulama Kodunu Giriniz</ThemedText>
+            <ThemedText style={styles.subtitle}>
+              {forgotTab === "email" 
+                ? `${email} adresine gönderilen doğrulama kodunu giriniz.`
+                : `+90 ${phone} numarasına gönderilen doğrulama kodunu giriniz.`
+              }
+            </ThemedText>
+
+            <View style={styles.formContainer}>
+              <View style={styles.timerRow}>
+                <Feather name="clock" size={18} color="#6B7280" />
+                <ThemedText style={styles.timerText}>{formatTimer(timer)}</ThemedText>
+              </View>
+
+              <View style={styles.codeBoxContainer}>
+                {Array(CODE_LENGTH).fill(0).map((_, index) => (
+                  <TextInput
+                    key={index}
+                    ref={(ref) => { inputRefs.current[index] = ref; }}
+                    style={styles.codeBox}
+                    value={codeDigits[index]}
+                    onChangeText={(text) => handleCodeDigitChange(text, index)}
+                    onKeyPress={({ nativeEvent }) => handleCodeKeyPress(nativeEvent.key, index)}
+                    keyboardType="number-pad"
+                    maxLength={1}
+                    selectTextOnFocus
+                  />
+                ))}
+              </View>
+
+              <Pressable
+                style={({ pressed }) => [
+                  styles.submitButton,
+                  verificationCode.length !== 6 && styles.submitButtonDisabled,
+                  pressed && verificationCode.length === 6 && styles.submitButtonPressed,
+                ]}
+                onPress={() => {
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                  Alert.alert("Başarılı", "Şifreniz sıfırlandı. Yeni şifreniz SMS/E-posta ile gönderildi.");
+                  resetToLogin();
+                }}
+                disabled={verificationCode.length !== 6 || isLoading}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="#FFFFFF" />
+                ) : (
+                  <ThemedText style={styles.submitButtonText}>Kodu Onayla</ThemedText>
+                )}
+              </Pressable>
+
+              <Pressable 
+                style={[styles.resendButton, timer > 0 && styles.resendButtonDisabled]} 
+                onPress={handleResendCode}
+                disabled={timer > 0}
+              >
+                <ThemedText style={[styles.resendButtonText, timer > 0 && styles.resendButtonTextDisabled]}>
+                  Yeni Kod Gönder
+                </ThemedText>
+              </Pressable>
+
+              <ThemedText style={styles.orText}>veya</ThemedText>
+
+              <Pressable style={styles.switchContainer} onPress={resetToLogin}>
+                <ThemedText style={styles.switchText}>Giriş Yapın</ThemedText>
               </Pressable>
             </View>
           </ScrollView>
@@ -546,7 +771,7 @@ export default function AuthScreen() {
                 </View>
                 <ThemedText style={styles.rememberMeText}>Beni hatırla</ThemedText>
               </Pressable>
-              <Pressable>
+              <Pressable onPress={() => setMode("forgotPassword")}>
                 <ThemedText style={styles.forgotPasswordText}>Şifremi unuttum</ThemedText>
               </Pressable>
             </View>
@@ -834,5 +1059,15 @@ const styles = StyleSheet.create({
   },
   resendButtonTextDisabled: {
     color: "#9CA3AF",
+  },
+  backLinkContainer: {
+    alignItems: "center",
+    marginTop: Spacing.lg,
+    paddingVertical: Spacing.sm,
+  },
+  backLinkText: {
+    fontSize: 16,
+    color: "#000000",
+    fontWeight: "500",
   },
 });
