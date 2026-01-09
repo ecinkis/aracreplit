@@ -1,4 +1,4 @@
-import { Colors } from "@/constants/theme";
+import { Colors, BrandColors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
 export function useTheme() {
@@ -8,6 +8,7 @@ export function useTheme() {
 
   return {
     theme,
+    brand: BrandColors,
     isDark,
   };
 }
