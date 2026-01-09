@@ -348,39 +348,50 @@ export default function MatchScreen() {
             ))}
           </View>
 
-          <View style={[styles.buttonsContainer, { marginBottom: tabBarHeight + Spacing.md }]}>
-            <Pressable
-              style={({ pressed }) => [
-                styles.actionButton,
-                styles.rejectButton,
-                pressed && styles.buttonPressed,
-              ]}
-              onPress={() => handleButtonSwipe("left")}
-            >
-              <Feather name="x" size={26} color="#EF4444" />
-            </Pressable>
+          <View style={styles.bottomSection}>
+            <View style={styles.buttonsContainer}>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.actionButton,
+                  styles.rejectButton,
+                  pressed && styles.buttonPressed,
+                ]}
+                onPress={() => handleButtonSwipe("left")}
+              >
+                <Feather name="x" size={26} color="#EF4444" />
+              </Pressable>
 
-            <Pressable
-              style={({ pressed }) => [
-                styles.actionButton,
-                styles.likeButton,
-                pressed && styles.buttonPressed,
-              ]}
-              onPress={() => handleButtonSwipe("right")}
-            >
-              <Feather name="heart" size={28} color="#10B981" />
-            </Pressable>
-            
-            <Pressable
-              style={({ pressed }) => [
-                styles.actionButton,
-                styles.superButton,
-                pressed && styles.buttonPressed,
-              ]}
-              onPress={() => handleButtonSwipe("up")}
-            >
-              <Feather name="star" size={22} color="#F59E0B" />
-            </Pressable>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.actionButton,
+                  styles.likeButton,
+                  pressed && styles.buttonPressed,
+                ]}
+                onPress={() => handleButtonSwipe("right")}
+              >
+                <Feather name="heart" size={28} color="#10B981" />
+              </Pressable>
+              
+              <Pressable
+                style={({ pressed }) => [
+                  styles.actionButton,
+                  styles.superButton,
+                  pressed && styles.buttonPressed,
+                ]}
+                onPress={() => handleButtonSwipe("up")}
+              >
+                <Feather name="star" size={22} color="#F59E0B" />
+              </Pressable>
+            </View>
+
+            <View style={[styles.tipSection, { paddingBottom: tabBarHeight + Spacing.sm }]}>
+              <ThemedText style={styles.tipText}>
+                Saga kaydir: Takas teklifi gonder
+              </ThemedText>
+              <ThemedText style={styles.tipText}>
+                Sola kaydir: Sonraki araca gec
+              </ThemedText>
+            </View>
           </View>
         </>
       )}
@@ -394,7 +405,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   titleSpacer: {
-    height: 24,
+    height: 44,
   },
   header: {
     flexDirection: "row",
@@ -606,12 +617,23 @@ const styles = StyleSheet.create({
     color: "#F59E0B",
     letterSpacing: 2,
   },
+  bottomSection: {
+    paddingTop: Spacing.sm,
+  },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     gap: Spacing.lg,
-    paddingVertical: Spacing.md,
+  },
+  tipSection: {
+    alignItems: "center",
+    marginTop: Spacing.md,
+    gap: 4,
+  },
+  tipText: {
+    fontSize: 12,
+    color: "#9CA3AF",
   },
   actionButton: {
     width: 60,
