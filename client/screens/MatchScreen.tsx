@@ -135,15 +135,15 @@ function SwipeCard({
     : "0";
 
   if (!isFirst) {
-    const scale = 0.95 - stackIndex * 0.03;
-    const offsetY = 15 + stackIndex * 8;
+    const scale = 0.94 - stackIndex * 0.03;
+    const offsetY = -12 - stackIndex * 8;
     return (
       <View style={[
         styles.card,
         styles.cardBehind,
         { 
           transform: [{ scale }, { translateY: offsetY }],
-          top: -offsetY,
+          zIndex: -stackIndex - 1,
         }
       ]}>
         <Image
@@ -157,7 +157,7 @@ function SwipeCard({
 
   return (
     <GestureDetector gesture={gesture}>
-      <Animated.View style={[styles.card, animatedStyle]}>
+      <Animated.View style={[styles.card, styles.cardFront, animatedStyle]}>
         <Image
           source={photoUrl ? { uri: photoUrl } : defaultVehicleImage}
           style={styles.cardImage}
@@ -482,9 +482,11 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 8,
   },
+  cardFront: {
+    zIndex: 10,
+  },
   cardBehind: {
     borderColor: "#D1D5DB",
-    opacity: 0.9,
   },
   cardImage: {
     width: "100%",
