@@ -146,18 +146,22 @@ export default function ProfileScreen() {
   });
 
   const handleChangeUserType = () => {
-    const newType = isKurumsal ? "bireysel" : "kurumsal";
-    Alert.alert(
-      "Uyelik Tipi Degistir",
-      `${isKurumsal ? "Bireysel" : "Kurumsal"} uyelige gecmek istediginize emin misiniz?`,
-      [
-        { text: "Iptal", style: "cancel" },
-        { 
-          text: "Evet, Degistir", 
-          onPress: () => changeUserTypeMutation.mutate(newType) 
-        },
-      ]
-    );
+    if (isKurumsal) {
+      const newType = "bireysel";
+      Alert.alert(
+        "Uyelik Tipi Degistir",
+        "Bireysel uyelige gecmek istediginize emin misiniz?",
+        [
+          { text: "Iptal", style: "cancel" },
+          { 
+            text: "Evet, Degistir", 
+            onPress: () => changeUserTypeMutation.mutate(newType) 
+          },
+        ]
+      );
+    } else {
+      navigation.navigate("CorporateApplication");
+    }
   };
 
   const { data: userListings, isLoading: listingsLoading } = useQuery<Listing[]>({
@@ -391,6 +395,80 @@ export default function ProfileScreen() {
               <ThemedText style={styles.addListingText}>Ilan Ekle</ThemedText>
             </Pressable>
           )}
+        </View>
+
+        <View style={styles.section}>
+          <ThemedText style={styles.sectionTitle}>Sozlesmeler ve Politikalar</ThemedText>
+          
+          <Pressable
+            style={({ pressed }) => [styles.legalItem, pressed && { opacity: 0.7 }]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              Alert.alert("Kullanim Kosullari", "Kullanim kosullari icerigi burada goruntulenecek.");
+            }}
+          >
+            <View style={styles.legalItemLeft}>
+              <Feather name="file-text" size={20} color="#374151" />
+              <ThemedText style={styles.legalItemText}>Kullanim Kosullari</ThemedText>
+            </View>
+            <Feather name="chevron-right" size={20} color="#9CA3AF" />
+          </Pressable>
+
+          <Pressable
+            style={({ pressed }) => [styles.legalItem, pressed && { opacity: 0.7 }]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              Alert.alert("Gizlilik Politikasi", "Gizlilik politikasi icerigi burada goruntulenecek.");
+            }}
+          >
+            <View style={styles.legalItemLeft}>
+              <Feather name="shield" size={20} color="#374151" />
+              <ThemedText style={styles.legalItemText}>Gizlilik Politikasi</ThemedText>
+            </View>
+            <Feather name="chevron-right" size={20} color="#9CA3AF" />
+          </Pressable>
+
+          <Pressable
+            style={({ pressed }) => [styles.legalItem, pressed && { opacity: 0.7 }]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              Alert.alert("KVKK Aydinlatma Metni", "KVKK aydinlatma metni icerigi burada goruntulenecek.");
+            }}
+          >
+            <View style={styles.legalItemLeft}>
+              <Feather name="lock" size={20} color="#374151" />
+              <ThemedText style={styles.legalItemText}>KVKK Aydinlatma Metni</ThemedText>
+            </View>
+            <Feather name="chevron-right" size={20} color="#9CA3AF" />
+          </Pressable>
+
+          <Pressable
+            style={({ pressed }) => [styles.legalItem, pressed && { opacity: 0.7 }]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              Alert.alert("Mesafeli Satis Sozlesmesi", "Mesafeli satis sozlesmesi icerigi burada goruntulenecek.");
+            }}
+          >
+            <View style={styles.legalItemLeft}>
+              <Feather name="clipboard" size={20} color="#374151" />
+              <ThemedText style={styles.legalItemText}>Mesafeli Satis Sozlesmesi</ThemedText>
+            </View>
+            <Feather name="chevron-right" size={20} color="#9CA3AF" />
+          </Pressable>
+
+          <Pressable
+            style={({ pressed }) => [styles.legalItem, pressed && { opacity: 0.7 }]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              Alert.alert("Cerez Politikasi", "Cerez politikasi icerigi burada goruntulenecek.");
+            }}
+          >
+            <View style={styles.legalItemLeft}>
+              <Feather name="info" size={20} color="#374151" />
+              <ThemedText style={styles.legalItemText}>Cerez Politikasi</ThemedText>
+            </View>
+            <Feather name="chevron-right" size={20} color="#9CA3AF" />
+          </Pressable>
         </View>
       </ScrollView>
     </View>
@@ -644,5 +722,22 @@ const styles = StyleSheet.create({
     color: BrandColors.primaryOrange,
     marginTop: Spacing.sm,
     fontWeight: "500",
+  },
+  legalItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6",
+  },
+  legalItemLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.md,
+  },
+  legalItemText: {
+    fontSize: 15,
+    color: "#374151",
   },
 });

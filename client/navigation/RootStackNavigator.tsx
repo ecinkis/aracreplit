@@ -8,6 +8,7 @@ import SettingsScreen from "@/screens/SettingsScreen";
 import EditProfileScreen from "@/screens/EditProfileScreen";
 import CreateListingScreen from "@/screens/CreateListingScreen";
 import QuickCreateListingScreen from "@/screens/QuickCreateListingScreen";
+import CorporateApplicationScreen from "@/screens/CorporateApplicationScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { useAuth } from "@/contexts/AuthContext";
 import { BrandColors } from "@/constants/theme";
@@ -21,6 +22,7 @@ export type RootStackParamList = {
   EditProfile: undefined;
   CreateListing: undefined;
   QuickCreateListing: undefined;
+  CorporateApplication: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -93,6 +95,13 @@ export default function RootStackNavigator() {
           <Stack.Screen
             name="QuickCreateListing"
             component={QuickCreateListingScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="CorporateApplication"
+            component={CorporateApplicationScreen}
             options={{
               headerShown: false,
             }}
