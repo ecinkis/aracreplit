@@ -36,11 +36,11 @@ const CARD_WIDTH = SCREEN_WIDTH - Spacing.lg * 2;
 const CARD_HEIGHT = SCREEN_HEIGHT * 0.48;
 
 const DEMO_LISTINGS = [
-  { id: "demo1", brand: "BMW", model: "320i", year: 2021, km: 45000, city: "Kadikoy", photos: [] },
-  { id: "demo2", brand: "Mercedes", model: "C180", year: 2020, km: 62000, city: "Besiktas", photos: [] },
-  { id: "demo3", brand: "Audi", model: "A4", year: 2019, km: 78000, city: "Sisli", photos: [] },
-  { id: "demo4", brand: "Volkswagen", model: "Passat", year: 2022, km: 25000, city: "Uskudar", photos: [] },
-  { id: "demo5", brand: "Toyota", model: "Corolla", year: 2021, km: 38000, city: "Bakirkoy", photos: [] },
+  { id: "demo1", brand: "BMW", model: "320i", year: 2021, km: 45000, city: "Kadikoy", photos: ["https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&q=80"] },
+  { id: "demo2", brand: "Mercedes", model: "C180", year: 2020, km: 62000, city: "Besiktas", photos: ["https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80"] },
+  { id: "demo3", brand: "Audi", model: "A4", year: 2019, km: 78000, city: "Sisli", photos: ["https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80"] },
+  { id: "demo4", brand: "Volkswagen", model: "Passat", year: 2022, km: 25000, city: "Uskudar", photos: ["https://images.unsplash.com/photo-1632245889029-e406faaa34cd?w=800&q=80"] },
+  { id: "demo5", brand: "Toyota", model: "Corolla", year: 2021, km: 38000, city: "Bakirkoy", photos: ["https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&q=80"] },
 ] as Listing[];
 
 function SwipeCard({
@@ -301,7 +301,8 @@ export default function MatchScreen() {
   const showMockCard = remainingListings.length === 0;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { paddingTop: insets.top + Spacing.md }]}>
+      <View style={styles.titleSpacer} />
       <View style={styles.header}>
         <Pressable style={styles.headerButton}>
           <Feather name="chevron-left" size={24} color="#F87171" />
@@ -380,6 +381,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
+  },
+  titleSpacer: {
+    height: 44,
   },
   header: {
     flexDirection: "row",
