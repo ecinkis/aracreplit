@@ -1,0 +1,75 @@
+Ben Türkiye pazarına yönelik, araç takasına odaklı bir mobil uygulama (iOS + Android) geliştiriyorum.
+Bu uygulama klasik ilan platformu değildir; temel değer önerisi araç takası ve takas + nakit eşleşmesidir.
+GENEL HEDEF
+Kullanıcıların araçlarını hızlı veya detaylı ilan olarak ekleyebilmesi
+Araçların takas uyumuna göre otomatik eşleştirilmesi
+Tinder benzeri sağa–sola kaydırma (match) deneyimi
+Türkiye’ye özgü güven, ekspertiz, nakit farkı problemlerini çözmesi
+UYGULAMA MODÜLLERİ
+1. Hızlı İlan Ver
+Facebook / Letgo tarzı
+60–90 saniyede ilan
+Az alan: marka, model, yıl, km, yakıt, vites, konum, takas tercihi
+Minimum 3 fotoğraf
+“Hızlı İlan” etiketiyle yayınlanır
+2. Detaylı İlan Ver
+Sahibinden seviyesinde
+Donanım, hasar, ekspertiz raporu
+Detaylı takas beklentisi:
+Kabul edilen marka / model
+Yıl ve km aralığı
+Üzerine / altına nakit aralığı
+Match algoritmasında öncelik
+3. Match (Sağa – Sola Kaydırma)
+Sadece takas uyumlu araçlar gösterilir
+Sağa: Takas olur
+Sola: İlgilenmiyorum
+Yukarı: Favori
+Eşleşme sonrası chat açılır
+“Teklif gönder” (Benim aracım + X TL ↔ Senin aracın)
+4. Vitrin
+Günün Takasları
+Acil Takas
+Sadece Takas
+Galeri Vitrini
+Premium / öne çıkarma destekli
+5. Araç Arama (Search)
+Klasik filtreler + takas odaklı filtreler
+“Bana uygun takaslar” tek tuş
+Kaydedilen aramalar + bildirim
+6. Bana Özel (Profil)
+İlanlarım
+Eşleşmelerim
+Teklifler
+Favoriler
+Güven Skoru
+Takas geçmişi
+TÜRKİYE’YE ÖZEL KRİTİK ÖZELLİKLER
+Takas Uyum Skoru (%):
+Araç değeri, lokasyon, takas tercihi ve segment bazlı
+Nakit Farkı Akıllı Hesaplama:
+“Bu takasta sen 45.000 TL almalısın” gibi öneriler
+Güven Skoru:
+Kimlik doğrulama, ekspertiz, geçmiş takaslar
+Sadece Takas Modu
+Çoklu Takas Senaryosu:
+2 araç + nakit ↔ 1 araç
+Galeri & Bireysel Ayrımı
+Rozetler:
+“Onaylı Takasçı”, “3 Başarılı Takas”
+TEKNİK BEKLENTİLER
+Mobil-first mimari
+Ölçeklenebilir backend
+Match algoritması merkezde
+Güvenlik, spam ve sahte ilan önleme
+Türkiye pazarına uygun UX/UI
+SENDEN İSTENEN
+Bu ürünü:
+Doğru ürün mimarisi ile tasarla
+Gerekli ekranları ve veri modellerini çıkar
+Match ve takas mantığını merkeze alan bir yapı kur
+Gereksiz özellik ekleme, core value = TAKAS
+Her cevabında:
+Varsayımlarını belirt
+Türkiye gerçeklerini dikkate al
+MVP ve ileri fazları ayır
