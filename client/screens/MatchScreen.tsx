@@ -5,7 +5,7 @@ import {
   Pressable,
   Image,
   ActivityIndicator,
-  Dimensions,
+  useWindowDimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -35,11 +35,6 @@ import defaultVehicleImage from "../assets/images/default-vehicle.png";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.3;
-const CARD_WIDTH = SCREEN_WIDTH - Spacing.xl * 2;
-const CARD_HEIGHT = SCREEN_HEIGHT * 0.52;
-
 const DEMO_LISTINGS = [
   { id: "demo1", brand: "BMW", model: "320i", year: 2021, km: 45000, city: "Kadikoy", estimatedValue: 1850000, photos: ["https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&q=80"] },
   { id: "demo2", brand: "Mercedes", model: "C180", year: 2020, km: 62000, city: "Besiktas", estimatedValue: 2100000, photos: ["https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80"] },
@@ -56,6 +51,10 @@ function SwipeCard({
   onDetailPress,
   isFirst,
   stackIndex = 0,
+  cardWidth,
+  cardHeight,
+  screenWidth,
+  screenHeight,
 }: {
   listing: Listing;
   onSwipeLeft: () => void;
@@ -64,10 +63,15 @@ function SwipeCard({
   onDetailPress: () => void;
   isFirst: boolean;
   stackIndex?: number;
+  cardWidth: number;
+  cardHeight: number;
+  screenWidth: number;
+  screenHeight: number;
 }) {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const photoUrl = listing.photos && listing.photos.length > 0 ? listing.photos[0] : null;
+  const swipeThreshold = screenWidth * 0.3;
 
   const handleSwipeComplete = useCallback((direction: "left" | "right" | "up") => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -87,13 +91,13 @@ function SwipeCard({
     })
     .onEnd((event) => {
       if (event.translationY < -100) {
-        translateY.value = withSpring(-SCREEN_HEIGHT);
+        translateY.value = withSpring(-screenHeight);
         runOnJS(handleSwipeComplete)("up");
-      } else if (event.translationX > SWIPE_THRESHOLD) {
-        translateX.value = withSpring(SCREEN_WIDTH * 1.5);
+      } else if (event.translationX > swipeThreshold) {
+        translateX.value = withSpring(screenWidth * 1.5);
         runOnJS(handleSwipeComplete)("right");
-      } else if (event.translationX < -SWIPE_THRESHOLD) {
-        translateX.value = withSpring(-SCREEN_WIDTH * 1.5);
+      } else if (event.translationX < -swipeThreshold) {
+        translateX.value = withSpring(-screenWidth * 1.5);
         runOnJS(handleSwipeComplete)("left");
       } else {
         translateX.value = withSpring(0);
@@ -104,7 +108,7 @@ function SwipeCard({
   const animatedStyle = useAnimatedStyle(() => {
     const rotate = interpolate(
       translateX.value,
-      [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
+      [-screenWidth / 2, 0, screenWidth / 2],
       [-12, 0, 12],
       Extrapolate.CLAMP
     );
@@ -119,11 +123,11 @@ function SwipeCard({
   });
 
   const likeOpacity = useAnimatedStyle(() => ({
-    opacity: interpolate(translateX.value, [0, SWIPE_THRESHOLD], [0, 1], Extrapolate.CLAMP),
+    opacity: interpolate(translateX.value, [0, swipeThreshold], [0, 1], Extrapolate.CLAMP),
   }));
 
   const nopeOpacity = useAnimatedStyle(() => ({
-    opacity: interpolate(translateX.value, [-SWIPE_THRESHOLD, 0], [1, 0], Extrapolate.CLAMP),
+    opacity: interpolate(translateX.value, [-swipeThreshold, 0], [1, 0], Extrapolate.CLAMP),
   }));
 
   const favoriteOpacity = useAnimatedStyle(() => ({
@@ -142,6 +146,8 @@ function SwipeCard({
         styles.card,
         styles.cardBehind,
         { 
+          width: cardWidth,
+          height: cardHeight,
           transform: [{ scale }, { translateY: offsetY }],
           zIndex: -stackIndex - 1,
         }
@@ -157,7 +163,7 @@ function SwipeCard({
 
   return (
     <GestureDetector gesture={gesture}>
-      <Animated.View style={[styles.card, styles.cardFront, animatedStyle]}>
+      <Animated.View style={[styles.card, styles.cardFront, { width: cardWidth, height: cardHeight }, animatedStyle]}>
         <Image
           source={photoUrl ? { uri: photoUrl } : defaultVehicleImage}
           style={styles.cardImage}
@@ -250,6 +256,9 @@ export default function MatchScreen() {
   const navigation = useNavigation<NavigationProp>();
   const { user, selectedListingId } = useAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+  const cardWidth = screenWidth - Spacing.xl * 2;
+  const cardHeight = screenHeight * 0.52;
 
   const { data: userListings } = useQuery<Listing[]>({
     queryKey: ["/api/users", user?.id, "listings"],
@@ -358,6 +367,10 @@ export default function MatchScreen() {
                   onSwipeUp={() => handleSwipe("up")}
                   onDetailPress={() => handleDetailPress(listing.id)}
                   stackIndex={stackIndex}
+                  cardWidth={cardWidth}
+                  cardHeight={cardHeight}
+                  screenWidth={screenWidth}
+                  screenHeight={screenHeight}
                 />
               );
             })}
@@ -461,16 +474,15 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   cardsContainer: {
-    width: CARD_WIDTH,
-    height: CARD_HEIGHT,
+    width: "100%",
+    aspectRatio: 0.77,
     alignItems: "center",
     justifyContent: "center",
     marginTop: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
   },
   card: {
     position: "absolute",
-    width: CARD_WIDTH,
-    height: CARD_HEIGHT,
     borderRadius: 28,
     overflow: "hidden",
     backgroundColor: "#1A1A1A",
