@@ -322,13 +322,13 @@ export default function MatchScreen() {
           </View>
         </View>
         <Pressable style={styles.filterButton}>
-          <Feather name="sliders" size={20} color="#FFFFFF" />
+          <Feather name="sliders" size={20} color="#000000" />
         </Pressable>
       </View>
 
       {isLoading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#FFFFFF" />
+          <ActivityIndicator size="large" color="#000000" />
         </View>
       ) : showEmptyState ? (
         <EmptyState />
@@ -359,6 +359,17 @@ export default function MatchScreen() {
             >
               <Feather name="x" size={26} color="#EF4444" />
             </Pressable>
+
+            <Pressable
+              style={({ pressed }) => [
+                styles.actionButton,
+                styles.likeButton,
+                pressed && styles.buttonPressed,
+              ]}
+              onPress={() => handleButtonSwipe("right")}
+            >
+              <Feather name="heart" size={28} color="#10B981" />
+            </Pressable>
             
             <Pressable
               style={({ pressed }) => [
@@ -370,17 +381,6 @@ export default function MatchScreen() {
             >
               <Feather name="star" size={22} color="#F59E0B" />
             </Pressable>
-
-            <Pressable
-              style={({ pressed }) => [
-                styles.actionButton,
-                styles.likeButton,
-                pressed && styles.buttonPressed,
-              ]}
-              onPress={() => handleButtonSwipe("right")}
-            >
-              <Feather name="heart" size={26} color="#10B981" />
-            </Pressable>
           </View>
         </>
       )}
@@ -391,7 +391,7 @@ export default function MatchScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0A0A0A",
+    backgroundColor: "#FFFFFF",
   },
   titleSpacer: {
     height: 24,
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: "800",
-    color: "#FFFFFF",
+    color: "#000000",
     letterSpacing: -0.5,
   },
   locationRow: {
@@ -425,11 +425,9 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: "#1F1F1F",
+    backgroundColor: "#F3F4F6",
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#2A2A2A",
   },
   loadingContainer: {
     flex: 1,
@@ -621,8 +619,13 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#1A1A1A",
+    backgroundColor: "#FFFFFF",
     borderWidth: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   buttonPressed: {
     transform: [{ scale: 0.9 }],
@@ -630,14 +633,17 @@ const styles = StyleSheet.create({
   rejectButton: {
     borderColor: "#EF4444",
   },
+  likeButton: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    borderColor: "#10B981",
+  },
   superButton: {
     width: 52,
     height: 52,
     borderRadius: 26,
     borderColor: "#F59E0B",
-  },
-  likeButton: {
-    borderColor: "#10B981",
   },
   emptyContainer: {
     flex: 1,
@@ -649,12 +655,11 @@ const styles = StyleSheet.create({
     width: 200,
     height: 150,
     marginBottom: Spacing.lg,
-    opacity: 0.6,
   },
   emptyTitle: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: "#000000",
     marginBottom: Spacing.sm,
     textAlign: "center",
   },
