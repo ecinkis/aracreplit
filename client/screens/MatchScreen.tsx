@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -27,20 +29,23 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
 import { Listing } from "@shared/schema";
 import { apiRequest } from "@/lib/query-client";
+import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import emptyMatchesImage from "../assets/images/empty-states/empty-matches.png";
 import defaultVehicleImage from "../assets/images/default-vehicle.png";
 
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.3;
-const CARD_WIDTH = SCREEN_WIDTH - Spacing.lg * 2;
-const CARD_HEIGHT = SCREEN_HEIGHT * 0.48;
+const CARD_WIDTH = SCREEN_WIDTH - Spacing.xl * 2;
+const CARD_HEIGHT = SCREEN_HEIGHT * 0.52;
 
 const DEMO_LISTINGS = [
-  { id: "demo1", brand: "BMW", model: "320i", year: 2021, km: 45000, city: "Kadikoy", photos: ["https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&q=80"] },
-  { id: "demo2", brand: "Mercedes", model: "C180", year: 2020, km: 62000, city: "Besiktas", photos: ["https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80"] },
-  { id: "demo3", brand: "Audi", model: "A4", year: 2019, km: 78000, city: "Sisli", photos: ["https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80"] },
-  { id: "demo4", brand: "Volkswagen", model: "Passat", year: 2022, km: 25000, city: "Uskudar", photos: ["https://images.unsplash.com/photo-1632245889029-e406faaa34cd?w=800&q=80"] },
-  { id: "demo5", brand: "Toyota", model: "Corolla", year: 2021, km: 38000, city: "Bakirkoy", photos: ["https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&q=80"] },
+  { id: "demo1", brand: "BMW", model: "320i", year: 2021, km: 45000, city: "Kadikoy", estimatedValue: 1850000, photos: ["https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&q=80"] },
+  { id: "demo2", brand: "Mercedes", model: "C180", year: 2020, km: 62000, city: "Besiktas", estimatedValue: 2100000, photos: ["https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80"] },
+  { id: "demo3", brand: "Audi", model: "A4", year: 2019, km: 78000, city: "Sisli", estimatedValue: 1650000, photos: ["https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80"] },
+  { id: "demo4", brand: "Volkswagen", model: "Passat", year: 2022, km: 25000, city: "Uskudar", estimatedValue: 1450000, photos: ["https://images.unsplash.com/photo-1632245889029-e406faaa34cd?w=800&q=80"] },
+  { id: "demo5", brand: "Toyota", model: "Corolla", year: 2021, km: 38000, city: "Bakirkoy", estimatedValue: 1250000, photos: ["https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&q=80"] },
 ] as Listing[];
 
 function SwipeCard({
@@ -48,12 +53,14 @@ function SwipeCard({
   onSwipeLeft,
   onSwipeRight,
   onSwipeUp,
+  onDetailPress,
   isFirst,
 }: {
   listing: Listing;
   onSwipeLeft: () => void;
   onSwipeRight: () => void;
   onSwipeUp: () => void;
+  onDetailPress: () => void;
   isFirst: boolean;
 }) {
   const translateX = useSharedValue(0);
@@ -96,7 +103,7 @@ function SwipeCard({
     const rotate = interpolate(
       translateX.value,
       [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
-      [-15, 0, 15],
+      [-12, 0, 12],
       Extrapolate.CLAMP
     );
 
@@ -121,6 +128,10 @@ function SwipeCard({
     opacity: interpolate(translateY.value, [-100, 0], [1, 0], Extrapolate.CLAMP),
   }));
 
+  const formattedPrice = listing.estimatedValue 
+    ? listing.estimatedValue.toLocaleString("tr-TR") 
+    : "0";
+
   if (!isFirst) {
     return (
       <View style={[styles.card, styles.cardBehind]}>
@@ -141,21 +152,24 @@ function SwipeCard({
           style={styles.cardImage}
           resizeMode="cover"
         />
-        <View style={styles.distanceBadge}>
-          <Feather name="map-pin" size={12} color="#FFFFFF" />
-          <ThemedText style={styles.distanceText}>
-            {listing.city || "1 km"}
-          </ThemedText>
+        
+        <View style={styles.topBadgesRow}>
+          <View style={styles.distanceBadge}>
+            <Feather name="map-pin" size={12} color="#FFFFFF" />
+            <ThemedText style={styles.distanceText}>
+              {listing.city || "Istanbul"}
+            </ThemedText>
+          </View>
+          <View style={styles.yearBadge}>
+            <ThemedText style={styles.yearText}>{listing.year}</ThemedText>
+          </View>
         </View>
-        <View style={styles.pageIndicator}>
-          <View style={[styles.dot, styles.dotActive]} />
-          <View style={styles.dot} />
-          <View style={styles.dot} />
-        </View>
+
         <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.85)"]}
+          colors={["transparent", "rgba(0,0,0,0.95)"]}
           style={styles.gradient}
         />
+
         <Animated.View style={[styles.likeLabel, likeOpacity]}>
           <ThemedText style={styles.likeLabelText}>TAKAS</ThemedText>
         </Animated.View>
@@ -165,43 +179,45 @@ function SwipeCard({
         <Animated.View style={[styles.favoriteLabel, favoriteOpacity]}>
           <ThemedText style={styles.favoriteLabelText}>FAVORI</ThemedText>
         </Animated.View>
-        <View style={styles.cardInfo}>
-          <ThemedText style={styles.cardTitle}>
-            {listing.brand} {listing.model}, {listing.year}
-          </ThemedText>
-          <ThemedText style={styles.cardSubtitle}>
-            {listing.km.toLocaleString("tr-TR")} km
-          </ThemedText>
+
+        <View style={styles.cardContent}>
+          <View style={styles.cardInfoSection}>
+            <ThemedText style={styles.cardTitle}>
+              {listing.brand} {listing.model}
+            </ThemedText>
+            <View style={styles.cardSpecs}>
+              <View style={styles.specItem}>
+                <Feather name="activity" size={14} color="#9CA3AF" />
+                <ThemedText style={styles.specText}>
+                  {listing.km.toLocaleString("tr-TR")} km
+                </ThemedText>
+              </View>
+              <View style={styles.specDivider} />
+              <View style={styles.specItem}>
+                <Feather name="tag" size={14} color="#9CA3AF" />
+                <ThemedText style={styles.specText}>
+                  {formattedPrice} TL
+                </ThemedText>
+              </View>
+            </View>
+          </View>
+
+          <Pressable
+            style={({ pressed }) => [
+              styles.detailButton,
+              pressed && styles.detailButtonPressed,
+            ]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              onDetailPress();
+            }}
+          >
+            <ThemedText style={styles.detailButtonText}>Detaylari Gor</ThemedText>
+            <Feather name="chevron-right" size={18} color="#FFFFFF" />
+          </Pressable>
         </View>
       </Animated.View>
     </GestureDetector>
-  );
-}
-
-function MockCard() {
-  return (
-    <View style={styles.card}>
-      <View style={styles.mockImageContainer}>
-        <Feather name="image" size={48} color="#6B7280" />
-      </View>
-      <View style={styles.distanceBadge}>
-        <Feather name="map-pin" size={12} color="#FFFFFF" />
-        <ThemedText style={styles.distanceText}>1 km</ThemedText>
-      </View>
-      <View style={styles.pageIndicator}>
-        <View style={[styles.dot, styles.dotActive]} />
-        <View style={styles.dot} />
-        <View style={styles.dot} />
-      </View>
-      <LinearGradient
-        colors={["transparent", "rgba(0,0,0,0.85)"]}
-        style={styles.gradient}
-      />
-      <View style={styles.cardInfo}>
-        <ThemedText style={styles.cardTitle}>BMW 320i, 2021</ThemedText>
-        <ThemedText style={styles.cardSubtitle}>45.000 km</ThemedText>
-      </View>
-    </View>
   );
 }
 
@@ -217,21 +233,10 @@ function EmptyState() {
   );
 }
 
-function NoListingState() {
-  return (
-    <View style={styles.emptyContainer}>
-      <Feather name="alert-circle" size={64} color={BrandColors.warning} />
-      <ThemedText style={styles.emptyTitle}>Ilan Gerekli</ThemedText>
-      <ThemedText style={styles.emptySubtitle}>
-        Eslesme yapabilmek icin once bir ilan eklemelisin
-      </ThemedText>
-    </View>
-  );
-}
-
 export default function MatchScreen() {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
+  const navigation = useNavigation<NavigationProp>();
   const { user, selectedListingId } = useAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -296,79 +301,85 @@ export default function MatchScreen() {
     handleSwipe(direction);
   };
 
+  const handleDetailPress = (listingId: string) => {
+    navigation.navigate("ListingDetail", { listingId });
+  };
+
   const apiListings = swipeableListings?.slice(currentIndex) || [];
   const remainingListings = apiListings.length > 0 ? apiListings : DEMO_LISTINGS.slice(currentIndex);
-  const showMockCard = remainingListings.length === 0;
+  const showEmptyState = remainingListings.length === 0;
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + Spacing.md }]}>
       <View style={styles.titleSpacer} />
+      
       <View style={styles.header}>
-        <Pressable style={styles.headerButton}>
-          <Feather name="chevron-left" size={24} color="#F87171" />
-        </Pressable>
-        <View style={styles.headerCenter}>
+        <View style={styles.headerLeft}>
           <ThemedText style={styles.headerTitle}>Kesfet</ThemedText>
-          <ThemedText style={styles.headerSubtitle}>Istanbul, TR</ThemedText>
+          <View style={styles.locationRow}>
+            <Feather name="map-pin" size={12} color="#6B7280" />
+            <ThemedText style={styles.headerLocation}>Istanbul, TR</ThemedText>
+          </View>
         </View>
-        <Pressable style={styles.headerButton}>
-          <Feather name="sliders" size={20} color="#F87171" />
+        <Pressable style={styles.filterButton}>
+          <Feather name="sliders" size={20} color="#FFFFFF" />
         </Pressable>
       </View>
 
       {isLoading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#F87171" />
+          <ActivityIndicator size="large" color="#FFFFFF" />
         </View>
+      ) : showEmptyState ? (
+        <EmptyState />
       ) : (
         <>
           <View style={styles.cardsContainer}>
-            {showMockCard ? (
-              <MockCard />
-            ) : (
-              remainingListings.slice(0, 2).reverse().map((listing, index) => (
-                <SwipeCard
-                  key={listing.id}
-                  listing={listing}
-                  isFirst={index === remainingListings.slice(0, 2).length - 1}
-                  onSwipeLeft={() => handleSwipe("left")}
-                  onSwipeRight={() => handleSwipe("right")}
-                  onSwipeUp={() => handleSwipe("up")}
-                />
-              ))
-            )}
+            {remainingListings.slice(0, 2).reverse().map((listing, index) => (
+              <SwipeCard
+                key={listing.id}
+                listing={listing}
+                isFirst={index === remainingListings.slice(0, 2).length - 1}
+                onSwipeLeft={() => handleSwipe("left")}
+                onSwipeRight={() => handleSwipe("right")}
+                onSwipeUp={() => handleSwipe("up")}
+                onDetailPress={() => handleDetailPress(listing.id)}
+              />
+            ))}
           </View>
 
-          <View style={[styles.buttonsContainer, { marginBottom: tabBarHeight + Spacing.xl }]}>
+          <View style={[styles.buttonsContainer, { marginBottom: tabBarHeight + Spacing.md }]}>
             <Pressable
               style={({ pressed }) => [
                 styles.actionButton,
                 styles.rejectButton,
-                pressed && { transform: [{ scale: 0.9 }] },
+                pressed && styles.buttonPressed,
               ]}
               onPress={() => handleButtonSwipe("left")}
             >
-              <Feather name="x" size={28} color="#F87171" />
+              <Feather name="x" size={26} color="#EF4444" />
             </Pressable>
+            
+            <Pressable
+              style={({ pressed }) => [
+                styles.actionButton,
+                styles.superButton,
+                pressed && styles.buttonPressed,
+              ]}
+              onPress={() => handleButtonSwipe("up")}
+            >
+              <Feather name="star" size={22} color="#F59E0B" />
+            </Pressable>
+
             <Pressable
               style={({ pressed }) => [
                 styles.actionButton,
                 styles.likeButton,
-                pressed && { transform: [{ scale: 0.9 }] },
+                pressed && styles.buttonPressed,
               ]}
               onPress={() => handleButtonSwipe("right")}
             >
-              <Feather name="heart" size={32} color="#FFFFFF" />
-            </Pressable>
-            <Pressable
-              style={({ pressed }) => [
-                styles.actionButton,
-                styles.favoriteButton,
-                pressed && { transform: [{ scale: 0.9 }] },
-              ]}
-              onPress={() => handleButtonSwipe("up")}
-            >
-              <Feather name="star" size={24} color="#A855F7" />
+              <Feather name="heart" size={26} color="#10B981" />
             </Pressable>
           </View>
         </>
@@ -380,38 +391,45 @@ export default function MatchScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#0A0A0A",
   },
   titleSpacer: {
-    height: 44,
+    height: 24,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.xl,
+    marginBottom: Spacing.md,
   },
-  headerButton: {
+  headerLeft: {
+    gap: 4,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: "800",
+    color: "#FFFFFF",
+    letterSpacing: -0.5,
+  },
+  locationRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  headerLocation: {
+    fontSize: 13,
+    color: "#6B7280",
+  },
+  filterButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: "#FEF2F2",
+    backgroundColor: "#1F1F1F",
     justifyContent: "center",
     alignItems: "center",
-  },
-  headerCenter: {
-    alignItems: "center",
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#000000",
-  },
-  headerSubtitle: {
-    fontSize: 13,
-    color: "#9CA3AF",
-    marginTop: 2,
+    borderWidth: 1,
+    borderColor: "#2A2A2A",
   },
   loadingContainer: {
     flex: 1,
@@ -422,140 +440,180 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: Spacing.lg,
   },
   card: {
     position: "absolute",
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
-    borderRadius: 24,
+    borderRadius: 28,
     overflow: "hidden",
-    backgroundColor: "#1F2937",
+    backgroundColor: "#1A1A1A",
+    borderWidth: 1,
+    borderColor: "#2A2A2A",
   },
   cardBehind: {
-    transform: [{ scale: 0.95 }],
-    top: 10,
+    transform: [{ scale: 0.94 }],
+    top: 12,
   },
   cardImage: {
     width: "100%",
     height: "100%",
   },
-  mockImageContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#374151",
-  },
-  distanceBadge: {
+  topBadgesRow: {
     position: "absolute",
     top: Spacing.md,
     left: Spacing.md,
+    right: Spacing.md,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  distanceBadge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.6)",
     paddingHorizontal: Spacing.sm,
-    paddingVertical: 4,
+    paddingVertical: 6,
     borderRadius: BorderRadius.full,
     gap: 4,
+    backdropFilter: "blur(10px)",
   },
   distanceText: {
     fontSize: 12,
     color: "#FFFFFF",
-    fontWeight: "500",
+    fontWeight: "600",
   },
-  pageIndicator: {
-    position: "absolute",
-    top: Spacing.md,
-    right: Spacing.md,
-    flexDirection: "column",
-    gap: 6,
+  yearBadge: {
+    backgroundColor: "rgba(0,0,0,0.6)",
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 6,
+    borderRadius: BorderRadius.full,
   },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: "rgba(255,255,255,0.4)",
-  },
-  dotActive: {
-    backgroundColor: "#FFFFFF",
+  yearText: {
+    fontSize: 12,
+    color: "#FFFFFF",
+    fontWeight: "600",
   },
   gradient: {
     position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
-    height: "40%",
+    height: "50%",
   },
-  cardInfo: {
+  cardContent: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
     padding: Spacing.lg,
   },
+  cardInfoSection: {
+    marginBottom: Spacing.md,
+  },
   cardTitle: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: "700",
     color: "#FFFFFF",
-    marginBottom: 4,
+    marginBottom: 8,
+    letterSpacing: -0.3,
   },
-  cardSubtitle: {
+  cardSpecs: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  specItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  specText: {
+    fontSize: 14,
+    color: "#D1D5DB",
+    fontWeight: "500",
+  },
+  specDivider: {
+    width: 1,
+    height: 14,
+    backgroundColor: "#4B5563",
+    marginHorizontal: Spacing.sm,
+  },
+  detailButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
+    paddingVertical: 14,
+    borderRadius: BorderRadius.lg,
+    gap: 6,
+  },
+  detailButtonPressed: {
+    opacity: 0.8,
+    transform: [{ scale: 0.98 }],
+  },
+  detailButtonText: {
     fontSize: 15,
-    color: "rgba(255,255,255,0.8)",
+    fontWeight: "700",
+    color: "#000000",
   },
   likeLabel: {
     position: "absolute",
-    top: 80,
-    left: Spacing.lg,
+    top: 100,
+    left: Spacing.xl,
     borderWidth: 4,
     borderColor: "#10B981",
-    borderRadius: BorderRadius.sm,
+    borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     transform: [{ rotate: "-15deg" }],
+    backgroundColor: "rgba(16, 185, 129, 0.1)",
   },
   likeLabelText: {
-    fontSize: 24,
-    fontWeight: "800",
+    fontSize: 28,
+    fontWeight: "900",
     color: "#10B981",
+    letterSpacing: 2,
   },
   nopeLabel: {
     position: "absolute",
-    top: 80,
-    right: Spacing.lg,
+    top: 100,
+    right: Spacing.xl,
     borderWidth: 4,
     borderColor: "#EF4444",
-    borderRadius: BorderRadius.sm,
+    borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     transform: [{ rotate: "15deg" }],
+    backgroundColor: "rgba(239, 68, 68, 0.1)",
   },
   nopeLabelText: {
-    fontSize: 24,
-    fontWeight: "800",
+    fontSize: 28,
+    fontWeight: "900",
     color: "#EF4444",
+    letterSpacing: 2,
   },
   favoriteLabel: {
     position: "absolute",
-    top: 80,
+    top: 100,
     alignSelf: "center",
     borderWidth: 4,
-    borderColor: "#A855F7",
-    borderRadius: BorderRadius.sm,
+    borderColor: "#F59E0B",
+    borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
+    backgroundColor: "rgba(245, 158, 11, 0.1)",
   },
   favoriteLabelText: {
-    fontSize: 24,
-    fontWeight: "800",
-    color: "#A855F7",
+    fontSize: 28,
+    fontWeight: "900",
+    color: "#F59E0B",
+    letterSpacing: 2,
   },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: Spacing.xl,
-    paddingVertical: Spacing.lg,
+    gap: Spacing.lg,
+    paddingVertical: Spacing.md,
   },
   actionButton: {
     width: 60,
@@ -563,24 +621,23 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    backgroundColor: "#1A1A1A",
+    borderWidth: 2,
+  },
+  buttonPressed: {
+    transform: [{ scale: 0.9 }],
   },
   rejectButton: {
-    backgroundColor: "#FEF2F2",
+    borderColor: "#EF4444",
+  },
+  superButton: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    borderColor: "#F59E0B",
   },
   likeButton: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: "#F87171",
-  },
-  favoriteButton: {
-    backgroundColor: "#FAF5FF",
+    borderColor: "#10B981",
   },
   emptyContainer: {
     flex: 1,
@@ -592,11 +649,12 @@ const styles = StyleSheet.create({
     width: 200,
     height: 150,
     marginBottom: Spacing.lg,
+    opacity: 0.6,
   },
   emptyTitle: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#000000",
+    color: "#FFFFFF",
     marginBottom: Spacing.sm,
     textAlign: "center",
   },
