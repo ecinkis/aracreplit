@@ -135,14 +135,14 @@ function SwipeCard({
     : "0";
 
   if (!isFirst) {
-    const scale = 1 - stackIndex * 0.05;
-    const offsetY = -stackIndex * 12;
+    const scale = 0.92 - stackIndex * 0.04;
+    const offsetY = -20 - stackIndex * 10;
     return (
       <View style={[
-        styles.card, 
+        styles.card,
+        styles.cardBehind,
         { 
           transform: [{ scale }, { translateY: offsetY }],
-          zIndex: -stackIndex,
         }
       ]}>
         <Image
@@ -474,11 +474,16 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: "#1A1A1A",
     borderWidth: 1,
-    borderColor: "#2A2A2A",
+    borderColor: "#E5E7EB",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
   cardBehind: {
-    transform: [{ scale: 0.94 }],
-    top: 12,
+    borderColor: "#D1D5DB",
+    opacity: 0.9,
   },
   cardImage: {
     width: "100%",
