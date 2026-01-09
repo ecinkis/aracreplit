@@ -35,6 +35,7 @@ export default function SearchScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + Spacing.md }]}>
+      <View style={styles.titleSpacer} />
       <View style={styles.searchContainer}>
         <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
         <TextInput
@@ -96,6 +97,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
     paddingHorizontal: Spacing.lg,
+  },
+  titleSpacer: {
+    height: 44,
   },
   searchContainer: {
     flexDirection: "row",
