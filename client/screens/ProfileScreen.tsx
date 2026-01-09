@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   StyleSheet,
@@ -7,7 +7,7 @@ import {
   Image,
   FlatList,
   ActivityIndicator,
-  Switch,
+  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -18,12 +18,16 @@ import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
 import { useAuth } from "@/contexts/AuthContext";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
-import { Spacing, BorderRadius, Typography, BrandColors } from "@/constants/theme";
+import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
 import { Listing, Match, Favorite } from "@shared/schema";
 import defaultAvatarImage from "../assets/images/default-avatar.png";
 import defaultVehicleImage from "../assets/images/default-vehicle.png";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+const showComingSoon = () => {
+  Alert.alert("Yakinda", "Bu ozellik cok yakinda aktif olacak.");
+};
 
 function MenuRow({ 
   icon, 
@@ -218,7 +222,7 @@ export default function ProfileScreen() {
             icon="phone" 
             label="Telefon Dogrulama" 
             verified={phoneVerified}
-            onPress={phoneVerified ? undefined : () => navigation.navigate("PhoneVerification" as any)}
+            onPress={phoneVerified ? undefined : showComingSoon}
           />
           
           {isKurumsal ? (
@@ -227,13 +231,13 @@ export default function ProfileScreen() {
                 icon="briefcase" 
                 label="Sirket Dogrulama" 
                 verified={companyVerified}
-                onPress={() => navigation.navigate("CompanyVerification" as any)}
+                onPress={showComingSoon}
               />
               <MenuRow 
                 icon="file-text" 
                 label="Vergi Levhasi Yukleme" 
                 verified={companyVerified}
-                onPress={() => navigation.navigate("TaxDocumentUpload" as any)}
+                onPress={showComingSoon}
               />
             </>
           ) : (
@@ -241,7 +245,7 @@ export default function ProfileScreen() {
               icon="user" 
               label="Kimlik Dogrulama" 
               verified={identityVerified}
-              onPress={() => navigation.navigate("IdentityVerification" as any)}
+              onPress={showComingSoon}
             />
           )}
         </View>
@@ -254,22 +258,22 @@ export default function ProfileScreen() {
               <MenuRow 
                 icon="briefcase" 
                 label="Sirket Bilgileri" 
-                onPress={() => navigation.navigate("EditCompanyInfo" as any)}
+                onPress={showComingSoon}
               />
               <MenuRow 
                 icon="map-pin" 
                 label="Sirket Adresi" 
-                onPress={() => navigation.navigate("EditCompanyAddress" as any)}
+                onPress={showComingSoon}
               />
               <MenuRow 
                 icon="user" 
                 label="Yetkili Kisi Bilgileri" 
-                onPress={() => navigation.navigate("EditAuthorizedPerson" as any)}
+                onPress={showComingSoon}
               />
               <MenuRow 
                 icon="mail" 
                 label="Iletisim Bilgileri" 
-                onPress={() => navigation.navigate("EditContactInfo" as any)}
+                onPress={showComingSoon}
               />
             </>
           ) : (
@@ -277,17 +281,17 @@ export default function ProfileScreen() {
               <MenuRow 
                 icon="user" 
                 label="Kisisel Bilgiler" 
-                onPress={() => navigation.navigate("EditPersonalInfo" as any)}
+                onPress={showComingSoon}
               />
               <MenuRow 
                 icon="map-pin" 
                 label="Adres Bilgileri" 
-                onPress={() => navigation.navigate("EditAddressInfo" as any)}
+                onPress={showComingSoon}
               />
               <MenuRow 
                 icon="mail" 
                 label="Iletisim Bilgileri" 
-                onPress={() => navigation.navigate("EditContactInfo" as any)}
+                onPress={showComingSoon}
               />
             </>
           )}
@@ -305,7 +309,7 @@ export default function ProfileScreen() {
             style={styles.changeTypeButton}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              navigation.navigate("ChangeUserType" as any);
+              showComingSoon();
             }}
           >
             <ThemedText style={styles.changeTypeButtonText}>
