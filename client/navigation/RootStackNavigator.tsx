@@ -6,6 +6,8 @@ import ListingDetailScreen from "@/screens/ListingDetailScreen";
 import ChatScreen from "@/screens/ChatScreen";
 import SettingsScreen from "@/screens/SettingsScreen";
 import EditProfileScreen from "@/screens/EditProfileScreen";
+import CreateListingScreen from "@/screens/CreateListingScreen";
+import QuickCreateListingScreen from "@/screens/QuickCreateListingScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { useAuth } from "@/contexts/AuthContext";
 import { BrandColors } from "@/constants/theme";
@@ -17,6 +19,8 @@ export type RootStackParamList = {
   Chat: { matchId: string; otherUserName: string };
   Settings: undefined;
   EditProfile: undefined;
+  CreateListing: undefined;
+  QuickCreateListing: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -73,6 +77,24 @@ export default function RootStackNavigator() {
             component={EditProfileScreen}
             options={{
               headerTitle: "Profil Düzenle",
+              headerTintColor: BrandColors.primaryOrange,
+              presentation: "modal",
+            }}
+          />
+          <Stack.Screen
+            name="CreateListing"
+            component={CreateListingScreen}
+            options={{
+              headerTitle: "Detayli Ilan Ver",
+              headerTintColor: BrandColors.primaryOrange,
+              presentation: "modal",
+            }}
+          />
+          <Stack.Screen
+            name="QuickCreateListing"
+            component={QuickCreateListingScreen}
+            options={{
+              headerTitle: "Hizli Ilan Ver",
               headerTintColor: BrandColors.primaryOrange,
               presentation: "modal",
             }}
