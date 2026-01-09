@@ -7,8 +7,12 @@ import {
   Pressable,
   Image,
   ActivityIndicator,
+  TextInput,
+  ScrollView,
+  Dimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQuery } from "@tanstack/react-query";
@@ -16,55 +20,67 @@ import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { useTheme } from "@/hooks/useTheme";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
-import { Spacing, BorderRadius, Typography, BrandColors } from "@/constants/theme";
+import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
 import { Listing } from "@shared/schema";
-import emptyVitrinImage from "../assets/images/empty-states/empty-vitrin.png";
+import appIcon from "../assets/images/icon.png";
 import defaultVehicleImage from "../assets/images/default-vehicle.png";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const CARD_GAP = 8;
+const CARD_WIDTH = (SCREEN_WIDTH - Spacing.lg * 2 - CARD_GAP * 2) / 3;
+
+const CATEGORIES = [
+  { id: "1", name: "Sedan" },
+  { id: "2", name: "SUV" },
+  { id: "3", name: "Hatchback" },
+  { id: "4", name: "Coupe" },
+  { id: "5", name: "Pickup" },
+  { id: "6", name: "Van" },
+];
+
 function ListingCard({ item, index, onPress }: { item: Listing; index: number; onPress: () => void }) {
-  const { theme } = useTheme();
   const photoUrl = item.photos && item.photos.length > 0 ? item.photos[0] : null;
+  const formattedPrice = item.estimatedValue 
+    ? item.estimatedValue.toLocaleString("tr-TR") 
+    : "0";
 
   return (
-    <Animated.View entering={FadeInDown.delay(index * 50).springify()}>
+    <Animated.View entering={FadeInDown.delay(index * 30).springify()}>
       <Pressable
-        style={({ pressed }) => [
-          styles.card,
-          { backgroundColor: theme.cardBackground },
-          pressed && styles.cardPressed,
-        ]}
+        style={styles.vehicleCard}
         onPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           onPress();
         }}
       >
-        <Image
-          source={photoUrl ? { uri: photoUrl } : defaultVehicleImage}
-          style={styles.cardImage}
-          resizeMode="cover"
-        />
-        {item.swapActive && (
-          <View style={styles.badge}>
-            <ThemedText style={styles.badgeText}>Takasa Açık</ThemedText>
-          </View>
-        )}
-        <View style={styles.cardContent}>
-          <ThemedText style={styles.cardTitle} numberOfLines={1}>
-            {item.brand} {item.model}
-          </ThemedText>
-          <ThemedText style={[styles.cardSubtitle, { color: theme.textSecondary }]}>
-            {item.year} - {item.km.toLocaleString("tr-TR")} km
-          </ThemedText>
-          <View style={styles.cardFooter}>
-            <View style={styles.locationRow}>
-              <Feather name="map-pin" size={12} color={theme.textSecondary} />
-              <ThemedText style={[styles.locationText, { color: theme.textSecondary }]}>
+        <View style={styles.vehicleImageContainer}>
+          {photoUrl ? (
+            <Image source={{ uri: photoUrl }} style={styles.vehicleImage} resizeMode="cover" />
+          ) : (
+            <Image source={defaultVehicleImage} style={styles.vehicleImage} resizeMode="cover" />
+          )}
+        </View>
+        <View style={styles.vehicleInfo}>
+          <View style={styles.vehicleTitleRow}>
+            <ThemedText style={styles.vehicleTitle} numberOfLines={1}>
+              {item.brand} {item.model}
+            </ThemedText>
+            <View style={styles.locationBadge}>
+              <Feather name="map-pin" size={8} color="#EF4444" />
+              <ThemedText style={styles.locationText} numberOfLines={1}>
                 {item.city}
+              </ThemedText>
+            </View>
+          </View>
+          <View style={styles.vehiclePriceRow}>
+            <ThemedText style={styles.vehiclePrice}>₺ {formattedPrice}</ThemedText>
+            <View style={styles.dateBadge}>
+              <Feather name="clock" size={8} color="#9CA3AF" />
+              <ThemedText style={styles.dateText}>
+                {new Date(item.createdAt).toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}
               </ThemedText>
             </View>
           </View>
@@ -74,15 +90,37 @@ function ListingCard({ item, index, onPress }: { item: Listing; index: number; o
   );
 }
 
-function EmptyState() {
+function MockListingCard({ index }: { index: number }) {
   return (
-    <View style={styles.emptyContainer}>
-      <Image source={emptyVitrinImage} style={styles.emptyImage} resizeMode="contain" />
-      <ThemedText style={styles.emptyTitle}>Henüz ilan yok</ThemedText>
-      <ThemedText style={styles.emptySubtitle}>
-        İlk ilanı sen ekle ve takasa başla!
-      </ThemedText>
-    </View>
+    <Animated.View entering={FadeInDown.delay(index * 30).springify()}>
+      <Pressable style={styles.vehicleCard}>
+        <View style={styles.vehicleImageContainer}>
+          <View style={styles.vehicleImagePlaceholder}>
+            <Feather name="image" size={24} color="#9CA3AF" />
+          </View>
+        </View>
+        <View style={styles.vehicleInfo}>
+          <View style={styles.vehicleTitleRow}>
+            <ThemedText style={styles.vehicleTitle} numberOfLines={1}>
+              Audi A5
+            </ThemedText>
+            <View style={styles.locationBadge}>
+              <Feather name="map-pin" size={8} color="#EF4444" />
+              <ThemedText style={styles.locationText} numberOfLines={1}>
+                Esenyurt
+              </ThemedText>
+            </View>
+          </View>
+          <View style={styles.vehiclePriceRow}>
+            <ThemedText style={styles.vehiclePrice}>₺ 1.500.000</ThemedText>
+            <View style={styles.dateBadge}>
+              <Feather name="clock" size={8} color="#9CA3AF" />
+              <ThemedText style={styles.dateText}>6 Eylül</ThemedText>
+            </View>
+          </View>
+        </View>
+      </Pressable>
+    </Animated.View>
   );
 }
 
@@ -96,9 +134,10 @@ function LoadingState() {
 
 export default function VitrinScreen() {
   const insets = useSafeAreaInsets();
+  const tabBarHeight = useBottomTabBarHeight();
   const navigation = useNavigation<NavigationProp>();
-  const { theme } = useTheme();
   const [refreshing, setRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { data: listings, isLoading, refetch } = useQuery<Listing[]>({
     queryKey: ["/api/listings"],
@@ -123,36 +162,60 @@ export default function VitrinScreen() {
     />
   );
 
-  return (
-    <ThemedView style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
-        <ThemedText style={styles.headerTitle}>Vitrin</ThemedText>
-        <Pressable
-          style={({ pressed }) => [
-            styles.filterButton,
-            pressed && { opacity: 0.7 },
-          ]}
-          onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
-        >
-          <Feather name="sliders" size={20} color={theme.text} />
-        </Pressable>
+  const renderMockItem = ({ index }: { index: number }) => (
+    <MockListingCard index={index} />
+  );
+
+  const ListHeader = () => (
+    <View style={styles.headerContent}>
+      <View style={styles.logoContainer}>
+        <Image source={appIcon} style={styles.logo} resizeMode="contain" />
       </View>
 
+      <View style={styles.searchContainer}>
+        <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchInput}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder="Kelime veya ilan No. ile ara"
+          placeholderTextColor="#9CA3AF"
+        />
+      </View>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.categoriesContainer}
+      >
+        {CATEGORIES.map((cat) => (
+          <Pressable key={cat.id} style={styles.categoryItem}>
+            <View style={styles.categoryCircle} />
+          </Pressable>
+        ))}
+      </ScrollView>
+    </View>
+  );
+
+  const hasListings = listings && listings.length > 0;
+  const mockData = Array.from({ length: 9 }, (_, i) => ({ id: String(i + 1) }));
+
+  return (
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       {isLoading ? (
         <LoadingState />
-      ) : !listings || listings.length === 0 ? (
-        <EmptyState />
       ) : (
         <FlatList
-          data={listings}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
+          data={hasListings ? listings : mockData}
+          renderItem={hasListings ? renderItem : ({ index }) => renderMockItem({ index })}
+          keyExtractor={(item) => ('id' in item ? item.id : String(item))}
+          numColumns={3}
           columnWrapperStyle={styles.row}
           contentContainerStyle={[
             styles.listContent,
-            { paddingBottom: insets.bottom + 100 },
+            { paddingBottom: tabBarHeight + Spacing.xl },
           ]}
+          ListHeaderComponent={ListHeader}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
@@ -163,113 +226,134 @@ export default function VitrinScreen() {
           }
         />
       )}
-    </ThemedView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingBottom: Spacing.md,
-  },
-  headerTitle: {
-    ...Typography.h1,
-  },
-  filterButton: {
-    padding: Spacing.sm,
+    backgroundColor: "#FFFFFF",
   },
   listContent: {
-    paddingHorizontal: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+  },
+  headerContent: {
+    marginBottom: Spacing.lg,
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: Spacing.md,
+  },
+  logo: {
+    width: 40,
+    height: 40,
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F9FAFB",
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    paddingHorizontal: Spacing.md,
+    height: 44,
+    marginBottom: Spacing.lg,
+  },
+  searchIcon: {
+    marginRight: Spacing.sm,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    color: "#000000",
+  },
+  categoriesContainer: {
+    paddingBottom: Spacing.md,
+    gap: Spacing.md,
+  },
+  categoryItem: {
+    alignItems: "center",
+    marginRight: Spacing.sm,
+  },
+  categoryCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: "#E5E7EB",
   },
   row: {
     justifyContent: "space-between",
+    marginBottom: CARD_GAP,
   },
-  card: {
-    width: "48%",
-    marginBottom: Spacing.md,
+  vehicleCard: {
+    width: CARD_WIDTH,
+    backgroundColor: "#FFFFFF",
     borderRadius: BorderRadius.md,
     overflow: "hidden",
-    marginHorizontal: "1%",
+    borderWidth: 1,
+    borderColor: "#F3F4F6",
   },
-  cardPressed: {
-    transform: [{ scale: 0.98 }],
-    opacity: 0.9,
-  },
-  cardImage: {
+  vehicleImageContainer: {
     width: "100%",
-    height: 120,
-    backgroundColor: "#E5E8EB",
+    aspectRatio: 1,
+    backgroundColor: "#F9FAFB",
   },
-  badge: {
-    position: "absolute",
-    top: Spacing.sm,
-    left: Spacing.sm,
-    backgroundColor: BrandColors.successGreen,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 2,
-    borderRadius: BorderRadius.xs,
+  vehicleImage: {
+    width: "100%",
+    height: "100%",
   },
-  badgeText: {
-    ...Typography.caption,
-    color: "#FFFFFF",
-    fontSize: 10,
-    fontWeight: "600",
+  vehicleImagePlaceholder: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  cardContent: {
-    padding: Spacing.sm,
+  vehicleInfo: {
+    padding: 6,
   },
-  cardTitle: {
-    ...Typography.small,
-    fontWeight: "600",
-  },
-  cardSubtitle: {
-    ...Typography.caption,
-    marginTop: 2,
-  },
-  cardFooter: {
+  vehicleTitleRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: Spacing.xs,
+    marginBottom: 2,
   },
-  locationRow: {
+  vehicleTitle: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: "#000000",
+    flex: 1,
+  },
+  locationBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: 2,
   },
   locationText: {
-    ...Typography.caption,
-    fontSize: 11,
+    fontSize: 9,
+    color: "#EF4444",
+  },
+  vehiclePriceRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  vehiclePrice: {
+    fontSize: 10,
+    fontWeight: "600",
+    color: "#000000",
+  },
+  dateBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
+  },
+  dateText: {
+    fontSize: 8,
+    color: "#9CA3AF",
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: Spacing.xl,
-  },
-  emptyImage: {
-    width: 200,
-    height: 150,
-    marginBottom: Spacing.lg,
-  },
-  emptyTitle: {
-    ...Typography.h3,
-    marginBottom: Spacing.sm,
-  },
-  emptySubtitle: {
-    ...Typography.body,
-    textAlign: "center",
-    opacity: 0.7,
   },
 });

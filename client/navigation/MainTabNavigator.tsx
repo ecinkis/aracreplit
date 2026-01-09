@@ -7,16 +7,16 @@ import { useTheme } from "@/hooks/useTheme";
 import { BrandColors, Spacing, BorderRadius } from "@/constants/theme";
 
 import VitrinScreen from "@/screens/VitrinScreen";
-import MatchScreen from "@/screens/MatchScreen";
+import SearchScreen from "@/screens/SearchScreen";
 import CreateListingScreen from "@/screens/CreateListingScreen";
-import MessagesScreen from "@/screens/MessagesScreen";
+import MatchScreen from "@/screens/MatchScreen";
 import ProfileScreen from "@/screens/ProfileScreen";
 
 export type MainTabParamList = {
   VitrinTab: undefined;
-  MatchTab: undefined;
+  SearchTab: undefined;
   CreateTab: undefined;
-  MessagesTab: undefined;
+  MatchTab: undefined;
   ProfileTab: undefined;
 };
 
@@ -75,19 +75,19 @@ export default function MainTabNavigator() {
         name="VitrinTab"
         component={VitrinScreen}
         options={{
-          title: "Vitrin",
+          title: "vitrin",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="grid" size={size} color={color} />
+            <Feather name="home" size={size} color={color} />
           ),
         }}
       />
       <Tab.Screen
-        name="MatchTab"
-        component={MatchScreen}
+        name="SearchTab"
+        component={SearchScreen}
         options={{
-          title: "Match",
+          title: "arama",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="repeat" size={size} color={color} />
+            <Feather name="search" size={size} color={color} />
           ),
         }}
       />
@@ -101,12 +101,12 @@ export default function MainTabNavigator() {
         }}
       />
       <Tab.Screen
-        name="MessagesTab"
-        component={MessagesScreen}
+        name="MatchTab"
+        component={MatchScreen}
         options={{
-          title: "Mesajlar",
+          title: "eşleş",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="message-circle" size={size} color={color} />
+            <Feather name="repeat" size={size} color={color} />
           ),
         }}
       />
@@ -114,7 +114,7 @@ export default function MainTabNavigator() {
         name="ProfileTab"
         component={ProfileScreen}
         options={{
-          title: "Profil",
+          title: "profil",
           tabBarIcon: ({ color, size }) => (
             <Feather name="user" size={size} color={color} />
           ),
@@ -129,13 +129,13 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: BorderRadius.full,
-    backgroundColor: BrandColors.primaryOrange,
+    backgroundColor: "#000000",
     justifyContent: "center",
     alignItems: "center",
     marginTop: -20,
-    shadowColor: BrandColors.primaryOrange,
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 8,
   },
