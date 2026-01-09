@@ -32,13 +32,12 @@ const CARD_GAP = 8;
 const CARD_WIDTH = (SCREEN_WIDTH - Spacing.lg * 2 - CARD_GAP * 2) / 3;
 
 const DEMO_STORIES = [
-  { id: "1", username: "TakasApp", isOwn: true, hasNewStory: false },
-  { id: "2", username: "BMW Turkiye", hasNewStory: true, timeAgo: "2s" },
-  { id: "3", username: "Mercedes", hasNewStory: true, timeAgo: "5s" },
-  { id: "4", username: "Audi TR", hasNewStory: true, timeAgo: "8s" },
-  { id: "5", username: "Volkswagen", hasNewStory: false, timeAgo: "12s" },
-  { id: "6", username: "Toyota", hasNewStory: true, timeAgo: "18s" },
-  { id: "7", username: "Honda", hasNewStory: false, timeAgo: "22s" },
+  { id: "1", username: "BMW Turkiye", hasNewStory: true, timeAgo: "2s" },
+  { id: "2", username: "Mercedes", hasNewStory: true, timeAgo: "5s" },
+  { id: "3", username: "Audi TR", hasNewStory: true, timeAgo: "8s" },
+  { id: "4", username: "Volkswagen", hasNewStory: false, timeAgo: "12s" },
+  { id: "5", username: "Toyota", hasNewStory: true, timeAgo: "18s" },
+  { id: "6", username: "Honda", hasNewStory: false, timeAgo: "22s" },
 ];
 
 function ListingCard({ item, index, onPress }: { item: Listing; index: number; onPress: () => void }) {
@@ -189,22 +188,15 @@ export default function VitrinScreen() {
             <View style={[
               styles.storyRing,
               story.hasNewStory ? styles.storyRingActive : styles.storyRingInactive,
-              story.isOwn && styles.storyRingOwn,
             ]}>
               <View style={styles.storyCircle}>
-                {story.isOwn ? (
-                  <View style={styles.addStoryIcon}>
-                    <Feather name="plus" size={16} color="#FFFFFF" />
-                  </View>
-                ) : (
-                  <Feather name="user" size={20} color="#9CA3AF" />
-                )}
+                <Feather name="user" size={20} color="#9CA3AF" />
               </View>
             </View>
             <ThemedText style={styles.storyUsername} numberOfLines={1}>
-              {story.isOwn ? "Hikaye Ekle" : story.username}
+              {story.username}
             </ThemedText>
-            {story.timeAgo && !story.isOwn ? (
+            {story.timeAgo ? (
               <ThemedText style={styles.storyTime}>{story.timeAgo}</ThemedText>
             ) : null}
           </Pressable>
@@ -300,23 +292,10 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#E5E7EB",
   },
-  storyRingOwn: {
-    borderWidth: 2,
-    borderColor: "#9CA3AF",
-    borderStyle: "dashed",
-  },
   storyCircle: {
     flex: 1,
     borderRadius: 30,
     backgroundColor: "#F3F4F6",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  addStoryIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "#000000",
     alignItems: "center",
     justifyContent: "center",
   },
