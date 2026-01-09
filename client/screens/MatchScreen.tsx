@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   titleSpacer: {
-    height: 44,
+    height: 24,
   },
   header: {
     flexDirection: "row",
