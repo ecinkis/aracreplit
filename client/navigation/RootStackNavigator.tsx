@@ -1,7 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainTabNavigator from "@/navigation/MainTabNavigator";
-import LoginScreen from "@/screens/LoginScreen";
+import AuthScreen from "@/screens/AuthScreen";
 import ListingDetailScreen from "@/screens/ListingDetailScreen";
 import ChatScreen from "@/screens/ChatScreen";
 import SettingsScreen from "@/screens/SettingsScreen";
@@ -34,7 +34,7 @@ export default function RootStackNavigator() {
       {!isAuthenticated ? (
         <Stack.Screen
           name="Login"
-          component={LoginScreen}
+          component={AuthScreen}
           options={{ headerShown: false }}
         />
       ) : (
