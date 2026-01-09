@@ -321,10 +321,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   loginButtonDisabled: {
-    opacity: 0.5,
+    backgroundColor: "#666666",
   },
   loginButtonPressed: {
-    opacity: 0.8,
+    backgroundColor: "#1a1a1a",
   },
   loginButtonText: {
     fontSize: 16,
