@@ -55,6 +55,7 @@ function SwipeCard({
   onSwipeUp,
   onDetailPress,
   isFirst,
+  stackIndex = 0,
 }: {
   listing: Listing;
   onSwipeLeft: () => void;
@@ -62,6 +63,7 @@ function SwipeCard({
   onSwipeUp: () => void;
   onDetailPress: () => void;
   isFirst: boolean;
+  stackIndex?: number;
 }) {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -133,8 +135,16 @@ function SwipeCard({
     : "0";
 
   if (!isFirst) {
+    const scale = 1 - stackIndex * 0.04;
+    const translateY = stackIndex * 8;
     return (
-      <View style={[styles.card, styles.cardBehind]}>
+      <View style={[
+        styles.card, 
+        { 
+          transform: [{ scale }, { translateY }],
+          zIndex: -stackIndex,
+        }
+      ]}>
         <Image
           source={photoUrl ? { uri: photoUrl } : defaultVehicleImage}
           style={styles.cardImage}
@@ -333,29 +343,32 @@ export default function MatchScreen() {
       ) : showEmptyState ? (
         <EmptyState />
       ) : (
-        <View style={styles.contentArea}>
-          <View style={styles.topSection}>
-            <View style={styles.cardsContainer}>
-              {remainingListings.slice(0, 2).reverse().map((listing, index) => (
+        <View style={[styles.contentArea, { paddingBottom: tabBarHeight + Spacing.sm }]}>
+          <View style={styles.cardsContainer}>
+            {remainingListings.slice(0, 3).reverse().map((listing, index) => {
+              const stackIndex = remainingListings.slice(0, 3).length - 1 - index;
+              return (
                 <SwipeCard
                   key={listing.id}
                   listing={listing}
-                  isFirst={index === remainingListings.slice(0, 2).length - 1}
+                  isFirst={stackIndex === 0}
                   onSwipeLeft={() => handleSwipe("left")}
                   onSwipeRight={() => handleSwipe("right")}
                   onSwipeUp={() => handleSwipe("up")}
                   onDetailPress={() => handleDetailPress(listing.id)}
+                  stackIndex={stackIndex}
                 />
-              ))}
-            </View>
-            <View style={styles.tipSection}>
-              <ThemedText style={styles.tipText}>
-                Saga kaydir: Begeni | Sola kaydir: Gec | Yukari: Favori
-              </ThemedText>
-            </View>
+              );
+            })}
           </View>
 
-          <View style={[styles.buttonsContainer, { paddingBottom: tabBarHeight + Spacing.md }]}>
+          <View style={styles.tipSection}>
+            <ThemedText style={styles.tipText}>
+              Saga kaydir: Begeni | Sola kaydir: Gec | Yukari: Favori
+            </ThemedText>
+          </View>
+
+          <View style={styles.buttonsContainer}>
             <Pressable
               style={({ pressed }) => [
                 styles.actionButton,
@@ -443,10 +456,8 @@ const styles = StyleSheet.create({
   },
   contentArea: {
     flex: 1,
-    justifyContent: "space-between",
-  },
-  topSection: {
     alignItems: "center",
+    justifyContent: "flex-start",
   },
   cardsContainer: {
     width: CARD_WIDTH,
@@ -623,7 +634,8 @@ const styles = StyleSheet.create({
   },
   tipSection: {
     alignItems: "center",
-    marginTop: Spacing.md,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.md,
   },
   tipText: {
     fontSize: 11,
