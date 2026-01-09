@@ -176,16 +176,18 @@ export default function MainTabNavigator() {
           options={{
             title: "",
             tabBarIcon: () => null,
-            tabBarButton: () => (
-              <Pressable
-                onPress={handleCreatePress}
-                style={({ pressed }) => [
-                  styles.createButton,
-                  pressed && styles.createButtonPressed,
-                ]}
-              >
-                <Feather name="plus" size={28} color="#FFFFFF" />
-              </Pressable>
+            tabBarButton: (props) => (
+              <View style={[props.style, styles.createButtonWrapper]}>
+                <Pressable
+                  onPress={handleCreatePress}
+                  style={({ pressed }) => [
+                    styles.createButton,
+                    pressed && styles.createButtonPressed,
+                  ]}
+                >
+                  <Feather name="plus" size={28} color="#FFFFFF" />
+                </Pressable>
+              </View>
             ),
           }}
         />
@@ -221,6 +223,11 @@ export default function MainTabNavigator() {
 }
 
 const styles = StyleSheet.create({
+  createButtonWrapper: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   createButton: {
     width: 56,
     height: 56,

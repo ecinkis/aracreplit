@@ -135,14 +135,15 @@ function SwipeCard({
     : "0";
 
   if (!isFirst) {
-    const scale = 0.92 - stackIndex * 0.04;
-    const offsetY = -20 - stackIndex * 10;
+    const scale = 0.95 - stackIndex * 0.03;
+    const offsetY = 15 + stackIndex * 8;
     return (
       <View style={[
         styles.card,
         styles.cardBehind,
         { 
           transform: [{ scale }, { translateY: offsetY }],
+          top: -offsetY,
         }
       ]}>
         <Image
