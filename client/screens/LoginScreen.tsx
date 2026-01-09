@@ -18,6 +18,8 @@ import { ThemedText } from "@/components/ThemedText";
 import { useAuth } from "@/contexts/AuthContext";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import appIcon from "../assets/images/icon.png";
+import googleLogo from "../assets/images/google-logo.png";
+import appleLogo from "../assets/images/apple-logo.png";
 
 type AuthTab = "email" | "phone";
 
@@ -86,7 +88,7 @@ export default function LoginScreen() {
     : phone.replace(/\D/g, "").length === 10;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
@@ -207,13 +209,13 @@ export default function LoginScreen() {
                 style={styles.socialButton}
                 onPress={() => handleSocialLogin("google")}
               >
-                <ThemedText style={styles.socialIcon}>G</ThemedText>
+                <Image source={googleLogo} style={styles.socialLogo} resizeMode="contain" />
               </Pressable>
               <Pressable 
                 style={styles.socialButton}
                 onPress={() => handleSocialLogin("apple")}
               >
-                <Feather name="smartphone" size={24} color="#000000" />
+                <Image source={appleLogo} style={styles.socialLogo} resizeMode="contain" />
               </Pressable>
             </View>
 
@@ -240,10 +242,10 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: Spacing.lg,
+    justifyContent: "center",
   },
   logoContainer: {
     alignItems: "center",
-    marginTop: Spacing["2xl"],
     marginBottom: Spacing.xl,
   },
   logo: {
@@ -272,9 +274,7 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontWeight: "600",
   },
-  formContainer: {
-    flex: 1,
-  },
+  formContainer: {},
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -379,10 +379,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#FFFFFF",
   },
-  socialIcon: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#4285F4",
+  socialLogo: {
+    width: 28,
+    height: 28,
   },
   orText: {
     fontSize: 14,
@@ -392,7 +391,7 @@ const styles = StyleSheet.create({
   },
   registerContainer: {
     alignItems: "center",
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.lg,
   },
   registerText: {
     fontSize: 16,
