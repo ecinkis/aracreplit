@@ -33,7 +33,15 @@ import defaultVehicleImage from "../assets/images/default-vehicle.png";
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.3;
 const CARD_WIDTH = SCREEN_WIDTH - Spacing.lg * 2;
-const CARD_HEIGHT = SCREEN_HEIGHT * 0.55;
+const CARD_HEIGHT = SCREEN_HEIGHT * 0.48;
+
+const DEMO_LISTINGS = [
+  { id: "demo1", brand: "BMW", model: "320i", year: 2021, km: 45000, city: "Kadikoy", photos: [] },
+  { id: "demo2", brand: "Mercedes", model: "C180", year: 2020, km: 62000, city: "Besiktas", photos: [] },
+  { id: "demo3", brand: "Audi", model: "A4", year: 2019, km: 78000, city: "Sisli", photos: [] },
+  { id: "demo4", brand: "Volkswagen", model: "Passat", year: 2022, km: 25000, city: "Uskudar", photos: [] },
+  { id: "demo5", brand: "Toyota", model: "Corolla", year: 2021, km: 38000, city: "Bakirkoy", photos: [] },
+] as Listing[];
 
 function SwipeCard({
   listing,
@@ -264,12 +272,13 @@ export default function MatchScreen() {
   });
 
   const handleSwipe = useCallback(async (direction: "left" | "right" | "up") => {
-    if (!swipeableListings || currentIndex >= swipeableListings.length) return;
+    const allListings = swipeableListings && swipeableListings.length > 0 ? swipeableListings : DEMO_LISTINGS;
+    if (currentIndex >= allListings.length) return;
     
-    const listing = swipeableListings[currentIndex];
+    const listing = allListings[currentIndex];
     const liked = direction === "right" || direction === "up";
 
-    if (user?.id && activeListingId) {
+    if (user?.id && activeListingId && listing.userId) {
       swipeMutation.mutate({
         fromUserId: user.id,
         toUserId: listing.userId,
@@ -287,8 +296,9 @@ export default function MatchScreen() {
     handleSwipe(direction);
   };
 
-  const remainingListings = swipeableListings?.slice(currentIndex) || [];
-  const showMockCard = !user?.id || !activeListingId || remainingListings.length === 0;
+  const apiListings = swipeableListings?.slice(currentIndex) || [];
+  const remainingListings = apiListings.length > 0 ? apiListings : DEMO_LISTINGS.slice(currentIndex);
+  const showMockCard = remainingListings.length === 0;
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -328,7 +338,7 @@ export default function MatchScreen() {
             )}
           </View>
 
-          <View style={[styles.buttonsContainer, { paddingBottom: tabBarHeight + Spacing.lg }]}>
+          <View style={[styles.buttonsContainer, { marginBottom: tabBarHeight + Spacing.xl }]}>
             <Pressable
               style={({ pressed }) => [
                 styles.actionButton,
@@ -540,8 +550,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: Spacing.lg,
-    paddingVertical: Spacing.md,
+    gap: Spacing.xl,
+    paddingVertical: Spacing.lg,
   },
   actionButton: {
     width: 60,
