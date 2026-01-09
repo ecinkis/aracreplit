@@ -7,59 +7,51 @@ import {
   Pressable,
   Image,
   ViewToken,
+  ImageSourcePropType,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  interpolate,
-} from "react-native-reanimated";
-import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
-import { BrandColors, Spacing, BorderRadius, Typography } from "@/constants/theme";
-import appIcon from "../assets/images/icon.png";
+import { Spacing, BorderRadius, Typography } from "@/constants/theme";
+
+import onboarding1 from "../assets/images/onboarding-1.png";
+import onboarding2 from "../assets/images/onboarding-2.png";
+import onboarding3 from "../assets/images/onboarding-3.png";
+import onboarding4 from "../assets/images/onboarding-4.png";
 
 const { width, height } = Dimensions.get("window");
 
 interface OnboardingSlide {
   id: string;
-  icon: keyof typeof Feather.glyphMap;
+  image: ImageSourcePropType;
   title: string;
   description: string;
-  color: string;
 }
 
 const slides: OnboardingSlide[] = [
   {
     id: "1",
-    icon: "refresh-cw",
+    image: onboarding1,
     title: "Araç Takası",
     description: "Aracınızı satmadan, istediğiniz araçla takas yapın. Nakit ödeme yapmadan hayalinizdeki araca kavuşun.",
-    color: BrandColors.primaryOrange,
   },
   {
     id: "2",
-    icon: "heart",
+    image: onboarding2,
     title: "Eşleşme Sistemi",
     description: "Tinder tarzı kaydırma ile size uygun araçları keşfedin. Sağa kaydırın, beğenin ve eşleşin!",
-    color: BrandColors.skyBlue,
   },
   {
     id: "3",
-    icon: "message-circle",
+    image: onboarding3,
     title: "Anında Mesajlaşma",
     description: "Eşleştiğiniz araç sahipleriyle güvenli bir şekilde mesajlaşın ve takas detaylarını konuşun.",
-    color: BrandColors.successGreen,
   },
   {
     id: "4",
-    icon: "shield",
+    image: onboarding4,
     title: "Güvenli Takas",
     description: "Telefon doğrulaması ve güven puanı sistemi ile güvenle takas yapın. Türkiye'nin ilk araç takas platformu!",
-    color: BrandColors.warning,
   },
 ];
 
@@ -71,7 +63,6 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
   const insets = useSafeAreaInsets();
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
-  const scrollX = useSharedValue(0);
 
   const handleViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
@@ -99,35 +90,31 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
     onComplete();
   };
 
-  const renderSlide = ({ item, index }: { item: OnboardingSlide; index: number }) => {
+  const renderSlide = ({ item }: { item: OnboardingSlide }) => {
     return (
       <View style={styles.slide}>
-        <View style={styles.slideContent}>
-          <View style={[styles.iconContainer, { backgroundColor: item.color }]}>
-            <Feather name={item.icon} size={48} color="#FFFFFF" />
-          </View>
-          <ThemedText style={styles.slideTitle}>{item.title}</ThemedText>
-          <ThemedText style={styles.slideDescription}>{item.description}</ThemedText>
+        <View style={styles.imageContainer}>
+          <Image
+            source={item.image}
+            style={styles.image}
+            resizeMode="cover"
+          />
         </View>
-      </View>
-    );
-  };
-
-  const renderDots = () => {
-    return (
-      <View style={styles.dotsContainer}>
-        {slides.map((_, index) => {
-          const isActive = index === currentIndex;
-          return (
-            <View
-              key={index}
-              style={[
-                styles.dot,
-                isActive ? styles.dotActive : styles.dotInactive,
-              ]}
-            />
-          );
-        })}
+        <View style={styles.contentContainer}>
+          <View style={styles.dotsContainer}>
+            {slides.map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.dot,
+                  index === currentIndex ? styles.dotActive : styles.dotInactive,
+                ]}
+              />
+            ))}
+          </View>
+          <ThemedText style={styles.title}>{item.title}</ThemedText>
+          <ThemedText style={styles.description}>{item.description}</ThemedText>
+        </View>
       </View>
     );
   };
@@ -135,22 +122,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
   const isLastSlide = currentIndex === slides.length - 1;
 
   return (
-    <LinearGradient
-      colors={[BrandColors.deepNavy, "#0D1520"]}
-      style={styles.container}
-    >
-      <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
-        <View style={styles.logoRow}>
-          <Image source={appIcon} style={styles.logo} resizeMode="contain" />
-          <ThemedText style={styles.appName}>TakasApp</ThemedText>
-        </View>
-        {!isLastSlide && (
-          <Pressable onPress={handleComplete} style={styles.skipButton}>
-            <ThemedText style={styles.skipText}>Atla</ThemedText>
-          </Pressable>
-        )}
-      </View>
-
+    <View style={styles.container}>
       <FlatList
         ref={flatListRef}
         data={slides}
@@ -161,145 +133,99 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
         keyExtractor={(item) => item.id}
         onViewableItemsChanged={handleViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
-        onScroll={(event) => {
-          scrollX.value = event.nativeEvent.contentOffset.x;
-        }}
         scrollEventThrottle={16}
       />
-
+      
       <View style={[styles.footer, { paddingBottom: insets.bottom + Spacing.lg }]}>
-        {renderDots()}
-        
         <Pressable
           style={({ pressed }) => [
-            styles.nextButton,
-            isLastSlide && styles.startButton,
+            styles.button,
             pressed && styles.buttonPressed,
           ]}
           onPress={handleNext}
         >
-          {isLastSlide ? (
-            <ThemedText style={styles.startButtonText}>Başlayalım</ThemedText>
-          ) : (
-            <>
-              <ThemedText style={styles.nextButtonText}>Devam</ThemedText>
-              <Feather name="arrow-right" size={20} color="#FFFFFF" />
-            </>
-          )}
+          <ThemedText style={styles.buttonText}>
+            {isLastSlide ? "Başlayalım" : "Devam"}
+          </ThemedText>
         </Pressable>
       </View>
-    </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: Spacing.lg,
-  },
-  logoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  logo: {
-    width: 40,
-    height: 40,
-    marginRight: Spacing.sm,
-  },
-  appName: {
-    ...Typography.h2,
-    color: "#FFFFFF",
-  },
-  skipButton: {
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.md,
-  },
-  skipText: {
-    ...Typography.body,
-    color: "rgba(255,255,255,0.6)",
+    backgroundColor: "#000000",
   },
   slide: {
     width,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: Spacing.lg,
+    flex: 1,
   },
-  slideContent: {
-    alignItems: "center",
-    maxWidth: 320,
+  imageContainer: {
+    flex: 0.6,
+    overflow: "hidden",
   },
-  iconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: Spacing["2xl"],
+  image: {
+    width: "100%",
+    height: "100%",
   },
-  slideTitle: {
-    ...Typography.h1,
-    color: "#FFFFFF",
-    textAlign: "center",
-    marginBottom: Spacing.md,
-  },
-  slideDescription: {
-    ...Typography.body,
-    color: "rgba(255,255,255,0.8)",
-    textAlign: "center",
-    lineHeight: 24,
-  },
-  footer: {
-    paddingHorizontal: Spacing.lg,
-    alignItems: "center",
+  contentContainer: {
+    flex: 0.4,
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.xl,
+    backgroundColor: "#000000",
   },
   dotsContainer: {
     flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.lg,
   },
   dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginHorizontal: 5,
+    height: 4,
+    borderRadius: 2,
+    marginRight: Spacing.xs,
   },
   dotActive: {
-    backgroundColor: BrandColors.primaryOrange,
     width: 24,
+    backgroundColor: "#FFFFFF",
   },
   dotInactive: {
+    width: 8,
     backgroundColor: "rgba(255,255,255,0.3)",
   },
-  nextButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.2)",
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.xl,
-    borderRadius: BorderRadius.lg,
-    minWidth: 160,
+  title: {
+    fontSize: 32,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    marginBottom: Spacing.md,
+    lineHeight: 40,
   },
-  startButton: {
-    backgroundColor: BrandColors.primaryOrange,
-    minWidth: 200,
+  description: {
+    fontSize: 16,
+    color: "rgba(255,255,255,0.7)",
+    lineHeight: 24,
+  },
+  footer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: Spacing.xl,
+    backgroundColor: "#000000",
+  },
+  button: {
+    backgroundColor: "#FFFFFF",
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.sm,
+    alignItems: "center",
   },
   buttonPressed: {
-    opacity: 0.8,
+    opacity: 0.9,
     transform: [{ scale: 0.98 }],
   },
-  nextButtonText: {
-    ...Typography.button,
-    color: "#FFFFFF",
-    marginRight: Spacing.sm,
-  },
-  startButtonText: {
-    ...Typography.button,
-    color: "#FFFFFF",
+  buttonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#000000",
   },
 });
