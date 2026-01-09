@@ -618,7 +618,7 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
   },
   bottomSection: {
-    paddingTop: Spacing.sm,
+    marginTop: -Spacing.md,
   },
   buttonsContainer: {
     flexDirection: "row",
