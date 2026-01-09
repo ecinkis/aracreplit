@@ -136,7 +136,7 @@ function SwipeCard({
 
   if (!isFirst) {
     const scale = 0.94 - stackIndex * 0.03;
-    const offsetY = -12 - stackIndex * 8;
+    const offsetY = -27 - stackIndex * 8;
     return (
       <View style={[
         styles.card,
