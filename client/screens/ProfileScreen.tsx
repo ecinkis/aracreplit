@@ -12,7 +12,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/query-client";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
@@ -119,6 +120,45 @@ export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
+
+  const userType = (user as any)?.userType || "bireysel";
+  const isKurumsal = userType === "kurumsal";
+  const trustScore = user?.trustScore || 0;
+  const phoneVerified = user?.phoneVerified || false;
+  const identityVerified = (user as any)?.identityVerified || false;
+  const companyVerified = (user as any)?.companyVerified || false;
+
+  const changeUserTypeMutation = useMutation({
+    mutationFn: async (newType: string) => {
+      return apiRequest(`/api/users/${user?.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ userType: newType }),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id] });
+      Alert.alert("Basarili", "Uyelik tipiniz degistirildi.");
+    },
+    onError: () => {
+      Alert.alert("Hata", "Uyelik tipi degistirilemedi. Lutfen tekrar deneyin.");
+    },
+  });
+
+  const handleChangeUserType = () => {
+    const newType = isKurumsal ? "bireysel" : "kurumsal";
+    Alert.alert(
+      "Uyelik Tipi Degistir",
+      `${isKurumsal ? "Bireysel" : "Kurumsal"} uyelige gecmek istediginize emin misiniz?`,
+      [
+        { text: "Iptal", style: "cancel" },
+        { 
+          text: "Evet, Degistir", 
+          onPress: () => changeUserTypeMutation.mutate(newType) 
+        },
+      ]
+    );
+  };
 
   const { data: userListings, isLoading: listingsLoading } = useQuery<Listing[]>({
     queryKey: ["/api/users", user?.id, "listings"],
@@ -138,13 +178,6 @@ export default function ProfileScreen() {
   const handleListingPress = (listingId: string) => {
     navigation.navigate("ListingDetail", { listingId });
   };
-
-  const userType = (user as any)?.userType || "bireysel";
-  const isKurumsal = userType === "kurumsal";
-  const trustScore = user?.trustScore || 0;
-  const phoneVerified = user?.phoneVerified || false;
-  const identityVerified = (user as any)?.identityVerified || false;
-  const companyVerified = (user as any)?.companyVerified || false;
 
   return (
     <View style={styles.container}>
@@ -309,7 +342,7 @@ export default function ProfileScreen() {
             style={styles.changeTypeButton}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              showComingSoon();
+              handleChangeUserType();
             }}
           >
             <ThemedText style={styles.changeTypeButtonText}>
