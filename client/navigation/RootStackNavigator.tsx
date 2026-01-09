@@ -94,9 +94,7 @@ export default function RootStackNavigator() {
             name="QuickCreateListing"
             component={QuickCreateListingScreen}
             options={{
-              headerTitle: "Hizli Ilan Ver",
-              headerTintColor: BrandColors.primaryOrange,
-              presentation: "modal",
+              headerShown: false,
             }}
           />
         </>

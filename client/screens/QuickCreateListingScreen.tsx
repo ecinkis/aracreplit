@@ -7,18 +7,24 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as Haptics from "expo-haptics";
+import { BlurView } from "expo-blur";
 import { ThemedText } from "@/components/ThemedText";
 import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
 import { useAuth } from "@/contexts/AuthContext";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
 import { apiRequest } from "@/lib/query-client";
+import { RootStackParamList } from "@/navigation/RootStackNavigator";
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const BRANDS = ["Audi", "BMW", "Mercedes", "Volkswagen", "Toyota", "Honda", "Ford", "Renault", "Fiat", "Hyundai", "Kia", "Opel", "Peugeot", "Citroen"];
 const FUEL_TYPES = ["Benzin", "Dizel", "Hibrit", "Elektrik", "LPG"];
@@ -68,9 +74,50 @@ function ChipSelect({
   );
 }
 
+function BottomTabBar() {
+  const navigation = useNavigation<NavigationProp>();
+  const insets = useSafeAreaInsets();
+
+  const handleTabPress = (tab: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    navigation.navigate("Main");
+  };
+
+  return (
+    <View style={[styles.tabBar, { paddingBottom: insets.bottom > 0 ? insets.bottom : 8 }]}>
+      {Platform.OS === "ios" ? (
+        <BlurView intensity={100} tint="light" style={StyleSheet.absoluteFill} />
+      ) : null}
+      <View style={styles.tabBarContent}>
+        <Pressable style={styles.tabItem} onPress={() => handleTabPress("vitrin")}>
+          <Feather name="home" size={22} color="#9CA3AF" />
+          <ThemedText style={styles.tabLabel}>vitrin</ThemedText>
+        </Pressable>
+        <Pressable style={styles.tabItem} onPress={() => handleTabPress("arama")}>
+          <Feather name="search" size={22} color="#9CA3AF" />
+          <ThemedText style={styles.tabLabel}>arama</ThemedText>
+        </Pressable>
+        <View style={styles.tabItemCenter}>
+          <View style={styles.createButtonActive}>
+            <Feather name="plus" size={28} color="#FFFFFF" />
+          </View>
+        </View>
+        <Pressable style={styles.tabItem} onPress={() => handleTabPress("esles")}>
+          <Feather name="repeat" size={22} color="#9CA3AF" />
+          <ThemedText style={styles.tabLabel}>esles</ThemedText>
+        </Pressable>
+        <Pressable style={styles.tabItem} onPress={() => handleTabPress("profil")}>
+          <Feather name="user" size={22} color="#9CA3AF" />
+          <ThemedText style={styles.tabLabel}>profil</ThemedText>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
 export default function QuickCreateListingScreen() {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
@@ -84,6 +131,8 @@ export default function QuickCreateListingScreen() {
   const [onlySwap, setOnlySwap] = useState(true);
   const [preferredBrands, setPreferredBrands] = useState<string[]>([]);
 
+  const tabBarHeight = Platform.OS === "ios" ? 88 : 60;
+
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
       return apiRequest("/api/listings", {
@@ -96,7 +145,7 @@ export default function QuickCreateListingScreen() {
       queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listings"] });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert("Basarili", "Ilaniniz yayinlandi!", [
-        { text: "Tamam", onPress: () => navigation.goBack() },
+        { text: "Tamam", onPress: () => navigation.navigate("Main") },
       ]);
     },
     onError: () => {
@@ -175,11 +224,11 @@ export default function QuickCreateListingScreen() {
     transmission;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top + Spacing.md }]}>
       <KeyboardAwareScrollViewCompat
         contentContainerStyle={[
           styles.content,
-          { paddingBottom: insets.bottom + 100 },
+          { paddingBottom: tabBarHeight + Spacing.xl },
         ]}
       >
         <ThemedText style={styles.sectionTitle}>Fotograflar (min 3)</ThemedText>
@@ -303,6 +352,8 @@ export default function QuickCreateListingScreen() {
           )}
         </Pressable>
       </KeyboardAwareScrollViewCompat>
+
+      <BottomTabBar />
     </View>
   );
 }
@@ -314,7 +365,6 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.md,
   },
   sectionTitle: {
     fontSize: 13,
@@ -437,5 +487,50 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#FFFFFF",
+  },
+  tabBar: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: Platform.OS === "ios" ? "transparent" : "#FFFFFF",
+    borderTopWidth: 0,
+  },
+  tabBarContent: {
+    flexDirection: "row",
+    height: 60,
+    alignItems: "center",
+    justifyContent: "space-around",
+    paddingHorizontal: Spacing.sm,
+  },
+  tabItem: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 8,
+  },
+  tabItemCenter: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tabLabel: {
+    fontSize: 11,
+    color: "#9CA3AF",
+    marginTop: 2,
+  },
+  createButtonActive: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "#000000",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: -20,
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
   },
 });
