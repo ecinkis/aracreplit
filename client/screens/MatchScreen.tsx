@@ -135,13 +135,13 @@ function SwipeCard({
     : "0";
 
   if (!isFirst) {
-    const scale = 1 - stackIndex * 0.04;
-    const translateY = stackIndex * 8;
+    const scale = 1 - stackIndex * 0.05;
+    const offsetY = -stackIndex * 12;
     return (
       <View style={[
         styles.card, 
         { 
-          transform: [{ scale }, { translateY }],
+          transform: [{ scale }, { translateY: offsetY }],
           zIndex: -stackIndex,
         }
       ]}>
@@ -464,6 +464,7 @@ const styles = StyleSheet.create({
     height: CARD_HEIGHT,
     alignItems: "center",
     justifyContent: "center",
+    marginTop: Spacing.lg,
   },
   card: {
     position: "absolute",
