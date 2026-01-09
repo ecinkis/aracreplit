@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -8,7 +8,8 @@ import {
   Dimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import Animated, {
@@ -22,10 +23,8 @@ import Animated, {
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
-import { Spacing, BorderRadius, Typography, BrandColors } from "@/constants/theme";
+import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
 import { Listing } from "@shared/schema";
 import { apiRequest } from "@/lib/query-client";
 import emptyMatchesImage from "../assets/images/empty-states/empty-matches.png";
@@ -33,6 +32,8 @@ import defaultVehicleImage from "../assets/images/default-vehicle.png";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.3;
+const CARD_WIDTH = SCREEN_WIDTH - Spacing.lg * 2;
+const CARD_HEIGHT = SCREEN_HEIGHT * 0.55;
 
 function SwipeCard({
   listing,
@@ -132,33 +133,67 @@ function SwipeCard({
           style={styles.cardImage}
           resizeMode="cover"
         />
+        <View style={styles.distanceBadge}>
+          <Feather name="map-pin" size={12} color="#FFFFFF" />
+          <ThemedText style={styles.distanceText}>
+            {listing.city || "1 km"}
+          </ThemedText>
+        </View>
+        <View style={styles.pageIndicator}>
+          <View style={[styles.dot, styles.dotActive]} />
+          <View style={styles.dot} />
+          <View style={styles.dot} />
+        </View>
         <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.8)"]}
+          colors={["transparent", "rgba(0,0,0,0.85)"]}
           style={styles.gradient}
         />
         <Animated.View style={[styles.likeLabel, likeOpacity]}>
           <ThemedText style={styles.likeLabelText}>TAKAS</ThemedText>
         </Animated.View>
         <Animated.View style={[styles.nopeLabel, nopeOpacity]}>
-          <ThemedText style={styles.nopeLabelText}>HAYIR</ThemedText>
+          <ThemedText style={styles.nopeLabelText}>GEC</ThemedText>
         </Animated.View>
         <Animated.View style={[styles.favoriteLabel, favoriteOpacity]}>
-          <ThemedText style={styles.favoriteLabelText}>FAVORİ</ThemedText>
+          <ThemedText style={styles.favoriteLabelText}>FAVORI</ThemedText>
         </Animated.View>
         <View style={styles.cardInfo}>
           <ThemedText style={styles.cardTitle}>
-            {listing.brand} {listing.model}
+            {listing.brand} {listing.model}, {listing.year}
           </ThemedText>
           <ThemedText style={styles.cardSubtitle}>
-            {listing.year} - {listing.km.toLocaleString("tr-TR")} km
+            {listing.km.toLocaleString("tr-TR")} km
           </ThemedText>
-          <View style={styles.locationRow}>
-            <Feather name="map-pin" size={14} color="#FFFFFF" />
-            <ThemedText style={styles.locationText}>{listing.city}</ThemedText>
-          </View>
         </View>
       </Animated.View>
     </GestureDetector>
+  );
+}
+
+function MockCard() {
+  return (
+    <View style={styles.card}>
+      <View style={styles.mockImageContainer}>
+        <Feather name="image" size={48} color="#6B7280" />
+      </View>
+      <View style={styles.distanceBadge}>
+        <Feather name="map-pin" size={12} color="#FFFFFF" />
+        <ThemedText style={styles.distanceText}>1 km</ThemedText>
+      </View>
+      <View style={styles.pageIndicator}>
+        <View style={[styles.dot, styles.dotActive]} />
+        <View style={styles.dot} />
+        <View style={styles.dot} />
+      </View>
+      <LinearGradient
+        colors={["transparent", "rgba(0,0,0,0.85)"]}
+        style={styles.gradient}
+      />
+      <View style={styles.cardInfo}>
+        <ThemedText style={styles.cardTitle}>BMW 320i, 2021</ThemedText>
+        <ThemedText style={styles.cardSubtitle}>45.000 km</ThemedText>
+      </View>
+    </View>
   );
 }
 
@@ -166,9 +201,9 @@ function EmptyState() {
   return (
     <View style={styles.emptyContainer}>
       <Image source={emptyMatchesImage} style={styles.emptyImage} resizeMode="contain" />
-      <ThemedText style={styles.emptyTitle}>Şu an için araç yok</ThemedText>
+      <ThemedText style={styles.emptyTitle}>Su an icin arac yok</ThemedText>
       <ThemedText style={styles.emptySubtitle}>
-        Önce bir ilan ekleyerek takas yapmaya başla
+        Once bir ilan ekleyerek takasa basla
       </ThemedText>
     </View>
   );
@@ -178,9 +213,9 @@ function NoListingState() {
   return (
     <View style={styles.emptyContainer}>
       <Feather name="alert-circle" size={64} color={BrandColors.warning} />
-      <ThemedText style={styles.emptyTitle}>İlan Gerekli</ThemedText>
+      <ThemedText style={styles.emptyTitle}>Ilan Gerekli</ThemedText>
       <ThemedText style={styles.emptySubtitle}>
-        Match yapabilmek için önce bir ilan eklemelisin
+        Eslesme yapabilmek icin once bir ilan eklemelisin
       </ThemedText>
     </View>
   );
@@ -188,9 +223,8 @@ function NoListingState() {
 
 export default function MatchScreen() {
   const insets = useSafeAreaInsets();
-  const { theme } = useTheme();
+  const tabBarHeight = useBottomTabBarHeight();
   const { user, selectedListingId } = useAuth();
-  const queryClient = useQueryClient();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const { data: userListings } = useQuery<Listing[]>({
@@ -254,51 +288,47 @@ export default function MatchScreen() {
   };
 
   const remainingListings = swipeableListings?.slice(currentIndex) || [];
-
-  if (!activeListingId) {
-    return (
-      <ThemedView style={styles.container}>
-        <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
-          <ThemedText style={styles.headerTitle}>Match</ThemedText>
-        </View>
-        <NoListingState />
-      </ThemedView>
-    );
-  }
+  const showMockCard = !user?.id || !activeListingId || remainingListings.length === 0;
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
-        <ThemedText style={styles.headerTitle}>Match</ThemedText>
-        {remainingListings.length > 0 && (
-          <View style={styles.countBadge}>
-            <ThemedText style={styles.countText}>{remainingListings.length}</ThemedText>
-          </View>
-        )}
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.header}>
+        <Pressable style={styles.headerButton}>
+          <Feather name="chevron-left" size={24} color="#F87171" />
+        </Pressable>
+        <View style={styles.headerCenter}>
+          <ThemedText style={styles.headerTitle}>Kesfet</ThemedText>
+          <ThemedText style={styles.headerSubtitle}>Istanbul, TR</ThemedText>
+        </View>
+        <Pressable style={styles.headerButton}>
+          <Feather name="sliders" size={20} color="#F87171" />
+        </Pressable>
       </View>
 
       {isLoading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={BrandColors.primaryOrange} />
+          <ActivityIndicator size="large" color="#F87171" />
         </View>
-      ) : remainingListings.length === 0 ? (
-        <EmptyState />
       ) : (
         <>
           <View style={styles.cardsContainer}>
-            {remainingListings.slice(0, 2).reverse().map((listing, index) => (
-              <SwipeCard
-                key={listing.id}
-                listing={listing}
-                isFirst={index === remainingListings.slice(0, 2).length - 1}
-                onSwipeLeft={() => handleSwipe("left")}
-                onSwipeRight={() => handleSwipe("right")}
-                onSwipeUp={() => handleSwipe("up")}
-              />
-            ))}
+            {showMockCard ? (
+              <MockCard />
+            ) : (
+              remainingListings.slice(0, 2).reverse().map((listing, index) => (
+                <SwipeCard
+                  key={listing.id}
+                  listing={listing}
+                  isFirst={index === remainingListings.slice(0, 2).length - 1}
+                  onSwipeLeft={() => handleSwipe("left")}
+                  onSwipeRight={() => handleSwipe("right")}
+                  onSwipeUp={() => handleSwipe("up")}
+                />
+              ))
+            )}
           </View>
 
-          <View style={[styles.buttonsContainer, { paddingBottom: insets.bottom + 100 }]}>
+          <View style={[styles.buttonsContainer, { paddingBottom: tabBarHeight + Spacing.lg }]}>
             <Pressable
               style={({ pressed }) => [
                 styles.actionButton,
@@ -307,17 +337,7 @@ export default function MatchScreen() {
               ]}
               onPress={() => handleButtonSwipe("left")}
             >
-              <Feather name="x" size={32} color={BrandColors.alertRed} />
-            </Pressable>
-            <Pressable
-              style={({ pressed }) => [
-                styles.actionButton,
-                styles.favoriteButton,
-                pressed && { transform: [{ scale: 0.9 }] },
-              ]}
-              onPress={() => handleButtonSwipe("up")}
-            >
-              <Feather name="star" size={24} color={BrandColors.warning} />
+              <Feather name="x" size={28} color="#F87171" />
             </Pressable>
             <Pressable
               style={({ pressed }) => [
@@ -327,40 +347,57 @@ export default function MatchScreen() {
               ]}
               onPress={() => handleButtonSwipe("right")}
             >
-              <Feather name="heart" size={32} color={BrandColors.successGreen} />
+              <Feather name="heart" size={32} color="#FFFFFF" />
+            </Pressable>
+            <Pressable
+              style={({ pressed }) => [
+                styles.actionButton,
+                styles.favoriteButton,
+                pressed && { transform: [{ scale: 0.9 }] },
+              ]}
+              onPress={() => handleButtonSwipe("up")}
+            >
+              <Feather name="star" size={24} color="#A855F7" />
             </Pressable>
           </View>
         </>
       )}
-    </ThemedView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#FFFFFF",
   },
   header: {
     flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+  },
+  headerButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "#FEF2F2",
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingBottom: Spacing.md,
+  },
+  headerCenter: {
+    alignItems: "center",
   },
   headerTitle: {
-    ...Typography.h1,
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#000000",
   },
-  countBadge: {
-    backgroundColor: BrandColors.primaryOrange,
-    borderRadius: BorderRadius.full,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 2,
-    marginLeft: Spacing.sm,
-  },
-  countText: {
-    ...Typography.caption,
-    color: "#FFFFFF",
-    fontWeight: "600",
+  headerSubtitle: {
+    fontSize: 13,
+    color: "#9CA3AF",
+    marginTop: 2,
   },
   loadingContainer: {
     flex: 1,
@@ -371,14 +408,15 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: Spacing.lg,
   },
   card: {
     position: "absolute",
-    width: SCREEN_WIDTH - Spacing.lg * 2,
-    height: SCREEN_HEIGHT * 0.55,
-    borderRadius: BorderRadius.lg,
+    width: CARD_WIDTH,
+    height: CARD_HEIGHT,
+    borderRadius: 24,
     overflow: "hidden",
-    backgroundColor: "#E5E8EB",
+    backgroundColor: "#1F2937",
   },
   cardBehind: {
     transform: [{ scale: 0.95 }],
@@ -388,12 +426,51 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  mockImageContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#374151",
+  },
+  distanceBadge: {
+    position: "absolute",
+    top: Spacing.md,
+    left: Spacing.md,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.full,
+    gap: 4,
+  },
+  distanceText: {
+    fontSize: 12,
+    color: "#FFFFFF",
+    fontWeight: "500",
+  },
+  pageIndicator: {
+    position: "absolute",
+    top: Spacing.md,
+    right: Spacing.md,
+    flexDirection: "column",
+    gap: 6,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "rgba(255,255,255,0.4)",
+  },
+  dotActive: {
+    backgroundColor: "#FFFFFF",
+  },
   gradient: {
     position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
-    height: "50%",
+    height: "40%",
   },
   cardInfo: {
     position: "absolute",
@@ -403,101 +480,93 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   cardTitle: {
-    ...Typography.h2,
+    fontSize: 26,
+    fontWeight: "700",
     color: "#FFFFFF",
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   cardSubtitle: {
-    ...Typography.body,
-    color: "rgba(255,255,255,0.9)",
-    marginBottom: Spacing.sm,
-  },
-  locationRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.xs,
-  },
-  locationText: {
-    ...Typography.small,
+    fontSize: 15,
     color: "rgba(255,255,255,0.8)",
   },
   likeLabel: {
     position: "absolute",
-    top: Spacing.xl,
+    top: 80,
     left: Spacing.lg,
     borderWidth: 4,
-    borderColor: BrandColors.successGreen,
+    borderColor: "#10B981",
     borderRadius: BorderRadius.sm,
-    padding: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
     transform: [{ rotate: "-15deg" }],
   },
   likeLabelText: {
-    ...Typography.h2,
-    color: BrandColors.successGreen,
-    fontWeight: "700",
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#10B981",
   },
   nopeLabel: {
     position: "absolute",
-    top: Spacing.xl,
+    top: 80,
     right: Spacing.lg,
     borderWidth: 4,
-    borderColor: BrandColors.alertRed,
+    borderColor: "#EF4444",
     borderRadius: BorderRadius.sm,
-    padding: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
     transform: [{ rotate: "15deg" }],
   },
   nopeLabelText: {
-    ...Typography.h2,
-    color: BrandColors.alertRed,
-    fontWeight: "700",
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#EF4444",
   },
   favoriteLabel: {
     position: "absolute",
-    top: Spacing.xl,
+    top: 80,
     alignSelf: "center",
     borderWidth: 4,
-    borderColor: BrandColors.warning,
+    borderColor: "#A855F7",
     borderRadius: BorderRadius.sm,
-    padding: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
   },
   favoriteLabelText: {
-    ...Typography.h2,
-    color: BrandColors.warning,
-    fontWeight: "700",
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#A855F7",
   },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     gap: Spacing.lg,
-    paddingVertical: Spacing.lg,
+    paddingVertical: Spacing.md,
   },
   actionButton: {
     width: 60,
     height: 60,
-    borderRadius: BorderRadius.full,
+    borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#FFFFFF",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 4,
   },
   rejectButton: {
-    borderWidth: 2,
-    borderColor: BrandColors.alertRed,
-  },
-  favoriteButton: {
-    width: 50,
-    height: 50,
-    borderWidth: 2,
-    borderColor: BrandColors.warning,
+    backgroundColor: "#FEF2F2",
   },
   likeButton: {
-    borderWidth: 2,
-    borderColor: BrandColors.successGreen,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: "#F87171",
+  },
+  favoriteButton: {
+    backgroundColor: "#FAF5FF",
   },
   emptyContainer: {
     flex: 1,
@@ -511,13 +580,15 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   emptyTitle: {
-    ...Typography.h3,
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#000000",
     marginBottom: Spacing.sm,
     textAlign: "center",
   },
   emptySubtitle: {
-    ...Typography.body,
+    fontSize: 15,
+    color: "#6B7280",
     textAlign: "center",
-    opacity: 0.7,
   },
 });
