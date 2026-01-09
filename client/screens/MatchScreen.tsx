@@ -386,10 +386,7 @@ export default function MatchScreen() {
 
             <View style={[styles.tipSection, { paddingBottom: tabBarHeight + Spacing.sm }]}>
               <ThemedText style={styles.tipText}>
-                Saga kaydir: Takas teklifi gonder
-              </ThemedText>
-              <ThemedText style={styles.tipText}>
-                Sola kaydir: Sonraki araca gec
+                Saga kaydir: Begeni | Sola kaydir: Gec | Yukari: Favori
               </ThemedText>
             </View>
           </View>
@@ -628,11 +625,10 @@ const styles = StyleSheet.create({
   },
   tipSection: {
     alignItems: "center",
-    marginTop: Spacing.md,
-    gap: 4,
+    marginTop: Spacing.sm,
   },
   tipText: {
-    fontSize: 12,
+    fontSize: 11,
     color: "#9CA3AF",
   },
   actionButton: {
