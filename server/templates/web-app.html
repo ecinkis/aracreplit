@@ -448,34 +448,63 @@
 
     .filter-select {
       width: 100%;
-      padding: 12px 16px;
+      padding: 14px 44px 14px 16px;
       font-size: 14px;
+      font-weight: 500;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      background: var(--white);
+      border-radius: 50px;
+      background: var(--gray-50);
       cursor: pointer;
       font-family: inherit;
-      transition: border-color 0.15s ease;
+      transition: all 0.2s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 16px;
+    }
+
+    .filter-select:hover {
+      background-color: var(--white);
+      border-color: var(--gray-300);
     }
 
     .filter-select:focus {
       outline: none;
-      border-color: var(--gray-400);
+      background-color: var(--white);
+      border-color: var(--black);
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
     }
 
     .filter-input {
       width: 100%;
-      padding: 12px 16px;
+      padding: 14px 16px;
       font-size: 14px;
+      font-weight: 500;
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 50px;
+      background: var(--gray-50);
       font-family: inherit;
-      transition: border-color 0.15s ease;
+      transition: all 0.2s ease;
+    }
+
+    .filter-input::placeholder {
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .filter-input:hover {
+      background-color: var(--white);
+      border-color: var(--gray-300);
     }
 
     .filter-input:focus {
       outline: none;
-      border-color: var(--gray-400);
+      background-color: var(--white);
+      border-color: var(--black);
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
     }
 
     .filter-row {
@@ -490,35 +519,49 @@
     .filter-checkbox {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       font-size: 14px;
+      font-weight: 500;
       cursor: pointer;
-      padding: 8px 0;
+      padding: 12px 16px;
+      background: var(--gray-50);
+      border-radius: 50px;
+      transition: all 0.2s ease;
+      margin-bottom: 8px;
+    }
+
+    .filter-checkbox:hover {
+      background: var(--white);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
 
     .filter-checkbox input {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       accent-color: var(--black);
+      border-radius: 6px;
     }
 
     .btn-filter {
       width: 100%;
-      padding: 14px;
+      padding: 16px;
       background: var(--black);
       color: var(--white);
       border: none;
-      border-radius: 12px;
-      font-size: 14px;
+      border-radius: 50px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       font-family: inherit;
-      transition: background 0.15s ease;
-      margin-top: 16px;
+      transition: all 0.2s ease;
+      margin-top: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
     .btn-filter:hover {
-      background: var(--gray-700);
+      background: var(--gray-800);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
     }
 
     /* Content */
@@ -548,17 +591,37 @@
     .results-sort {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
     }
 
     .results-sort select {
-      padding: 10px 16px;
+      padding: 12px 40px 12px 16px;
       font-size: 14px;
+      font-weight: 500;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      background: var(--white);
+      border-radius: 50px;
+      background: var(--gray-50);
       font-family: inherit;
       cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .results-sort select:hover {
+      background-color: var(--white);
+      border-color: var(--gray-300);
+    }
+
+    .results-sort select:focus {
+      outline: none;
+      background-color: var(--white);
+      border-color: var(--black);
     }
 
     /* Listing Cards */
