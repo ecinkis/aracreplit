@@ -26,11 +26,17 @@ import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
 import { Spacing, BorderRadius, Typography, BrandColors } from "@/constants/theme";
 import { apiRequest } from "@/lib/query-client";
-import { BRAND_NAMES, getModelsByBrand } from "@/constants/vehicleData";
+import { 
+  BRAND_NAMES, 
+  getModelsByBrand, 
+  getVariantsByBrandModel,
+  BODY_TYPES,
+  FUEL_TYPES,
+  TRANSMISSIONS,
+  TRIM_PACKAGES,
+} from "@/constants/vehicleData";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const FUEL_TYPES = ["Benzin", "Dizel", "Hibrit", "Elektrik", "LPG"];
-const TRANSMISSIONS = ["Manuel", "Otomatik"];
 const CITIES = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Adana", "Konya", "Gaziantep", "Şanlıurfa", "Kocaeli", "Mersin", "Diyarbakır", "Hatay", "Manisa", "Kayseri"];
 const CAR_PARTS = ["Ön Tampon", "Arka Tampon", "Ön Kaput", "Ön Çamurluk Sol", "Ön Çamurluk Sağ", "Ön Kapı Sol", "Ön Kapı Sağ", "Arka Kapı Sol", "Arka Kapı Sağ", "Tavan", "Bagaj Kapağı", "Arka Çamurluk Sol", "Arka Çamurluk Sağ"];
 
@@ -249,8 +255,11 @@ export default function CreateListingScreen() {
   const [model, setModel] = useState("");
   const [year, setYear] = useState("");
   const [km, setKm] = useState("");
+  const [bodyType, setBodyType] = useState("");
   const [fuelType, setFuelType] = useState("");
   const [transmission, setTransmission] = useState("");
+  const [variant, setVariant] = useState("");
+  const [trimPackage, setTrimPackage] = useState("");
   const [city, setCity] = useState("");
   const [onlySwap, setOnlySwap] = useState(true);
   const [preferredBrands, setPreferredBrands] = useState<string[]>([]);
@@ -355,8 +364,8 @@ export default function CreateListingScreen() {
         }
         return true;
       case 3:
-        if (!fuelType || !transmission || !city) {
-          Alert.alert("Uyarı", "Tüm teknik özellikleri seçin.");
+        if (!bodyType || !fuelType || !transmission || !city) {
+          Alert.alert("Uyarı", "Kasa tipi, yakıt, vites ve şehir seçin.");
           return false;
         }
         return true;
@@ -388,8 +397,11 @@ export default function CreateListingScreen() {
       model,
       year: parseInt(year),
       km: parseInt(km.replace(/\D/g, "")),
+      bodyType,
       fuelType,
       transmission,
+      variant,
+      trimPackage,
       city,
       photos,
       swapActive,
@@ -469,6 +481,7 @@ export default function CreateListingScreen() {
 
       case 2:
         const availableModels = brand ? getModelsByBrand(brand) : [];
+        const availableVariants = brand && model ? getVariantsByBrandModel(brand, model) : [];
         return (
           <Animated.View entering={FadeIn} style={styles.stepContent}>
             <View style={styles.stepHeader}>
@@ -477,9 +490,20 @@ export default function CreateListingScreen() {
               </View>
               <ThemedText style={styles.stepTitle}>Araç Bilgileri</ThemedText>
               <ThemedText style={[styles.stepDescription, { color: theme.textSecondary }]}>
-                Aracınızın marka, model ve temel bilgilerini seçin.
+                Aracınızın marka, model ve varyant bilgilerini seçin.
               </ThemedText>
             </View>
+
+            <ThemedText style={styles.fieldLabel}>Model Yılı</ThemedText>
+            <TextInput
+              style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
+              value={year}
+              onChangeText={setYear}
+              placeholder="2024"
+              placeholderTextColor={theme.textSecondary}
+              keyboardType="number-pad"
+              maxLength={4}
+            />
 
             <ThemedText style={styles.fieldLabel}>Marka</ThemedText>
             <SearchablePicker
@@ -490,51 +514,48 @@ export default function CreateListingScreen() {
               onSelect={(selectedBrand) => {
                 setBrand(selectedBrand);
                 setModel("");
+                setVariant("");
               }}
             />
 
-            <ThemedText style={styles.fieldLabel}>Model</ThemedText>
+            <ThemedText style={styles.fieldLabel}>Seri / Model</ThemedText>
             <SearchablePicker
               label="Model Seçin"
               placeholder={brand ? "Model seçin..." : "Önce marka seçin"}
               options={availableModels}
               selected={model}
-              onSelect={setModel}
+              onSelect={(selectedModel) => {
+                setModel(selectedModel);
+                setVariant("");
+              }}
               disabled={!brand}
             />
 
-            <View style={styles.row}>
-              <View style={styles.halfInput}>
-                <ThemedText style={styles.fieldLabel}>Model Yılı</ThemedText>
-                <TextInput
-                  style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
-                  value={year}
-                  onChangeText={setYear}
-                  placeholder="2020"
-                  placeholderTextColor={theme.textSecondary}
-                  keyboardType="number-pad"
-                  maxLength={4}
-                />
-              </View>
-              <View style={styles.halfInput}>
-                <ThemedText style={styles.fieldLabel}>Kilometre</ThemedText>
-                <TextInput
-                  style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
-                  value={km ? `${parseInt(km).toLocaleString("tr-TR")}` : ""}
-                  onChangeText={(text) => setKm(text.replace(/\D/g, ""))}
-                  placeholder="50.000"
-                  placeholderTextColor={theme.textSecondary}
-                  keyboardType="number-pad"
-                />
-              </View>
-            </View>
+            <ThemedText style={styles.fieldLabel}>Varyant (Motor)</ThemedText>
+            {availableVariants.length > 0 ? (
+              <SearchablePicker
+                label="Varyant Seçin"
+                placeholder="Varyant seçin..."
+                options={availableVariants}
+                selected={variant}
+                onSelect={setVariant}
+              />
+            ) : (
+              <TextInput
+                style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
+                value={variant}
+                onChangeText={setVariant}
+                placeholder="Örn: 320i, 1.6 TDI, 2.0 Hybrid"
+                placeholderTextColor={theme.textSecondary}
+              />
+            )}
 
-            <ThemedText style={styles.fieldLabel}>Tahmini Değer (TL) - Opsiyonel</ThemedText>
+            <ThemedText style={styles.fieldLabel}>Kilometre</ThemedText>
             <TextInput
               style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
-              value={estimatedValue ? `${parseInt(estimatedValue).toLocaleString("tr-TR")}` : ""}
-              onChangeText={(text) => setEstimatedValue(text.replace(/\D/g, ""))}
-              placeholder="500.000"
+              value={km ? `${parseInt(km).toLocaleString("tr-TR")}` : ""}
+              onChangeText={(text) => setKm(text.replace(/\D/g, ""))}
+              placeholder="50.000"
               placeholderTextColor={theme.textSecondary}
               keyboardType="number-pad"
             />
@@ -550,9 +571,12 @@ export default function CreateListingScreen() {
               </View>
               <ThemedText style={styles.stepTitle}>Teknik Özellikler</ThemedText>
               <ThemedText style={[styles.stepDescription, { color: theme.textSecondary }]}>
-                Yakıt tipi, vites ve konum bilgilerini seçin.
+                Kasa tipi, yakıt ve donanım bilgilerini seçin.
               </ThemedText>
             </View>
+
+            <ThemedText style={styles.fieldLabel}>Kasa Tipi</ThemedText>
+            <ChipSelect options={BODY_TYPES} selected={bodyType} onSelect={setBodyType} />
 
             <ThemedText style={styles.fieldLabel}>Yakıt Tipi</ThemedText>
             <ChipSelect options={FUEL_TYPES} selected={fuelType} onSelect={setFuelType} />
@@ -560,8 +584,33 @@ export default function CreateListingScreen() {
             <ThemedText style={styles.fieldLabel}>Vites</ThemedText>
             <ChipSelect options={TRANSMISSIONS} selected={transmission} onSelect={setTransmission} />
 
+            <ThemedText style={styles.fieldLabel}>Donanım Paketi</ThemedText>
+            <SearchablePicker
+              label="Donanım Paketi Seçin"
+              placeholder="Donanım paketi seçin..."
+              options={TRIM_PACKAGES}
+              selected={trimPackage}
+              onSelect={setTrimPackage}
+            />
+
             <ThemedText style={styles.fieldLabel}>Şehir</ThemedText>
-            <ChipSelect options={CITIES} selected={city} onSelect={setCity} />
+            <SearchablePicker
+              label="Şehir Seçin"
+              placeholder="Şehir seçin..."
+              options={CITIES}
+              selected={city}
+              onSelect={setCity}
+            />
+
+            <ThemedText style={styles.fieldLabel}>Tahmini Değer (TL) - Opsiyonel</ThemedText>
+            <TextInput
+              style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
+              value={estimatedValue ? `${parseInt(estimatedValue).toLocaleString("tr-TR")}` : ""}
+              onChangeText={(text) => setEstimatedValue(text.replace(/\D/g, ""))}
+              placeholder="500.000"
+              placeholderTextColor={theme.textSecondary}
+              keyboardType="number-pad"
+            />
 
             <ThemedText style={styles.fieldLabel}>Açıklama (Opsiyonel)</ThemedText>
             <TextInput
@@ -740,12 +789,17 @@ export default function CreateListingScreen() {
                 <Image source={{ uri: photos[0] }} style={styles.previewImage} />
               )}
               <View style={styles.previewContent}>
-                <ThemedText style={styles.previewTitle}>{brand} {model}</ThemedText>
+                <ThemedText style={styles.previewTitle}>
+                  {year} {brand} {model} {variant}
+                </ThemedText>
                 <ThemedText style={[styles.previewSubtitle, { color: theme.textSecondary }]}>
-                  {year} | {km ? parseInt(km).toLocaleString("tr-TR") : "0"} km
+                  {trimPackage} | {km ? parseInt(km).toLocaleString("tr-TR") : "0"} km
                 </ThemedText>
 
                 <View style={styles.previewTags}>
+                  <View style={[styles.previewTag, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
+                    <ThemedText style={[styles.previewTagText, { color: BrandColors.primaryBlue }]}>{bodyType}</ThemedText>
+                  </View>
                   <View style={[styles.previewTag, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
                     <ThemedText style={[styles.previewTagText, { color: BrandColors.primaryBlue }]}>{fuelType}</ThemedText>
                   </View>

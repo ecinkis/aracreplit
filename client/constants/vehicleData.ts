@@ -8,6 +8,100 @@ export interface VehicleBrand {
   models: VehicleModel[];
 }
 
+export const BODY_TYPES = [
+  "Sedan",
+  "Hatchback",
+  "Station Wagon",
+  "SUV",
+  "Crossover",
+  "Coupe",
+  "Cabrio",
+  "MPV",
+  "Pick-up",
+  "Panelvan",
+  "Minivan",
+];
+
+export const FUEL_TYPES = [
+  "Benzin",
+  "Dizel",
+  "Hibrit",
+  "Elektrik",
+  "LPG",
+  "Benzin + LPG",
+];
+
+export const TRANSMISSIONS = [
+  "Manuel",
+  "Otomatik",
+  "Yarı Otomatik",
+];
+
+export const TRIM_PACKAGES = [
+  "Standart",
+  "Comfort",
+  "Style",
+  "Sport",
+  "M Sport",
+  "AMG Line",
+  "S Line",
+  "R Line",
+  "RS Line",
+  "GT Line",
+  "N Line",
+  "FR",
+  "Cupra",
+  "Elegance",
+  "Exclusive",
+  "Premium",
+  "Luxury",
+  "Executive",
+  "Titanium",
+  "ST-Line",
+  "Vignale",
+  "Active",
+  "Allure",
+  "GT",
+  "Inscription",
+  "R-Design",
+  "Black Edition",
+  "Limited Edition",
+];
+
+export const POPULAR_VARIANTS: Record<string, string[]> = {
+  "BMW-1 Serisi": ["116i", "118i", "120i", "125i", "M135i", "116d", "118d", "120d"],
+  "BMW-2 Serisi": ["218i", "220i", "230i", "M240i", "218d", "220d"],
+  "BMW-3 Serisi": ["318i", "320i", "330i", "340i", "M340i", "318d", "320d", "330d"],
+  "BMW-4 Serisi": ["420i", "430i", "440i", "M440i", "420d", "430d"],
+  "BMW-5 Serisi": ["520i", "530i", "540i", "M550i", "520d", "530d", "540d"],
+  "BMW-X1": ["sDrive18i", "sDrive20i", "xDrive20i", "xDrive25i", "sDrive18d", "xDrive20d"],
+  "BMW-X3": ["xDrive20i", "xDrive30i", "M40i", "xDrive20d", "xDrive30d"],
+  "BMW-X5": ["xDrive40i", "xDrive50i", "M50i", "xDrive30d", "xDrive40d", "M60i"],
+  "Mercedes-Benz-C Serisi": ["C180", "C200", "C220", "C250", "C300", "C43 AMG", "C63 AMG", "C180d", "C200d", "C220d", "C300d"],
+  "Mercedes-Benz-E Serisi": ["E180", "E200", "E220", "E300", "E350", "E400", "E53 AMG", "E63 AMG", "E200d", "E220d", "E300d", "E350d"],
+  "Mercedes-Benz-A Serisi": ["A180", "A200", "A220", "A250", "A35 AMG", "A45 AMG", "A180d", "A200d"],
+  "Mercedes-Benz-GLC": ["GLC 200", "GLC 220", "GLC 300", "GLC 43 AMG", "GLC 63 AMG", "GLC 200d", "GLC 220d", "GLC 300d"],
+  "Audi-A3": ["1.0 TFSI", "1.5 TFSI", "2.0 TFSI", "35 TFSI", "40 TFSI", "S3", "RS3", "30 TDI", "35 TDI"],
+  "Audi-A4": ["1.4 TFSI", "2.0 TFSI", "40 TFSI", "45 TFSI", "S4", "RS4", "35 TDI", "40 TDI"],
+  "Audi-A6": ["2.0 TFSI", "40 TFSI", "45 TFSI", "55 TFSI", "S6", "RS6", "40 TDI", "45 TDI", "50 TDI"],
+  "Audi-Q3": ["35 TFSI", "40 TFSI", "45 TFSI", "RS Q3", "35 TDI", "40 TDI"],
+  "Audi-Q5": ["40 TFSI", "45 TFSI", "55 TFSI", "SQ5", "40 TDI", "50 TDI"],
+  "Volkswagen-Golf": ["1.0 TSI", "1.5 TSI", "2.0 TSI", "GTI", "R", "1.6 TDI", "2.0 TDI", "GTD"],
+  "Volkswagen-Passat": ["1.4 TSI", "1.5 TSI", "2.0 TSI", "1.6 TDI", "2.0 TDI"],
+  "Volkswagen-Tiguan": ["1.4 TSI", "1.5 TSI", "2.0 TSI", "1.6 TDI", "2.0 TDI"],
+  "Toyota-Corolla": ["1.6", "1.8 Hybrid", "2.0 Hybrid"],
+  "Toyota-RAV4": ["2.0", "2.5 Hybrid", "2.5 Plug-in Hybrid"],
+  "Honda-Civic": ["1.0 VTEC Turbo", "1.5 VTEC Turbo", "2.0 VTEC Turbo", "e:HEV"],
+  "Hyundai-Tucson": ["1.6 T-GDI", "1.6 T-GDI Hybrid", "1.6 CRDi", "2.0 CRDi"],
+  "Renault-Clio": ["0.9 TCe", "1.0 TCe", "1.3 TCe", "1.5 dCi"],
+  "Fiat-Egea": ["1.4 Fire", "1.3 MultiJet", "1.6 MultiJet"],
+};
+
+export function getVariantsByBrandModel(brand: string, model: string): string[] {
+  const key = `${brand}-${model}`;
+  return POPULAR_VARIANTS[key] || [];
+}
+
 export const VEHICLE_BRANDS: VehicleBrand[] = [
   {
     name: "Audi",
