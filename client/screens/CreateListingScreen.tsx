@@ -400,13 +400,26 @@ export default function CreateListingScreen() {
 
   const uploadPhoto = async (uri: string): Promise<string> => {
     try {
-      const base64 = await FileSystem.readAsStringAsync(uri, {
-        encoding: "base64",
-      });
+      let base64: string;
       
-      const ext = uri.split('.').pop()?.toLowerCase() || 'jpg';
-      const mimeType = ext === 'png' ? 'image/png' : 'image/jpeg';
-      const dataUrl = `data:${mimeType};base64,${base64}`;
+      // Use ImageManipulator to ensure we get a readable local file URI
+      // This handles ph://, assets-library://, and other special URI schemes
+      const manipResult = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: 1200 } }],
+        { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG, base64: true }
+      );
+      
+      base64 = manipResult.base64 || "";
+      
+      if (!base64) {
+        // Fallback to FileSystem if base64 not returned
+        base64 = await FileSystem.readAsStringAsync(manipResult.uri, {
+          encoding: "base64",
+        });
+      }
+      
+      const dataUrl = `data:image/jpeg;base64,${base64}`;
       
       const response = await fetch(new URL("/api/upload", getApiUrl()).toString(), {
         method: "POST",
