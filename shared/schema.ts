@@ -142,8 +142,11 @@ export const messages = pgTable("messages", {
     .default(sql`gen_random_uuid()`),
   matchId: varchar("match_id").notNull().references(() => matches.id, { onDelete: "cascade" }),
   senderId: varchar("sender_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  content: text("content").notNull(),
+  content: text("content"),
   imageUrl: text("image_url"),
+  messageType: text("message_type").default("text"),
+  audioData: text("audio_data"),
+  audioDuration: integer("audio_duration"),
   read: boolean("read").default(false),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -197,6 +200,9 @@ export const insertMessageSchema = createInsertSchema(messages).pick({
   senderId: true,
   content: true,
   imageUrl: true,
+  messageType: true,
+  audioData: true,
+  audioDuration: true,
 });
 
 export type User = typeof users.$inferSelect;
