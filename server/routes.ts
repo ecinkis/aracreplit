@@ -628,7 +628,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin Panel HTML
   app.get("/admin", (req, res) => {
     const adminHtml = fs.readFileSync(
-      path.join(__dirname, "templates", "admin-panel.html"),
+      path.join(process.cwd(), "server", "templates", "admin-panel.html"),
       "utf-8"
     );
     res.send(adminHtml);
