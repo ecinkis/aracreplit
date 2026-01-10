@@ -336,7 +336,7 @@ export default function CompareScreen() {
 
             <View style={styles.swapCalculator}>
               <View style={styles.calculatorHeader}>
-                <Feather name="calculator" size={20} color={BrandColors.primaryBlue} />
+                <Feather name="dollar-sign" size={20} color={BrandColors.primaryBlue} />
                 <ThemedText style={styles.calculatorTitle}>Takas Değer Hesaplayıcı</ThemedText>
               </View>
 

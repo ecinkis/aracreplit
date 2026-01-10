@@ -68,6 +68,7 @@ export const listings = pgTable("listings", {
   accidentFree: boolean("accident_free").default(true),
   isFeatured: boolean("is_featured").default(false),
   featuredExpiresAt: timestamp("featured_expires_at"),
+  estimatedValue: integer("estimated_value"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

@@ -448,7 +448,7 @@ export default function ListingDetailScreen() {
         onRequestClose={() => setPriceAlertModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: theme.background }]}>
+          <View style={[styles.modalContent, { backgroundColor: theme.backgroundDefault }]}>
             <View style={styles.modalHeader}>
               <ThemedText style={styles.modalTitle}>Fiyat Alarmı Oluştur</ThemedText>
               <Pressable onPress={() => setPriceAlertModalVisible(false)}>
