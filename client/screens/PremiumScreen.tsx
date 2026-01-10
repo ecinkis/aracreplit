@@ -75,7 +75,7 @@ function PlanCard({
     >
       {plan.popular && (
         <View style={styles.popularBadge}>
-          <ThemedText style={styles.popularBadgeText}>En Popüler</ThemedText>
+          <ThemedText style={styles.popularBadgeText}>Popüler</ThemedText>
         </View>
       )}
       <ThemedText style={styles.planTitle}>{plan.title}</ThemedText>
