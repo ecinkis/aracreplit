@@ -426,6 +426,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Price alerts routes
+  app.get("/api/price-alerts/:userId", async (req, res) => {
+    try {
+      const alerts = await storage.getPriceAlertsByUser(req.params.userId);
+      res.json(alerts);
+    } catch (error) {
+      console.error("Get price alerts error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/price-alerts/:userId/:listingId/check", async (req, res) => {
+    try {
+      const { userId, listingId } = req.params;
+      const alert = await storage.getPriceAlertForListing(userId, listingId);
+      res.json({ hasAlert: !!alert, alert });
+    } catch (error) {
+      console.error("Check price alert error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/price-alerts", async (req, res) => {
+    try {
+      const { userId, listingId, targetPrice, originalPrice } = req.body;
+      
+      if (!userId || !listingId || !targetPrice || !originalPrice) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const existingAlert = await storage.getPriceAlertForListing(userId, listingId);
+      if (existingAlert) {
+        return res.status(400).json({ error: "Alert already exists for this listing" });
+      }
+
+      const alert = await storage.createPriceAlert({
+        userId,
+        listingId,
+        targetPrice,
+        originalPrice,
+        isActive: true,
+      });
+
+      res.status(201).json(alert);
+    } catch (error) {
+      console.error("Create price alert error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.delete("/api/price-alerts/:id", async (req, res) => {
+    try {
+      await storage.deletePriceAlert(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Delete price alert error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

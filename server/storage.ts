@@ -12,6 +12,8 @@ import {
   type InsertNotification,
   type Review,
   type InsertReview,
+  type PriceAlert,
+  type InsertPriceAlert,
   users,
   listings,
   likes,
@@ -20,6 +22,7 @@ import {
   favorites,
   notifications,
   reviews,
+  priceAlerts,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, desc, sql, ne, notInArray } from "drizzle-orm";
@@ -67,6 +70,12 @@ export interface IStorage {
   createReview(review: InsertReview): Promise<Review>;
   getReviewForMatch(matchId: string, reviewerId: string): Promise<Review | undefined>;
   getUserAverageRating(userId: string): Promise<{ average: number; count: number }>;
+
+  getPriceAlertsByUser(userId: string): Promise<PriceAlert[]>;
+  getPriceAlertForListing(userId: string, listingId: string): Promise<PriceAlert | undefined>;
+  createPriceAlert(alert: InsertPriceAlert): Promise<PriceAlert>;
+  deletePriceAlert(id: string): Promise<void>;
+  updatePriceAlert(id: string, data: Partial<PriceAlert>): Promise<PriceAlert | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -357,6 +366,36 @@ export class DatabaseStorage implements IStorage {
       average: Number(result[0]?.average || 0),
       count: Number(result[0]?.count || 0),
     };
+  }
+
+  async getPriceAlertsByUser(userId: string): Promise<PriceAlert[]> {
+    return db
+      .select()
+      .from(priceAlerts)
+      .where(eq(priceAlerts.userId, userId))
+      .orderBy(desc(priceAlerts.createdAt));
+  }
+
+  async getPriceAlertForListing(userId: string, listingId: string): Promise<PriceAlert | undefined> {
+    const [alert] = await db
+      .select()
+      .from(priceAlerts)
+      .where(and(eq(priceAlerts.userId, userId), eq(priceAlerts.listingId, listingId)));
+    return alert || undefined;
+  }
+
+  async createPriceAlert(alert: InsertPriceAlert): Promise<PriceAlert> {
+    const [created] = await db.insert(priceAlerts).values(alert).returning();
+    return created;
+  }
+
+  async deletePriceAlert(id: string): Promise<void> {
+    await db.delete(priceAlerts).where(eq(priceAlerts.id, id));
+  }
+
+  async updatePriceAlert(id: string, data: Partial<PriceAlert>): Promise<PriceAlert | undefined> {
+    const [updated] = await db.update(priceAlerts).set(data).where(eq(priceAlerts.id, id)).returning();
+    return updated || undefined;
   }
 }
 

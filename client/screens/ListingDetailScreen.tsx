@@ -8,6 +8,8 @@ import {
   Dimensions,
   ActivityIndicator,
   Alert,
+  TextInput,
+  Modal,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
@@ -51,6 +53,8 @@ export default function ListingDetailScreen() {
   const queryClient = useQueryClient();
   const { listingId } = route.params;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [priceAlertModalVisible, setPriceAlertModalVisible] = useState(false);
+  const [targetPrice, setTargetPrice] = useState("");
 
   const { data: listing, isLoading } = useQuery<Listing>({
     queryKey: ["/api/listings", listingId],
@@ -64,6 +68,48 @@ export default function ListingDetailScreen() {
   const { data: isFavorite } = useQuery<{ isFavorite: boolean }>({
     queryKey: ["/api/favorites", user?.id, listingId, "check"],
     enabled: !!user?.id && !!listingId,
+  });
+
+  const { data: priceAlertData } = useQuery<{ hasAlert: boolean; alert: any }>({
+    queryKey: ["/api/price-alerts", user?.id, listingId, "check"],
+    enabled: !!user?.id && !!listingId,
+  });
+
+  const createPriceAlertMutation = useMutation({
+    mutationFn: async (price: number) => {
+      await apiRequest("/api/price-alerts", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: user?.id,
+          listingId,
+          targetPrice: price,
+          originalPrice: listing?.estimatedValue || 0,
+        }),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/price-alerts", user?.id, listingId, "check"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/price-alerts", user?.id] });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      setPriceAlertModalVisible(false);
+      setTargetPrice("");
+      Alert.alert("Fiyat Alarmı", "Fiyat alarmı başarıyla oluşturuldu!");
+    },
+    onError: () => {
+      Alert.alert("Hata", "Fiyat alarmı oluşturulamadı.");
+    },
+  });
+
+  const deletePriceAlertMutation = useMutation({
+    mutationFn: async (alertId: string) => {
+      await apiRequest(`/api/price-alerts/${alertId}`, { method: "DELETE" });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/price-alerts", user?.id, listingId, "check"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/price-alerts", user?.id] });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Alert.alert("Fiyat Alarmı", "Fiyat alarmı kaldırıldı.");
+    },
   });
 
   const favoriteMutation = useMutation({
@@ -185,20 +231,54 @@ export default function ListingDetailScreen() {
               </ThemedText>
             </View>
             {!isOwner && (
-              <Pressable
-                style={[
-                  styles.favoriteButton,
-                  { backgroundColor: theme.backgroundSecondary },
-                ]}
-                onPress={() => favoriteMutation.mutate()}
-              >
-                <Feather
-                  name={isFavorite?.isFavorite ? "heart" : "heart"}
-                  size={24}
-                  color={isFavorite?.isFavorite ? BrandColors.alertRed : theme.textSecondary}
-                  style={{ opacity: isFavorite?.isFavorite ? 1 : 0.5 }}
-                />
-              </Pressable>
+              <View style={styles.actionButtonsRow}>
+                <Pressable
+                  style={[
+                    styles.favoriteButton,
+                    { backgroundColor: theme.backgroundSecondary },
+                  ]}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    if (priceAlertData?.hasAlert) {
+                      Alert.alert(
+                        "Fiyat Alarmı",
+                        "Bu ilan için fiyat alarmı mevcut. Kaldırmak ister misiniz?",
+                        [
+                          { text: "İptal", style: "cancel" },
+                          { 
+                            text: "Kaldır", 
+                            style: "destructive", 
+                            onPress: () => deletePriceAlertMutation.mutate(priceAlertData.alert.id) 
+                          },
+                        ]
+                      );
+                    } else {
+                      setPriceAlertModalVisible(true);
+                    }
+                  }}
+                >
+                  <Feather
+                    name="bell"
+                    size={24}
+                    color={priceAlertData?.hasAlert ? BrandColors.primaryBlue : theme.textSecondary}
+                    style={{ opacity: priceAlertData?.hasAlert ? 1 : 0.5 }}
+                  />
+                </Pressable>
+                <Pressable
+                  style={[
+                    styles.favoriteButton,
+                    { backgroundColor: theme.backgroundSecondary },
+                  ]}
+                  onPress={() => favoriteMutation.mutate()}
+                >
+                  <Feather
+                    name={isFavorite?.isFavorite ? "heart" : "heart"}
+                    size={24}
+                    color={isFavorite?.isFavorite ? BrandColors.alertRed : theme.textSecondary}
+                    style={{ opacity: isFavorite?.isFavorite ? 1 : 0.5 }}
+                  />
+                </Pressable>
+              </View>
             )}
           </View>
 
@@ -360,6 +440,77 @@ export default function ListingDetailScreen() {
           )}
         </View>
       </ScrollView>
+
+      <Modal
+        visible={priceAlertModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setPriceAlertModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: theme.background }]}>
+            <View style={styles.modalHeader}>
+              <ThemedText style={styles.modalTitle}>Fiyat Alarmı Oluştur</ThemedText>
+              <Pressable onPress={() => setPriceAlertModalVisible(false)}>
+                <Feather name="x" size={24} color={theme.text} />
+              </Pressable>
+            </View>
+            
+            <ThemedText style={[styles.modalSubtitle, { color: theme.textSecondary }]}>
+              Fiyat bu değere düştüğünde bildirim alacaksınız
+            </ThemedText>
+
+            {listing?.estimatedValue ? (
+              <View style={styles.currentPriceRow}>
+                <ThemedText style={[styles.currentPriceLabel, { color: theme.textSecondary }]}>
+                  Mevcut Fiyat:
+                </ThemedText>
+                <ThemedText style={styles.currentPrice}>
+                  {listing.estimatedValue.toLocaleString("tr-TR")} TL
+                </ThemedText>
+              </View>
+            ) : null}
+
+            <View style={styles.priceInputContainer}>
+              <TextInput
+                style={[
+                  styles.priceInput,
+                  { 
+                    backgroundColor: theme.backgroundSecondary,
+                    color: theme.text,
+                  },
+                ]}
+                placeholder="Hedef fiyat"
+                placeholderTextColor={theme.textSecondary}
+                value={targetPrice}
+                onChangeText={setTargetPrice}
+                keyboardType="numeric"
+              />
+              <ThemedText style={styles.priceSuffix}>TL</ThemedText>
+            </View>
+
+            <Pressable
+              style={[
+                styles.createAlertButton,
+                { backgroundColor: BrandColors.primaryBlue },
+                !targetPrice && { opacity: 0.5 },
+              ]}
+              onPress={() => {
+                const price = parseInt(targetPrice.replace(/\D/g, ""), 10);
+                if (price > 0) {
+                  createPriceAlertMutation.mutate(price);
+                }
+              }}
+              disabled={!targetPrice || createPriceAlertMutation.isPending}
+            >
+              <Feather name="bell" size={18} color="#FFFFFF" />
+              <ThemedText style={styles.createAlertButtonText}>
+                {createPriceAlertMutation.isPending ? "Oluşturuluyor..." : "Alarm Oluştur"}
+              </ThemedText>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </ThemedView>
   );
 }
@@ -616,5 +767,81 @@ const styles = StyleSheet.create({
   cleanHistoryText: {
     ...Typography.body,
     fontWeight: "600",
+  },
+  actionButtonsRow: {
+    flexDirection: "row",
+    gap: Spacing.sm,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "flex-end",
+  },
+  modalContent: {
+    borderTopLeftRadius: BorderRadius.lg,
+    borderTopRightRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    paddingBottom: Spacing.xl + 20,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: Spacing.md,
+  },
+  modalTitle: {
+    ...Typography.h3,
+    fontWeight: "700",
+  },
+  modalSubtitle: {
+    ...Typography.small,
+    marginBottom: Spacing.lg,
+  },
+  currentPriceRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: Spacing.md,
+    paddingBottom: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E8EB",
+  },
+  currentPriceLabel: {
+    ...Typography.body,
+  },
+  currentPrice: {
+    ...Typography.h3,
+    fontWeight: "700",
+    color: BrandColors.primaryBlue,
+  },
+  priceInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: Spacing.lg,
+  },
+  priceInput: {
+    flex: 1,
+    height: 50,
+    borderRadius: BorderRadius.sm,
+    paddingHorizontal: Spacing.md,
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  priceSuffix: {
+    ...Typography.body,
+    fontWeight: "600",
+    marginLeft: Spacing.sm,
+  },
+  createAlertButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.sm,
+  },
+  createAlertButtonText: {
+    ...Typography.button,
+    color: "#FFFFFF",
   },
 });
