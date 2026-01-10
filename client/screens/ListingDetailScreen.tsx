@@ -10,6 +10,7 @@ import {
   Alert,
   TextInput,
   Modal,
+  Linking,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
@@ -55,6 +56,8 @@ export default function ListingDetailScreen() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [priceAlertModalVisible, setPriceAlertModalVisible] = useState(false);
   const [targetPrice, setTargetPrice] = useState("");
+  const [offerModalVisible, setOfferModalVisible] = useState(false);
+  const [customOfferPrice, setCustomOfferPrice] = useState("");
 
   const { data: listing, isLoading } = useQuery<Listing>({
     queryKey: ["/api/listings", listingId],
@@ -511,6 +514,192 @@ export default function ListingDetailScreen() {
           </View>
         </View>
       </Modal>
+
+      <Modal
+        visible={offerModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setOfferModalVisible(false)}
+      >
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setOfferModalVisible(false)}
+        >
+          <Pressable
+            style={[styles.modalContent, { backgroundColor: "#FFFFFF" }]}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={styles.modalHeader}>
+              <ThemedText style={styles.modalTitle}>Teklif Gönder</ThemedText>
+              <Pressable onPress={() => setOfferModalVisible(false)}>
+                <Feather name="x" size={24} color={theme.text} />
+              </Pressable>
+            </View>
+
+            <ThemedText style={[styles.modalSubtitle, { color: theme.textSecondary }]}>
+              Satıcıya teklif gönderin
+            </ThemedText>
+
+            {listing?.estimatedValue ? (
+              <View style={styles.currentPriceRow}>
+                <ThemedText style={styles.currentPriceLabel}>İlan Fiyatı</ThemedText>
+                <ThemedText style={styles.currentPrice}>
+                  {(listing.estimatedValue).toLocaleString("tr-TR")} TL
+                </ThemedText>
+              </View>
+            ) : null}
+
+            <ThemedText style={[styles.offerOptionsLabel, { color: theme.textSecondary }]}>
+              Hızlı Teklif Seçenekleri
+            </ThemedText>
+
+            <View style={styles.offerOptionsRow}>
+              <Pressable
+                style={[styles.offerOptionButton, { borderColor: BrandColors.primaryBlue }]}
+                onPress={() => {
+                  if (listing?.estimatedValue) {
+                    const offer = Math.round(listing.estimatedValue * 0.90);
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    Alert.alert(
+                      "Teklif Gönderildi",
+                      `${offer.toLocaleString("tr-TR")} TL teklifiniz satıcıya iletildi.`
+                    );
+                    setOfferModalVisible(false);
+                  }
+                }}
+              >
+                <ThemedText style={styles.offerOptionDiscount}>%10 indirimli</ThemedText>
+                <ThemedText style={styles.offerOptionPrice}>
+                  {listing?.estimatedValue ? Math.round(listing.estimatedValue * 0.90).toLocaleString("tr-TR") : "—"} TL
+                </ThemedText>
+              </Pressable>
+
+              <Pressable
+                style={[styles.offerOptionButton, { borderColor: BrandColors.primaryBlue }]}
+                onPress={() => {
+                  if (listing?.estimatedValue) {
+                    const offer = Math.round(listing.estimatedValue * 0.85);
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    Alert.alert(
+                      "Teklif Gönderildi",
+                      `${offer.toLocaleString("tr-TR")} TL teklifiniz satıcıya iletildi.`
+                    );
+                    setOfferModalVisible(false);
+                  }
+                }}
+              >
+                <ThemedText style={styles.offerOptionDiscount}>%15 indirimli</ThemedText>
+                <ThemedText style={styles.offerOptionPrice}>
+                  {listing?.estimatedValue ? Math.round(listing.estimatedValue * 0.85).toLocaleString("tr-TR") : "—"} TL
+                </ThemedText>
+              </Pressable>
+            </View>
+
+            <ThemedText style={[styles.offerOptionsLabel, { color: theme.textSecondary, marginTop: Spacing.md }]}>
+              Özel Teklif
+            </ThemedText>
+
+            <View style={styles.priceInputContainer}>
+              <TextInput
+                style={[
+                  styles.priceInput,
+                  { 
+                    backgroundColor: theme.backgroundSecondary,
+                    color: theme.text,
+                  },
+                ]}
+                placeholder="Teklif tutarı girin"
+                placeholderTextColor={theme.textSecondary}
+                value={customOfferPrice}
+                onChangeText={setCustomOfferPrice}
+                keyboardType="numeric"
+              />
+              <ThemedText style={styles.priceSuffix}>TL</ThemedText>
+            </View>
+
+            <Pressable
+              style={[
+                styles.sendOfferButton,
+                { backgroundColor: BrandColors.primaryBlue },
+                !customOfferPrice && { opacity: 0.5 },
+              ]}
+              onPress={() => {
+                const price = parseInt(customOfferPrice.replace(/\D/g, ""), 10);
+                if (price > 0) {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  Alert.alert(
+                    "Teklif Gönderildi",
+                    `${price.toLocaleString("tr-TR")} TL teklifiniz satıcıya iletildi.`
+                  );
+                  setCustomOfferPrice("");
+                  setOfferModalVisible(false);
+                }
+              }}
+              disabled={!customOfferPrice}
+            >
+              <Feather name="send" size={18} color="#FFFFFF" />
+              <ThemedText style={styles.sendOfferButtonText}>Teklif Gönder</ThemedText>
+            </Pressable>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      {!isOwner && (
+        <View style={[styles.footer, { paddingBottom: insets.bottom + Spacing.sm }]}>
+          <Pressable
+            style={styles.footerButton}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              if (listingUser?.phone) {
+                Linking.openURL(`tel:${listingUser.phone}`);
+              } else {
+                Alert.alert("Bilgi", "Satıcının telefon numarası bulunamadı.");
+              }
+            }}
+          >
+            <Feather name="phone" size={20} color={BrandColors.primaryBlue} />
+            <ThemedText style={styles.footerButtonText}>Ara</ThemedText>
+          </Pressable>
+
+          <Pressable
+            style={[styles.footerButton, styles.footerButtonPrimary]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setOfferModalVisible(true);
+            }}
+          >
+            <Feather name="tag" size={20} color="#FFFFFF" />
+            <ThemedText style={styles.footerButtonTextPrimary}>Teklif</ThemedText>
+          </Pressable>
+
+          <Pressable
+            style={styles.footerButton}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              Alert.alert("Bilgi", "Mesajlaşma özelliği yakında aktif olacak.");
+            }}
+          >
+            <Feather name="message-circle" size={20} color={BrandColors.primaryBlue} />
+            <ThemedText style={styles.footerButtonText}>Mesaj</ThemedText>
+          </Pressable>
+
+          <Pressable
+            style={[styles.footerButton, { backgroundColor: "#25D366" }]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              if (listingUser?.phone) {
+                const message = `Merhaba, ${listing?.brand} ${listing?.model} ilanınız için ilgileniyorum.`;
+                Linking.openURL(`https://wa.me/${listingUser.phone.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`);
+              } else {
+                Alert.alert("Bilgi", "Satıcının telefon numarası bulunamadı.");
+              }
+            }}
+          >
+            <Feather name="message-square" size={20} color="#FFFFFF" />
+            <ThemedText style={styles.footerButtonTextPrimary}>WhatsApp</ThemedText>
+          </Pressable>
+        </View>
+      )}
     </View>
   );
 }
@@ -842,6 +1031,76 @@ const styles = StyleSheet.create({
   },
   createAlertButtonText: {
     ...Typography.button,
+    color: "#FFFFFF",
+  },
+  offerOptionsLabel: {
+    ...Typography.small,
+    fontWeight: "600",
+    marginBottom: Spacing.sm,
+  },
+  offerOptionsRow: {
+    flexDirection: "row",
+    gap: Spacing.sm,
+  },
+  offerOptionButton: {
+    flex: 1,
+    borderWidth: 2,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    alignItems: "center",
+  },
+  offerOptionDiscount: {
+    ...Typography.small,
+    fontWeight: "600",
+    color: BrandColors.primaryBlue,
+    marginBottom: Spacing.xs,
+  },
+  offerOptionPrice: {
+    ...Typography.body,
+    fontWeight: "700",
+  },
+  sendOfferButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.sm,
+  },
+  sendOfferButtonText: {
+    ...Typography.button,
+    color: "#FFFFFF",
+  },
+  footer: {
+    flexDirection: "row",
+    paddingHorizontal: Spacing.sm,
+    paddingTop: Spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: "#E5E8EB",
+    backgroundColor: "#FFFFFF",
+    gap: Spacing.xs,
+  },
+  footerButton: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    backgroundColor: "#F3F4F6",
+    gap: 4,
+  },
+  footerButtonPrimary: {
+    backgroundColor: BrandColors.primaryBlue,
+  },
+  footerButtonText: {
+    ...Typography.caption,
+    fontWeight: "600",
+    color: BrandColors.primaryBlue,
+  },
+  footerButtonTextPrimary: {
+    ...Typography.caption,
+    fontWeight: "600",
     color: "#FFFFFF",
   },
 });
