@@ -23,8 +23,9 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import { ThemedText } from "@/components/ThemedText";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
-import { Listing } from "@shared/schema";
+import { Listing, Story } from "@shared/schema";
 import defaultVehicleImage from "../assets/images/default-vehicle.png";
+import { getApiUrl } from "@/lib/query-client";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -33,13 +34,15 @@ const CARD_GAP = 8;
 const CARD_WIDTH = (SCREEN_WIDTH - Spacing.lg * 2 - CARD_GAP * 2) / 3;
 
 const DEMO_STORIES = [
-  { id: "1", username: "BMW Turkiye", hasNewStory: true, timeAgo: "2s", avatar: "https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=100" },
-  { id: "2", username: "Mercedes", hasNewStory: true, timeAgo: "5s", avatar: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=100" },
-  { id: "3", username: "Audi TR", hasNewStory: true, timeAgo: "8s", avatar: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=100" },
-  { id: "4", username: "Volkswagen", hasNewStory: false, timeAgo: "12s", avatar: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=100" },
-  { id: "5", username: "Toyota", hasNewStory: true, timeAgo: "18s", avatar: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=100" },
-  { id: "6", username: "Honda", hasNewStory: false, timeAgo: "22s", avatar: "https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=100" },
+  { id: "1", brandName: "BMW Turkiye", title: "Yeni BMW M5", imageUrl: "https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=800", isActive: true, viewCount: 0, expiresAt: new Date(Date.now() + 86400000).toISOString(), createdAt: new Date().toISOString() },
+  { id: "2", brandName: "Mercedes", title: "Mercedes EQS", imageUrl: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800", isActive: true, viewCount: 0, expiresAt: new Date(Date.now() + 86400000).toISOString(), createdAt: new Date().toISOString() },
+  { id: "3", brandName: "Audi TR", title: "Audi RS e-tron GT", imageUrl: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800", isActive: true, viewCount: 0, expiresAt: new Date(Date.now() + 86400000).toISOString(), createdAt: new Date().toISOString() },
+  { id: "4", brandName: "Volkswagen", title: "VW ID.4", imageUrl: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=800", isActive: true, viewCount: 0, expiresAt: new Date(Date.now() + 86400000).toISOString(), createdAt: new Date().toISOString() },
+  { id: "5", brandName: "Toyota", title: "Toyota Supra", imageUrl: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800", isActive: true, viewCount: 0, expiresAt: new Date(Date.now() + 86400000).toISOString(), createdAt: new Date().toISOString() },
+  { id: "6", brandName: "Honda", title: "Honda Civic Type R", imageUrl: "https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800", isActive: true, viewCount: 0, expiresAt: new Date(Date.now() + 86400000).toISOString(), createdAt: new Date().toISOString() },
 ];
+
+type StoryItem = typeof DEMO_STORIES[0] | Story;
 
 function ListingCard({ item, index, onPress }: { item: Listing; index: number; onPress: () => void }) {
   const photoUrl = item.photos && item.photos.length > 0 ? item.photos[0] : null;
@@ -138,7 +141,7 @@ export default function VitrinScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedStory, setSelectedStory] = useState<typeof DEMO_STORIES[0] | null>(null);
+  const [selectedStory, setSelectedStory] = useState<StoryItem | null>(null);
 
   const { data: listings, isLoading, refetch } = useQuery<Listing[]>({
     queryKey: ["/api/listings"],
@@ -147,6 +150,12 @@ export default function VitrinScreen() {
   const { data: featuredListings } = useQuery<Listing[]>({
     queryKey: ["/api/listings/featured"],
   });
+
+  const { data: apiStories } = useQuery<Story[]>({
+    queryKey: ["/api/stories"],
+  });
+
+  const displayStories = apiStories && apiStories.length > 0 ? apiStories : DEMO_STORIES;
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -190,7 +199,7 @@ export default function VitrinScreen() {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.storiesContainer}
       >
-        {DEMO_STORIES.map((story) => (
+        {displayStories.map((story) => (
           <Pressable 
             key={story.id} 
             style={styles.storyItem}
@@ -201,20 +210,17 @@ export default function VitrinScreen() {
           >
             <View style={[
               styles.storyRing,
-              story.hasNewStory ? styles.storyRingActive : styles.storyRingInactive,
+              story.isActive ? styles.storyRingActive : styles.storyRingInactive,
             ]}>
               <Image 
-                source={{ uri: story.avatar }} 
+                source={{ uri: story.imageUrl }} 
                 style={styles.storyAvatar}
                 resizeMode="cover"
               />
             </View>
             <ThemedText style={styles.storyUsername} numberOfLines={1}>
-              {story.username}
+              {story.brandName}
             </ThemedText>
-            {story.timeAgo ? (
-              <ThemedText style={styles.storyTime}>{story.timeAgo}</ThemedText>
-            ) : null}
           </Pressable>
         ))}
       </ScrollView>
@@ -319,16 +325,16 @@ export default function VitrinScreen() {
             <View style={styles.storyModalHeader}>
               <View style={styles.storyModalUserInfo}>
                 <Image
-                  source={{ uri: selectedStory?.avatar }}
+                  source={{ uri: selectedStory?.imageUrl }}
                   style={styles.storyModalAvatar}
                   resizeMode="cover"
                 />
                 <View>
                   <ThemedText style={styles.storyModalUsername}>
-                    {selectedStory?.username}
+                    {selectedStory?.brandName}
                   </ThemedText>
                   <ThemedText style={styles.storyModalTime}>
-                    {selectedStory?.timeAgo}
+                    {selectedStory?.title}
                   </ThemedText>
                 </View>
               </View>
@@ -343,13 +349,13 @@ export default function VitrinScreen() {
               <View style={styles.storyProgressBar} />
             </View>
             <Image
-              source={{ uri: selectedStory?.avatar.replace("w=100", "w=800") }}
+              source={{ uri: selectedStory?.imageUrl }}
               style={styles.storyModalImage}
               resizeMode="cover"
             />
             <View style={styles.storyModalFooter}>
               <ThemedText style={styles.storyModalFooterText}>
-                {selectedStory?.username} - Yeni Araç Kampanyası
+                {selectedStory?.title}
               </ThemedText>
             </View>
           </View>

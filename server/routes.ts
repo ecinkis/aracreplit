@@ -1,6 +1,50 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "node:http";
 import { storage } from "./storage";
+import * as crypto from "crypto";
+import * as fs from "fs";
+import * as path from "path";
+
+const ADMIN_SECRET = process.env.SESSION_SECRET || "admin-secret-key";
+
+function generateToken(email: string): string {
+  const payload = { email, exp: Date.now() + 24 * 60 * 60 * 1000 };
+  const data = JSON.stringify(payload);
+  const signature = crypto.createHmac("sha256", ADMIN_SECRET).update(data).digest("hex");
+  return Buffer.from(data).toString("base64") + "." + signature;
+}
+
+function verifyToken(token: string): { email: string } | null {
+  try {
+    const [dataB64, signature] = token.split(".");
+    const data = Buffer.from(dataB64, "base64").toString();
+    const expectedSig = crypto.createHmac("sha256", ADMIN_SECRET).update(data).digest("hex");
+    if (signature !== expectedSig) return null;
+    const payload = JSON.parse(data);
+    if (payload.exp < Date.now()) return null;
+    return { email: payload.email };
+  } catch {
+    return null;
+  }
+}
+
+function hashPassword(password: string): string {
+  return crypto.createHash("sha256").update(password + ADMIN_SECRET).digest("hex");
+}
+
+function adminAuth(req: Request, res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  const token = authHeader.substring(7);
+  const payload = verifyToken(token);
+  if (!payload) {
+    return res.status(401).json({ error: "Invalid or expired token" });
+  }
+  (req as any).adminEmail = payload.email;
+  next();
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // User routes
@@ -482,6 +526,205 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       console.error("Delete price alert error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Stories API (public)
+  app.get("/api/stories", async (req, res) => {
+    try {
+      const activeStories = await storage.getActiveStories();
+      res.json(activeStories);
+    } catch (error) {
+      console.error("Get stories error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/stories/:id/view", async (req, res) => {
+    try {
+      await storage.incrementStoryViewCount(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Increment story view error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Admin Panel HTML
+  app.get("/admin", (req, res) => {
+    const adminHtml = fs.readFileSync(
+      path.join(__dirname, "templates", "admin-panel.html"),
+      "utf-8"
+    );
+    res.send(adminHtml);
+  });
+
+  // Admin API Routes
+  app.post("/api/admin/login", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      let admin = await storage.getAdminUserByEmail(email);
+      
+      if (!admin) {
+        const adminEmail = process.env.ADMIN_EMAIL;
+        const adminPassword = process.env.ADMIN_PASSWORD;
+        
+        if (adminEmail && adminPassword && email === adminEmail && password === adminPassword) {
+          admin = await storage.createAdminUser({
+            email: adminEmail,
+            password: hashPassword(adminPassword),
+            name: "Admin",
+            role: "admin",
+          });
+        } else {
+          return res.status(401).json({ error: "Geçersiz e-posta veya şifre" });
+        }
+      } else {
+        if (admin.password !== hashPassword(password)) {
+          return res.status(401).json({ error: "Geçersiz e-posta veya şifre" });
+        }
+      }
+      
+      const token = generateToken(admin.email);
+      res.json({ token, admin: { id: admin.id, email: admin.email, name: admin.name } });
+    } catch (error) {
+      console.error("Admin login error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/admin/verify", adminAuth, (req, res) => {
+    res.json({ valid: true, email: (req as any).adminEmail });
+  });
+
+  app.get("/api/admin/stats", adminAuth, async (req, res) => {
+    try {
+      const [allUsers, allListings, allMatches, allStories] = await Promise.all([
+        storage.getAllUsers(),
+        storage.getAllListings(),
+        storage.getAllMatches(),
+        storage.getActiveStories(),
+      ]);
+      
+      res.json({
+        users: allUsers.length,
+        listings: allListings.length,
+        matches: allMatches.length,
+        stories: allStories.length,
+      });
+    } catch (error) {
+      console.error("Admin stats error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/admin/users", adminAuth, async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 100;
+      const allUsers = await storage.getAllUsers();
+      res.json(allUsers.slice(0, limit));
+    } catch (error) {
+      console.error("Admin users error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/admin/listings", adminAuth, async (req, res) => {
+    try {
+      const allListings = await storage.getAllListings();
+      res.json(allListings);
+    } catch (error) {
+      console.error("Admin listings error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.patch("/api/admin/listings/:id/featured", adminAuth, async (req, res) => {
+    try {
+      const { isFeatured } = req.body;
+      const listing = await storage.updateListing(req.params.id, { isFeatured });
+      res.json(listing);
+    } catch (error) {
+      console.error("Admin toggle featured error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/admin/stories", adminAuth, async (req, res) => {
+    try {
+      const allStories = await storage.getStories();
+      res.json(allStories);
+    } catch (error) {
+      console.error("Admin stories error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/admin/stories", adminAuth, async (req, res) => {
+    try {
+      const { brandName, title, imageUrl, linkUrl, expiresAt } = req.body;
+      const story = await storage.createStory({
+        brandName,
+        title,
+        imageUrl,
+        linkUrl,
+        expiresAt: new Date(expiresAt),
+        isActive: true,
+      });
+      res.status(201).json(story);
+    } catch (error) {
+      console.error("Admin create story error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.patch("/api/admin/stories/:id", adminAuth, async (req, res) => {
+    try {
+      const { brandName, title, imageUrl, linkUrl, expiresAt, isActive } = req.body;
+      const updateData: any = {};
+      if (brandName !== undefined) updateData.brandName = brandName;
+      if (title !== undefined) updateData.title = title;
+      if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
+      if (linkUrl !== undefined) updateData.linkUrl = linkUrl;
+      if (expiresAt !== undefined) updateData.expiresAt = new Date(expiresAt);
+      if (isActive !== undefined) updateData.isActive = isActive;
+      
+      const story = await storage.updateStory(req.params.id, updateData);
+      res.json(story);
+    } catch (error) {
+      console.error("Admin update story error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.delete("/api/admin/stories/:id", adminAuth, async (req, res) => {
+    try {
+      await storage.deleteStory(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Admin delete story error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/admin/messages/stats", adminAuth, async (req, res) => {
+    try {
+      const stats = await storage.getMessageStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Admin message stats error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/admin/messages/recent", adminAuth, async (req, res) => {
+    try {
+      const recentMessages = await storage.getRecentMessagesByMatch();
+      res.json(recentMessages);
+    } catch (error) {
+      console.error("Admin recent messages error:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   });

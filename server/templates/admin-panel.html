@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Araç Takası - Admin Panel</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+    }
+    .login-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .login-box {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    .login-box h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+      color: #1C6BF9;
+    }
+    .login-box p {
+      color: #666;
+      margin-bottom: 24px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #333;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #1C6BF9;
+    }
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: #1C6BF9;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover { background: #1557d4; }
+    .error-message {
+      background: #fee;
+      color: #c00;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .admin-container { display: none; }
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 250px;
+      height: 100vh;
+      background: #1C6BF9;
+      color: white;
+      padding: 20px 0;
+    }
+    .sidebar-header {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      margin-bottom: 20px;
+    }
+    .sidebar-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .sidebar-header span {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 20px;
+      color: white;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .nav-item:hover, .nav-item.active {
+      background: rgba(255,255,255,0.15);
+    }
+    .nav-item svg {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+    }
+    .main-content {
+      margin-left: 250px;
+      padding: 30px;
+      min-height: 100vh;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .page-header h1 {
+      font-size: 24px;
+      color: #222;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .stat-card .value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1C6BF9;
+    }
+    .stat-card .label {
+      color: #666;
+      margin-top: 4px;
+    }
+    .data-table {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .data-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .data-table th, .data-table td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    .data-table th {
+      background: #f9f9f9;
+      font-weight: 600;
+      color: #333;
+    }
+    .data-table tr:hover { background: #fafafa; }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .badge-success { background: #e6f7e6; color: #2e7d32; }
+    .badge-warning { background: #fff3e0; color: #ef6c00; }
+    .badge-danger { background: #ffebee; color: #c62828; }
+    .btn-action {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      margin-right: 4px;
+    }
+    .btn-edit { background: #e3f2fd; color: #1565c0; }
+    .btn-delete { background: #ffebee; color: #c62828; }
+    .btn-view { background: #e8f5e9; color: #2e7d32; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal h2 {
+      margin-bottom: 20px;
+      color: #222;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .modal-actions button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-cancel {
+      background: #f5f5f5;
+      border: none;
+      color: #666;
+    }
+    .btn-save {
+      background: #1C6BF9;
+      border: none;
+      color: white;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 16px 24px;
+      background: #333;
+      color: white;
+      border-radius: 8px;
+      display: none;
+      z-index: 1001;
+    }
+    .toast.success { background: #2e7d32; }
+    .toast.error { background: #c62828; }
+    .toast.show { display: block; }
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container" id="loginContainer">
+    <div class="login-box">
+      <h1>Araç Takası</h1>
+      <p>Admin paneline giriş yapın</p>
+      <div class="error-message" id="loginError"></div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label>E-posta</label>
+          <input type="email" id="loginEmail" required placeholder="admin@aractakasi.com">
+        </div>
+        <div class="form-group">
+          <label>Şifre</label>
+          <input type="password" id="loginPassword" required placeholder="Şifrenizi girin">
+        </div>
+        <button type="submit" class="btn-primary">Giriş Yap</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="admin-container" id="adminContainer">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Araç Takası</h2>
+        <span>Admin Panel</span>
+      </div>
+      <nav>
+        <a class="nav-item active" data-section="dashboard">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          Dashboard
+        </a>
+        <a class="nav-item" data-section="stories">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Hikayeler
+        </a>
+        <a class="nav-item" data-section="users">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          Kullanıcılar
+        </a>
+        <a class="nav-item" data-section="listings">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          İlanlar
+        </a>
+        <a class="nav-item" data-section="messages">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+          Mesajlar
+        </a>
+        <a class="nav-item" id="logoutBtn">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          Çıkış
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <section class="section active" id="dashboard">
+        <div class="page-header">
+          <h1>Dashboard</h1>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="value" id="totalUsers">0</div>
+            <div class="label">Toplam Kullanıcı</div>
+          </div>
+          <div class="stat-card">
+            <div class="value" id="totalListings">0</div>
+            <div class="label">Toplam İlan</div>
+          </div>
+          <div class="stat-card">
+            <div class="value" id="totalMatches">0</div>
+            <div class="label">Eşleşme</div>
+          </div>
+          <div class="stat-card">
+            <div class="value" id="activeStories">0</div>
+            <div class="label">Aktif Hikaye</div>
+          </div>
+        </div>
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Son Kullanıcılar</th>
+                <th>Telefon</th>
+                <th>Kayıt Tarihi</th>
+                <th>Durum</th>
+              </tr>
+            </thead>
+            <tbody id="recentUsersTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="stories">
+        <div class="page-header">
+          <h1>Hikaye Yönetimi</h1>
+          <button class="btn-primary" onclick="openStoryModal()">+ Yeni Hikaye</button>
+        </div>
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Görsel</th>
+                <th>Marka</th>
+                <th>Başlık</th>
+                <th>Görüntülenme</th>
+                <th>Bitiş</th>
+                <th>Durum</th>
+                <th>İşlem</th>
+              </tr>
+            </thead>
+            <tbody id="storiesTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="users">
+        <div class="page-header">
+          <h1>Kullanıcı Yönetimi</h1>
+        </div>
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>İsim</th>
+                <th>Telefon</th>
+                <th>Şehir</th>
+                <th>Tip</th>
+                <th>Premium</th>
+                <th>Kayıt</th>
+                <th>İşlem</th>
+              </tr>
+            </thead>
+            <tbody id="usersTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="listings">
+        <div class="page-header">
+          <h1>İlan Yönetimi</h1>
+        </div>
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Görsel</th>
+                <th>Araç</th>
+                <th>Fiyat</th>
+                <th>Şehir</th>
+                <th>Vitrin</th>
+                <th>Durum</th>
+                <th>İşlem</th>
+              </tr>
+            </thead>
+            <tbody id="listingsTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="messages">
+        <div class="page-header">
+          <h1>Mesaj Genel Bakış</h1>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="value" id="totalMessages">0</div>
+            <div class="label">Toplam Mesaj</div>
+          </div>
+          <div class="stat-card">
+            <div class="value" id="todayMessages">0</div>
+            <div class="label">Bugün Gönderilen</div>
+          </div>
+        </div>
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Eşleşme ID</th>
+                <th>Mesaj Sayısı</th>
+                <th>Son Mesaj</th>
+                <th>Tarih</th>
+              </tr>
+            </thead>
+            <tbody id="messagesTable"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="storyModal">
+    <div class="modal">
+      <h2 id="storyModalTitle">Yeni Hikaye Ekle</h2>
+      <form id="storyForm">
+        <input type="hidden" id="storyId">
+        <div class="form-group">
+          <label>Marka Adı</label>
+          <input type="text" id="storyBrand" required placeholder="BMW, Mercedes vb.">
+        </div>
+        <div class="form-group">
+          <label>Başlık</label>
+          <input type="text" id="storyTitle" required placeholder="Hikaye başlığı">
+        </div>
+        <div class="form-group">
+          <label>Görsel URL</label>
+          <input type="url" id="storyImage" required placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label>Link URL (opsiyonel)</label>
+          <input type="url" id="storyLink" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label>Süre (saat)</label>
+          <input type="number" id="storyDuration" value="24" min="1" max="168">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="closeStoryModal()">İptal</button>
+          <button type="submit" class="btn-save">Kaydet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API_BASE = '/api/admin';
+    let adminToken = localStorage.getItem('adminToken');
+
+    async function apiRequest(endpoint, options = {}) {
+      const response = await fetch(`${API_BASE}${endpoint}`, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`,
+          ...options.headers
+        }
+      });
+      if (response.status === 401) {
+        logout();
+        throw new Error('Oturum süresi doldu');
+      }
+      return response.json();
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `toast ${type} show`;
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function formatDate(date) {
+      if (!date) return '-';
+      return new Date(date).toLocaleDateString('tr-TR');
+    }
+
+    function formatPrice(price) {
+      if (!price) return '-';
+      return new Intl.NumberFormat('tr-TR').format(price) + ' TL';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      
+      try {
+        const response = await fetch(`${API_BASE}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await response.json();
+        
+        if (data.token) {
+          adminToken = data.token;
+          localStorage.setItem('adminToken', adminToken);
+          showAdminPanel();
+        } else {
+          document.getElementById('loginError').textContent = data.error || 'Giriş başarısız';
+          document.getElementById('loginError').style.display = 'block';
+        }
+      } catch (error) {
+        document.getElementById('loginError').textContent = 'Bağlantı hatası';
+        document.getElementById('loginError').style.display = 'block';
+      }
+    });
+
+    function logout() {
+      localStorage.removeItem('adminToken');
+      adminToken = null;
+      document.getElementById('loginContainer').style.display = 'flex';
+      document.getElementById('adminContainer').style.display = 'none';
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+
+    document.querySelectorAll('.nav-item[data-section]').forEach(item => {
+      item.addEventListener('click', () => {
+        const section = item.dataset.section;
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        item.classList.add('active');
+        document.getElementById(section).classList.add('active');
+        loadSectionData(section);
+      });
+    });
+
+    async function showAdminPanel() {
+      document.getElementById('loginContainer').style.display = 'none';
+      document.getElementById('adminContainer').style.display = 'block';
+      loadDashboard();
+    }
+
+    async function loadSectionData(section) {
+      switch(section) {
+        case 'dashboard': loadDashboard(); break;
+        case 'stories': loadStories(); break;
+        case 'users': loadUsers(); break;
+        case 'listings': loadListings(); break;
+        case 'messages': loadMessages(); break;
+      }
+    }
+
+    async function loadDashboard() {
+      try {
+        const stats = await apiRequest('/stats');
+        document.getElementById('totalUsers').textContent = stats.users || 0;
+        document.getElementById('totalListings').textContent = stats.listings || 0;
+        document.getElementById('totalMatches').textContent = stats.matches || 0;
+        document.getElementById('activeStories').textContent = stats.stories || 0;
+
+        const users = await apiRequest('/users?limit=5');
+        const tbody = document.getElementById('recentUsersTable');
+        tbody.innerHTML = users.map(u => `
+          <tr>
+            <td>${u.name || 'İsimsiz'}</td>
+            <td>${u.phone}</td>
+            <td>${formatDate(u.createdAt)}</td>
+            <td><span class="badge ${u.phoneVerified ? 'badge-success' : 'badge-warning'}">${u.phoneVerified ? 'Doğrulanmış' : 'Bekliyor'}</span></td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Dashboard error:', error);
+      }
+    }
+
+    async function loadStories() {
+      try {
+        const stories = await apiRequest('/stories');
+        const tbody = document.getElementById('storiesTable');
+        if (stories.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Henüz hikaye yok</td></tr>';
+          return;
+        }
+        tbody.innerHTML = stories.map(s => `
+          <tr>
+            <td><img src="${s.imageUrl}" style="width:50px;height:50px;object-fit:cover;border-radius:8px;"></td>
+            <td>${s.brandName}</td>
+            <td>${s.title}</td>
+            <td>${s.viewCount || 0}</td>
+            <td>${formatDate(s.expiresAt)}</td>
+            <td><span class="badge ${s.isActive ? 'badge-success' : 'badge-danger'}">${s.isActive ? 'Aktif' : 'Pasif'}</span></td>
+            <td>
+              <button class="btn-action btn-edit" onclick="editStory('${s.id}')">Düzenle</button>
+              <button class="btn-action btn-delete" onclick="deleteStory('${s.id}')">Sil</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Stories error:', error);
+      }
+    }
+
+    async function loadUsers() {
+      try {
+        const users = await apiRequest('/users');
+        const tbody = document.getElementById('usersTable');
+        tbody.innerHTML = users.map(u => `
+          <tr>
+            <td>${u.id.substring(0,8)}...</td>
+            <td>${u.name || '-'}</td>
+            <td>${u.phone}</td>
+            <td>${u.city || '-'}</td>
+            <td>${u.userType === 'dealer' ? 'Bayi' : 'Bireysel'}</td>
+            <td><span class="badge ${u.isPremium ? 'badge-success' : 'badge-warning'}">${u.isPremium ? 'Premium' : 'Standart'}</span></td>
+            <td>${formatDate(u.createdAt)}</td>
+            <td>
+              <button class="btn-action btn-view" onclick="viewUser('${u.id}')">Detay</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Users error:', error);
+      }
+    }
+
+    async function loadListings() {
+      try {
+        const listings = await apiRequest('/listings');
+        const tbody = document.getElementById('listingsTable');
+        tbody.innerHTML = listings.map(l => `
+          <tr>
+            <td><img src="${l.photos?.[0] || 'https://via.placeholder.com/50'}" style="width:50px;height:50px;object-fit:cover;border-radius:8px;"></td>
+            <td>${l.brand} ${l.model} (${l.year})</td>
+            <td>${formatPrice(l.price)}</td>
+            <td>${l.city || '-'}</td>
+            <td>
+              <button class="btn-action ${l.isFeatured ? 'btn-delete' : 'btn-edit'}" onclick="toggleFeatured('${l.id}', ${!l.isFeatured})">
+                ${l.isFeatured ? 'Kaldır' : 'Vitrine Al'}
+              </button>
+            </td>
+            <td><span class="badge ${l.status === 'active' ? 'badge-success' : 'badge-warning'}">${l.status === 'active' ? 'Aktif' : l.status}</span></td>
+            <td>
+              <button class="btn-action btn-view" onclick="viewListing('${l.id}')">Görüntüle</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Listings error:', error);
+      }
+    }
+
+    async function loadMessages() {
+      try {
+        const data = await apiRequest('/messages/stats');
+        document.getElementById('totalMessages').textContent = data.total || 0;
+        document.getElementById('todayMessages').textContent = data.today || 0;
+
+        const matches = await apiRequest('/messages/recent');
+        const tbody = document.getElementById('messagesTable');
+        tbody.innerHTML = matches.map(m => `
+          <tr>
+            <td>${m.matchId.substring(0,8)}...</td>
+            <td>${m.messageCount}</td>
+            <td>${m.lastMessage?.substring(0,50) || '-'}...</td>
+            <td>${formatDate(m.lastMessageAt)}</td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Messages error:', error);
+      }
+    }
+
+    function openStoryModal(story = null) {
+      document.getElementById('storyModalTitle').textContent = story ? 'Hikaye Düzenle' : 'Yeni Hikaye Ekle';
+      document.getElementById('storyId').value = story?.id || '';
+      document.getElementById('storyBrand').value = story?.brandName || '';
+      document.getElementById('storyTitle').value = story?.title || '';
+      document.getElementById('storyImage').value = story?.imageUrl || '';
+      document.getElementById('storyLink').value = story?.linkUrl || '';
+      document.getElementById('storyDuration').value = 24;
+      document.getElementById('storyModal').classList.add('active');
+    }
+
+    function closeStoryModal() {
+      document.getElementById('storyModal').classList.remove('active');
+    }
+
+    document.getElementById('storyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('storyId').value;
+      const hours = parseInt(document.getElementById('storyDuration').value) || 24;
+      const expiresAt = new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
+      
+      const data = {
+        brandName: document.getElementById('storyBrand').value,
+        title: document.getElementById('storyTitle').value,
+        imageUrl: document.getElementById('storyImage').value,
+        linkUrl: document.getElementById('storyLink').value || null,
+        expiresAt
+      };
+
+      try {
+        if (id) {
+          await apiRequest(`/stories/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
+          showToast('Hikaye güncellendi');
+        } else {
+          await apiRequest('/stories', { method: 'POST', body: JSON.stringify(data) });
+          showToast('Hikaye eklendi');
+        }
+        closeStoryModal();
+        loadStories();
+      } catch (error) {
+        showToast('Hata: ' + error.message, 'error');
+      }
+    });
+
+    async function editStory(id) {
+      const stories = await apiRequest('/stories');
+      const story = stories.find(s => s.id === id);
+      if (story) openStoryModal(story);
+    }
+
+    async function deleteStory(id) {
+      if (!confirm('Bu hikayeyi silmek istediğinize emin misiniz?')) return;
+      try {
+        await apiRequest(`/stories/${id}`, { method: 'DELETE' });
+        showToast('Hikaye silindi');
+        loadStories();
+      } catch (error) {
+        showToast('Silme hatası', 'error');
+      }
+    }
+
+    async function toggleFeatured(id, featured) {
+      try {
+        await apiRequest(`/listings/${id}/featured`, { 
+          method: 'PATCH', 
+          body: JSON.stringify({ isFeatured: featured }) 
+        });
+        showToast(featured ? 'Vitrine alındı' : 'Vitrinden kaldırıldı');
+        loadListings();
+      } catch (error) {
+        showToast('Hata oluştu', 'error');
+      }
+    }
+
+    function viewUser(id) {
+      alert('Kullanıcı detay sayfası geliştiriliyor: ' + id);
+    }
+
+    function viewListing(id) {
+      alert('İlan detay sayfası geliştiriliyor: ' + id);
+    }
+
+    if (adminToken) {
+      apiRequest('/verify').then(data => {
+        if (data.valid) showAdminPanel();
+        else logout();
+      }).catch(logout);
+    }
+  </script>
+</body>
+</html>

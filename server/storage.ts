@@ -14,6 +14,10 @@ import {
   type InsertReview,
   type PriceAlert,
   type InsertPriceAlert,
+  type Story,
+  type InsertStory,
+  type AdminUser,
+  type InsertAdminUser,
   users,
   listings,
   likes,
@@ -23,6 +27,8 @@ import {
   notifications,
   reviews,
   priceAlerts,
+  stories,
+  adminUsers,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, desc, sql, ne, notInArray } from "drizzle-orm";
@@ -76,6 +82,23 @@ export interface IStorage {
   createPriceAlert(alert: InsertPriceAlert): Promise<PriceAlert>;
   deletePriceAlert(id: string): Promise<void>;
   updatePriceAlert(id: string, data: Partial<PriceAlert>): Promise<PriceAlert | undefined>;
+
+  getStories(): Promise<Story[]>;
+  getActiveStories(): Promise<Story[]>;
+  getStory(id: string): Promise<Story | undefined>;
+  createStory(story: InsertStory): Promise<Story>;
+  updateStory(id: string, data: Partial<Story>): Promise<Story | undefined>;
+  deleteStory(id: string): Promise<void>;
+  incrementStoryViewCount(id: string): Promise<void>;
+
+  getAdminUserByEmail(email: string): Promise<AdminUser | undefined>;
+  createAdminUser(admin: InsertAdminUser): Promise<AdminUser>;
+
+  getAllUsers(): Promise<User[]>;
+  getAllListings(): Promise<Listing[]>;
+  getAllMatches(): Promise<Match[]>;
+  getMessageStats(): Promise<{ total: number; today: number }>;
+  getRecentMessagesByMatch(): Promise<any[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -396,6 +419,99 @@ export class DatabaseStorage implements IStorage {
   async updatePriceAlert(id: string, data: Partial<PriceAlert>): Promise<PriceAlert | undefined> {
     const [updated] = await db.update(priceAlerts).set(data).where(eq(priceAlerts.id, id)).returning();
     return updated || undefined;
+  }
+
+  async getStories(): Promise<Story[]> {
+    return db.select().from(stories).orderBy(desc(stories.createdAt));
+  }
+
+  async getActiveStories(): Promise<Story[]> {
+    const now = new Date();
+    return db
+      .select()
+      .from(stories)
+      .where(and(eq(stories.isActive, true), sql`${stories.expiresAt} > ${now}`))
+      .orderBy(desc(stories.createdAt));
+  }
+
+  async getStory(id: string): Promise<Story | undefined> {
+    const [story] = await db.select().from(stories).where(eq(stories.id, id));
+    return story || undefined;
+  }
+
+  async createStory(story: InsertStory): Promise<Story> {
+    const [created] = await db.insert(stories).values(story).returning();
+    return created;
+  }
+
+  async updateStory(id: string, data: Partial<Story>): Promise<Story | undefined> {
+    const [updated] = await db.update(stories).set(data).where(eq(stories.id, id)).returning();
+    return updated || undefined;
+  }
+
+  async deleteStory(id: string): Promise<void> {
+    await db.delete(stories).where(eq(stories.id, id));
+  }
+
+  async incrementStoryViewCount(id: string): Promise<void> {
+    await db
+      .update(stories)
+      .set({ viewCount: sql`${stories.viewCount} + 1` })
+      .where(eq(stories.id, id));
+  }
+
+  async getAdminUserByEmail(email: string): Promise<AdminUser | undefined> {
+    const [admin] = await db.select().from(adminUsers).where(eq(adminUsers.email, email));
+    return admin || undefined;
+  }
+
+  async createAdminUser(admin: InsertAdminUser): Promise<AdminUser> {
+    const [created] = await db.insert(adminUsers).values(admin).returning();
+    return created;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return db.select().from(users).orderBy(desc(users.createdAt));
+  }
+
+  async getAllListings(): Promise<Listing[]> {
+    return db.select().from(listings).orderBy(desc(listings.createdAt));
+  }
+
+  async getAllMatches(): Promise<Match[]> {
+    return db.select().from(matches).orderBy(desc(matches.createdAt));
+  }
+
+  async getMessageStats(): Promise<{ total: number; today: number }> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const totalResult = await db.select({ count: sql<number>`COUNT(*)` }).from(messages);
+    const todayResult = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(messages)
+      .where(sql`${messages.createdAt} >= ${today}`);
+    
+    return {
+      total: Number(totalResult[0]?.count || 0),
+      today: Number(todayResult[0]?.count || 0),
+    };
+  }
+
+  async getRecentMessagesByMatch(): Promise<any[]> {
+    const result = await db
+      .select({
+        matchId: messages.matchId,
+        messageCount: sql<number>`COUNT(*)`,
+        lastMessage: sql<string>`MAX(${messages.content})`,
+        lastMessageAt: sql<Date>`MAX(${messages.createdAt})`,
+      })
+      .from(messages)
+      .groupBy(messages.matchId)
+      .orderBy(desc(sql`MAX(${messages.createdAt})`))
+      .limit(20);
+    
+    return result;
   }
 }
 
