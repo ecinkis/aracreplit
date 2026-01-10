@@ -485,7 +485,8 @@ export default function CreateListingScreen() {
 
       case 2:
         const availableModels = brand ? getModelsByBrand(brand) : [];
-        const availableVariants = brand && model ? getVariantsByBrandModel(brand, model) : [];
+        const currentYear = new Date().getFullYear();
+        const yearOptions = Array.from({ length: currentYear - 1989 }, (_, i) => String(currentYear + 1 - i));
         return (
           <Animated.View entering={FadeIn} style={styles.stepContent}>
             <View style={styles.stepHeader}>
@@ -499,14 +500,12 @@ export default function CreateListingScreen() {
             </View>
 
             <ThemedText style={styles.fieldLabel}>Model Yılı</ThemedText>
-            <TextInput
-              style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
-              value={year}
-              onChangeText={setYear}
-              placeholder="2024"
-              placeholderTextColor={theme.textSecondary}
-              keyboardType="number-pad"
-              maxLength={4}
+            <SearchablePicker
+              label="Model Yılı Seçin"
+              placeholder="Model yılı seçin..."
+              options={yearOptions}
+              selected={year}
+              onSelect={setYear}
             />
 
             <ThemedText style={styles.fieldLabel}>Marka</ThemedText>
@@ -518,7 +517,6 @@ export default function CreateListingScreen() {
               onSelect={(selectedBrand) => {
                 setBrand(selectedBrand);
                 setModel("");
-                setVariant("");
               }}
             />
 
@@ -528,31 +526,18 @@ export default function CreateListingScreen() {
               placeholder={brand ? "Model seçin..." : "Önce marka seçin"}
               options={availableModels}
               selected={model}
-              onSelect={(selectedModel) => {
-                setModel(selectedModel);
-                setVariant("");
-              }}
+              onSelect={setModel}
               disabled={!brand}
             />
 
             <ThemedText style={styles.fieldLabel}>Varyant (Motor)</ThemedText>
-            {availableVariants.length > 0 ? (
-              <SearchablePicker
-                label="Varyant Seçin"
-                placeholder="Varyant seçin..."
-                options={availableVariants}
-                selected={variant}
-                onSelect={setVariant}
-              />
-            ) : (
-              <TextInput
-                style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
-                value={variant}
-                onChangeText={setVariant}
-                placeholder="Örn: 320i, 1.6 TDI, 2.0 Hybrid"
-                placeholderTextColor={theme.textSecondary}
-              />
-            )}
+            <TextInput
+              style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
+              value={variant}
+              onChangeText={setVariant}
+              placeholder="Örn: 320i, 1.6 TDI, 2.0 Hybrid"
+              placeholderTextColor={theme.textSecondary}
+            />
 
             <ThemedText style={styles.fieldLabel}>Kilometre</ThemedText>
             <TextInput
