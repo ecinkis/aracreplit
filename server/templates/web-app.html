@@ -1410,34 +1410,96 @@
     .footer {
       background: var(--black);
       color: var(--white);
-      padding: 64px 0 32px;
+      padding: 80px 0 0;
       margin-top: 64px;
     }
 
-    .footer-grid {
+    .footer-top {
       display: grid;
-      grid-template-columns: 2fr repeat(3, 1fr);
+      grid-template-columns: 1.5fr 1fr 1fr 1fr 1.5fr;
       gap: 48px;
-      margin-bottom: 48px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid var(--gray-800);
     }
 
-    .footer-brand {
-      font-size: 20px;
-      font-weight: 700;
+    .footer-brand-section {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       margin-bottom: 16px;
+    }
+
+    .footer-logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .footer-logo-icon svg {
+      width: 22px;
+      height: 22px;
+      color: white;
+    }
+
+    .footer-logo-text {
+      font-size: 22px;
+      font-weight: 700;
     }
 
     .footer-desc {
       font-size: 14px;
       color: var(--gray-400);
-      line-height: 1.6;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 12px;
+    }
+
+    .footer-social a {
+      width: 40px;
+      height: 40px;
+      background: var(--gray-800);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .footer-social a:hover {
+      background: var(--gray-700);
+      transform: translateY(-2px);
+    }
+
+    .footer-social svg {
+      width: 18px;
+      height: 18px;
+      color: var(--gray-400);
+    }
+
+    .footer-social a:hover svg {
+      color: var(--white);
     }
 
     .footer-col h4 {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
-      margin-bottom: 20px;
-      color: var(--gray-300);
+      margin-bottom: 24px;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .footer-col ul {
@@ -1445,51 +1507,240 @@
     }
 
     .footer-col li {
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .footer-col a {
       font-size: 14px;
       color: var(--gray-400);
-      transition: color 0.15s ease;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .footer-col a:hover {
       color: var(--white);
       text-decoration: none;
+      padding-left: 4px;
     }
 
-    .footer-bottom {
-      border-top: 1px solid var(--gray-800);
-      padding-top: 32px;
+    .footer-col a svg {
+      width: 14px;
+      height: 14px;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .footer-col a:hover svg {
+      opacity: 1;
+    }
+
+    .footer-newsletter {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+    }
+
+    .footer-newsletter h4 {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .footer-newsletter p {
       font-size: 14px;
+      color: var(--gray-400);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .newsletter-form input {
+      flex: 1;
+      padding: 12px 16px;
+      background: var(--gray-800);
+      border: 1px solid var(--gray-700);
+      border-radius: 10px;
+      color: var(--white);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .newsletter-form input::placeholder {
       color: var(--gray-500);
+    }
+
+    .newsletter-form input:focus {
+      border-color: var(--gray-500);
+    }
+
+    .newsletter-form button {
+      padding: 12px 20px;
+      background: var(--white);
+      border: none;
+      border-radius: 10px;
+      color: var(--black);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .newsletter-form button:hover {
+      background: var(--gray-100);
     }
 
     .footer-apps {
       display: flex;
-      gap: 12px;
+      gap: 10px;
     }
 
     .footer-apps a {
-      padding: 10px 20px;
+      padding: 10px 16px;
       background: var(--gray-800);
-      border-radius: 12px;
-      font-size: 13px;
+      border-radius: 10px;
+      font-size: 12px;
       font-weight: 500;
       color: var(--white);
       display: flex;
       align-items: center;
       gap: 8px;
-      transition: background 0.15s ease;
+      transition: all 0.2s ease;
     }
 
     .footer-apps a:hover {
       background: var(--gray-700);
       text-decoration: none;
+      transform: translateY(-2px);
+    }
+
+    .footer-apps svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .footer-listings {
+      padding: 48px 0;
+      border-bottom: 1px solid var(--gray-800);
+    }
+
+    .footer-listings h4 {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .footer-listings-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .footer-listing-card {
+      background: var(--gray-900);
+      border: 1px solid var(--gray-800);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      gap: 12px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .footer-listing-card:hover {
+      background: var(--gray-800);
+      border-color: var(--gray-700);
+    }
+
+    .footer-listing-img {
+      width: 60px;
+      height: 45px;
+      background: var(--gray-800);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .footer-listing-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .footer-listing-info h5 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .footer-listing-info p {
+      font-size: 12px;
+      color: var(--gray-400);
+    }
+
+    .footer-bottom {
+      padding: 32px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--gray-500);
+    }
+
+    .footer-bottom-left {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .footer-bottom-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-bottom-links a {
+      color: var(--gray-500);
+      transition: color 0.15s ease;
+    }
+
+    .footer-bottom-links a:hover {
+      color: var(--white);
+      text-decoration: none;
+    }
+
+    .footer-badges {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .footer-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--gray-900);
+      border: 1px solid var(--gray-800);
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--gray-400);
+    }
+
+    .footer-badge svg {
+      width: 14px;
+      height: 14px;
     }
 
     /* Toast */
@@ -1608,15 +1859,48 @@
         grid-template-columns: 1fr;
       }
 
-      .footer-grid {
+      .footer-top {
         grid-template-columns: 1fr;
         gap: 32px;
+      }
+
+      .footer-listings-grid {
+        grid-template-columns: 1fr 1fr;
       }
 
       .footer-bottom {
         flex-direction: column;
         gap: 20px;
         text-align: center;
+      }
+
+      .footer-bottom-left {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .footer-bottom-links {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .footer-badges {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .footer-listings-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .newsletter-form {
+        flex-direction: column;
+      }
+
+      .footer-apps {
+        flex-direction: column;
       }
     }
 
@@ -2092,11 +2376,59 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="container">
-      <div class="footer-grid">
-        <div>
-          <div class="footer-brand">Araç Takası</div>
-          <p class="footer-desc">Türkiye'nin ilk ve en güvenilir araç takas platformu. Aracını ver, istediğin aracı al.</p>
+      <!-- Footer Top -->
+      <div class="footer-top">
+        <!-- Brand Section -->
+        <div class="footer-brand-section">
+          <div class="footer-logo">
+            <div class="footer-logo-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 8h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2v4l-4-4H9a1.994 1.994 0 0 1-1.414-.586m0 0L11 14h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2v4l.586-.586z"/>
+              </svg>
+            </div>
+            <span class="footer-logo-text">Araç Takası</span>
+          </div>
+          <p class="footer-desc">Türkiye'nin ilk ve en güvenilir araç takas platformu. Aracını ver, istediğin aracı al. Güvenli, hızlı ve kolay takas deneyimi.</p>
+          <div class="footer-social">
+            <a href="#" title="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+              </svg>
+            </a>
+            <a href="#" title="Twitter">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+              </svg>
+            </a>
+            <a href="#" title="Facebook">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+              </svg>
+            </a>
+            <a href="#" title="YouTube">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/>
+                <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/>
+              </svg>
+            </a>
+          </div>
         </div>
+
+        <!-- Kurumsal -->
+        <div class="footer-col">
+          <h4>Kurumsal</h4>
+          <ul>
+            <li><a href="#">Hakkımızda</a></li>
+            <li><a href="#">Nasıl Çalışır?</a></li>
+            <li><a href="#">Basında Biz</a></li>
+            <li><a href="#">Kariyer</a></li>
+            <li><a href="#">İletişim</a></li>
+          </ul>
+        </div>
+
+        <!-- Kategoriler -->
         <div class="footer-col">
           <h4>Kategoriler</h4>
           <ul>
@@ -2104,31 +2436,81 @@
             <li><a href="#" onclick="filterByCategory('SUV')">SUV / Arazi</a></li>
             <li><a href="#" onclick="filterByCategory('Ticari')">Ticari Araç</a></li>
             <li><a href="#" onclick="filterByCategory('Motosiklet')">Motosiklet</a></li>
+            <li><a href="#">Tüm Kategoriler</a></li>
           </ul>
         </div>
+
+        <!-- Yardım -->
         <div class="footer-col">
-          <h4>Yardım</h4>
+          <h4>Yardım & Destek</h4>
           <ul>
-            <li><a href="#">Nasıl Çalışır?</a></li>
-            <li><a href="#">SSS</a></li>
-            <li><a href="#">Güvenli Takas</a></li>
-            <li><a href="#">Destek</a></li>
+            <li><a href="#">Sıkça Sorulan Sorular</a></li>
+            <li><a href="#">Güvenli Takas Rehberi</a></li>
+            <li><a href="#">Değerleme Nasıl Yapılır?</a></li>
+            <li><a href="#">Canlı Destek</a></li>
+            <li><a href="#">Şikayet & Öneri</a></li>
           </ul>
         </div>
-        <div class="footer-col">
-          <h4>Yasal</h4>
-          <ul>
-            <li><a href="#">Kullanım Koşulları</a></li>
-            <li><a href="#">Gizlilik Politikası</a></li>
-            <li><a href="#">KVKK</a></li>
-          </ul>
+
+        <!-- Newsletter -->
+        <div class="footer-newsletter">
+          <h4>Bültenimize Abone Olun</h4>
+          <p>En yeni ilanlar ve fırsatlardan haberdar olun. Spam göndermeyeceğiz!</p>
+          <form class="newsletter-form" onsubmit="event.preventDefault(); showToast('Abone oldunuz!', 'success');">
+            <input type="email" placeholder="E-posta adresiniz" required>
+            <button type="submit">Abone Ol</button>
+          </form>
+          <div class="footer-apps">
+            <a href="#">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+              </svg>
+              App Store
+            </a>
+            <a href="#">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+              </svg>
+              Google Play
+            </a>
+          </div>
         </div>
       </div>
+
+      <!-- Son Eklenen İlanlar -->
+      <div class="footer-listings">
+        <h4>Son Eklenen İlanlar</h4>
+        <div class="footer-listings-grid" id="footerListings">
+          <!-- JS ile doldurulacak -->
+        </div>
+      </div>
+
+      <!-- Footer Bottom -->
       <div class="footer-bottom">
-        <div>© 2025 Araç Takası. Tüm hakları saklıdır.</div>
-        <div class="footer-apps">
-          <a href="#">App Store</a>
-          <a href="#">Google Play</a>
+        <div class="footer-bottom-left">
+          <span>© 2025 Araç Takası. Tüm hakları saklıdır.</span>
+          <div class="footer-bottom-links">
+            <a href="#">Kullanım Koşulları</a>
+            <a href="#">Gizlilik Politikası</a>
+            <a href="#">KVKK Aydınlatma Metni</a>
+            <a href="#">Çerez Politikası</a>
+            <a href="#">Mesafeli Satış Sözleşmesi</a>
+          </div>
+        </div>
+        <div class="footer-badges">
+          <div class="footer-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            SSL Güvenli
+          </div>
+          <div class="footer-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            Doğrulanmış Platform
+          </div>
         </div>
       </div>
     </div>
@@ -2482,9 +2864,34 @@
         
         const latest = [...allListings].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 4);
         renderFeaturedCards(latest, 'latestListings');
+        
+        // Footer ilanları
+        renderFooterListings(latest);
       } catch (err) {
         console.error('Failed to load:', err);
       }
+    }
+
+    function renderFooterListings(listings) {
+      const container = document.getElementById('footerListings');
+      if (!container) return;
+      
+      if (!listings || listings.length === 0) {
+        container.innerHTML = '<p style="color: var(--gray-500); grid-column: 1/-1;">Henüz ilan eklenmedi</p>';
+        return;
+      }
+
+      container.innerHTML = listings.map(l => `
+        <div class="footer-listing-card" onclick="navigateTo('detail', { id: '${l.id}' })">
+          <div class="footer-listing-img">
+            <img src="${l.photos?.[0] || 'https://via.placeholder.com/60x45?text=Araç'}" alt="${l.brand} ${l.model}" onerror="this.src='https://via.placeholder.com/60x45?text=Araç'">
+          </div>
+          <div class="footer-listing-info">
+            <h5>${l.brand} ${l.model}</h5>
+            <p>${l.year} · ${formatPrice(l.estimatedValue)}</p>
+          </div>
+        </div>
+      `).join('');
     }
 
     function renderFeaturedCards(listings, containerId) {
