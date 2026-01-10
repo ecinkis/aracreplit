@@ -69,7 +69,7 @@ export default function HomeScreen() {
             {item.title}
           </ThemedText>
           <View style={styles.locationBadge}>
-            <Feather name="map-pin" size={8} color="#EF4444" />
+            <Feather name="map-pin" size={8} color="#1C6BF9" />
             <ThemedText style={styles.locationText} numberOfLines={1}>
               {item.location}
             </ThemedText>
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 9,
-    color: "#EF4444",
+    color: "#1C6BF9",
   },
   vehiclePriceRow: {
     flexDirection: "row",

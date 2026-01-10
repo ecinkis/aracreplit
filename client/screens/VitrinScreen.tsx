@@ -68,7 +68,7 @@ function ListingCard({ item, index, onPress }: { item: Listing; index: number; o
               {item.brand} {item.model}
             </ThemedText>
             <View style={styles.locationBadge}>
-              <Feather name="map-pin" size={8} color="#EF4444" />
+              <Feather name="map-pin" size={8} color="#1C6BF9" />
               <ThemedText style={styles.locationText} numberOfLines={1}>
                 {item.city}
               </ThemedText>
@@ -104,7 +104,7 @@ function MockListingCard({ index }: { index: number }) {
               Audi A5
             </ThemedText>
             <View style={styles.locationBadge}>
-              <Feather name="map-pin" size={8} color="#EF4444" />
+              <Feather name="map-pin" size={8} color="#1C6BF9" />
               <ThemedText style={styles.locationText} numberOfLines={1}>
                 Esenyurt
               </ThemedText>
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 9,
-    color: "#EF4444",
+    color: "#1C6BF9",
   },
   vehiclePriceRow: {
     flexDirection: "row",
