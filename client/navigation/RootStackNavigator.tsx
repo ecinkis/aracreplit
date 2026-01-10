@@ -11,6 +11,7 @@ import QuickCreateListingScreen from "@/screens/QuickCreateListingScreen";
 import CorporateApplicationScreen from "@/screens/CorporateApplicationScreen";
 import LegalDocumentScreen from "@/screens/LegalDocumentScreen";
 import NotificationsScreen from "@/screens/NotificationsScreen";
+import CompareScreen from "@/screens/CompareScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { useAuth } from "@/contexts/AuthContext";
 import { BrandColors } from "@/constants/theme";
@@ -27,6 +28,7 @@ export type RootStackParamList = {
   CorporateApplication: undefined;
   LegalDocument: { documentType: string };
   Notifications: undefined;
+  Compare: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -120,6 +122,13 @@ export default function RootStackNavigator() {
           <Stack.Screen
             name="Notifications"
             component={NotificationsScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="Compare"
+            component={CompareScreen}
             options={{
               headerShown: false,
             }}

@@ -8,9 +8,15 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
+import type { RootStackParamList } from "@/navigation/RootStackNavigator";
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const RECENT_SEARCHES = [
   "BMW 3 Serisi",
@@ -31,11 +37,24 @@ const POPULAR_BRANDS = [
 export default function SearchScreen() {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
+  const navigation = useNavigation<NavigationProp>();
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + Spacing.md }]}>
-      <View style={styles.titleSpacer} />
+      <View style={styles.headerRow}>
+        <ThemedText style={styles.headerTitle}>Ara</ThemedText>
+        <Pressable
+          style={({ pressed }) => [styles.compareButton, pressed && { opacity: 0.7 }]}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            navigation.navigate("Compare");
+          }}
+        >
+          <Feather name="columns" size={18} color={BrandColors.primaryBlue} />
+          <ThemedText style={styles.compareButtonText}>Karsilastir</ThemedText>
+        </Pressable>
+      </View>
       <View style={styles.searchContainer}>
         <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
         <TextInput
@@ -98,8 +117,30 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     paddingHorizontal: Spacing.lg,
   },
-  titleSpacer: {
-    height: 44,
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: Spacing.md,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#000000",
+  },
+  compareButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    backgroundColor: BrandColors.primaryBlue + "10",
+    borderRadius: BorderRadius.md,
+  },
+  compareButtonText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: BrandColors.primaryBlue,
   },
   searchContainer: {
     flexDirection: "row",
