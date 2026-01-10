@@ -8,6 +8,7 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  Dimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -15,6 +16,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as Haptics from "expo-haptics";
+import Animated, { FadeIn, FadeOut, SlideInRight, SlideOutLeft } from "react-native-reanimated";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
@@ -23,11 +25,40 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Spacing, BorderRadius, Typography, BrandColors } from "@/constants/theme";
 import { apiRequest } from "@/lib/query-client";
 
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
 const BRANDS = ["Audi", "BMW", "Mercedes", "Volkswagen", "Toyota", "Honda", "Ford", "Renault", "Fiat", "Hyundai", "Kia", "Opel", "Peugeot", "Citroen", "Seat", "Skoda", "Volvo", "Nissan", "Mazda"];
 const FUEL_TYPES = ["Benzin", "Dizel", "Hibrit", "Elektrik", "LPG"];
 const TRANSMISSIONS = ["Manuel", "Otomatik"];
 const CITIES = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Adana", "Konya", "Gaziantep", "Şanlıurfa", "Kocaeli", "Mersin", "Diyarbakır", "Hatay", "Manisa", "Kayseri"];
 const CAR_PARTS = ["Ön Tampon", "Arka Tampon", "Ön Kaput", "Ön Çamurluk Sol", "Ön Çamurluk Sağ", "Ön Kapı Sol", "Ön Kapı Sağ", "Arka Kapı Sol", "Arka Kapı Sağ", "Tavan", "Bagaj Kapağı", "Arka Çamurluk Sol", "Arka Çamurluk Sağ"];
+
+const STEPS = [
+  { id: 1, title: "Fotoğraflar", icon: "camera" },
+  { id: 2, title: "Araç Bilgileri", icon: "truck" },
+  { id: 3, title: "Teknik Özellikler", icon: "settings" },
+  { id: 4, title: "Takas Tercihleri", icon: "refresh-cw" },
+  { id: 5, title: "Araç Geçmişi", icon: "file-text" },
+  { id: 6, title: "Önizleme", icon: "eye" },
+];
+
+function StepIndicator({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) {
+  return (
+    <View style={styles.stepIndicatorContainer}>
+      <View style={styles.stepProgressBar}>
+        <Animated.View 
+          style={[
+            styles.stepProgressFill, 
+            { width: `${(currentStep / totalSteps) * 100}%` }
+          ]} 
+        />
+      </View>
+      <ThemedText style={styles.stepText}>
+        Adım {currentStep} / {totalSteps}
+      </ThemedText>
+    </View>
+  );
+}
 
 function ChipSelect({
   options,
@@ -82,6 +113,7 @@ export default function CreateListingScreen() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
+  const [currentStep, setCurrentStep] = useState(1);
   const [photos, setPhotos] = useState<string[]>([]);
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
@@ -97,6 +129,8 @@ export default function CreateListingScreen() {
   const [accidentFree, setAccidentFree] = useState(true);
   const [paintedParts, setPaintedParts] = useState<string[]>([]);
   const [replacedParts, setReplacedParts] = useState<string[]>([]);
+  const [description, setDescription] = useState("");
+  const [estimatedValue, setEstimatedValue] = useState("");
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -168,16 +202,56 @@ export default function CreateListingScreen() {
     }
   };
 
-  const handleSubmit = () => {
-    if (photos.length < 3) {
-      Alert.alert("Uyarı", "En az 3 fotoğraf eklemelisiniz.");
-      return;
+  const validateStep = (step: number): boolean => {
+    switch (step) {
+      case 1:
+        if (photos.length < 3) {
+          Alert.alert("Uyarı", "En az 3 fotoğraf eklemelisiniz.");
+          return false;
+        }
+        return true;
+      case 2:
+        if (!brand || !model) {
+          Alert.alert("Uyarı", "Marka ve model seçmelisiniz.");
+          return false;
+        }
+        if (!year || parseInt(year) < 1980 || parseInt(year) > new Date().getFullYear() + 1) {
+          Alert.alert("Uyarı", "Geçerli bir yıl girin.");
+          return false;
+        }
+        if (!km) {
+          Alert.alert("Uyarı", "Kilometre bilgisi girin.");
+          return false;
+        }
+        return true;
+      case 3:
+        if (!fuelType || !transmission || !city) {
+          Alert.alert("Uyarı", "Tüm teknik özellikleri seçin.");
+          return false;
+        }
+        return true;
+      case 4:
+        return true;
+      case 5:
+        return true;
+      default:
+        return true;
     }
-    if (!brand || !model || !year || !km || !fuelType || !transmission || !city) {
-      Alert.alert("Uyarı", "Lütfen tüm alanları doldurun.");
-      return;
-    }
+  };
 
+  const nextStep = () => {
+    if (validateStep(currentStep)) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setCurrentStep(currentStep - 1);
+  };
+
+  const handleSubmit = () => {
     createMutation.mutate({
       userId: user?.id,
       brand,
@@ -196,241 +270,448 @@ export default function CreateListingScreen() {
       accidentFree,
       paintedParts,
       replacedParts,
+      description,
+      estimatedValue: estimatedValue ? parseInt(estimatedValue.replace(/\D/g, "")) : null,
     });
   };
 
-  const isValid =
-    photos.length >= 3 &&
-    brand &&
-    model &&
-    year &&
-    km &&
-    fuelType &&
-    transmission &&
-    city;
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <Animated.View entering={FadeIn} style={styles.stepContent}>
+            <View style={styles.stepHeader}>
+              <View style={[styles.stepIconContainer, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
+                <Feather name="camera" size={28} color={BrandColors.primaryBlue} />
+              </View>
+              <ThemedText style={styles.stepTitle}>Araç Fotoğrafları</ThemedText>
+              <ThemedText style={[styles.stepDescription, { color: theme.textSecondary }]}>
+                Aracınızın en az 3, en fazla 10 fotoğrafını ekleyin. İlk fotoğraf kapak görseli olarak kullanılacak.
+              </ThemedText>
+            </View>
+
+            <View style={styles.photosGrid}>
+              {photos.map((photo, index) => (
+                <View key={index} style={styles.photoWrapper}>
+                  <Image source={{ uri: photo }} style={styles.photo} />
+                  {index === 0 && (
+                    <View style={styles.coverBadge}>
+                      <ThemedText style={styles.coverBadgeText}>Kapak</ThemedText>
+                    </View>
+                  )}
+                  <Pressable
+                    style={styles.removePhotoButton}
+                    onPress={() => removePhoto(index)}
+                  >
+                    <Feather name="x" size={16} color="#FFFFFF" />
+                  </Pressable>
+                </View>
+              ))}
+              {photos.length < 10 && (
+                <Pressable
+                  style={[styles.addPhotoButton, { backgroundColor: theme.backgroundSecondary }]}
+                  onPress={pickImage}
+                >
+                  <Feather name="plus" size={32} color={BrandColors.primaryBlue} />
+                  <ThemedText style={[styles.addPhotoText, { color: theme.textSecondary }]}>
+                    Fotoğraf Ekle
+                  </ThemedText>
+                </Pressable>
+              )}
+            </View>
+
+            <View style={styles.photoTips}>
+              <View style={styles.tipRow}>
+                <Feather name="check-circle" size={16} color={BrandColors.successGreen} />
+                <ThemedText style={[styles.tipText, { color: theme.textSecondary }]}>Ön, arka ve yan görünümler</ThemedText>
+              </View>
+              <View style={styles.tipRow}>
+                <Feather name="check-circle" size={16} color={BrandColors.successGreen} />
+                <ThemedText style={[styles.tipText, { color: theme.textSecondary }]}>İç mekan ve gösterge paneli</ThemedText>
+              </View>
+              <View style={styles.tipRow}>
+                <Feather name="check-circle" size={16} color={BrandColors.successGreen} />
+                <ThemedText style={[styles.tipText, { color: theme.textSecondary }]}>Motor bölümü</ThemedText>
+              </View>
+            </View>
+          </Animated.View>
+        );
+
+      case 2:
+        return (
+          <Animated.View entering={FadeIn} style={styles.stepContent}>
+            <View style={styles.stepHeader}>
+              <View style={[styles.stepIconContainer, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
+                <Feather name="truck" size={28} color={BrandColors.primaryBlue} />
+              </View>
+              <ThemedText style={styles.stepTitle}>Araç Bilgileri</ThemedText>
+              <ThemedText style={[styles.stepDescription, { color: theme.textSecondary }]}>
+                Aracınızın marka, model ve temel bilgilerini girin.
+              </ThemedText>
+            </View>
+
+            <ThemedText style={styles.fieldLabel}>Marka</ThemedText>
+            <ChipSelect options={BRANDS} selected={brand} onSelect={setBrand} />
+
+            <ThemedText style={styles.fieldLabel}>Model</ThemedText>
+            <TextInput
+              style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
+              value={model}
+              onChangeText={setModel}
+              placeholder="Örn: A4, 320i, C180"
+              placeholderTextColor={theme.textSecondary}
+            />
+
+            <View style={styles.row}>
+              <View style={styles.halfInput}>
+                <ThemedText style={styles.fieldLabel}>Model Yılı</ThemedText>
+                <TextInput
+                  style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
+                  value={year}
+                  onChangeText={setYear}
+                  placeholder="2020"
+                  placeholderTextColor={theme.textSecondary}
+                  keyboardType="number-pad"
+                  maxLength={4}
+                />
+              </View>
+              <View style={styles.halfInput}>
+                <ThemedText style={styles.fieldLabel}>Kilometre</ThemedText>
+                <TextInput
+                  style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
+                  value={km ? `${parseInt(km).toLocaleString("tr-TR")}` : ""}
+                  onChangeText={(text) => setKm(text.replace(/\D/g, ""))}
+                  placeholder="50.000"
+                  placeholderTextColor={theme.textSecondary}
+                  keyboardType="number-pad"
+                />
+              </View>
+            </View>
+
+            <ThemedText style={styles.fieldLabel}>Tahmini Değer (TL) - Opsiyonel</ThemedText>
+            <TextInput
+              style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
+              value={estimatedValue ? `${parseInt(estimatedValue).toLocaleString("tr-TR")}` : ""}
+              onChangeText={(text) => setEstimatedValue(text.replace(/\D/g, ""))}
+              placeholder="500.000"
+              placeholderTextColor={theme.textSecondary}
+              keyboardType="number-pad"
+            />
+          </Animated.View>
+        );
+
+      case 3:
+        return (
+          <Animated.View entering={FadeIn} style={styles.stepContent}>
+            <View style={styles.stepHeader}>
+              <View style={[styles.stepIconContainer, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
+                <Feather name="settings" size={28} color={BrandColors.primaryBlue} />
+              </View>
+              <ThemedText style={styles.stepTitle}>Teknik Özellikler</ThemedText>
+              <ThemedText style={[styles.stepDescription, { color: theme.textSecondary }]}>
+                Yakıt tipi, vites ve konum bilgilerini seçin.
+              </ThemedText>
+            </View>
+
+            <ThemedText style={styles.fieldLabel}>Yakıt Tipi</ThemedText>
+            <ChipSelect options={FUEL_TYPES} selected={fuelType} onSelect={setFuelType} />
+
+            <ThemedText style={styles.fieldLabel}>Vites</ThemedText>
+            <ChipSelect options={TRANSMISSIONS} selected={transmission} onSelect={setTransmission} />
+
+            <ThemedText style={styles.fieldLabel}>Şehir</ThemedText>
+            <ChipSelect options={CITIES} selected={city} onSelect={setCity} />
+
+            <ThemedText style={styles.fieldLabel}>Açıklama (Opsiyonel)</ThemedText>
+            <TextInput
+              style={[styles.textArea, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
+              value={description}
+              onChangeText={setDescription}
+              placeholder="Aracınız hakkında ek bilgiler yazın..."
+              placeholderTextColor={theme.textSecondary}
+              multiline
+              numberOfLines={4}
+              textAlignVertical="top"
+            />
+          </Animated.View>
+        );
+
+      case 4:
+        return (
+          <Animated.View entering={FadeIn} style={styles.stepContent}>
+            <View style={styles.stepHeader}>
+              <View style={[styles.stepIconContainer, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
+                <Feather name="refresh-cw" size={28} color={BrandColors.primaryBlue} />
+              </View>
+              <ThemedText style={styles.stepTitle}>Takas Tercihleri</ThemedText>
+              <ThemedText style={[styles.stepDescription, { color: theme.textSecondary }]}>
+                Takas şartlarınızı ve kabul ettiğiniz markaları belirleyin.
+              </ThemedText>
+            </View>
+
+            <ThemedText style={styles.fieldLabel}>Takas Türü</ThemedText>
+            <View style={styles.toggleContainer}>
+              <Pressable
+                style={[
+                  styles.toggleButton,
+                  { backgroundColor: theme.backgroundSecondary },
+                  onlySwap && styles.toggleButtonSelected,
+                ]}
+                onPress={() => {
+                  Haptics.selectionAsync();
+                  setOnlySwap(true);
+                }}
+              >
+                <Feather name="repeat" size={20} color={onlySwap ? "#FFFFFF" : theme.text} />
+                <ThemedText style={[styles.toggleText, onlySwap && styles.toggleTextSelected]}>
+                  Sadece Takas
+                </ThemedText>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.toggleButton,
+                  { backgroundColor: theme.backgroundSecondary },
+                  !onlySwap && styles.toggleButtonSelected,
+                ]}
+                onPress={() => {
+                  Haptics.selectionAsync();
+                  setOnlySwap(false);
+                }}
+              >
+                <Feather name="dollar-sign" size={20} color={!onlySwap ? "#FFFFFF" : theme.text} />
+                <ThemedText style={[styles.toggleText, !onlySwap && styles.toggleTextSelected]}>
+                  Takas + Nakit
+                </ThemedText>
+              </Pressable>
+            </View>
+
+            <View style={styles.switchRow}>
+              <View>
+                <ThemedText style={styles.switchLabel}>Takas için Aktif</ThemedText>
+                <ThemedText style={[styles.switchDescription, { color: theme.textSecondary }]}>
+                  İlanınız takas aramasında görünsün
+                </ThemedText>
+              </View>
+              <Pressable
+                style={[styles.switch, swapActive ? styles.switchOn : styles.switchOff]}
+                onPress={() => {
+                  Haptics.selectionAsync();
+                  setSwapActive(!swapActive);
+                }}
+              >
+                <View style={[styles.switchThumb, swapActive ? styles.switchThumbOn : styles.switchThumbOff]} />
+              </Pressable>
+            </View>
+
+            <ThemedText style={styles.fieldLabel}>Kabul Ettiğim Markalar (Opsiyonel)</ThemedText>
+            <ThemedText style={[styles.fieldHint, { color: theme.textSecondary }]}>
+              Boş bırakırsanız tüm markalar kabul edilir
+            </ThemedText>
+            <ChipSelect
+              options={BRANDS}
+              selected={preferredBrands}
+              onSelect={handlePreferredBrandToggle}
+              multiSelect
+            />
+          </Animated.View>
+        );
+
+      case 5:
+        return (
+          <Animated.View entering={FadeIn} style={styles.stepContent}>
+            <View style={styles.stepHeader}>
+              <View style={[styles.stepIconContainer, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
+                <Feather name="file-text" size={28} color={BrandColors.primaryBlue} />
+              </View>
+              <ThemedText style={styles.stepTitle}>Araç Geçmişi</ThemedText>
+              <ThemedText style={[styles.stepDescription, { color: theme.textSecondary }]}>
+                Aracınızın hasar geçmişi ve tramer kayıtlarını belirtin.
+              </ThemedText>
+            </View>
+
+            <View style={styles.switchRow}>
+              <View>
+                <ThemedText style={styles.switchLabel}>Kazasız</ThemedText>
+                <ThemedText style={[styles.switchDescription, { color: theme.textSecondary }]}>
+                  Araç hiç kaza yapmadı
+                </ThemedText>
+              </View>
+              <Pressable
+                style={[styles.switch, accidentFree ? styles.switchOn : styles.switchOff]}
+                onPress={() => {
+                  Haptics.selectionAsync();
+                  setAccidentFree(!accidentFree);
+                }}
+              >
+                <View style={[styles.switchThumb, accidentFree ? styles.switchThumbOn : styles.switchThumbOff]} />
+              </Pressable>
+            </View>
+
+            <ThemedText style={styles.fieldLabel}>Tramer Kaydı (TL)</ThemedText>
+            <TextInput
+              style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
+              value={tramerRecord ? `${parseInt(tramerRecord).toLocaleString("tr-TR")}` : ""}
+              onChangeText={(text) => setTramerRecord(text.replace(/\D/g, ""))}
+              placeholder="0"
+              placeholderTextColor={theme.textSecondary}
+              keyboardType="number-pad"
+            />
+
+            <ThemedText style={styles.fieldLabel}>Boyalı Parçalar</ThemedText>
+            <ThemedText style={[styles.fieldHint, { color: theme.textSecondary }]}>
+              Boyanan parçaları seçin
+            </ThemedText>
+            <ChipSelect
+              options={CAR_PARTS}
+              selected={paintedParts}
+              onSelect={handlePaintedPartToggle}
+              multiSelect
+            />
+
+            <ThemedText style={styles.fieldLabel}>Değişen Parçalar</ThemedText>
+            <ThemedText style={[styles.fieldHint, { color: theme.textSecondary }]}>
+              Değiştirilen parçaları seçin
+            </ThemedText>
+            <ChipSelect
+              options={CAR_PARTS}
+              selected={replacedParts}
+              onSelect={handleReplacedPartToggle}
+              multiSelect
+            />
+          </Animated.View>
+        );
+
+      case 6:
+        return (
+          <Animated.View entering={FadeIn} style={styles.stepContent}>
+            <View style={styles.stepHeader}>
+              <View style={[styles.stepIconContainer, { backgroundColor: `${BrandColors.successGreen}15` }]}>
+                <Feather name="check-circle" size={28} color={BrandColors.successGreen} />
+              </View>
+              <ThemedText style={styles.stepTitle}>Önizleme</ThemedText>
+              <ThemedText style={[styles.stepDescription, { color: theme.textSecondary }]}>
+                İlan bilgilerinizi kontrol edin ve yayınlayın.
+              </ThemedText>
+            </View>
+
+            <View style={[styles.previewCard, { backgroundColor: theme.backgroundSecondary }]}>
+              {photos.length > 0 && (
+                <Image source={{ uri: photos[0] }} style={styles.previewImage} />
+              )}
+              <View style={styles.previewContent}>
+                <ThemedText style={styles.previewTitle}>{brand} {model}</ThemedText>
+                <ThemedText style={[styles.previewSubtitle, { color: theme.textSecondary }]}>
+                  {year} | {km ? parseInt(km).toLocaleString("tr-TR") : "0"} km
+                </ThemedText>
+
+                <View style={styles.previewTags}>
+                  <View style={[styles.previewTag, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
+                    <ThemedText style={[styles.previewTagText, { color: BrandColors.primaryBlue }]}>{fuelType}</ThemedText>
+                  </View>
+                  <View style={[styles.previewTag, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
+                    <ThemedText style={[styles.previewTagText, { color: BrandColors.primaryBlue }]}>{transmission}</ThemedText>
+                  </View>
+                  <View style={[styles.previewTag, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
+                    <ThemedText style={[styles.previewTagText, { color: BrandColors.primaryBlue }]}>{city}</ThemedText>
+                  </View>
+                </View>
+
+                <View style={styles.previewDivider} />
+
+                <View style={styles.previewRow}>
+                  <ThemedText style={[styles.previewLabel, { color: theme.textSecondary }]}>Takas Tercihi:</ThemedText>
+                  <ThemedText style={styles.previewValue}>{onlySwap ? "Sadece Takas" : "Takas + Nakit"}</ThemedText>
+                </View>
+
+                {estimatedValue ? (
+                  <View style={styles.previewRow}>
+                    <ThemedText style={[styles.previewLabel, { color: theme.textSecondary }]}>Tahmini Değer:</ThemedText>
+                    <ThemedText style={styles.previewValue}>{parseInt(estimatedValue).toLocaleString("tr-TR")} TL</ThemedText>
+                  </View>
+                ) : null}
+
+                <View style={styles.previewRow}>
+                  <ThemedText style={[styles.previewLabel, { color: theme.textSecondary }]}>Kaza Durumu:</ThemedText>
+                  <ThemedText style={[styles.previewValue, { color: accidentFree ? BrandColors.successGreen : BrandColors.alertRed }]}>
+                    {accidentFree ? "Kazasız" : "Kazalı"}
+                  </ThemedText>
+                </View>
+
+                {tramerRecord ? (
+                  <View style={styles.previewRow}>
+                    <ThemedText style={[styles.previewLabel, { color: theme.textSecondary }]}>Tramer:</ThemedText>
+                    <ThemedText style={styles.previewValue}>{parseInt(tramerRecord).toLocaleString("tr-TR")} TL</ThemedText>
+                  </View>
+                ) : null}
+
+                <View style={styles.previewRow}>
+                  <ThemedText style={[styles.previewLabel, { color: theme.textSecondary }]}>Fotoğraf:</ThemedText>
+                  <ThemedText style={styles.previewValue}>{photos.length} adet</ThemedText>
+                </View>
+              </View>
+            </View>
+          </Animated.View>
+        );
+
+      default:
+        return null;
+    }
+  };
 
   return (
     <ThemedView style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
-        <Pressable onPress={() => navigation.goBack()}>
+      <View style={[styles.header, { paddingTop: insets.top + Spacing.sm }]}>
+        <Pressable onPress={() => navigation.goBack()} style={styles.headerButton}>
           <Feather name="x" size={24} color={theme.text} />
         </Pressable>
-        <ThemedText style={styles.headerTitle}>Hızlı İlan Ver</ThemedText>
-        <View style={{ width: 24 }} />
+        <View style={styles.headerCenter}>
+          <ThemedText style={styles.headerTitle}>{STEPS[currentStep - 1].title}</ThemedText>
+        </View>
+        <View style={styles.headerButton} />
       </View>
 
+      <StepIndicator currentStep={currentStep} totalSteps={STEPS.length} />
+
       <KeyboardAwareScrollViewCompat
-        contentContainerStyle={[
-          styles.content,
-          { paddingBottom: insets.bottom + 100 },
-        ]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }]}
+        showsVerticalScrollIndicator={false}
       >
-        <ThemedText style={styles.sectionTitle}>Fotoğraflar (min 3)</ThemedText>
-        <View style={styles.photosContainer}>
-          {photos.map((photo, index) => (
-            <View key={index} style={styles.photoWrapper}>
-              <Image source={{ uri: photo }} style={styles.photo} />
-              <Pressable
-                style={styles.removePhotoButton}
-                onPress={() => removePhoto(index)}
-              >
-                <Feather name="x" size={16} color="#FFFFFF" />
-              </Pressable>
-            </View>
-          ))}
-          {photos.length < 10 && (
-            <Pressable
-              style={[styles.addPhotoButton, { backgroundColor: theme.backgroundSecondary }]}
-              onPress={pickImage}
-            >
-              <Feather name="camera" size={24} color={theme.textSecondary} />
-              <ThemedText style={[styles.addPhotoText, { color: theme.textSecondary }]}>
-                Ekle
-              </ThemedText>
-            </Pressable>
-          )}
-        </View>
-
-        <ThemedText style={styles.sectionTitle}>Marka</ThemedText>
-        <ChipSelect options={BRANDS} selected={brand} onSelect={setBrand} />
-
-        <ThemedText style={styles.sectionTitle}>Model</ThemedText>
-        <TextInput
-          style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
-          value={model}
-          onChangeText={setModel}
-          placeholder="Model girin"
-          placeholderTextColor={theme.textSecondary}
-        />
-
-        <View style={styles.row}>
-          <View style={styles.halfInput}>
-            <ThemedText style={styles.sectionTitle}>Yıl</ThemedText>
-            <TextInput
-              style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
-              value={year}
-              onChangeText={setYear}
-              placeholder="2020"
-              placeholderTextColor={theme.textSecondary}
-              keyboardType="number-pad"
-              maxLength={4}
-            />
-          </View>
-          <View style={styles.halfInput}>
-            <ThemedText style={styles.sectionTitle}>Kilometre</ThemedText>
-            <TextInput
-              style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
-              value={km}
-              onChangeText={(text) => setKm(text.replace(/\D/g, ""))}
-              placeholder="50000"
-              placeholderTextColor={theme.textSecondary}
-              keyboardType="number-pad"
-            />
-          </View>
-        </View>
-
-        <ThemedText style={styles.sectionTitle}>Yakıt</ThemedText>
-        <ChipSelect options={FUEL_TYPES} selected={fuelType} onSelect={setFuelType} />
-
-        <ThemedText style={styles.sectionTitle}>Vites</ThemedText>
-        <ChipSelect options={TRANSMISSIONS} selected={transmission} onSelect={setTransmission} />
-
-        <ThemedText style={styles.sectionTitle}>Şehir</ThemedText>
-        <ChipSelect options={CITIES} selected={city} onSelect={setCity} />
-
-        <ThemedText style={styles.sectionTitle}>Takas Tercihi</ThemedText>
-        <View style={styles.toggleContainer}>
-          <Pressable
-            style={[
-              styles.toggleButton,
-              { backgroundColor: theme.backgroundSecondary },
-              onlySwap && styles.toggleButtonSelected,
-            ]}
-            onPress={() => {
-              Haptics.selectionAsync();
-              setOnlySwap(true);
-            }}
-          >
-            <ThemedText style={[styles.toggleText, onlySwap && styles.toggleTextSelected]}>
-              Sadece Takas
-            </ThemedText>
-          </Pressable>
-          <Pressable
-            style={[
-              styles.toggleButton,
-              { backgroundColor: theme.backgroundSecondary },
-              !onlySwap && styles.toggleButtonSelected,
-            ]}
-            onPress={() => {
-              Haptics.selectionAsync();
-              setOnlySwap(false);
-            }}
-          >
-            <ThemedText style={[styles.toggleText, !onlySwap && styles.toggleTextSelected]}>
-              Takas + Nakit
-            </ThemedText>
-          </Pressable>
-        </View>
-
-        <ThemedText style={styles.sectionTitle}>Kabul Ettiğim Markalar</ThemedText>
-        <ChipSelect
-          options={BRANDS}
-          selected={preferredBrands}
-          onSelect={handlePreferredBrandToggle}
-          multiSelect
-        />
-
-        <View style={[styles.historySection, { backgroundColor: theme.backgroundSecondary }]}>
-          <View style={styles.historySectionHeader}>
-            <Feather name="file-text" size={20} color={BrandColors.primaryBlue} />
-            <ThemedText style={styles.historySectionTitle}>Araç Geçmişi</ThemedText>
-          </View>
-
-          <View style={styles.historyRow}>
-            <ThemedText style={styles.historyLabel}>Kazasız</ThemedText>
-            <Pressable
-              style={[
-                styles.switch,
-                accidentFree ? styles.switchOn : styles.switchOff,
-              ]}
-              onPress={() => {
-                Haptics.selectionAsync();
-                setAccidentFree(!accidentFree);
-              }}
-            >
-              <View
-                style={[
-                  styles.switchThumb,
-                  accidentFree ? styles.switchThumbOn : styles.switchThumbOff,
-                ]}
-              />
-            </Pressable>
-          </View>
-
-          <ThemedText style={styles.historyLabel}>Tramer Kaydı (TL)</ThemedText>
-          <TextInput
-            style={[styles.input, { backgroundColor: theme.backgroundRoot, color: theme.text }]}
-            value={tramerRecord}
-            onChangeText={(text) => setTramerRecord(text.replace(/\D/g, ""))}
-            placeholder="0"
-            placeholderTextColor={theme.textSecondary}
-            keyboardType="number-pad"
-          />
-
-          <ThemedText style={[styles.historyLabel, { marginTop: Spacing.md }]}>Boyalı Parçalar</ThemedText>
-          <ChipSelect
-            options={CAR_PARTS}
-            selected={paintedParts}
-            onSelect={handlePaintedPartToggle}
-            multiSelect
-          />
-
-          <ThemedText style={[styles.historyLabel, { marginTop: Spacing.md }]}>Değişen Parçalar</ThemedText>
-          <ChipSelect
-            options={CAR_PARTS}
-            selected={replacedParts}
-            onSelect={handleReplacedPartToggle}
-            multiSelect
-          />
-        </View>
-
-        <View style={styles.swapActiveRow}>
-          <ThemedText style={styles.swapActiveLabel}>Takas için aktif</ThemedText>
-          <Pressable
-            style={[
-              styles.switch,
-              swapActive ? styles.switchOn : styles.switchOff,
-            ]}
-            onPress={() => {
-              Haptics.selectionAsync();
-              setSwapActive(!swapActive);
-            }}
-          >
-            <View
-              style={[
-                styles.switchThumb,
-                swapActive ? styles.switchThumbOn : styles.switchThumbOff,
-              ]}
-            />
-          </Pressable>
-        </View>
-
-        <Pressable
-          style={({ pressed }) => [
-            styles.submitButton,
-            !isValid && styles.submitButtonDisabled,
-            pressed && isValid && { opacity: 0.9, transform: [{ scale: 0.98 }] },
-          ]}
-          onPress={handleSubmit}
-          disabled={!isValid || createMutation.isPending}
-        >
-          {createMutation.isPending ? (
-            <ActivityIndicator color="#FFFFFF" />
-          ) : (
-            <ThemedText style={styles.submitButtonText}>İlanı Yayınla</ThemedText>
-          )}
-        </Pressable>
+        {renderStepContent()}
       </KeyboardAwareScrollViewCompat>
+
+      <View style={[styles.footer, { paddingBottom: insets.bottom + Spacing.md }]}>
+        {currentStep > 1 && (
+          <Pressable style={[styles.backButton, { borderColor: theme.border }]} onPress={prevStep}>
+            <Feather name="arrow-left" size={20} color={theme.text} />
+            <ThemedText style={styles.backButtonText}>Geri</ThemedText>
+          </Pressable>
+        )}
+
+        {currentStep < STEPS.length ? (
+          <Pressable
+            style={[styles.nextButton, currentStep === 1 && styles.fullWidthButton]}
+            onPress={nextStep}
+          >
+            <ThemedText style={styles.nextButtonText}>Devam</ThemedText>
+            <Feather name="arrow-right" size={20} color="#FFFFFF" />
+          </Pressable>
+        ) : (
+          <Pressable
+            style={[styles.submitButton, createMutation.isPending && { opacity: 0.7 }]}
+            onPress={handleSubmit}
+            disabled={createMutation.isPending}
+          >
+            {createMutation.isPending ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <>
+                <Feather name="check" size={20} color="#FFFFFF" />
+                <ThemedText style={styles.submitButtonText}>İlanı Yayınla</ThemedText>
+              </>
+            )}
+          </Pressable>
+        )}
+      </View>
     </ThemedView>
   );
 }
@@ -441,37 +722,110 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: Spacing.md,
-    paddingBottom: Spacing.md,
+    paddingBottom: Spacing.sm,
+  },
+  headerButton: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  headerCenter: {
+    flex: 1,
+    alignItems: "center",
   },
   headerTitle: {
     ...Typography.h3,
   },
-  content: {
+  stepIndicatorContainer: {
+    paddingHorizontal: Spacing.md,
+    paddingBottom: Spacing.md,
+  },
+  stepProgressBar: {
+    height: 4,
+    backgroundColor: "#E5E8EB",
+    borderRadius: 2,
+    marginBottom: Spacing.xs,
+  },
+  stepProgressFill: {
+    height: "100%",
+    backgroundColor: BrandColors.primaryBlue,
+    borderRadius: 2,
+  },
+  stepText: {
+    ...Typography.caption,
+    color: "#9CA3AF",
+    textAlign: "center",
+  },
+  scrollContent: {
     paddingHorizontal: Spacing.md,
   },
-  sectionTitle: {
+  stepContent: {
+    flex: 1,
+  },
+  stepHeader: {
+    alignItems: "center",
+    marginBottom: Spacing.xl,
+  },
+  stepIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: Spacing.md,
+  },
+  stepTitle: {
+    ...Typography.h2,
+    marginBottom: Spacing.xs,
+  },
+  stepDescription: {
+    ...Typography.body,
+    textAlign: "center",
+    paddingHorizontal: Spacing.lg,
+  },
+  fieldLabel: {
     ...Typography.small,
     fontWeight: "600",
     marginTop: Spacing.lg,
     marginBottom: Spacing.sm,
   },
-  photosContainer: {
+  fieldHint: {
+    ...Typography.caption,
+    marginBottom: Spacing.sm,
+    marginTop: -Spacing.xs,
+  },
+  photosGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: Spacing.sm,
   },
   photoWrapper: {
-    width: 80,
-    height: 80,
-    borderRadius: BorderRadius.sm,
+    width: (SCREEN_WIDTH - Spacing.md * 2 - Spacing.sm * 2) / 3,
+    aspectRatio: 1,
+    borderRadius: BorderRadius.md,
     overflow: "hidden",
   },
   photo: {
     width: "100%",
     height: "100%",
+  },
+  coverBadge: {
+    position: "absolute",
+    top: 4,
+    left: 4,
+    backgroundColor: BrandColors.primaryBlue,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.sm,
+  },
+  coverBadgeText: {
+    ...Typography.caption,
+    color: "#FFFFFF",
+    fontWeight: "600",
+    fontSize: 9,
   },
   removePhotoButton: {
     position: "absolute",
@@ -482,18 +836,30 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   addPhotoButton: {
-    width: 80,
-    height: 80,
-    borderRadius: BorderRadius.sm,
+    width: (SCREEN_WIDTH - Spacing.md * 2 - Spacing.sm * 2) / 3,
+    aspectRatio: 1,
+    borderRadius: BorderRadius.md,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
     borderStyle: "dashed",
-    borderColor: "#E5E8EB",
+    borderColor: BrandColors.primaryBlue,
   },
   addPhotoText: {
     ...Typography.caption,
     marginTop: 4,
+  },
+  photoTips: {
+    marginTop: Spacing.lg,
+    gap: Spacing.xs,
+  },
+  tipRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  tipText: {
+    ...Typography.small,
   },
   chipContainer: {
     flexDirection: "row",
@@ -516,9 +882,16 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   input: {
-    height: 48,
-    borderRadius: BorderRadius.sm,
+    height: 52,
+    borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
+    fontSize: 16,
+  },
+  textArea: {
+    minHeight: 100,
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
     fontSize: 16,
   },
   row: {
@@ -534,9 +907,12 @@ const styles = StyleSheet.create({
   },
   toggleButton: {
     flex: 1,
-    paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.sm,
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
   },
   toggleButtonSelected: {
     backgroundColor: BrandColors.primaryBlue,
@@ -548,15 +924,20 @@ const styles = StyleSheet.create({
   toggleTextSelected: {
     color: "#FFFFFF",
   },
-  swapActiveRow: {
+  switchRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: Spacing.xl,
     paddingVertical: Spacing.md,
+    marginTop: Spacing.md,
   },
-  swapActiveLabel: {
+  switchLabel: {
     ...Typography.body,
+    fontWeight: "500",
+  },
+  switchDescription: {
+    ...Typography.caption,
+    marginTop: 2,
   },
   switch: {
     width: 51,
@@ -582,44 +963,107 @@ const styles = StyleSheet.create({
   switchThumbOff: {
     transform: [{ translateX: 0 }],
   },
-  submitButton: {
-    backgroundColor: BrandColors.primaryBlue,
-    paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.sm,
-    alignItems: "center",
-    marginTop: Spacing.xl,
+  previewCard: {
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
   },
-  submitButtonDisabled: {
-    opacity: 0.5,
+  previewImage: {
+    width: "100%",
+    height: 200,
+  },
+  previewContent: {
+    padding: Spacing.md,
+  },
+  previewTitle: {
+    ...Typography.h3,
+    marginBottom: 4,
+  },
+  previewSubtitle: {
+    ...Typography.body,
+    marginBottom: Spacing.md,
+  },
+  previewTags: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.sm,
+    marginBottom: Spacing.md,
+  },
+  previewTag: {
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.full,
+  },
+  previewTagText: {
+    ...Typography.caption,
+    fontWeight: "500",
+  },
+  previewDivider: {
+    height: 1,
+    backgroundColor: "#E5E8EB",
+    marginVertical: Spacing.md,
+  },
+  previewRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: Spacing.sm,
+  },
+  previewLabel: {
+    ...Typography.small,
+  },
+  previewValue: {
+    ...Typography.small,
+    fontWeight: "600",
+  },
+  footer: {
+    flexDirection: "row",
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: "#E5E8EB",
+  },
+  backButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+  },
+  backButtonText: {
+    ...Typography.button,
+  },
+  nextButton: {
+    flex: 2,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+    backgroundColor: BrandColors.primaryBlue,
+  },
+  fullWidthButton: {
+    flex: 1,
+  },
+  nextButtonText: {
+    ...Typography.button,
+    color: "#FFFFFF",
+  },
+  submitButton: {
+    flex: 2,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+    backgroundColor: BrandColors.successGreen,
   },
   submitButtonText: {
     ...Typography.button,
     color: "#FFFFFF",
-  },
-  historySection: {
-    marginTop: Spacing.xl,
-    padding: Spacing.md,
-    borderRadius: BorderRadius.md,
-  },
-  historySectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-    marginBottom: Spacing.md,
-  },
-  historySectionTitle: {
-    ...Typography.body,
-    fontWeight: "600",
-  },
-  historyRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: Spacing.md,
-  },
-  historyLabel: {
-    ...Typography.small,
-    fontWeight: "500",
-    marginBottom: Spacing.xs,
   },
 });
