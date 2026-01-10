@@ -401,7 +401,7 @@ export default function CreateListingScreen() {
   const uploadPhoto = async (uri: string): Promise<string> => {
     try {
       const base64 = await FileSystem.readAsStringAsync(uri, {
-        encoding: FileSystem.EncodingType.Base64,
+        encoding: "base64",
       });
       
       const ext = uri.split('.').pop()?.toLowerCase() || 'jpg';
