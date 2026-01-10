@@ -59,6 +59,7 @@ export default function ListingDetailScreen() {
   const [offerModalVisible, setOfferModalVisible] = useState(false);
   const [customOfferPrice, setCustomOfferPrice] = useState("");
   const [activeTab, setActiveTab] = useState<"info" | "description">("info");
+  const [selectedOfferOption, setSelectedOfferOption] = useState<"10" | "15" | "custom" | null>(null);
 
   const { data: listing, isLoading } = useQuery<Listing>({
     queryKey: ["/api/listings", listingId],
@@ -643,41 +644,49 @@ export default function ListingDetailScreen() {
 
             <View style={styles.offerOptionsRow}>
               <Pressable
-                style={[styles.offerOptionButton, { borderColor: BrandColors.primaryBlue }]}
+                style={[
+                  styles.offerOptionButton,
+                  { borderColor: selectedOfferOption === "10" ? BrandColors.primaryBlue : "#E5E8EB" },
+                  selectedOfferOption === "10" && { backgroundColor: BrandColors.primaryBlue },
+                ]}
                 onPress={() => {
-                  if (listing?.estimatedValue) {
-                    const offer = Math.round(listing.estimatedValue * 0.90);
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    Alert.alert(
-                      "Teklif Gönderildi",
-                      `${offer.toLocaleString("tr-TR")} TL teklifiniz satıcıya iletildi.`
-                    );
-                    setOfferModalVisible(false);
-                  }
+                  Haptics.selectionAsync();
+                  setSelectedOfferOption("10");
+                  setCustomOfferPrice("");
                 }}
               >
-                <ThemedText style={styles.offerOptionDiscount}>%10 indirimli</ThemedText>
-                <ThemedText style={styles.offerOptionPrice}>
+                <ThemedText style={[
+                  styles.offerOptionDiscount,
+                  selectedOfferOption === "10" && { color: "#FFFFFF" },
+                ]}>%10 indirimli</ThemedText>
+                <ThemedText style={[
+                  styles.offerOptionPrice,
+                  selectedOfferOption === "10" && { color: "#FFFFFF" },
+                ]}>
                   {listing?.estimatedValue ? Math.round(listing.estimatedValue * 0.90).toLocaleString("tr-TR") : "—"} TL
                 </ThemedText>
               </Pressable>
 
               <Pressable
-                style={[styles.offerOptionButton, { borderColor: BrandColors.primaryBlue }]}
+                style={[
+                  styles.offerOptionButton,
+                  { borderColor: selectedOfferOption === "15" ? BrandColors.primaryBlue : "#E5E8EB" },
+                  selectedOfferOption === "15" && { backgroundColor: BrandColors.primaryBlue },
+                ]}
                 onPress={() => {
-                  if (listing?.estimatedValue) {
-                    const offer = Math.round(listing.estimatedValue * 0.85);
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    Alert.alert(
-                      "Teklif Gönderildi",
-                      `${offer.toLocaleString("tr-TR")} TL teklifiniz satıcıya iletildi.`
-                    );
-                    setOfferModalVisible(false);
-                  }
+                  Haptics.selectionAsync();
+                  setSelectedOfferOption("15");
+                  setCustomOfferPrice("");
                 }}
               >
-                <ThemedText style={styles.offerOptionDiscount}>%15 indirimli</ThemedText>
-                <ThemedText style={styles.offerOptionPrice}>
+                <ThemedText style={[
+                  styles.offerOptionDiscount,
+                  selectedOfferOption === "15" && { color: "#FFFFFF" },
+                ]}>%15 indirimli</ThemedText>
+                <ThemedText style={[
+                  styles.offerOptionPrice,
+                  selectedOfferOption === "15" && { color: "#FFFFFF" },
+                ]}>
                   {listing?.estimatedValue ? Math.round(listing.estimatedValue * 0.85).toLocaleString("tr-TR") : "—"} TL
                 </ThemedText>
               </Pressable>
@@ -695,11 +704,19 @@ export default function ListingDetailScreen() {
                     backgroundColor: theme.backgroundSecondary,
                     color: theme.text,
                   },
+                  selectedOfferOption === "custom" && { borderWidth: 2, borderColor: BrandColors.primaryBlue },
                 ]}
                 placeholder="Teklif tutarı girin"
                 placeholderTextColor={theme.textSecondary}
                 value={customOfferPrice}
-                onChangeText={setCustomOfferPrice}
+                onChangeText={(text) => {
+                  setCustomOfferPrice(text);
+                  if (text) {
+                    setSelectedOfferOption("custom");
+                  } else {
+                    setSelectedOfferOption(null);
+                  }
+                }}
                 keyboardType="numeric"
               />
               <ThemedText style={styles.priceSuffix}>TL</ThemedText>
@@ -709,21 +726,30 @@ export default function ListingDetailScreen() {
               style={[
                 styles.sendOfferButton,
                 { backgroundColor: BrandColors.primaryBlue },
-                !customOfferPrice && { opacity: 0.5 },
+                !selectedOfferOption && { opacity: 0.5 },
               ]}
               onPress={() => {
-                const price = parseInt(customOfferPrice.replace(/\D/g, ""), 10);
-                if (price > 0) {
+                let offerPrice = 0;
+                if (selectedOfferOption === "10" && listing?.estimatedValue) {
+                  offerPrice = Math.round(listing.estimatedValue * 0.90);
+                } else if (selectedOfferOption === "15" && listing?.estimatedValue) {
+                  offerPrice = Math.round(listing.estimatedValue * 0.85);
+                } else if (selectedOfferOption === "custom" && customOfferPrice) {
+                  offerPrice = parseInt(customOfferPrice.replace(/\D/g, ""), 10);
+                }
+                
+                if (offerPrice > 0) {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                   Alert.alert(
                     "Teklif Gönderildi",
-                    `${price.toLocaleString("tr-TR")} TL teklifiniz satıcıya iletildi.`
+                    `${offerPrice.toLocaleString("tr-TR")} TL teklifiniz satıcıya iletildi.`
                   );
                   setCustomOfferPrice("");
+                  setSelectedOfferOption(null);
                   setOfferModalVisible(false);
                 }
               }}
-              disabled={!customOfferPrice}
+              disabled={!selectedOfferOption}
             >
               <Feather name="send" size={18} color="#FFFFFF" />
               <ThemedText style={styles.sendOfferButtonText}>Teklif Gönder</ThemedText>
