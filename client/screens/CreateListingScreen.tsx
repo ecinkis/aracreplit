@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   View,
   StyleSheet,
@@ -9,6 +9,8 @@ import {
   Alert,
   ActivityIndicator,
   Dimensions,
+  Modal,
+  FlatList,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -24,10 +26,9 @@ import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
 import { Spacing, BorderRadius, Typography, BrandColors } from "@/constants/theme";
 import { apiRequest } from "@/lib/query-client";
+import { BRAND_NAMES, getModelsByBrand } from "@/constants/vehicleData";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-
-const BRANDS = ["Audi", "BMW", "Mercedes", "Volkswagen", "Toyota", "Honda", "Ford", "Renault", "Fiat", "Hyundai", "Kia", "Opel", "Peugeot", "Citroen", "Seat", "Skoda", "Volvo", "Nissan", "Mazda"];
 const FUEL_TYPES = ["Benzin", "Dizel", "Hibrit", "Elektrik", "LPG"];
 const TRANSMISSIONS = ["Manuel", "Otomatik"];
 const CITIES = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Adana", "Konya", "Gaziantep", "Şanlıurfa", "Kocaeli", "Mersin", "Diyarbakır", "Hatay", "Manisa", "Kayseri"];
@@ -57,6 +58,135 @@ function StepIndicator({ currentStep, totalSteps }: { currentStep: number; total
         Adım {currentStep} / {totalSteps}
       </ThemedText>
     </View>
+  );
+}
+
+function SearchablePicker({
+  label,
+  placeholder,
+  options,
+  selected,
+  onSelect,
+  disabled = false,
+}: {
+  label: string;
+  placeholder: string;
+  options: string[];
+  selected: string;
+  onSelect: (value: string) => void;
+  disabled?: boolean;
+}) {
+  const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredOptions = useMemo(() => {
+    if (!searchQuery) return options;
+    return options.filter((option) =>
+      option.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [options, searchQuery]);
+
+  return (
+    <>
+      <Pressable
+        style={[
+          styles.pickerButton,
+          { backgroundColor: theme.backgroundSecondary },
+          disabled && { opacity: 0.5 },
+        ]}
+        onPress={() => {
+          if (!disabled) {
+            Haptics.selectionAsync();
+            setModalVisible(true);
+          }
+        }}
+        disabled={disabled}
+      >
+        <ThemedText
+          style={[
+            styles.pickerButtonText,
+            !selected && { color: theme.textSecondary },
+          ]}
+        >
+          {selected || placeholder}
+        </ThemedText>
+        <Feather name="chevron-down" size={20} color={theme.textSecondary} />
+      </Pressable>
+
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={[styles.modalContainer, { backgroundColor: theme.backgroundDefault }]}>
+          <View style={[styles.modalHeader, { paddingTop: insets.top + Spacing.sm }]}>
+            <ThemedText style={styles.modalTitle}>{label}</ThemedText>
+            <Pressable onPress={() => setModalVisible(false)}>
+              <Feather name="x" size={24} color={theme.text} />
+            </Pressable>
+          </View>
+
+          <View style={[styles.searchContainer, { backgroundColor: theme.backgroundSecondary }]}>
+            <Feather name="search" size={20} color={theme.textSecondary} />
+            <TextInput
+              style={[styles.searchInput, { color: theme.text }]}
+              placeholder="Ara..."
+              placeholderTextColor={theme.textSecondary}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              autoFocus
+            />
+            {searchQuery.length > 0 && (
+              <Pressable onPress={() => setSearchQuery("")}>
+                <Feather name="x-circle" size={18} color={theme.textSecondary} />
+              </Pressable>
+            )}
+          </View>
+
+          <FlatList
+            data={filteredOptions}
+            keyExtractor={(item) => item}
+            contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.lg }}
+            renderItem={({ item }) => (
+              <Pressable
+                style={[
+                  styles.optionItem,
+                  selected === item && { backgroundColor: `${BrandColors.primaryBlue}15` },
+                ]}
+                onPress={() => {
+                  Haptics.selectionAsync();
+                  onSelect(item);
+                  setModalVisible(false);
+                  setSearchQuery("");
+                }}
+              >
+                <ThemedText
+                  style={[
+                    styles.optionText,
+                    selected === item && { color: BrandColors.primaryBlue, fontWeight: "600" },
+                  ]}
+                >
+                  {item}
+                </ThemedText>
+                {selected === item && (
+                  <Feather name="check" size={20} color={BrandColors.primaryBlue} />
+                )}
+              </Pressable>
+            )}
+            ListEmptyComponent={
+              <View style={styles.emptyList}>
+                <ThemedText style={{ color: theme.textSecondary }}>
+                  Sonuç bulunamadı
+                </ThemedText>
+              </View>
+            }
+          />
+        </View>
+      </Modal>
+    </>
   );
 }
 
@@ -338,6 +468,7 @@ export default function CreateListingScreen() {
         );
 
       case 2:
+        const availableModels = brand ? getModelsByBrand(brand) : [];
         return (
           <Animated.View entering={FadeIn} style={styles.stepContent}>
             <View style={styles.stepHeader}>
@@ -346,20 +477,30 @@ export default function CreateListingScreen() {
               </View>
               <ThemedText style={styles.stepTitle}>Araç Bilgileri</ThemedText>
               <ThemedText style={[styles.stepDescription, { color: theme.textSecondary }]}>
-                Aracınızın marka, model ve temel bilgilerini girin.
+                Aracınızın marka, model ve temel bilgilerini seçin.
               </ThemedText>
             </View>
 
             <ThemedText style={styles.fieldLabel}>Marka</ThemedText>
-            <ChipSelect options={BRANDS} selected={brand} onSelect={setBrand} />
+            <SearchablePicker
+              label="Marka Seçin"
+              placeholder="Marka seçin..."
+              options={BRAND_NAMES}
+              selected={brand}
+              onSelect={(selectedBrand) => {
+                setBrand(selectedBrand);
+                setModel("");
+              }}
+            />
 
             <ThemedText style={styles.fieldLabel}>Model</ThemedText>
-            <TextInput
-              style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
-              value={model}
-              onChangeText={setModel}
-              placeholder="Örn: A4, 320i, C180"
-              placeholderTextColor={theme.textSecondary}
+            <SearchablePicker
+              label="Model Seçin"
+              placeholder={brand ? "Model seçin..." : "Önce marka seçin"}
+              options={availableModels}
+              selected={model}
+              onSelect={setModel}
+              disabled={!brand}
             />
 
             <View style={styles.row}>
@@ -508,7 +649,7 @@ export default function CreateListingScreen() {
               Boş bırakırsanız tüm markalar kabul edilir
             </ThemedText>
             <ChipSelect
-              options={BRANDS}
+              options={BRAND_NAMES}
               selected={preferredBrands}
               onSelect={handlePreferredBrandToggle}
               multiSelect
@@ -1065,5 +1206,62 @@ const styles = StyleSheet.create({
   submitButtonText: {
     ...Typography.button,
     color: "#FFFFFF",
+  },
+  pickerButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+  },
+  pickerButtonText: {
+    ...Typography.body,
+  },
+  modalContainer: {
+    flex: 1,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.md,
+    paddingBottom: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E8EB",
+  },
+  modalTitle: {
+    ...Typography.h3,
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: Spacing.md,
+    marginVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    gap: Spacing.sm,
+  },
+  searchInput: {
+    flex: 1,
+    ...Typography.body,
+    padding: 0,
+  },
+  optionItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6",
+  },
+  optionText: {
+    ...Typography.body,
+  },
+  emptyList: {
+    alignItems: "center",
+    paddingVertical: Spacing.xl,
   },
 });
