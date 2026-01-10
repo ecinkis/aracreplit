@@ -770,22 +770,6 @@ export default function ListingDetailScreen() {
             <Feather name="message-circle" size={20} color={BrandColors.primaryBlue} />
             <ThemedText style={styles.footerButtonText}>Mesaj</ThemedText>
           </Pressable>
-
-          <Pressable
-            style={[styles.footerButton, { backgroundColor: "#25D366" }]}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              if (listingUser?.phone) {
-                const message = `Merhaba, ${listing?.brand} ${listing?.model} ilanınız için ilgileniyorum.`;
-                Linking.openURL(`https://wa.me/${listingUser.phone.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`);
-              } else {
-                Alert.alert("Bilgi", "Satıcının telefon numarası bulunamadı.");
-              }
-            }}
-          >
-            <Feather name="message-square" size={20} color="#FFFFFF" />
-            <ThemedText style={styles.footerButtonTextPrimary}>WhatsApp</ThemedText>
-          </Pressable>
         </View>
       )}
     </View>
