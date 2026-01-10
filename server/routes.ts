@@ -625,6 +625,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Web App - Integrated website for non-app users
+  app.get("/web", (req, res) => {
+    const webAppHtml = fs.readFileSync(
+      path.join(process.cwd(), "server", "templates", "web-app.html"),
+      "utf-8"
+    );
+    res.send(webAppHtml);
+  });
+
   // Robots.txt - block admin paths from search engines
   app.get("/robots.txt", (req, res) => {
     res.type("text/plain");
