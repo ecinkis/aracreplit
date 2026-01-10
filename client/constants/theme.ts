@@ -2,6 +2,7 @@ import { Platform } from "react-native";
 
 export const BrandColors = {
   primaryOrange: "#FF6B35",
+  secondaryBlue: "#1C6BF9",
   deepNavy: "#1A2332",
   successGreen: "#00C48C",
   alertRed: "#FF4757",

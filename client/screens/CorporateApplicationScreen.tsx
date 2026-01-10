@@ -160,7 +160,7 @@ export default function CorporateApplicationScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.infoCard}>
-          <Feather name="info" size={20} color={BrandColors.primaryOrange} />
+          <Feather name="info" size={20} color={BrandColors.secondaryBlue} />
           <ThemedText style={styles.infoText}>
             Kurumsal uyelik icin asagidaki bilgileri doldurun ve gerekli evraklari yukleyin.
           </ThemedText>
@@ -261,7 +261,7 @@ export default function CorporateApplicationScreen() {
               pickDocument();
             }}
           >
-            <Feather name="upload" size={20} color={BrandColors.primaryOrange} />
+            <Feather name="upload" size={20} color={BrandColors.secondaryBlue} />
             <ThemedText style={styles.uploadButtonText}>Evrak Yukle</ThemedText>
           </Pressable>
         </View>
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
   },
   infoCard: {
     flexDirection: "row",
-    backgroundColor: "#FFF7ED",
+    backgroundColor: "#EBF2FF",
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.lg,
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
   infoText: {
     flex: 1,
     fontSize: 13,
-    color: "#92400E",
+    color: "#1C5BB9",
     lineHeight: 20,
   },
   section: {
@@ -396,21 +396,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFF7ED",
+    backgroundColor: "#EBF2FF",
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
     borderStyle: "dashed",
-    borderColor: BrandColors.primaryOrange,
+    borderColor: BrandColors.secondaryBlue,
     gap: Spacing.sm,
   },
   uploadButtonText: {
     fontSize: 14,
     fontWeight: "600",
-    color: BrandColors.primaryOrange,
+    color: BrandColors.secondaryBlue,
   },
   submitButton: {
-    backgroundColor: BrandColors.primaryOrange,
+    backgroundColor: BrandColors.secondaryBlue,
     paddingVertical: Spacing.md + 4,
     borderRadius: BorderRadius.md,
     alignItems: "center",
