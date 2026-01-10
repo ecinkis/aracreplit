@@ -3,881 +3,932 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Araç Takası - Türkiye'nin İlk Araç Takas Platformu</title>
-  <meta name="description" content="Aracınızı kolayca takas edin. Tinder tarzı eşleşme sistemi ile uyumlu araçları bulun.">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Araç Takası - Türkiye'nin Araç Takas Platformu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --primary: #FF6B35;
-      --primary-dark: #E55A2B;
-      --navy: #1A2332;
-      --success: #00C48C;
-      --danger: #FF4757;
-      --info: #4A90E2;
-      --warning: #FFA726;
-      --bg: #F8F9FA;
-      --surface: #FFFFFF;
-      --border: #E5E8EB;
-      --text-primary: rgba(26, 35, 50, 0.9);
-      --text-secondary: rgba(107, 114, 128, 0.8);
-      --text-muted: #9CA3AF;
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-      --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-      --transition: 0.2s ease;
-    }
-
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
-      color: var(--text-primary);
-      line-height: 1.6;
+    :root {
+      --primary: #FF6B35;
+      --primary-dark: #e55a2b;
+      --primary-light: #fff3ef;
+      --navy: #1A2332;
+      --text-primary: #333;
+      --text-secondary: #666;
+      --text-muted: #999;
+      --border: #ddd;
+      --border-light: #eee;
+      --surface: #fff;
+      --background: #f5f5f5;
+      --success: #28a745;
+      --warning: #ffc107;
+      --danger: #dc3545;
+      --info: #17a2b8;
     }
 
-    h1, h2, h3, h4, h5, h6 {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 600;
+    body {
+      font-family: 'Open Sans', Arial, sans-serif;
+      background: var(--background);
+      color: var(--text-primary);
+      font-size: 13px;
+      line-height: 1.4;
     }
 
     a {
-      color: inherit;
+      color: var(--primary);
       text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      background: var(--navy);
+      color: #fff;
+      font-size: 11px;
+      padding: 6px 0;
+    }
+
+    .top-bar .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .top-bar a {
+      color: #ccc;
+      margin-left: 15px;
+    }
+
+    .top-bar a:hover {
+      color: #fff;
     }
 
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 20px;
+      padding: 0 15px;
     }
 
-    /* Navigation */
-    .nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
+    /* Header */
+    .header {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
-      z-index: 1000;
-      transition: box-shadow var(--transition);
+      padding: 10px 0;
     }
 
-    .nav.scrolled {
-      box-shadow: var(--shadow-md);
-    }
-
-    .nav-inner {
+    .header-inner {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      height: 64px;
+      gap: 20px;
     }
 
-    .nav-logo {
+    .logo {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-family: 'Montserrat', sans-serif;
+      gap: 8px;
+      font-size: 22px;
       font-weight: 700;
-      font-size: 20px;
       color: var(--navy);
     }
 
-    .nav-logo-icon {
+    .logo-icon {
       width: 36px;
       height: 36px;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 32px;
-    }
-
-    .nav-link {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      transition: color var(--transition);
-    }
-
-    .nav-link:hover {
-      color: var(--primary);
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 20px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      border: none;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: all var(--transition);
-    }
-
-    .btn-primary {
       background: var(--primary);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-dark);
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .btn-secondary {
-      background: var(--surface);
-      color: var(--navy);
-      border: 1px solid var(--border);
-    }
-
-    .btn-secondary:hover {
-      background: var(--bg);
-      border-color: var(--text-muted);
-    }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--text-secondary);
-    }
-
-    .btn-ghost:hover {
-      color: var(--primary);
-    }
-
-    .btn-lg {
-      padding: 14px 28px;
-      font-size: 16px;
-    }
-
-    /* Mobile Nav Toggle */
-    .nav-toggle {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 4px;
-    }
-
-    .nav-toggle span {
-      width: 24px;
-      height: 2px;
-      background: var(--navy);
-      border-radius: 2px;
-      transition: all var(--transition);
-    }
-
-    /* Hero Section */
-    .hero {
-      padding: 120px 0 80px;
-      background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
-    }
-
-    .hero-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: center;
-    }
-
-    .hero-content {
-      max-width: 540px;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
-      background: rgba(255, 107, 53, 0.1);
-      color: var(--primary);
-      font-size: 13px;
-      font-weight: 600;
-      border-radius: 20px;
-      margin-bottom: 20px;
-    }
-
-    .hero-title {
-      font-size: 48px;
-      font-weight: 700;
-      line-height: 1.15;
-      color: var(--navy);
-      margin-bottom: 20px;
-    }
-
-    .hero-title span {
-      color: var(--primary);
-    }
-
-    .hero-desc {
-      font-size: 18px;
-      color: var(--text-secondary);
-      margin-bottom: 32px;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 40px;
-    }
-
-    .hero-stats {
-      display: flex;
-      gap: 40px;
-    }
-
-    .hero-stat {
-      text-align: left;
-    }
-
-    .hero-stat-value {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--navy);
-    }
-
-    .hero-stat-label {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .hero-visual {
-      position: relative;
-    }
-
-    .hero-cards {
-      position: relative;
-      width: 100%;
-      height: 480px;
-    }
-
-    .hero-card {
-      position: absolute;
-      width: 280px;
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-lg);
-      overflow: hidden;
-      transition: transform 0.3s ease;
-    }
-
-    .hero-card:nth-child(1) {
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%) rotate(-5deg);
-      z-index: 3;
-    }
-
-    .hero-card:nth-child(2) {
-      top: 40px;
-      left: 20%;
-      transform: rotate(8deg);
-      z-index: 2;
-      opacity: 0.9;
-    }
-
-    .hero-card:nth-child(3) {
-      top: 80px;
-      right: 10%;
-      transform: rotate(-3deg);
-      z-index: 1;
-      opacity: 0.7;
-    }
-
-    .hero-card-img {
-      width: 100%;
-      height: 160px;
-      background: linear-gradient(135deg, #ddd 0%, #eee 100%);
-      position: relative;
-    }
-
-    .hero-card-img::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      background: linear-gradient(transparent, rgba(0,0,0,0.4));
-    }
-
-    .hero-card-body {
-      padding: 16px;
-    }
-
-    .hero-card-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .hero-card-meta {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 12px;
-    }
-
-    .hero-card-match {
+      border-radius: 6px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
     }
 
-    .match-bar {
+    .logo-icon svg {
+      width: 22px;
+      height: 22px;
+      color: #fff;
+    }
+
+    .search-box {
       flex: 1;
-      height: 6px;
-      background: var(--border);
-      border-radius: 3px;
-      overflow: hidden;
+      display: flex;
+      max-width: 500px;
     }
 
-    .match-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--success), #00E5A0);
-      border-radius: 3px;
+    .search-box input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-right: none;
+      border-radius: 4px 0 0 4px;
+      font-size: 13px;
+      outline: none;
     }
 
-    .match-label {
+    .search-box input:focus {
+      border-color: var(--primary);
+    }
+
+    .search-box button {
+      padding: 10px 18px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .search-box button:hover {
+      background: var(--primary-dark);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-link {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--text-primary);
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .header-link:hover {
+      background: var(--background);
+      text-decoration: none;
+    }
+
+    .header-link svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .btn-post {
+      background: var(--primary);
+      color: #fff !important;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-post:hover {
+      background: var(--primary-dark);
+      text-decoration: none;
+    }
+
+    /* Category Nav */
+    .category-nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .category-nav ul {
+      display: flex;
+      list-style: none;
+      gap: 0;
+    }
+
+    .category-nav li {
+      position: relative;
+    }
+
+    .category-nav a {
+      display: block;
+      padding: 12px 16px;
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 500;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .category-nav a:hover,
+    .category-nav a.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      text-decoration: none;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      padding: 12px 0;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .breadcrumb a {
+      color: var(--text-secondary);
+    }
+
+    .breadcrumb a:hover {
+      color: var(--primary);
+    }
+
+    .breadcrumb span {
+      margin: 0 6px;
+      color: var(--text-muted);
+    }
+
+    /* Main Layout */
+    .main-layout {
+      display: flex;
+      gap: 20px;
+      padding: 15px 0 30px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      flex-shrink: 0;
+    }
+
+    .filter-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+
+    .filter-header {
+      padding: 12px 15px;
+      font-weight: 600;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .filter-clear {
+      font-size: 11px;
+      color: var(--primary);
+      font-weight: 400;
+    }
+
+    .filter-content {
+      padding: 12px 15px;
+    }
+
+    .filter-group {
+      margin-bottom: 15px;
+    }
+
+    .filter-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .filter-label {
       font-size: 12px;
       font-weight: 600;
-      color: var(--success);
-    }
-
-    /* Features Section */
-    .features {
-      padding: 80px 0;
-    }
-
-    .section-header {
-      text-align: center;
-      max-width: 600px;
-      margin: 0 auto 60px;
-    }
-
-    .section-title {
-      font-size: 36px;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 16px;
-    }
-
-    .section-desc {
-      font-size: 16px;
       color: var(--text-secondary);
+      margin-bottom: 8px;
+      display: block;
     }
 
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 32px;
-    }
-
-    .feature-card {
-      background: var(--surface);
+    .filter-select {
+      width: 100%;
+      padding: 8px 10px;
       border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 32px;
-      transition: all var(--transition);
-    }
-
-    .feature-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
-      border-color: transparent;
-    }
-
-    .feature-icon {
-      width: 56px;
-      height: 56px;
-      background: rgba(255, 107, 53, 0.1);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-
-    .feature-icon svg {
-      width: 28px;
-      height: 28px;
-      color: var(--primary);
-    }
-
-    .feature-title {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--navy);
-      margin-bottom: 12px;
-    }
-
-    .feature-desc {
-      font-size: 14px;
-      color: var(--text-secondary);
-    }
-
-    /* How It Works */
-    .how-it-works {
-      padding: 80px 0;
+      border-radius: 4px;
+      font-size: 12px;
       background: var(--surface);
+      cursor: pointer;
     }
 
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 32px;
-      position: relative;
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--primary);
     }
 
-    .steps-grid::before {
-      content: '';
-      position: absolute;
-      top: 40px;
-      left: 15%;
-      right: 15%;
-      height: 2px;
-      background: linear-gradient(90deg, var(--border), var(--primary), var(--border));
-      z-index: 0;
+    .filter-input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 12px;
     }
 
-    .step-card {
-      text-align: center;
-      position: relative;
-      z-index: 1;
+    .filter-input:focus {
+      outline: none;
+      border-color: var(--primary);
     }
 
-    .step-number {
-      width: 80px;
-      height: 80px;
-      background: var(--bg);
-      border: 3px solid var(--primary);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 24px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    .step-title {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--navy);
-      margin-bottom: 12px;
-    }
-
-    .step-desc {
-      font-size: 14px;
-      color: var(--text-secondary);
-    }
-
-    /* Listings Section */
-    .listings {
-      padding: 80px 0;
-    }
-
-    .listings-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 40px;
-    }
-
-    .listings-tabs {
+    .filter-row {
       display: flex;
       gap: 8px;
     }
 
-    .tab-btn {
-      padding: 8px 16px;
-      font-size: 14px;
-      font-weight: 500;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
+    .filter-row .filter-input {
+      flex: 1;
+    }
+
+    .filter-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      margin-bottom: 8px;
       cursor: pointer;
-      transition: all var(--transition);
     }
 
-    .tab-btn:hover {
-      border-color: var(--primary);
-      color: var(--primary);
+    .filter-checkbox input {
+      accent-color: var(--primary);
     }
 
-    .tab-btn.active {
+    .btn-filter {
+      width: 100%;
+      padding: 10px;
       background: var(--primary);
-      border-color: var(--primary);
-      color: white;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
     }
 
-    .listings-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
+    .btn-filter:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Content Area */
+    .content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Results Header */
+    .results-header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 12px 15px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .results-count {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .results-count strong {
+      color: var(--text-primary);
+    }
+
+    .results-sort {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .results-sort select {
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    /* Listing Cards - List View */
+    .listings-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     .listing-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
+      border-radius: 4px;
+      display: flex;
       overflow: hidden;
-      transition: all var(--transition);
+      transition: box-shadow 0.2s;
       cursor: pointer;
     }
 
     .listing-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
-      border-color: transparent;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
-    .listing-img {
-      width: 100%;
-      height: 180px;
-      background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
+    .listing-image {
+      width: 200px;
+      height: 150px;
+      flex-shrink: 0;
+      background: var(--background);
       position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      overflow: hidden;
     }
 
-    .listing-img img {
+    .listing-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
-    .listing-img svg {
+    .listing-image-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+    }
+
+    .listing-image-placeholder svg {
       width: 48px;
       height: 48px;
-      color: #bbb;
     }
 
     .listing-badges {
       position: absolute;
-      top: 12px;
-      left: 12px;
+      top: 8px;
+      left: 8px;
       display: flex;
-      gap: 6px;
+      gap: 4px;
     }
 
     .listing-badge {
-      padding: 4px 10px;
-      font-size: 11px;
+      padding: 3px 8px;
+      font-size: 10px;
       font-weight: 600;
-      background: rgba(0,0,0,0.7);
-      color: white;
-      border-radius: 4px;
-    }
-
-    .listing-badge.featured {
+      border-radius: 3px;
       background: var(--primary);
+      color: #fff;
     }
 
-    .listing-badge.urgent {
-      background: var(--danger);
+    .listing-badge.vitrin {
+      background: var(--warning);
+      color: #333;
     }
 
     .listing-body {
-      padding: 16px;
+      flex: 1;
+      padding: 12px 15px;
+      display: flex;
+      flex-direction: column;
     }
 
     .listing-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
       color: var(--navy);
       margin-bottom: 6px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
-    .listing-meta {
-      font-size: 13px;
+    .listing-title:hover {
+      color: var(--primary);
+    }
+
+    .listing-specs {
+      display: flex;
+      gap: 15px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .listing-spec {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .listing-spec svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .listing-location {
+      font-size: 12px;
       color: var(--text-muted);
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
 
     .listing-match {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 8px;
+      margin-top: auto;
     }
 
     .listing-match-bar {
       flex: 1;
-      height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      margin-right: 12px;
+      max-width: 120px;
+      height: 6px;
+      background: var(--border-light);
+      border-radius: 3px;
       overflow: hidden;
     }
 
     .listing-match-fill {
       height: 100%;
-      background: var(--success);
-      border-radius: 2px;
+      background: linear-gradient(90deg, var(--primary), #ff9f7a);
+      border-radius: 3px;
     }
 
-    .listing-match-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--success);
-    }
-
-    /* CTA Section */
-    .cta {
-      padding: 80px 0;
-      background: linear-gradient(135deg, var(--navy) 0%, #2D3B4E 100%);
-    }
-
-    .cta-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 40px;
-    }
-
-    .cta-content {
-      max-width: 500px;
-    }
-
-    .cta-title {
-      font-size: 32px;
-      font-weight: 700;
-      color: white;
-      margin-bottom: 16px;
-    }
-
-    .cta-desc {
-      font-size: 16px;
-      color: rgba(255,255,255,0.7);
-      margin-bottom: 24px;
-    }
-
-    .cta-actions {
-      display: flex;
-      gap: 16px;
-    }
-
-    .cta .btn-primary {
-      background: var(--primary);
-    }
-
-    .cta .btn-secondary {
-      background: transparent;
-      border-color: rgba(255,255,255,0.3);
-      color: white;
-    }
-
-    .cta .btn-secondary:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: rgba(255,255,255,0.5);
-    }
-
-    .cta-app-links {
-      display: flex;
-      gap: 16px;
-    }
-
-    .app-link {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 20px;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: var(--radius-sm);
-      color: white;
-      transition: all var(--transition);
-    }
-
-    .app-link:hover {
-      background: rgba(255,255,255,0.15);
-      border-color: rgba(255,255,255,0.4);
-    }
-
-    .app-link svg {
-      width: 28px;
-      height: 28px;
-    }
-
-    .app-link-text {
-      text-align: left;
-    }
-
-    .app-link-small {
+    .listing-match-text {
       font-size: 11px;
-      opacity: 0.7;
-    }
-
-    .app-link-name {
-      font-size: 14px;
       font-weight: 600;
+      color: var(--primary);
     }
 
-    /* Footer */
-    .footer {
-      padding: 60px 0 40px;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-    }
-
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr;
-      gap: 40px;
-      margin-bottom: 40px;
-    }
-
-    .footer-brand {
-      max-width: 280px;
-    }
-
-    .footer-logo {
+    .listing-sidebar {
+      width: 140px;
+      padding: 12px;
+      border-left: 1px solid var(--border-light);
       display: flex;
-      align-items: center;
-      gap: 10px;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      font-size: 18px;
-      color: var(--navy);
-      margin-bottom: 16px;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: space-between;
     }
 
-    .footer-desc {
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin-bottom: 20px;
+    .listing-date {
+      font-size: 11px;
+      color: var(--text-muted);
     }
 
-    .footer-social {
-      display: flex;
-      gap: 12px;
-    }
-
-    .footer-social a {
-      width: 40px;
-      height: 40px;
-      background: var(--bg);
-      border-radius: var(--radius-sm);
+    .listing-favorite {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--text-secondary);
-      transition: all var(--transition);
+      background: var(--surface);
+      cursor: pointer;
+      transition: all 0.2s;
     }
 
-    .footer-social a:hover {
+    .listing-favorite:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .listing-favorite svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin-top: 20px;
+    }
+
+    .pagination a {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--text-primary);
+      background: var(--surface);
+    }
+
+    .pagination a:hover,
+    .pagination a.active {
       background: var(--primary);
-      color: white;
+      border-color: var(--primary);
+      color: #fff;
+      text-decoration: none;
     }
 
-    .footer-social svg {
+    /* Detail Page */
+    .detail-layout {
+      display: flex;
+      gap: 20px;
+      padding: 15px 0 30px;
+    }
+
+    .detail-main {
+      flex: 1;
+    }
+
+    .detail-sidebar {
+      width: 300px;
+      flex-shrink: 0;
+    }
+
+    .detail-gallery {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+
+    .detail-main-image {
+      height: 400px;
+      background: var(--background);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .detail-main-image img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .detail-main-image svg {
+      width: 80px;
+      height: 80px;
+      color: var(--text-muted);
+    }
+
+    .detail-thumbnails {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .detail-thumbnail {
+      width: 60px;
+      height: 45px;
+      border: 2px solid transparent;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .detail-thumbnail.active {
+      border-color: var(--primary);
+    }
+
+    .detail-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .detail-info {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+
+    .detail-title-section {
+      padding: 15px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .detail-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .detail-meta {
+      display: flex;
+      gap: 15px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .detail-specs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+    }
+
+    .detail-spec-item {
+      padding: 10px 15px;
+      border-bottom: 1px solid var(--border-light);
+      border-right: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .detail-spec-item:nth-child(2n) {
+      border-right: none;
+    }
+
+    .detail-spec-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .detail-spec-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .detail-description {
+      padding: 15px;
+    }
+
+    .detail-description h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .detail-description p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Seller Box */
+    .seller-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+
+    .seller-header {
+      padding: 15px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .seller-avatar {
+      width: 50px;
+      height: 50px;
+      background: var(--background);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .seller-avatar svg {
+      width: 24px;
+      height: 24px;
+      color: var(--text-muted);
+    }
+
+    .seller-info h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .seller-info p {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .seller-trust {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 15px;
+      background: var(--primary-light);
+    }
+
+    .seller-trust svg {
+      width: 16px;
+      height: 16px;
+      color: var(--primary);
+    }
+
+    .seller-trust span {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .seller-actions {
+      padding: 15px;
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .btn-action:last-child {
+      margin-bottom: 0;
+    }
+
+    .btn-action.primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-action.primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-action.secondary {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+
+    .btn-action.secondary:hover {
+      background: var(--background);
+    }
+
+    .btn-action svg {
       width: 18px;
       height: 18px;
     }
 
-    .footer-col-title {
-      font-size: 14px;
+    /* Match Box */
+    .match-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 15px;
+    }
+
+    .match-box h4 {
+      font-size: 13px;
       font-weight: 600;
-      color: var(--navy);
-      margin-bottom: 20px;
-    }
-
-    .footer-links {
-      list-style: none;
-    }
-
-    .footer-links li {
       margin-bottom: 12px;
     }
 
-    .footer-links a {
-      font-size: 14px;
-      color: var(--text-secondary);
-      transition: color var(--transition);
+    .match-percentage {
+      text-align: center;
+      padding: 20px 0;
     }
 
-    .footer-links a:hover {
-      color: var(--primary);
-    }
-
-    .footer-bottom {
+    .match-circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: conic-gradient(var(--primary) calc(var(--percent) * 1%), var(--border-light) 0);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
+      justify-content: center;
+      margin: 0 auto 10px;
+      position: relative;
     }
 
-    .footer-copyright {
-      font-size: 13px;
-      color: var(--text-muted);
+    .match-circle::before {
+      content: '';
+      width: 80px;
+      height: 80px;
+      background: var(--surface);
+      border-radius: 50%;
+      position: absolute;
     }
 
-    .footer-legal {
-      display: flex;
-      gap: 24px;
-    }
-
-    .footer-legal a {
-      font-size: 13px;
-      color: var(--text-muted);
-      transition: color var(--transition);
-    }
-
-    .footer-legal a:hover {
+    .match-circle span {
+      position: relative;
+      font-size: 24px;
+      font-weight: 700;
       color: var(--primary);
+    }
+
+    .match-label {
+      font-size: 12px;
+      color: var(--text-secondary);
     }
 
     /* Auth Modal */
     .modal-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      inset: 0;
       background: rgba(0,0,0,0.5);
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 2000;
-      backdrop-filter: blur(4px);
+      z-index: 1000;
     }
 
     .modal-overlay.active {
@@ -886,608 +937,117 @@
 
     .modal {
       background: var(--surface);
-      border-radius: var(--radius-lg);
+      border-radius: 8px;
       width: 100%;
-      max-width: 420px;
-      padding: 32px;
-      box-shadow: var(--shadow-lg);
-      animation: modalIn 0.2s ease;
-    }
-
-    @keyframes modalIn {
-      from {
-        opacity: 0;
-        transform: scale(0.95) translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
+      max-width: 400px;
+      max-height: 90vh;
+      overflow: auto;
     }
 
     .modal-header {
-      text-align: center;
-      margin-bottom: 24px;
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .modal-title {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 8px;
-    }
-
-    .modal-desc {
-      font-size: 14px;
-      color: var(--text-secondary);
+    .modal-header h3 {
+      font-size: 16px;
+      font-weight: 600;
     }
 
     .modal-close {
-      position: absolute;
-      top: 16px;
-      right: 16px;
       width: 32px;
       height: 32px;
-      background: var(--bg);
       border: none;
-      border-radius: 50%;
+      background: none;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
+      border-radius: 4px;
+    }
+
+    .modal-close:hover {
+      background: var(--background);
+    }
+
+    .modal-body {
+      padding: 20px;
     }
 
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
-    .form-label {
+    .form-group label {
       display: block;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
       font-size: 13px;
-      font-weight: 500;
-      color: var(--navy);
-      margin-bottom: 8px;
     }
 
-    .form-input {
-      width: 100%;
-      padding: 12px 16px;
-      font-size: 15px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--bg);
-      transition: all var(--transition);
-    }
-
-    .form-input:focus {
-      outline: none;
-      border-color: var(--primary);
-      background: var(--surface);
-      box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
-    }
-
-    .form-phone {
-      display: flex;
-      gap: 8px;
-    }
-
-    .form-phone-prefix {
-      width: 72px;
-      text-align: center;
-    }
-
-    .form-btn {
-      width: 100%;
-      padding: 14px;
-      margin-top: 8px;
-    }
-
-    .modal-footer {
-      text-align: center;
-      margin-top: 24px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
-    }
-
-    .modal-footer-text {
-      font-size: 14px;
-      color: var(--text-secondary);
-    }
-
-    .modal-footer-link {
-      color: var(--primary);
-      font-weight: 500;
-      cursor: pointer;
-    }
-
-    .modal-footer-link:hover {
-      text-decoration: underline;
-    }
-
-    /* Loading Spinner */
-    .spinner {
-      width: 20px;
-      height: 20px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Mobile Menu */
-    .mobile-menu {
-      display: none;
-      position: fixed;
-      top: 64px;
-      left: 0;
-      right: 0;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 20px;
-      z-index: 999;
-    }
-
-    .mobile-menu.active {
-      display: block;
-    }
-
-    .mobile-menu-links {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-
-    .mobile-menu-link {
-      font-size: 16px;
-      font-weight: 500;
-      color: var(--text-primary);
-    }
-
-    .mobile-menu-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    /* Responsive */
-    @media (max-width: 1024px) {
-      .hero-inner {
-        grid-template-columns: 1fr;
-        text-align: center;
-      }
-
-      .hero-content {
-        max-width: 100%;
-      }
-
-      .hero-actions {
-        justify-content: center;
-      }
-
-      .hero-stats {
-        justify-content: center;
-      }
-
-      .hero-visual {
-        display: none;
-      }
-
-      .features-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .steps-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 40px;
-      }
-
-      .steps-grid::before {
-        display: none;
-      }
-
-      .listings-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .cta-inner {
-        flex-direction: column;
-        text-align: center;
-      }
-
-      .cta-actions {
-        justify-content: center;
-      }
-
-      .footer-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 768px) {
-      .nav-links {
-        display: none;
-      }
-
-      .nav-toggle {
-        display: flex;
-      }
-
-      .nav-actions {
-        display: none;
-      }
-
-      .hero {
-        padding: 100px 0 60px;
-      }
-
-      .hero-title {
-        font-size: 32px;
-      }
-
-      .hero-desc {
-        font-size: 16px;
-      }
-
-      .hero-actions {
-        flex-direction: column;
-      }
-
-      .hero-stats {
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      .section-title {
-        font-size: 28px;
-      }
-
-      .features-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .steps-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .listings-header {
-        flex-direction: column;
-        gap: 20px;
-        align-items: flex-start;
-      }
-
-      .listings-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .cta-app-links {
-        flex-direction: column;
-      }
-
-      .footer-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .footer-bottom {
-        flex-direction: column;
-        gap: 16px;
-        text-align: center;
-      }
-    }
-
-    /* Page Styles */
-    .page {
-      display: none;
-      padding-top: 64px;
-      min-height: 100vh;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    /* Browse Page */
-    .browse-header {
-      padding: 32px 0;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .browse-title {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 20px;
-    }
-
-    .filters-bar {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .filter-select {
-      padding: 10px 16px;
-      font-size: 14px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--surface);
-      cursor: pointer;
-      min-width: 140px;
-    }
-
-    .filter-select:focus {
+    .form-group input:focus,
+    .form-group select:focus {
       outline: none;
       border-color: var(--primary);
     }
 
-    .browse-content {
-      padding: 40px 0;
-    }
-
-    .browse-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-    }
-
-    @media (max-width: 1024px) {
-      .browse-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 768px) {
-      .browse-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 80px 20px;
-    }
-
-    .empty-state svg {
-      width: 80px;
-      height: 80px;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-    }
-
-    .empty-state-title {
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--navy);
-      margin-bottom: 8px;
-    }
-
-    .empty-state-desc {
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin-bottom: 24px;
-    }
-
-    /* Detail Page */
-    .detail-header {
-      padding: 32px 0;
-      background: var(--surface);
-    }
-
-    .detail-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin-bottom: 24px;
-      cursor: pointer;
-      transition: color var(--transition);
-    }
-
-    .detail-back:hover {
-      color: var(--primary);
-    }
-
-    .detail-back svg {
-      width: 18px;
-      height: 18px;
-    }
-
-    .detail-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 40px;
-    }
-
-    .detail-gallery {
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      background: var(--border);
-      height: 400px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .detail-gallery img {
+    .btn-submit {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .detail-gallery svg {
-      width: 64px;
-      height: 64px;
-      color: var(--text-muted);
-    }
-
-    .detail-info {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-    }
-
-    .detail-title {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 8px;
-    }
-
-    .detail-meta {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-    }
-
-    .detail-specs {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-      padding-bottom: 24px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .detail-spec {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .detail-spec-label {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .detail-spec-value {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--navy);
-    }
-
-    .detail-match {
-      margin-bottom: 24px;
-    }
-
-    .detail-match-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-
-    .detail-match-title {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--navy);
-    }
-
-    .detail-match-value {
+      padding: 12px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
       font-size: 14px;
       font-weight: 600;
-      color: var(--success);
+      cursor: pointer;
     }
 
-    .detail-match-bar {
-      height: 8px;
-      background: var(--border);
-      border-radius: 4px;
-      overflow: hidden;
+    .btn-submit:hover {
+      background: var(--primary-dark);
     }
 
-    .detail-match-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--success), #00E5A0);
-      border-radius: 4px;
-    }
-
-    .detail-owner {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 16px;
-      background: var(--bg);
-      border-radius: var(--radius-md);
-      margin-bottom: 20px;
-    }
-
-    .detail-owner-avatar {
-      width: 48px;
-      height: 48px;
-      background: var(--border);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .detail-owner-avatar svg {
-      width: 24px;
-      height: 24px;
-      color: var(--text-muted);
-    }
-
-    .detail-owner-info {
-      flex: 1;
-    }
-
-    .detail-owner-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--navy);
-    }
-
-    .detail-owner-trust {
+    .auth-switch {
+      text-align: center;
+      margin-top: 15px;
       font-size: 12px;
-      color: var(--text-muted);
+      color: var(--text-secondary);
     }
 
-    .detail-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    .auth-switch a {
+      font-weight: 600;
     }
 
-    @media (max-width: 768px) {
-      .detail-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .detail-gallery {
-        height: 280px;
-      }
-    }
-
-    /* User Dashboard */
-    .dashboard {
-      padding: 40px 0;
-    }
-
+    /* Dashboard */
     .dashboard-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 40px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
     }
 
     .dashboard-user {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 15px;
     }
 
     .dashboard-avatar {
-      width: 64px;
-      height: 64px;
-      background: var(--border);
+      width: 60px;
+      height: 60px;
+      background: var(--background);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -1495,101 +1055,160 @@
     }
 
     .dashboard-avatar svg {
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       color: var(--text-muted);
     }
 
-    .dashboard-user-name {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--navy);
-    }
-
-    .dashboard-user-phone {
-      font-size: 14px;
-      color: var(--text-muted);
-    }
-
-    .dashboard-stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
-      margin-bottom: 40px;
-    }
-
-    .dashboard-stat {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      text-align: center;
-    }
-
-    .dashboard-stat-value {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 32px;
-      font-weight: 700;
-      color: var(--navy);
+    .dashboard-info h2 {
+      font-size: 18px;
+      font-weight: 600;
       margin-bottom: 4px;
     }
 
-    .dashboard-stat-label {
+    .dashboard-info p {
       font-size: 13px;
-      color: var(--text-muted);
+      color: var(--text-secondary);
     }
 
-    .dashboard-section {
-      margin-bottom: 40px;
-    }
-
-    .dashboard-section-header {
+    .dashboard-tabs {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      gap: 0;
+      margin-top: 15px;
+    }
+
+    .dashboard-tab {
+      padding: 10px 20px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .dashboard-tab:hover,
+    .dashboard-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .dashboard-content {
+      padding: 20px 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
       margin-bottom: 20px;
     }
 
-    .dashboard-section-title {
-      font-size: 18px;
-      font-weight: 600;
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
       color: var(--navy);
     }
 
-    @media (max-width: 768px) {
-      .dashboard-header {
-        flex-direction: column;
-        gap: 20px;
-        text-align: center;
-      }
-
-      .dashboard-user {
-        flex-direction: column;
-      }
-
-      .dashboard-stats {
-        grid-template-columns: repeat(2, 1fr);
-      }
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
     }
 
-    /* Toast Notification */
+    /* Footer */
+    .footer {
+      background: var(--navy);
+      color: #ccc;
+      padding: 40px 0 20px;
+      margin-top: 40px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .footer-col h4 {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col li {
+      margin-bottom: 8px;
+    }
+
+    .footer-col a {
+      color: #999;
+      font-size: 12px;
+    }
+
+    .footer-col a:hover {
+      color: #fff;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .footer-apps {
+      display: flex;
+      gap: 10px;
+    }
+
+    .footer-apps a {
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+      font-size: 11px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .footer-apps a:hover {
+      background: rgba(255,255,255,0.2);
+      text-decoration: none;
+    }
+
+    /* Toast */
     .toast {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
-      padding: 16px 24px;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
       background: var(--navy);
-      color: white;
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-lg);
-      z-index: 3000;
-      transform: translateY(100px);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 4px;
+      font-size: 13px;
+      z-index: 2000;
       opacity: 0;
-      transition: all 0.3s ease;
+      transition: all 0.3s;
     }
 
     .toast.active {
-      transform: translateY(0);
+      transform: translateX(-50%) translateY(0);
       opacity: 1;
     }
 
@@ -1600,477 +1219,860 @@
     .toast.error {
       background: var(--danger);
     }
+
+    /* Homepage Banner */
+    .home-banner {
+      background: linear-gradient(135deg, var(--navy) 0%, #2a3a52 100%);
+      padding: 40px 0;
+      color: #fff;
+    }
+
+    .banner-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .banner-text h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .banner-text p {
+      font-size: 16px;
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+
+    .banner-stats {
+      display: flex;
+      gap: 40px;
+    }
+
+    .banner-stat {
+      text-align: center;
+    }
+
+    .banner-stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .banner-stat-label {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    /* Featured Section */
+    .section {
+      padding: 30px 0;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .section-link {
+      font-size: 13px;
+      color: var(--primary);
+    }
+
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+
+    .featured-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: box-shadow 0.2s;
+    }
+
+    .featured-card:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .featured-image {
+      height: 140px;
+      background: var(--background);
+      position: relative;
+    }
+
+    .featured-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .featured-body {
+      padding: 12px;
+    }
+
+    .featured-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .featured-meta {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .featured-match {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    /* How it works */
+    .how-section {
+      background: var(--surface);
+      padding: 40px 0;
+      margin-top: 30px;
+    }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+      margin-top: 30px;
+    }
+
+    .how-item {
+      text-align: center;
+    }
+
+    .how-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--primary-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 15px;
+    }
+
+    .how-icon svg {
+      width: 28px;
+      height: 28px;
+      color: var(--primary);
+    }
+
+    .how-item h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .how-item p {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .featured-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .how-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+
+      .listing-card {
+        flex-direction: column;
+      }
+
+      .listing-image {
+        width: 100%;
+        height: 200px;
+      }
+
+      .listing-sidebar {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--border-light);
+        flex-direction: row;
+      }
+
+      .detail-layout {
+        flex-direction: column;
+      }
+
+      .detail-sidebar {
+        width: 100%;
+      }
+
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .banner-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .banner-stats {
+        margin-top: 20px;
+      }
+
+      .featured-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .how-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header-actions {
+        display: none;
+      }
+
+      .search-box {
+        max-width: none;
+      }
+    }
+
+    /* Page visibility */
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
   </style>
 </head>
 <body>
-  <!-- Navigation -->
-  <nav class="nav" id="nav">
+  <!-- Top Bar -->
+  <div class="top-bar">
     <div class="container">
-      <div class="nav-inner">
-        <a href="#" class="nav-logo" onclick="navigateTo('home')">
-          <div class="nav-logo-icon">TK</div>
-          Araç Takası
-        </a>
-        <div class="nav-links">
-          <a href="#" class="nav-link" onclick="navigateTo('browse')">İlanlar</a>
-          <a href="#" class="nav-link" onclick="navigateTo('how-it-works')">Nasıl Çalışır</a>
-          <a href="#" class="nav-link" onclick="scrollToSection('features')">Özellikler</a>
-        </div>
-        <div class="nav-actions">
-          <button class="btn btn-ghost" onclick="openAuthModal('login')">Giriş Yap</button>
-          <button class="btn btn-primary" onclick="openAuthModal('register')">Ücretsiz Kayıt</button>
-        </div>
-        <button class="nav-toggle" onclick="toggleMobileMenu()">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+      <div>Araç Takası'na hoş geldiniz!</div>
+      <div>
+        <a href="#" onclick="openModal('login')">Giriş Yap</a>
+        <a href="#" onclick="openModal('register')">Üye Ol</a>
+        <a href="#" onclick="openModal('post')">Ücretsiz İlan Ver</a>
       </div>
-    </div>
-  </nav>
-
-  <!-- Mobile Menu -->
-  <div class="mobile-menu" id="mobileMenu">
-    <div class="mobile-menu-links">
-      <a href="#" class="mobile-menu-link" onclick="navigateTo('browse'); closeMobileMenu();">İlanlar</a>
-      <a href="#" class="mobile-menu-link" onclick="navigateTo('how-it-works'); closeMobileMenu();">Nasıl Çalışır</a>
-      <a href="#" class="mobile-menu-link" onclick="scrollToSection('features'); closeMobileMenu();">Özellikler</a>
-    </div>
-    <div class="mobile-menu-actions">
-      <button class="btn btn-secondary" onclick="openAuthModal('login'); closeMobileMenu();">Giriş Yap</button>
-      <button class="btn btn-primary" onclick="openAuthModal('register'); closeMobileMenu();">Ücretsiz Kayıt</button>
     </div>
   </div>
 
-  <!-- Home Page -->
-  <div class="page active" id="page-home">
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="container">
-        <div class="hero-inner">
-          <div class="hero-content">
-            <div class="hero-badge">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-              </svg>
-              Türkiye'nin 1 Numaralı Takas Platformu
-            </div>
-            <h1 class="hero-title">
-              Aracınızı <span>Kolayca</span> Takas Edin
-            </h1>
-            <p class="hero-desc">
-              Tinder tarzı eşleşme sistemi ile size uygun araçları bulun. Güvenli, hızlı ve kolay takas deneyimi.
-            </p>
-            <div class="hero-actions">
-              <button class="btn btn-primary btn-lg" onclick="navigateTo('browse')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="11" cy="11" r="8"/>
-                  <path d="M21 21l-4.35-4.35"/>
-                </svg>
-                Araçları Keşfet
-              </button>
-              <button class="btn btn-secondary btn-lg" onclick="openAuthModal('register')">
-                Hemen Başla
-              </button>
-            </div>
-            <div class="hero-stats">
-              <div class="hero-stat">
-                <div class="hero-stat-value">2,450+</div>
-                <div class="hero-stat-label">Aktif İlan</div>
-              </div>
-              <div class="hero-stat">
-                <div class="hero-stat-value">1,200+</div>
-                <div class="hero-stat-label">Başarılı Takas</div>
-              </div>
-              <div class="hero-stat">
-                <div class="hero-stat-value">4.8</div>
-                <div class="hero-stat-label">Kullanıcı Puanı</div>
-              </div>
-            </div>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-inner">
+        <a href="#" class="logo" onclick="navigateTo('home')">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 3H7c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+              <path d="M12 17l4-4-4-4M8 13h8"/>
+            </svg>
           </div>
-          <div class="hero-visual">
-            <div class="hero-cards">
-              <div class="hero-card">
-                <div class="hero-card-img"></div>
-                <div class="hero-card-body">
-                  <div class="hero-card-title">BMW 320i</div>
-                  <div class="hero-card-meta">2020 • 45.000 km • İstanbul</div>
-                  <div class="hero-card-match">
-                    <div class="match-bar"><div class="match-fill" style="width: 92%"></div></div>
-                    <span class="match-label">%92 Uyum</span>
-                  </div>
-                </div>
-              </div>
-              <div class="hero-card">
-                <div class="hero-card-img"></div>
-                <div class="hero-card-body">
-                  <div class="hero-card-title">Mercedes C180</div>
-                  <div class="hero-card-meta">2019 • 60.000 km • Ankara</div>
-                  <div class="hero-card-match">
-                    <div class="match-bar"><div class="match-fill" style="width: 85%"></div></div>
-                    <span class="match-label">%85 Uyum</span>
-                  </div>
-                </div>
-              </div>
-              <div class="hero-card">
-                <div class="hero-card-img"></div>
-                <div class="hero-card-body">
-                  <div class="hero-card-title">Audi A4</div>
-                  <div class="hero-card-meta">2021 • 30.000 km • İzmir</div>
-                  <div class="hero-card-match">
-                    <div class="match-bar"><div class="match-fill" style="width: 78%"></div></div>
-                    <span class="match-label">%78 Uyum</span>
-                  </div>
-                </div>
-              </div>
+          Araç Takası
+        </a>
+
+        <div class="search-box">
+          <input type="text" id="globalSearch" placeholder="Marka, model veya anahtar kelime ara...">
+          <button onclick="handleSearch()">Ara</button>
+        </div>
+
+        <div class="header-actions">
+          <a href="#" class="header-link" onclick="navigateTo('favorites')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            Favorilerim
+          </a>
+          <a href="#" class="header-link" id="headerUser" onclick="navigateTo('dashboard')" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span id="headerUserName">Hesabım</span>
+          </a>
+          <a href="#" class="btn-post" onclick="openModal('post')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Ücretsiz İlan Ver
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Category Nav -->
+  <nav class="category-nav">
+    <div class="container">
+      <ul>
+        <li><a href="#" class="active" onclick="navigateTo('home')">Ana Sayfa</a></li>
+        <li><a href="#" onclick="filterByCategory('Otomobil')">Otomobil</a></li>
+        <li><a href="#" onclick="filterByCategory('SUV')">SUV / Arazi</a></li>
+        <li><a href="#" onclick="filterByCategory('Ticari')">Ticari Araç</a></li>
+        <li><a href="#" onclick="filterByCategory('Motosiklet')">Motosiklet</a></li>
+        <li><a href="#" onclick="navigateTo('browse')">Tüm İlanlar</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HOME PAGE -->
+  <div id="homePage" class="page active">
+    <!-- Banner -->
+    <div class="home-banner">
+      <div class="container">
+        <div class="banner-content">
+          <div class="banner-text">
+            <h1>Türkiye'nin Araç Takas Platformu</h1>
+            <p>Aracını takas et, fark öde veya al. Güvenli ve hızlı takas deneyimi.</p>
+          </div>
+          <div class="banner-stats">
+            <div class="banner-stat">
+              <div class="banner-stat-value" id="statTotalListings">0</div>
+              <div class="banner-stat-label">Aktif İlan</div>
+            </div>
+            <div class="banner-stat">
+              <div class="banner-stat-value" id="statTotalUsers">0</div>
+              <div class="banner-stat-label">Üye</div>
+            </div>
+            <div class="banner-stat">
+              <div class="banner-stat-value" id="statTotalMatches">0</div>
+              <div class="banner-stat-label">Başarılı Takas</div>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- Features Section -->
-    <section class="features" id="features">
+    <!-- Featured Listings -->
+    <div class="section">
       <div class="container">
         <div class="section-header">
-          <h2 class="section-title">Neden Araç Takası?</h2>
-          <p class="section-desc">Geleneksel satış yöntemlerinden farklı, modern ve güvenli bir takas deneyimi sunuyoruz.</p>
+          <h2 class="section-title">Vitrin İlanları</h2>
+          <a href="#" class="section-link" onclick="navigateTo('browse')">Tümünü Gör</a>
         </div>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">
+        <div class="featured-grid" id="featuredListings">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- How it works -->
+    <div class="how-section">
+      <div class="container">
+        <h2 class="section-title" style="text-align: center;">Nasıl Çalışır?</h2>
+        <div class="how-grid">
+          <div class="how-item">
+            <div class="how-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </div>
+            <h4>1. İlanını Ver</h4>
+            <p>Aracının fotoğraflarını yükle ve detaylarını gir</p>
+          </div>
+          <div class="how-item">
+            <div class="how-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </div>
+            <h4>2. Takas Ara</h4>
+            <p>Sana uygun araçları bul ve takas teklifleri gör</p>
+          </div>
+          <div class="how-item">
+            <div class="how-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
               </svg>
             </div>
-            <h3 class="feature-title">Akıllı Eşleşme</h3>
-            <p class="feature-desc">Tinder tarzı kaydırma sistemi ile size en uygun araçları kolayca keşfedin ve eşleşin.</p>
+            <h4>3. Eşleş</h4>
+            <p>Karşılıklı beğeni ile otomatik eşleşme sağla</p>
           </div>
-          <div class="feature-card">
-            <div class="feature-icon">
+          <div class="how-item">
+            <div class="how-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="M17 3H7c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                <path d="M12 17l4-4-4-4M8 13h8"/>
               </svg>
             </div>
-            <h3 class="feature-title">Güvenli Takas</h3>
-            <p class="feature-desc">Kullanıcı güven skoru ve doğrulama sistemi ile güvenli bir takas ortamı sağlıyoruz.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 6v6l4 2"/>
-              </svg>
-            </div>
-            <h3 class="feature-title">Hızlı Süreç</h3>
-            <p class="feature-desc">Dakikalar içinde ilan oluşturun, eşleşin ve mesajlaşmaya başlayın.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
-            </div>
-            <h3 class="feature-title">Kolay İlan</h3>
-            <p class="feature-desc">Fotoğraf çekin, bilgileri girin, takas tercihlerinizi belirleyin. Bu kadar basit!</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-              </svg>
-            </div>
-            <h3 class="feature-title">Anlık Mesajlaşma</h3>
-            <p class="feature-desc">Eşleştiğiniz kullanıcılarla anında iletişime geçin ve detayları konuşun.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <line x1="3" y1="9" x2="21" y2="9"/>
-                <line x1="9" y1="21" x2="9" y2="9"/>
-              </svg>
-            </div>
-            <h3 class="feature-title">Uyum Yüzdesi</h3>
-            <p class="feature-desc">Her araç için takas uyum yüzdesi görün ve en iyi fırsatları yakalayın.</p>
+            <h4>4. Takas Yap</h4>
+            <p>Güvenle iletişime geç ve takası tamamla</p>
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- How It Works -->
-    <section class="how-it-works" id="how-it-works">
+    <!-- Latest Listings -->
+    <div class="section">
       <div class="container">
         <div class="section-header">
-          <h2 class="section-title">Nasıl Çalışır?</h2>
-          <p class="section-desc">4 basit adımda araç takasınızı tamamlayın.</p>
+          <h2 class="section-title">Son Eklenen İlanlar</h2>
+          <a href="#" class="section-link" onclick="navigateTo('browse')">Tümünü Gör</a>
         </div>
-        <div class="steps-grid">
-          <div class="step-card">
-            <div class="step-number">1</div>
-            <h3 class="step-title">Kayıt Olun</h3>
-            <p class="step-desc">Telefon numaranız ile hızlıca kayıt olun ve profilinizi tamamlayın.</p>
-          </div>
-          <div class="step-card">
-            <div class="step-number">2</div>
-            <h3 class="step-title">İlan Verin</h3>
-            <p class="step-desc">Aracınızın fotoğraflarını ekleyin, bilgilerini girin ve takas tercihlerinizi belirtin.</p>
-          </div>
-          <div class="step-card">
-            <div class="step-number">3</div>
-            <h3 class="step-title">Keşfedin</h3>
-            <p class="step-desc">Uyumlu araçları kaydırarak keşfedin. Beğendiklerinizi sağa, beğenmediklerinizi sola kaydırın.</p>
-          </div>
-          <div class="step-card">
-            <div class="step-number">4</div>
-            <h3 class="step-title">Eşleşin</h3>
-            <p class="step-desc">Karşılıklı beğeni olduğunda eşleşin ve mesajlaşmaya başlayın!</p>
-          </div>
+        <div class="featured-grid" id="latestListings">
+          <!-- Filled by JS -->
         </div>
       </div>
-    </section>
+    </div>
+  </div>
 
-    <!-- Listings Preview -->
-    <section class="listings">
-      <div class="container">
-        <div class="listings-header">
-          <div>
-            <h2 class="section-title">Öne Çıkan İlanlar</h2>
-            <p class="section-desc">En popüler ve güncel araç ilanlarını keşfedin.</p>
+  <!-- BROWSE PAGE -->
+  <div id="browsePage" class="page">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="#" onclick="navigateTo('home')">Ana Sayfa</a>
+        <span>›</span>
+        <span id="browseBreadcrumb">Tüm Araç İlanları</span>
+      </div>
+
+      <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <div class="filter-box">
+            <div class="filter-header">
+              Filtreler
+              <a href="#" class="filter-clear" onclick="clearFilters()">Temizle</a>
+            </div>
+            <div class="filter-content">
+              <div class="filter-group">
+                <label class="filter-label">Şehir</label>
+                <select class="filter-select" id="filterCity" onchange="applyFilters()">
+                  <option value="">Tüm Şehirler</option>
+                  <option value="İstanbul">İstanbul</option>
+                  <option value="Ankara">Ankara</option>
+                  <option value="İzmir">İzmir</option>
+                  <option value="Bursa">Bursa</option>
+                  <option value="Antalya">Antalya</option>
+                  <option value="Adana">Adana</option>
+                  <option value="Konya">Konya</option>
+                  <option value="Gaziantep">Gaziantep</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label class="filter-label">Marka</label>
+                <select class="filter-select" id="filterBrand" onchange="applyFilters()">
+                  <option value="">Tüm Markalar</option>
+                  <option value="BMW">BMW</option>
+                  <option value="Mercedes">Mercedes</option>
+                  <option value="Audi">Audi</option>
+                  <option value="Volkswagen">Volkswagen</option>
+                  <option value="Toyota">Toyota</option>
+                  <option value="Honda">Honda</option>
+                  <option value="Ford">Ford</option>
+                  <option value="Renault">Renault</option>
+                  <option value="Fiat">Fiat</option>
+                  <option value="Hyundai">Hyundai</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label class="filter-label">Yıl</label>
+                <div class="filter-row">
+                  <input type="number" class="filter-input" id="filterYearMin" placeholder="Min">
+                  <input type="number" class="filter-input" id="filterYearMax" placeholder="Max">
+                </div>
+              </div>
+
+              <div class="filter-group">
+                <label class="filter-label">Kilometre</label>
+                <div class="filter-row">
+                  <input type="number" class="filter-input" id="filterKmMin" placeholder="Min">
+                  <input type="number" class="filter-input" id="filterKmMax" placeholder="Max">
+                </div>
+              </div>
+
+              <div class="filter-group">
+                <label class="filter-label">Yakıt Tipi</label>
+                <select class="filter-select" id="filterFuel" onchange="applyFilters()">
+                  <option value="">Tümü</option>
+                  <option value="Benzin">Benzin</option>
+                  <option value="Dizel">Dizel</option>
+                  <option value="LPG">LPG</option>
+                  <option value="Elektrik">Elektrik</option>
+                  <option value="Hibrit">Hibrit</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label class="filter-label">Vites</label>
+                <select class="filter-select" id="filterTransmission" onchange="applyFilters()">
+                  <option value="">Tümü</option>
+                  <option value="Otomatik">Otomatik</option>
+                  <option value="Manuel">Manuel</option>
+                  <option value="Yarı Otomatik">Yarı Otomatik</option>
+                </select>
+              </div>
+
+              <label class="filter-checkbox">
+                <input type="checkbox" id="filterSwapOnly" onchange="applyFilters()">
+                Sadece takas aktif olanlar
+              </label>
+
+              <button class="btn-filter" onclick="applyFilters()">Filtrele</button>
+            </div>
           </div>
-          <button class="btn btn-secondary" onclick="navigateTo('browse')">
-            Tümünü Gör
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
+        </aside>
+
+        <!-- Content -->
+        <main class="content">
+          <div class="results-header">
+            <div class="results-count">
+              <strong id="resultsCount">0</strong> ilan bulundu
+            </div>
+            <div class="results-sort">
+              <span>Sırala:</span>
+              <select id="sortOrder" onchange="applyFilters()">
+                <option value="newest">En Yeni</option>
+                <option value="oldest">En Eski</option>
+                <option value="year-desc">Yıl (Yeni-Eski)</option>
+                <option value="year-asc">Yıl (Eski-Yeni)</option>
+                <option value="km-asc">Km (Az-Çok)</option>
+                <option value="km-desc">Km (Çok-Az)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="listings-container" id="browseListings">
+            <!-- Filled by JS -->
+          </div>
+
+          <div class="pagination" id="pagination">
+            <!-- Filled by JS -->
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL PAGE -->
+  <div id="detailPage" class="page">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="#" onclick="navigateTo('home')">Ana Sayfa</a>
+        <span>›</span>
+        <a href="#" onclick="navigateTo('browse')">Araç İlanları</a>
+        <span>›</span>
+        <span id="detailBreadcrumb">İlan Detayı</span>
+      </div>
+
+      <div class="detail-layout" id="detailContent">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PAGE -->
+  <div id="dashboardPage" class="page">
+    <div class="dashboard-header">
+      <div class="container">
+        <div class="dashboard-user">
+          <div class="dashboard-avatar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
             </svg>
-          </button>
-        </div>
-        <div class="listings-grid" id="featuredListings">
-          <!-- Listings will be loaded here -->
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta">
-      <div class="container">
-        <div class="cta-inner">
-          <div class="cta-content">
-            <h2 class="cta-title">Mobil Uygulamayı İndirin</h2>
-            <p class="cta-desc">Daha iyi bir deneyim için mobil uygulamamızı indirin. Swipe özelliği ile eşleşmek çok daha eğlenceli!</p>
           </div>
-          <div class="cta-app-links">
-            <a href="https://apps.apple.com/app/id982107779" class="app-link" target="_blank">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-              </svg>
-              <div class="app-link-text">
-                <div class="app-link-small">İndir</div>
-                <div class="app-link-name">App Store</div>
-              </div>
-            </a>
-            <a href="https://play.google.com/store/apps/details?id=host.exp.exponent" class="app-link" target="_blank">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
-              </svg>
-              <div class="app-link-text">
-                <div class="app-link-small">İndir</div>
-                <div class="app-link-name">Google Play</div>
-              </div>
-            </a>
+          <div class="dashboard-info">
+            <h2 id="dashUserName">Kullanıcı</h2>
+            <p id="dashUserPhone">+90 5XX XXX XX XX</p>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-grid">
-          <div class="footer-brand">
-            <div class="footer-logo">
-              <div class="nav-logo-icon">TK</div>
-              Araç Takası
-            </div>
-            <p class="footer-desc">Türkiye'nin ilk ve en güvenilir araç takas platformu. Aracınızı kolayca takas edin.</p>
-            <div class="footer-social">
-              <a href="#" aria-label="Instagram">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-                </svg>
-              </a>
-              <a href="#" aria-label="Twitter">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
-                </svg>
-              </a>
-              <a href="#" aria-label="Facebook">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-                </svg>
-              </a>
-            </div>
-          </div>
-          <div>
-            <h4 class="footer-col-title">Platform</h4>
-            <ul class="footer-links">
-              <li><a href="#" onclick="navigateTo('browse')">İlanları Keşfet</a></li>
-              <li><a href="#" onclick="navigateTo('how-it-works')">Nasıl Çalışır</a></li>
-              <li><a href="#">Vitrin</a></li>
-              <li><a href="#">Fiyatlandırma</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="footer-col-title">Destek</h4>
-            <ul class="footer-links">
-              <li><a href="#">Yardım Merkezi</a></li>
-              <li><a href="#">SSS</a></li>
-              <li><a href="#">İletişim</a></li>
-              <li><a href="#">Güvenlik</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="footer-col-title">Şirket</h4>
-            <ul class="footer-links">
-              <li><a href="#">Hakkımızda</a></li>
-              <li><a href="#">Kariyer</a></li>
-              <li><a href="#">Blog</a></li>
-              <li><a href="#">Basın</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="footer-bottom">
-          <div class="footer-copyright">
-            &copy; 2026 Araç Takası. Tüm hakları saklıdır.
-          </div>
-          <div class="footer-legal">
-            <a href="#">Gizlilik Politikası</a>
-            <a href="#">Kullanım Koşulları</a>
-            <a href="#">Çerez Politikası</a>
-          </div>
-        </div>
-      </div>
-    </footer>
-  </div>
-
-  <!-- Browse Page -->
-  <div class="page" id="page-browse">
-    <div class="browse-header">
-      <div class="container">
-        <h1 class="browse-title">Araç İlanları</h1>
-        <div class="filters-bar">
-          <select class="filter-select" id="filterCity">
-            <option value="">Tüm Şehirler</option>
-            <option value="Istanbul">İstanbul</option>
-            <option value="Ankara">Ankara</option>
-            <option value="Izmir">İzmir</option>
-            <option value="Bursa">Bursa</option>
-            <option value="Antalya">Antalya</option>
-          </select>
-          <select class="filter-select" id="filterBrand">
-            <option value="">Tüm Markalar</option>
-            <option value="BMW">BMW</option>
-            <option value="Mercedes">Mercedes</option>
-            <option value="Audi">Audi</option>
-            <option value="Volkswagen">Volkswagen</option>
-            <option value="Toyota">Toyota</option>
-            <option value="Honda">Honda</option>
-          </select>
-          <button class="btn btn-primary" onclick="applyFilters()">Filtrele</button>
+        <div class="dashboard-tabs">
+          <div class="dashboard-tab active">İlanlarım</div>
+          <div class="dashboard-tab">Eşleşmelerim</div>
+          <div class="dashboard-tab">Mesajlarım</div>
+          <div class="dashboard-tab" onclick="logout()">Çıkış Yap</div>
         </div>
       </div>
     </div>
-    <div class="browse-content">
-      <div class="container">
-        <div class="browse-grid" id="browseListings">
-          <!-- Listings will be loaded here -->
+
+    <div class="container">
+      <div class="dashboard-content">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="dashStatListings">0</div>
+            <div class="stat-label">İlanlarım</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="dashStatMatches">0</div>
+            <div class="stat-label">Eşleşmelerim</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="dashStatFavorites">0</div>
+            <div class="stat-label">Favorilerim</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="dashStatTrust">85</div>
+            <div class="stat-label">Güven Skoru</div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <h2 class="section-title">İlanlarım</h2>
+          <a href="#" class="btn-post" onclick="openModal('post')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Yeni İlan Ver
+          </a>
+        </div>
+
+        <div class="listings-container" id="dashboardListings">
+          <!-- Filled by JS -->
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Detail Page -->
-  <div class="page" id="page-detail">
-    <div class="detail-header">
-      <div class="container">
-        <div class="detail-back" onclick="navigateTo('browse')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
+  <!-- FAVORITES PAGE -->
+  <div id="favoritesPage" class="page">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="#" onclick="navigateTo('home')">Ana Sayfa</a>
+        <span>›</span>
+        <span>Favorilerim</span>
+      </div>
+
+      <div class="section-header" style="margin-top: 20px;">
+        <h2 class="section-title">Favori İlanlarım</h2>
+      </div>
+
+      <div class="listings-container" id="favoriteListings">
+        <div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 15px;">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
           </svg>
-          İlanlara Dön
-        </div>
-        <div class="detail-grid" id="detailContent">
-          <!-- Detail content will be loaded here -->
+          <h3 style="font-size: 16px; margin-bottom: 8px;">Henüz favori ilanınız yok</h3>
+          <p style="font-size: 13px;">Beğendiğiniz ilanları favorilere ekleyin</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Dashboard Page -->
-  <div class="page" id="page-dashboard">
-    <div class="dashboard">
-      <div class="container">
-        <div class="dashboard-header">
-          <div class="dashboard-user">
-            <div class="dashboard-avatar">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-              </svg>
-            </div>
-            <div>
-              <div class="dashboard-user-name" id="dashboardUserName">Kullanıcı</div>
-              <div class="dashboard-user-phone" id="dashboardUserPhone">+90 5** *** ** **</div>
-            </div>
-          </div>
-          <button class="btn btn-secondary" onclick="logout()">Çıkış Yap</button>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Araç Takası</h4>
+          <ul>
+            <li><a href="#">Hakkımızda</a></li>
+            <li><a href="#">İletişim</a></li>
+            <li><a href="#">Kariyer</a></li>
+            <li><a href="#">Blog</a></li>
+          </ul>
         </div>
-        <div class="dashboard-stats">
-          <div class="dashboard-stat">
-            <div class="dashboard-stat-value" id="statListings">0</div>
-            <div class="dashboard-stat-label">İlanlarım</div>
-          </div>
-          <div class="dashboard-stat">
-            <div class="dashboard-stat-value" id="statMatches">0</div>
-            <div class="dashboard-stat-label">Eşleşmeler</div>
-          </div>
-          <div class="dashboard-stat">
-            <div class="dashboard-stat-value" id="statFavorites">0</div>
-            <div class="dashboard-stat-label">Favoriler</div>
-          </div>
-          <div class="dashboard-stat">
-            <div class="dashboard-stat-value" id="statTrustScore">85</div>
-            <div class="dashboard-stat-label">Güven Skoru</div>
-          </div>
+        <div class="footer-col">
+          <h4>Kategoriler</h4>
+          <ul>
+            <li><a href="#" onclick="filterByCategory('Otomobil')">Otomobil</a></li>
+            <li><a href="#" onclick="filterByCategory('SUV')">SUV / Arazi</a></li>
+            <li><a href="#" onclick="filterByCategory('Ticari')">Ticari Araç</a></li>
+            <li><a href="#" onclick="filterByCategory('Motosiklet')">Motosiklet</a></li>
+          </ul>
         </div>
-        <div class="dashboard-section">
-          <div class="dashboard-section-header">
-            <h3 class="dashboard-section-title">İlanlarım</h3>
-            <button class="btn btn-primary btn-sm" onclick="openAuthModal('create-listing')">Yeni İlan</button>
-          </div>
-          <div class="browse-grid" id="userListings">
-            <!-- User listings will be loaded here -->
-          </div>
+        <div class="footer-col">
+          <h4>Yardım</h4>
+          <ul>
+            <li><a href="#">Nasıl Çalışır?</a></li>
+            <li><a href="#">SSS</a></li>
+            <li><a href="#">Güvenli Takas</a></li>
+            <li><a href="#">Destek</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Yasal</h4>
+          <ul>
+            <li><a href="#">Kullanım Koşulları</a></li>
+            <li><a href="#">Gizlilik Politikası</a></li>
+            <li><a href="#">KVKK</a></li>
+            <li><a href="#">Çerez Politikası</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2025 Araç Takası. Tüm hakları saklıdır.</div>
+        <div class="footer-apps">
+          <a href="#">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+            </svg>
+            App Store
+          </a>
+          <a href="#">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/>
+            </svg>
+            Google Play
+          </a>
         </div>
       </div>
     </div>
-  </div>
+  </footer>
 
-  <!-- Auth Modal -->
-  <div class="modal-overlay" id="authModal">
-    <div class="modal" style="position: relative;">
-      <button class="modal-close" onclick="closeAuthModal()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
-      <div id="authContent">
-        <!-- Auth forms will be loaded here -->
+  <!-- Modals -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal" style="display: none;">
+      <div class="modal-header">
+        <h3>Giriş Yap</h3>
+        <button class="modal-close" onclick="closeModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label>Telefon Numarası</label>
+            <input type="tel" id="loginPhone" placeholder="5XX XXX XX XX" required>
+          </div>
+          <button type="submit" class="btn-submit">Giriş Yap</button>
+        </form>
+        <div class="auth-switch">
+          Hesabın yok mu? <a href="#" onclick="switchModal('register')">Üye Ol</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal" style="display: none;">
+      <div class="modal-header">
+        <h3>Üye Ol</h3>
+        <button class="modal-close" onclick="closeModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label>Ad Soyad</label>
+            <input type="text" id="registerName" placeholder="Adınız Soyadınız" required>
+          </div>
+          <div class="form-group">
+            <label>Telefon Numarası</label>
+            <input type="tel" id="registerPhone" placeholder="5XX XXX XX XX" required>
+          </div>
+          <button type="submit" class="btn-submit">Üye Ol</button>
+        </form>
+        <div class="auth-switch">
+          Zaten üye misin? <a href="#" onclick="switchModal('login')">Giriş Yap</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Post Listing Modal -->
+    <div class="modal" id="postModal" style="display: none;">
+      <div class="modal-header">
+        <h3>Ücretsiz İlan Ver</h3>
+        <button class="modal-close" onclick="closeModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="handlePostListing(event)">
+          <div class="form-group">
+            <label>Marka</label>
+            <select id="postBrand" required>
+              <option value="">Seçiniz</option>
+              <option value="BMW">BMW</option>
+              <option value="Mercedes">Mercedes</option>
+              <option value="Audi">Audi</option>
+              <option value="Volkswagen">Volkswagen</option>
+              <option value="Toyota">Toyota</option>
+              <option value="Honda">Honda</option>
+              <option value="Ford">Ford</option>
+              <option value="Renault">Renault</option>
+              <option value="Fiat">Fiat</option>
+              <option value="Hyundai">Hyundai</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Model</label>
+            <input type="text" id="postModel" placeholder="örn: 320i, Civic, Focus" required>
+          </div>
+          <div class="form-group">
+            <label>Yıl</label>
+            <input type="number" id="postYear" placeholder="2020" min="1990" max="2025" required>
+          </div>
+          <div class="form-group">
+            <label>Kilometre</label>
+            <input type="number" id="postMileage" placeholder="50000" required>
+          </div>
+          <div class="form-group">
+            <label>Şehir</label>
+            <select id="postCity" required>
+              <option value="">Seçiniz</option>
+              <option value="İstanbul">İstanbul</option>
+              <option value="Ankara">Ankara</option>
+              <option value="İzmir">İzmir</option>
+              <option value="Bursa">Bursa</option>
+              <option value="Antalya">Antalya</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Yakıt Tipi</label>
+            <select id="postFuel" required>
+              <option value="Benzin">Benzin</option>
+              <option value="Dizel">Dizel</option>
+              <option value="LPG">LPG</option>
+              <option value="Elektrik">Elektrik</option>
+              <option value="Hibrit">Hibrit</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Vites</label>
+            <select id="postTransmission" required>
+              <option value="Otomatik">Otomatik</option>
+              <option value="Manuel">Manuel</option>
+              <option value="Yarı Otomatik">Yarı Otomatik</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-submit">İlanı Yayınla</button>
+        </form>
       </div>
     </div>
   </div>
@@ -2079,200 +2081,44 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // State Management
-    let currentUser = null;
-    let currentPage = 'home';
-    let listings = [];
-    let currentListingId = null;
-
-    // API Base URL
     const API_BASE = '';
+    let currentUser = null;
+    let allListings = [];
+    let currentListingId = null;
 
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
       checkAuth();
-      loadFeaturedListings();
-      setupScrollEffects();
+      loadHomeData();
     });
-
-    // Navigation
-    function navigateTo(page, params = {}) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      const pageEl = document.getElementById(`page-${page}`);
-      if (pageEl) {
-        pageEl.classList.add('active');
-        currentPage = page;
-        window.scrollTo(0, 0);
-
-        if (page === 'browse') {
-          loadListings();
-        } else if (page === 'detail' && params.id) {
-          loadListingDetail(params.id);
-        } else if (page === 'dashboard') {
-          loadDashboard();
-        }
-      }
-    }
-
-    function scrollToSection(sectionId) {
-      if (currentPage !== 'home') {
-        navigateTo('home');
-        setTimeout(() => {
-          document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      } else {
-        document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-
-    // Mobile Menu
-    function toggleMobileMenu() {
-      document.getElementById('mobileMenu').classList.toggle('active');
-    }
-
-    function closeMobileMenu() {
-      document.getElementById('mobileMenu').classList.remove('active');
-    }
-
-    // Scroll Effects
-    function setupScrollEffects() {
-      window.addEventListener('scroll', () => {
-        const nav = document.getElementById('nav');
-        if (window.scrollY > 10) {
-          nav.classList.add('scrolled');
-        } else {
-          nav.classList.remove('scrolled');
-        }
-      });
-    }
 
     // Auth
     function checkAuth() {
-      const userData = localStorage.getItem('user');
-      if (userData) {
-        currentUser = JSON.parse(userData);
-        updateNavForAuth();
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        currentUser = JSON.parse(stored);
+        updateUIForAuth();
       }
     }
 
-    function updateNavForAuth() {
-      const navActions = document.querySelector('.nav-actions');
+    function updateUIForAuth() {
+      const topBarLinks = document.querySelector('.top-bar > .container > div:last-child');
+      const headerUser = document.getElementById('headerUser');
+      
       if (currentUser) {
-        navActions.innerHTML = `
-          <button class="btn btn-ghost" onclick="navigateTo('dashboard')">Hesabım</button>
-          <button class="btn btn-primary" onclick="openAuthModal('create-listing')">İlan Ver</button>
+        topBarLinks.innerHTML = `
+          <a href="#" onclick="navigateTo('dashboard')">Hesabım</a>
+          <a href="#" onclick="logout()">Çıkış</a>
         `;
+        headerUser.style.display = 'flex';
+        document.getElementById('headerUserName').textContent = currentUser.name || 'Hesabım';
       }
-    }
-
-    function openAuthModal(type) {
-      const modal = document.getElementById('authModal');
-      const content = document.getElementById('authContent');
-      modal.classList.add('active');
-
-      if (type === 'login') {
-        content.innerHTML = `
-          <div class="modal-header">
-            <h2 class="modal-title">Giriş Yap</h2>
-            <p class="modal-desc">Telefon numaranız ile giriş yapın</p>
-          </div>
-          <form onsubmit="handleLogin(event)">
-            <div class="form-group">
-              <label class="form-label">Telefon Numarası</label>
-              <div class="form-phone">
-                <input type="text" class="form-input form-phone-prefix" value="+90" readonly>
-                <input type="tel" class="form-input" id="loginPhone" placeholder="5XX XXX XX XX" required>
-              </div>
-            </div>
-            <button type="submit" class="btn btn-primary form-btn">Giriş Yap</button>
-          </form>
-          <div class="modal-footer">
-            <span class="modal-footer-text">Hesabınız yok mu? <span class="modal-footer-link" onclick="openAuthModal('register')">Kayıt Olun</span></span>
-          </div>
-        `;
-      } else if (type === 'register') {
-        content.innerHTML = `
-          <div class="modal-header">
-            <h2 class="modal-title">Kayıt Ol</h2>
-            <p class="modal-desc">Hemen ücretsiz hesap oluşturun</p>
-          </div>
-          <form onsubmit="handleRegister(event)">
-            <div class="form-group">
-              <label class="form-label">Telefon Numarası</label>
-              <div class="form-phone">
-                <input type="text" class="form-input form-phone-prefix" value="+90" readonly>
-                <input type="tel" class="form-input" id="registerPhone" placeholder="5XX XXX XX XX" required>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Ad Soyad (Opsiyonel)</label>
-              <input type="text" class="form-input" id="registerName" placeholder="Adınız Soyadınız">
-            </div>
-            <button type="submit" class="btn btn-primary form-btn">Kayıt Ol</button>
-          </form>
-          <div class="modal-footer">
-            <span class="modal-footer-text">Zaten hesabınız var mı? <span class="modal-footer-link" onclick="openAuthModal('login')">Giriş Yapın</span></span>
-          </div>
-        `;
-      } else if (type === 'create-listing') {
-        if (!currentUser) {
-          openAuthModal('login');
-          return;
-        }
-        content.innerHTML = `
-          <div class="modal-header">
-            <h2 class="modal-title">Yeni İlan</h2>
-            <p class="modal-desc">Aracınızın bilgilerini girin</p>
-          </div>
-          <form onsubmit="handleCreateListing(event)">
-            <div class="form-group">
-              <label class="form-label">Marka</label>
-              <select class="form-input" id="listingBrand" required>
-                <option value="">Seçiniz</option>
-                <option value="BMW">BMW</option>
-                <option value="Mercedes">Mercedes</option>
-                <option value="Audi">Audi</option>
-                <option value="Volkswagen">Volkswagen</option>
-                <option value="Toyota">Toyota</option>
-                <option value="Honda">Honda</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Model</label>
-              <input type="text" class="form-input" id="listingModel" placeholder="320i, C180, A4..." required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Yıl</label>
-              <input type="number" class="form-input" id="listingYear" placeholder="2020" min="1990" max="2026" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Kilometre</label>
-              <input type="number" class="form-input" id="listingMileage" placeholder="45000" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Şehir</label>
-              <select class="form-input" id="listingCity" required>
-                <option value="">Seçiniz</option>
-                <option value="Istanbul">İstanbul</option>
-                <option value="Ankara">Ankara</option>
-                <option value="Izmir">İzmir</option>
-                <option value="Bursa">Bursa</option>
-                <option value="Antalya">Antalya</option>
-              </select>
-            </div>
-            <button type="submit" class="btn btn-primary form-btn">İlanı Yayınla</button>
-          </form>
-        `;
-      }
-    }
-
-    function closeAuthModal() {
-      document.getElementById('authModal').classList.remove('active');
     }
 
     async function handleLogin(e) {
       e.preventDefault();
       const phone = document.getElementById('loginPhone').value;
+      
       try {
         const res = await fetch(`${API_BASE}/api/auth/login`, {
           method: 'POST',
@@ -2280,11 +2126,12 @@
           body: JSON.stringify({ phone: '+90' + phone.replace(/\s/g, '') })
         });
         const data = await res.json();
+        
         if (data.user) {
           currentUser = data.user;
           localStorage.setItem('user', JSON.stringify(data.user));
-          updateNavForAuth();
-          closeAuthModal();
+          updateUIForAuth();
+          closeModal();
           showToast('Giriş başarılı!', 'success');
           navigateTo('dashboard');
         } else {
@@ -2297,8 +2144,9 @@
 
     async function handleRegister(e) {
       e.preventDefault();
-      const phone = document.getElementById('registerPhone').value;
       const name = document.getElementById('registerName').value;
+      const phone = document.getElementById('registerPhone').value;
+      
       try {
         const res = await fetch(`${API_BASE}/api/auth/login`, {
           method: 'POST',
@@ -2306,6 +2154,7 @@
           body: JSON.stringify({ phone: '+90' + phone.replace(/\s/g, '') })
         });
         const data = await res.json();
+        
         if (data.user) {
           if (name) {
             await fetch(`${API_BASE}/api/users/${data.user.id}`, {
@@ -2317,8 +2166,8 @@
           }
           currentUser = data.user;
           localStorage.setItem('user', JSON.stringify(data.user));
-          updateNavForAuth();
-          closeAuthModal();
+          updateUIForAuth();
+          closeModal();
           showToast('Kayıt başarılı!', 'success');
           navigateTo('dashboard');
         } else {
@@ -2329,34 +2178,39 @@
       }
     }
 
-    async function handleCreateListing(e) {
+    async function handlePostListing(e) {
       e.preventDefault();
-      const brand = document.getElementById('listingBrand').value;
-      const model = document.getElementById('listingModel').value;
-      const year = parseInt(document.getElementById('listingYear').value);
-      const mileage = parseInt(document.getElementById('listingMileage').value);
-      const city = document.getElementById('listingCity').value;
+      
+      if (!currentUser) {
+        closeModal();
+        openModal('login');
+        showToast('Önce giriş yapmalısınız', 'error');
+        return;
+      }
+
+      const listing = {
+        userId: currentUser.id,
+        brand: document.getElementById('postBrand').value,
+        model: document.getElementById('postModel').value,
+        year: parseInt(document.getElementById('postYear').value),
+        mileage: parseInt(document.getElementById('postMileage').value),
+        city: document.getElementById('postCity').value,
+        fuelType: document.getElementById('postFuel').value,
+        transmission: document.getElementById('postTransmission').value,
+        swapActive: true
+      };
 
       try {
         const res = await fetch(`${API_BASE}/api/listings`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            userId: currentUser.id,
-            brand,
-            model,
-            year,
-            mileage,
-            city,
-            fuelType: 'Benzin',
-            transmission: 'Otomatik',
-            swapActive: true
-          })
+          body: JSON.stringify(listing)
         });
         const data = await res.json();
+        
         if (data.id) {
-          closeAuthModal();
-          showToast('İlan başarıyla oluşturuldu!', 'success');
+          closeModal();
+          showToast('İlan başarıyla yayınlandı!', 'success');
           navigateTo('dashboard');
         } else {
           showToast('İlan oluşturulamadı', 'error');
@@ -2372,95 +2226,254 @@
       location.reload();
     }
 
-    // Listings
-    async function loadFeaturedListings() {
-      try {
-        const res = await fetch(`${API_BASE}/api/listings/featured`);
-        const data = await res.json();
-        renderListings(data.slice(0, 4), 'featuredListings');
-      } catch (err) {
-        console.error('Failed to load featured listings:', err);
-        renderEmptyState('featuredListings', 'Öne çıkan ilan bulunamadı');
+    // Navigation
+    function navigateTo(page, params = {}) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(page + 'Page').classList.add('active');
+      window.scrollTo(0, 0);
+
+      if (page === 'browse') {
+        loadListings();
+      } else if (page === 'detail' && params.id) {
+        loadListingDetail(params.id);
+      } else if (page === 'dashboard') {
+        if (!currentUser) {
+          openModal('login');
+          navigateTo('home');
+          return;
+        }
+        loadDashboard();
       }
     }
 
-    async function loadListings(filters = {}) {
-      try {
-        let url = `${API_BASE}/api/listings`;
-        const params = new URLSearchParams();
-        if (filters.city) params.append('city', filters.city);
-        if (filters.brand) params.append('brand', filters.brand);
-        if (params.toString()) url += '?' + params.toString();
+    function filterByCategory(category) {
+      navigateTo('browse');
+      document.getElementById('browseBreadcrumb').textContent = category + ' İlanları';
+    }
 
-        const res = await fetch(url);
-        const data = await res.json();
-        listings = data;
-        renderListings(data, 'browseListings');
-      } catch (err) {
-        console.error('Failed to load listings:', err);
-        renderEmptyState('browseListings', 'İlan bulunamadı');
+    function handleSearch() {
+      const query = document.getElementById('globalSearch').value;
+      if (query) {
+        navigateTo('browse');
       }
     }
 
-    function applyFilters() {
-      const city = document.getElementById('filterCity').value;
-      const brand = document.getElementById('filterBrand').value;
-      loadListings({ city, brand });
+    // Home Data
+    async function loadHomeData() {
+      try {
+        const res = await fetch(`${API_BASE}/api/listings`);
+        allListings = await res.json();
+        
+        document.getElementById('statTotalListings').textContent = allListings.length;
+        
+        // Featured
+        const featured = allListings.filter(l => l.isFeatured).slice(0, 4);
+        renderFeaturedCards(featured.length > 0 ? featured : allListings.slice(0, 4), 'featuredListings');
+        
+        // Latest
+        const latest = [...allListings].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 4);
+        renderFeaturedCards(latest, 'latestListings');
+
+        // Stats
+        const usersRes = await fetch(`${API_BASE}/api/users/count`).catch(() => ({ json: () => ({ count: 0 }) }));
+        const matchesRes = await fetch(`${API_BASE}/api/matches/count`).catch(() => ({ json: () => ({ count: 0 }) }));
+        
+      } catch (err) {
+        console.error('Failed to load home data:', err);
+      }
     }
 
-    function renderListings(data, containerId) {
+    function renderFeaturedCards(listings, containerId) {
       const container = document.getElementById(containerId);
-      if (!data || data.length === 0) {
-        renderEmptyState(containerId, 'Henüz ilan yok');
+      if (!listings || listings.length === 0) {
+        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">Henüz ilan yok</div>';
         return;
       }
 
-      container.innerHTML = data.map(listing => `
-        <div class="listing-card" onclick="navigateTo('detail', { id: '${listing.id}' })">
-          <div class="listing-img">
+      container.innerHTML = listings.map(listing => `
+        <div class="featured-card" onclick="navigateTo('detail', { id: '${listing.id}' })">
+          <div class="featured-image">
             ${listing.photos && listing.photos.length > 0 
               ? `<img src="${listing.photos[0]}" alt="${listing.brand} ${listing.model}">`
-              : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                  <circle cx="8.5" cy="8.5" r="1.5"/>
-                  <polyline points="21 15 16 10 5 21"/>
-                </svg>`
+              : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-muted);">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                </div>`
             }
-            <div class="listing-badges">
-              ${listing.isFeatured ? '<span class="listing-badge featured">Vitrin</span>' : ''}
-              ${listing.swapActive ? '<span class="listing-badge">Takas Aktif</span>' : ''}
-            </div>
+            ${listing.isFeatured ? '<div class="listing-badges"><span class="listing-badge vitrin">Vitrin</span></div>' : ''}
           </div>
-          <div class="listing-body">
-            <div class="listing-title">${listing.brand} ${listing.model}</div>
-            <div class="listing-meta">${listing.year} &bull; ${formatNumber(listing.mileage)} km &bull; ${listing.city || 'Türkiye'}</div>
-            <div class="listing-match">
-              <div class="listing-match-bar">
-                <div class="listing-match-fill" style="width: ${Math.floor(Math.random() * 30) + 70}%"></div>
-              </div>
-              <span class="listing-match-label">${Math.floor(Math.random() * 30) + 70}% Uyum</span>
-            </div>
+          <div class="featured-body">
+            <div class="featured-title">${listing.brand} ${listing.model}</div>
+            <div class="featured-meta">${listing.year} - ${formatNumber(listing.mileage)} km</div>
+            <div class="featured-match">%${Math.floor(Math.random() * 20) + 75} Takas Uyumu</div>
           </div>
         </div>
       `).join('');
     }
 
-    function renderEmptyState(containerId, message) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = `
-        <div class="empty-state" style="grid-column: 1 / -1;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
-          </svg>
-          <h3 class="empty-state-title">${message}</h3>
-          <p class="empty-state-desc">Henüz bu kriterlere uygun ilan bulunamadı.</p>
-          <button class="btn btn-primary" onclick="openAuthModal('create-listing')">İlk İlanı Sen Ver</button>
-        </div>
-      `;
+    // Listings
+    async function loadListings() {
+      try {
+        const res = await fetch(`${API_BASE}/api/listings`);
+        allListings = await res.json();
+        applyFilters();
+      } catch (err) {
+        console.error('Failed to load listings:', err);
+      }
     }
 
+    function applyFilters() {
+      let filtered = [...allListings];
+      
+      const city = document.getElementById('filterCity').value;
+      const brand = document.getElementById('filterBrand').value;
+      const fuel = document.getElementById('filterFuel').value;
+      const transmission = document.getElementById('filterTransmission').value;
+      const swapOnly = document.getElementById('filterSwapOnly').checked;
+      const yearMin = parseInt(document.getElementById('filterYearMin').value);
+      const yearMax = parseInt(document.getElementById('filterYearMax').value);
+      const kmMin = parseInt(document.getElementById('filterKmMin').value);
+      const kmMax = parseInt(document.getElementById('filterKmMax').value);
+      const sortOrder = document.getElementById('sortOrder').value;
+
+      if (city) filtered = filtered.filter(l => l.city === city);
+      if (brand) filtered = filtered.filter(l => l.brand === brand);
+      if (fuel) filtered = filtered.filter(l => l.fuelType === fuel);
+      if (transmission) filtered = filtered.filter(l => l.transmission === transmission);
+      if (swapOnly) filtered = filtered.filter(l => l.swapActive);
+      if (yearMin) filtered = filtered.filter(l => l.year >= yearMin);
+      if (yearMax) filtered = filtered.filter(l => l.year <= yearMax);
+      if (kmMin) filtered = filtered.filter(l => l.mileage >= kmMin);
+      if (kmMax) filtered = filtered.filter(l => l.mileage <= kmMax);
+
+      // Sort
+      switch (sortOrder) {
+        case 'oldest':
+          filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+          break;
+        case 'year-desc':
+          filtered.sort((a, b) => b.year - a.year);
+          break;
+        case 'year-asc':
+          filtered.sort((a, b) => a.year - b.year);
+          break;
+        case 'km-asc':
+          filtered.sort((a, b) => a.mileage - b.mileage);
+          break;
+        case 'km-desc':
+          filtered.sort((a, b) => b.mileage - a.mileage);
+          break;
+        default:
+          filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      }
+
+      document.getElementById('resultsCount').textContent = filtered.length;
+      renderListingCards(filtered);
+    }
+
+    function clearFilters() {
+      document.getElementById('filterCity').value = '';
+      document.getElementById('filterBrand').value = '';
+      document.getElementById('filterFuel').value = '';
+      document.getElementById('filterTransmission').value = '';
+      document.getElementById('filterSwapOnly').checked = false;
+      document.getElementById('filterYearMin').value = '';
+      document.getElementById('filterYearMax').value = '';
+      document.getElementById('filterKmMin').value = '';
+      document.getElementById('filterKmMax').value = '';
+      applyFilters();
+    }
+
+    function renderListingCards(listings) {
+      const container = document.getElementById('browseListings');
+      
+      if (!listings || listings.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 15px;">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <h3 style="font-size: 16px; margin-bottom: 8px;">İlan bulunamadı</h3>
+            <p style="font-size: 13px;">Filtrelerinizi değiştirerek tekrar deneyin</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = listings.map(listing => {
+        const matchPercent = Math.floor(Math.random() * 20) + 75;
+        const daysAgo = Math.floor(Math.random() * 30) + 1;
+        
+        return `
+          <div class="listing-card" onclick="navigateTo('detail', { id: '${listing.id}' })">
+            <div class="listing-image">
+              ${listing.photos && listing.photos.length > 0 
+                ? `<img src="${listing.photos[0]}" alt="${listing.brand} ${listing.model}">`
+                : `<div class="listing-image-placeholder">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                  </div>`
+              }
+              <div class="listing-badges">
+                ${listing.isFeatured ? '<span class="listing-badge vitrin">Vitrin</span>' : ''}
+                ${listing.swapActive ? '<span class="listing-badge">Takas</span>' : ''}
+              </div>
+            </div>
+            <div class="listing-body">
+              <div class="listing-title">${listing.brand} ${listing.model}</div>
+              <div class="listing-specs">
+                <span class="listing-spec">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  ${listing.year}
+                </span>
+                <span class="listing-spec">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  ${formatNumber(listing.mileage)} km
+                </span>
+                <span class="listing-spec">${listing.fuelType || 'Benzin'}</span>
+                <span class="listing-spec">${listing.transmission || 'Otomatik'}</span>
+              </div>
+              <div class="listing-location">${listing.city || 'Türkiye'}</div>
+              <div class="listing-match">
+                <div class="listing-match-bar">
+                  <div class="listing-match-fill" style="width: ${matchPercent}%"></div>
+                </div>
+                <span class="listing-match-text">%${matchPercent} Uyum</span>
+              </div>
+            </div>
+            <div class="listing-sidebar">
+              <span class="listing-date">${daysAgo} gün önce</span>
+              <button class="listing-favorite" onclick="event.stopPropagation(); toggleFavorite('${listing.id}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleFavorite(id) {
+      showToast('Favorilere eklendi', 'success');
+    }
+
+    // Detail
     async function loadListingDetail(id) {
       currentListingId = id;
       try {
@@ -2473,101 +2486,148 @@
     }
 
     function renderListingDetail(listing) {
+      document.getElementById('detailBreadcrumb').textContent = `${listing.brand} ${listing.model}`;
+      
+      const matchPercent = Math.floor(Math.random() * 20) + 75;
       const container = document.getElementById('detailContent');
-      const matchPercent = Math.floor(Math.random() * 30) + 70;
-
+      
       container.innerHTML = `
-        <div class="detail-gallery">
-          ${listing.photos && listing.photos.length > 0 
-            ? `<img src="${listing.photos[0]}" alt="${listing.brand} ${listing.model}">`
-            : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <polyline points="21 15 16 10 5 21"/>
-              </svg>`
-          }
+        <div class="detail-main">
+          <div class="detail-gallery">
+            <div class="detail-main-image">
+              ${listing.photos && listing.photos.length > 0 
+                ? `<img src="${listing.photos[0]}" alt="${listing.brand} ${listing.model}">`
+                : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>`
+              }
+            </div>
+          </div>
+
+          <div class="detail-info">
+            <div class="detail-title-section">
+              <h1 class="detail-title">${listing.brand} ${listing.model}</h1>
+              <div class="detail-meta">
+                <span>${listing.city || 'Türkiye'}</span>
+                <span>İlan No: ${listing.id.substring(0, 8)}</span>
+              </div>
+            </div>
+
+            <div class="detail-specs-grid">
+              <div class="detail-spec-item">
+                <span class="detail-spec-label">Marka</span>
+                <span class="detail-spec-value">${listing.brand}</span>
+              </div>
+              <div class="detail-spec-item">
+                <span class="detail-spec-label">Model</span>
+                <span class="detail-spec-value">${listing.model}</span>
+              </div>
+              <div class="detail-spec-item">
+                <span class="detail-spec-label">Yıl</span>
+                <span class="detail-spec-value">${listing.year}</span>
+              </div>
+              <div class="detail-spec-item">
+                <span class="detail-spec-label">Kilometre</span>
+                <span class="detail-spec-value">${formatNumber(listing.mileage)} km</span>
+              </div>
+              <div class="detail-spec-item">
+                <span class="detail-spec-label">Yakıt Tipi</span>
+                <span class="detail-spec-value">${listing.fuelType || 'Belirtilmemiş'}</span>
+              </div>
+              <div class="detail-spec-item">
+                <span class="detail-spec-label">Vites</span>
+                <span class="detail-spec-value">${listing.transmission || 'Belirtilmemiş'}</span>
+              </div>
+            </div>
+
+            <div class="detail-description">
+              <h3>Açıklama</h3>
+              <p>${listing.description || 'Bu araç takas için uygundur. Detaylı bilgi için iletişime geçebilirsiniz.'}</p>
+            </div>
+          </div>
         </div>
-        <div class="detail-info">
-          <h1 class="detail-title">${listing.brand} ${listing.model}</h1>
-          <div class="detail-meta">${listing.year} &bull; ${formatNumber(listing.mileage)} km &bull; ${listing.city || 'Türkiye'}</div>
-          
-          <div class="detail-specs">
-            <div class="detail-spec">
-              <span class="detail-spec-label">Marka</span>
-              <span class="detail-spec-value">${listing.brand}</span>
-            </div>
-            <div class="detail-spec">
-              <span class="detail-spec-label">Model</span>
-              <span class="detail-spec-value">${listing.model}</span>
-            </div>
-            <div class="detail-spec">
-              <span class="detail-spec-label">Yıl</span>
-              <span class="detail-spec-value">${listing.year}</span>
-            </div>
-            <div class="detail-spec">
-              <span class="detail-spec-label">Kilometre</span>
-              <span class="detail-spec-value">${formatNumber(listing.mileage)} km</span>
-            </div>
-            <div class="detail-spec">
-              <span class="detail-spec-label">Yakıt</span>
-              <span class="detail-spec-value">${listing.fuelType || 'Belirtilmemiş'}</span>
-            </div>
-            <div class="detail-spec">
-              <span class="detail-spec-label">Vites</span>
-              <span class="detail-spec-value">${listing.transmission || 'Belirtilmemiş'}</span>
+
+        <div class="detail-sidebar">
+          <div class="match-box">
+            <h4>Takas Uyum Oranı</h4>
+            <div class="match-percentage">
+              <div class="match-circle" style="--percent: ${matchPercent}">
+                <span>%${matchPercent}</span>
+              </div>
+              <div class="match-label">Bu araçla takas yapabilirsiniz</div>
             </div>
           </div>
 
-          <div class="detail-match">
-            <div class="detail-match-header">
-              <span class="detail-match-title">Takas Uyum Oranı</span>
-              <span class="detail-match-value">${matchPercent}%</span>
+          <div class="seller-box">
+            <div class="seller-header">
+              <div class="seller-avatar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </div>
+              <div class="seller-info">
+                <h4>İlan Sahibi</h4>
+                <p>Bireysel Satıcı</p>
+              </div>
             </div>
-            <div class="detail-match-bar">
-              <div class="detail-match-fill" style="width: ${matchPercent}%"></div>
-            </div>
-          </div>
-
-          <div class="detail-owner">
-            <div class="detail-owner-avatar">
+            <div class="seller-trust">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               </svg>
+              <span>Güven Skoru: 85/100</span>
             </div>
-            <div class="detail-owner-info">
-              <div class="detail-owner-name">İlan Sahibi</div>
-              <div class="detail-owner-trust">Güven Skoru: 85/100</div>
+            <div class="seller-actions">
+              <button class="btn-action primary" onclick="sendSwapOffer()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 3H7c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                  <path d="M12 17l4-4-4-4M8 13h8"/>
+                </svg>
+                Takas Teklifi Gönder
+              </button>
+              <button class="btn-action secondary" onclick="sendMessage()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                </svg>
+                Mesaj Gönder
+              </button>
+              <button class="btn-action secondary" onclick="toggleFavorite('${listing.id}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+                Favorilere Ekle
+              </button>
             </div>
-          </div>
-
-          <div class="detail-actions">
-            <button class="btn btn-primary btn-lg" onclick="openAuthModal('login')">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-              </svg>
-              Takas Teklifi Gönder
-            </button>
-            <button class="btn btn-secondary btn-lg">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-              </svg>
-              Mesaj Gönder
-            </button>
           </div>
         </div>
       `;
     }
 
-    // Dashboard
-    async function loadDashboard() {
+    function sendSwapOffer() {
       if (!currentUser) {
-        navigateTo('home');
+        openModal('login');
         return;
       }
+      showToast('Takas teklifi gönderildi!', 'success');
+    }
 
-      document.getElementById('dashboardUserName').textContent = currentUser.name || 'Kullanıcı';
-      document.getElementById('dashboardUserPhone').textContent = currentUser.phone?.replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '+90 $1 *** ** **') || '';
+    function sendMessage() {
+      if (!currentUser) {
+        openModal('login');
+        return;
+      }
+      showToast('Mesaj gönderildi!', 'success');
+    }
+
+    // Dashboard
+    async function loadDashboard() {
+      if (!currentUser) return;
+      
+      document.getElementById('dashUserName').textContent = currentUser.name || 'Kullanıcı';
+      document.getElementById('dashUserPhone').textContent = currentUser.phone?.replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '+90 $1 *** ** **') || '';
+      document.getElementById('dashStatTrust').textContent = currentUser.trustScore || 85;
 
       try {
         const [listingsRes, matchesRes] = await Promise.all([
@@ -2578,14 +2638,45 @@
         const userListings = await listingsRes.json();
         const matches = await matchesRes.json();
 
-        document.getElementById('statListings').textContent = userListings.length || 0;
-        document.getElementById('statMatches').textContent = matches.length || 0;
-        document.getElementById('statTrustScore').textContent = currentUser.trustScore || 85;
+        document.getElementById('dashStatListings').textContent = userListings.length || 0;
+        document.getElementById('dashStatMatches').textContent = matches.length || 0;
 
-        renderListings(userListings, 'userListings');
+        renderListingCards(userListings.length > 0 ? userListings : []);
+        document.getElementById('dashboardListings').innerHTML = document.getElementById('browseListings').innerHTML;
+        
+        if (userListings.length === 0) {
+          document.getElementById('dashboardListings').innerHTML = `
+            <div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 15px;">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <line x1="12" y1="8" x2="12" y2="16"/>
+                <line x1="8" y1="12" x2="16" y2="12"/>
+              </svg>
+              <h3 style="font-size: 16px; margin-bottom: 8px;">Henüz ilanınız yok</h3>
+              <p style="font-size: 13px;">İlk ilanınızı verin ve takas yapmaya başlayın</p>
+            </div>
+          `;
+        }
       } catch (err) {
         console.error('Failed to load dashboard:', err);
       }
+    }
+
+    // Modal
+    function openModal(type) {
+      document.getElementById('modalOverlay').classList.add('active');
+      document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+      document.getElementById(type + 'Modal').style.display = 'block';
+    }
+
+    function closeModal(e) {
+      if (e && e.target !== e.currentTarget) return;
+      document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    function switchModal(type) {
+      document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+      document.getElementById(type + 'Modal').style.display = 'block';
     }
 
     // Utilities
@@ -2597,17 +2688,8 @@
       const toast = document.getElementById('toast');
       toast.textContent = message;
       toast.className = `toast ${type} active`;
-      setTimeout(() => {
-        toast.classList.remove('active');
-      }, 3000);
+      setTimeout(() => toast.classList.remove('active'), 3000);
     }
-
-    // Close modal on outside click
-    document.getElementById('authModal').addEventListener('click', (e) => {
-      if (e.target.id === 'authModal') {
-        closeAuthModal();
-      }
-    });
   </script>
 </body>
 </html>
