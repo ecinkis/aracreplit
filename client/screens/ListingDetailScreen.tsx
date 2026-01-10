@@ -13,7 +13,7 @@ import {
   Linking,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
+import { useRoute, useNavigation, RouteProp, NavigationProp } from "@react-navigation/native";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -24,13 +24,14 @@ import { useAuth } from "@/contexts/AuthContext";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { Spacing, BorderRadius, Typography, BrandColors } from "@/constants/theme";
 import { Listing, User } from "@shared/schema";
-import { apiRequest } from "@/lib/query-client";
+import { apiRequest, getApiUrl } from "@/lib/query-client";
 import defaultVehicleImage from "../assets/images/default-vehicle.png";
 import defaultAvatarImage from "../assets/images/default-avatar.png";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 type ListingDetailRouteProp = RouteProp<RootStackParamList, "ListingDetail">;
+type ListingDetailNavigationProp = NavigationProp<RootStackParamList>;
 
 function SpecItem({ icon, label, value }: { icon: string; label: string; value: string }) {
   const { theme } = useTheme();
@@ -48,7 +49,7 @@ function SpecItem({ icon, label, value }: { icon: string; label: string; value: 
 export default function ListingDetailScreen() {
   const insets = useSafeAreaInsets();
   const route = useRoute<ListingDetailRouteProp>();
-  const navigation = useNavigation();
+  const navigation = useNavigation<ListingDetailNavigationProp>();
   const { theme } = useTheme();
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -498,9 +499,34 @@ export default function ListingDetailScreen() {
               </View>
               <Pressable
                 style={[styles.messageButton, { backgroundColor: BrandColors.primaryBlue }]}
-                onPress={() => {
+                onPress={async () => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  Alert.alert("Bilgi", "Mesaj göndermek için önce eşleşmeniz gerekiyor.");
+                  if (!user?.id || !listingUser?.id || !listing?.id) {
+                    Alert.alert("Hata", "Mesaj göndermek için giriş yapmanız gerekiyor.");
+                    return;
+                  }
+                  try {
+                    const response = await fetch(
+                      new URL("/api/conversations/start", getApiUrl()).toString(),
+                      {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          fromUserId: user.id,
+                          toUserId: listingUser.id,
+                          listingId: listing.id,
+                        }),
+                      }
+                    );
+                    if (!response.ok) throw new Error("Failed to start conversation");
+                    const { match } = await response.json();
+                    navigation.navigate("Chat", {
+                      matchId: match.id,
+                      otherUserName: listingUser.name || "İlan Sahibi",
+                    });
+                  } catch (error) {
+                    Alert.alert("Hata", "Mesaj başlatılamadı. Lütfen tekrar deneyin.");
+                  }
                 }}
               >
                 <Feather name="message-circle" size={18} color="#FFFFFF" />
@@ -788,9 +814,34 @@ export default function ListingDetailScreen() {
 
           <Pressable
             style={styles.footerButton}
-            onPress={() => {
+            onPress={async () => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              Alert.alert("Bilgi", "Mesajlaşma özelliği yakında aktif olacak.");
+              if (!user?.id || !listingUser?.id || !listing?.id) {
+                Alert.alert("Hata", "Mesaj göndermek için giriş yapmanız gerekiyor.");
+                return;
+              }
+              try {
+                const response = await fetch(
+                  new URL("/api/conversations/start", getApiUrl()).toString(),
+                  {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      fromUserId: user.id,
+                      toUserId: listingUser.id,
+                      listingId: listing.id,
+                    }),
+                  }
+                );
+                if (!response.ok) throw new Error("Failed to start conversation");
+                const { match } = await response.json();
+                navigation.navigate("Chat", {
+                  matchId: match.id,
+                  otherUserName: listingUser.name || "İlan Sahibi",
+                });
+              } catch (error) {
+                Alert.alert("Hata", "Mesaj başlatılamadı. Lütfen tekrar deneyin.");
+              }
             }}
           >
             <Feather name="message-circle" size={20} color={BrandColors.primaryBlue} />

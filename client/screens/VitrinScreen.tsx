@@ -411,7 +411,8 @@ const styles = StyleSheet.create({
     width: 68,
     height: 68,
     borderRadius: 34,
-    padding: 3,
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 4,
   },
   storyRingActive: {
@@ -430,9 +431,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   storyAvatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 62,
+    height: 62,
+    borderRadius: 31,
   },
   storyUsername: {
     fontSize: 10,

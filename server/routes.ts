@@ -285,6 +285,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Direct conversation - create match if not exists
+  app.post("/api/conversations/start", async (req, res) => {
+    try {
+      const { fromUserId, toUserId, listingId } = req.body;
+      
+      // Check if match already exists between these users
+      const existingMatches = await storage.getMatchesByUser(fromUserId);
+      const existingMatch = existingMatches.find(
+        (m: any) => (m.user1Id === toUserId || m.user2Id === toUserId)
+      );
+      
+      if (existingMatch) {
+        return res.json({ match: existingMatch, isNew: false });
+      }
+      
+      // Create a new match for direct conversation
+      const match = await storage.createMatch(fromUserId, toUserId, listingId, listingId);
+      res.status(201).json({ match, isNew: true });
+    } catch (error) {
+      console.error("Start conversation error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   // Messages routes
   app.get("/api/messages/:matchId", async (req, res) => {
     try {
