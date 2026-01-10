@@ -13,6 +13,7 @@ import LegalDocumentScreen from "@/screens/LegalDocumentScreen";
 import NotificationsScreen from "@/screens/NotificationsScreen";
 import CompareScreen from "@/screens/CompareScreen";
 import FilterScreen, { type FilterValues } from "@/screens/FilterScreen";
+import ReviewScreen from "@/screens/ReviewScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { useAuth } from "@/contexts/AuthContext";
 import { BrandColors } from "@/constants/theme";
@@ -31,6 +32,12 @@ export type RootStackParamList = {
   Notifications: undefined;
   Compare: undefined;
   Filter: { currentFilters?: FilterValues };
+  Review: {
+    matchId: string;
+    reviewerId: string;
+    reviewedUserId: string;
+    reviewedUserName: string;
+  };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -138,6 +145,14 @@ export default function RootStackNavigator() {
           <Stack.Screen
             name="Filter"
             component={FilterScreen}
+            options={{
+              headerShown: false,
+              presentation: "modal",
+            }}
+          />
+          <Stack.Screen
+            name="Review"
+            component={ReviewScreen}
             options={{
               headerShown: false,
               presentation: "modal",

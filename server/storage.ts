@@ -10,6 +10,8 @@ import {
   type Favorite,
   type Notification,
   type InsertNotification,
+  type Review,
+  type InsertReview,
   users,
   listings,
   likes,
@@ -17,6 +19,7 @@ import {
   messages,
   favorites,
   notifications,
+  reviews,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, desc, sql, ne, notInArray } from "drizzle-orm";
@@ -57,6 +60,12 @@ export interface IStorage {
   markNotificationAsRead(notificationId: string): Promise<void>;
   markAllNotificationsAsRead(userId: string): Promise<void>;
   getUnreadNotificationCount(userId: string): Promise<number>;
+
+  getReviewsByUser(userId: string): Promise<Review[]>;
+  getReviewsForUser(userId: string): Promise<Review[]>;
+  createReview(review: InsertReview): Promise<Review>;
+  getReviewForMatch(matchId: string, reviewerId: string): Promise<Review | undefined>;
+  getUserAverageRating(userId: string): Promise<{ average: number; count: number }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -294,6 +303,49 @@ export class DatabaseStorage implements IStorage {
       .from(notifications)
       .where(and(eq(notifications.userId, userId), eq(notifications.read, false)));
     return result[0]?.count || 0;
+  }
+
+  async getReviewsByUser(userId: string): Promise<Review[]> {
+    return db
+      .select()
+      .from(reviews)
+      .where(eq(reviews.reviewerId, userId))
+      .orderBy(desc(reviews.createdAt));
+  }
+
+  async getReviewsForUser(userId: string): Promise<Review[]> {
+    return db
+      .select()
+      .from(reviews)
+      .where(eq(reviews.reviewedUserId, userId))
+      .orderBy(desc(reviews.createdAt));
+  }
+
+  async createReview(review: InsertReview): Promise<Review> {
+    const [created] = await db.insert(reviews).values(review).returning();
+    return created;
+  }
+
+  async getReviewForMatch(matchId: string, reviewerId: string): Promise<Review | undefined> {
+    const [review] = await db
+      .select()
+      .from(reviews)
+      .where(and(eq(reviews.matchId, matchId), eq(reviews.reviewerId, reviewerId)));
+    return review || undefined;
+  }
+
+  async getUserAverageRating(userId: string): Promise<{ average: number; count: number }> {
+    const result = await db
+      .select({
+        average: sql<number>`COALESCE(AVG(rating), 0)`,
+        count: sql<number>`COUNT(*)`,
+      })
+      .from(reviews)
+      .where(eq(reviews.reviewedUserId, userId));
+    return {
+      average: Number(result[0]?.average || 0),
+      count: Number(result[0]?.count || 0),
+    };
   }
 }
 

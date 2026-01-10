@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect, useMemo, useLayoutEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -12,7 +12,9 @@ import {
 } from "react-native";
 import * as FileSystem from "expo-file-system";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useRoute, RouteProp } from "@react-navigation/native";
+import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { HeaderButton } from "@react-navigation/elements";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -24,10 +26,11 @@ import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { Spacing, BorderRadius, Typography, BrandColors } from "@/constants/theme";
-import { Message } from "@shared/schema";
-import { apiRequest } from "@/lib/query-client";
+import { Message, Match } from "@shared/schema";
+import { apiRequest, getApiUrl } from "@/lib/query-client";
 
 type ChatRouteProp = RouteProp<RootStackParamList, "Chat">;
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 function VoiceMessageBubble({
   message,
@@ -256,10 +259,11 @@ function RecordingIndicator({ duration }: { duration: number }) {
 export default function ChatScreen() {
   const insets = useSafeAreaInsets();
   const route = useRoute<ChatRouteProp>();
+  const navigation = useNavigation<NavigationProp>();
   const { theme } = useTheme();
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const { matchId } = route.params;
+  const { matchId, otherUserName } = route.params;
   const [messageText, setMessageText] = useState("");
   const flatListRef = useRef<FlatList>(null);
 
@@ -267,6 +271,43 @@ export default function ChatScreen() {
   const [recordingDuration, setRecordingDuration] = useState(0);
   const recordingRef = useRef<Audio.Recording | null>(null);
   const recordingTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const { data: match } = useQuery<Match>({
+    queryKey: ["/api/match", matchId],
+  });
+
+  const { data: reviewCheck } = useQuery<{ hasReviewed: boolean }>({
+    queryKey: [`/api/reviews/match/${matchId}/check/${user?.id}`],
+    enabled: !!user?.id && !!matchId,
+  });
+
+  const otherUserId = match
+    ? match.user1Id === user?.id
+      ? match.user2Id
+      : match.user1Id
+    : null;
+
+  useLayoutEffect(() => {
+    if (!reviewCheck?.hasReviewed && otherUserId) {
+      navigation.setOptions({
+        headerRight: () => (
+          <HeaderButton
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.navigate("Review", {
+                matchId,
+                reviewerId: user?.id || "",
+                reviewedUserId: otherUserId,
+                reviewedUserName: otherUserName,
+              });
+            }}
+          >
+            <Feather name="star" size={22} color={BrandColors.primaryBlue} />
+          </HeaderButton>
+        ),
+      });
+    }
+  }, [navigation, reviewCheck, otherUserId, matchId, user?.id, otherUserName]);
 
   const { data: messages, isLoading } = useQuery<Message[]>({
     queryKey: ["/api/messages", matchId],

@@ -309,6 +309,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Reviews routes
+  app.get("/api/reviews/user/:userId", async (req, res) => {
+    try {
+      const reviews = await storage.getReviewsForUser(req.params.userId);
+      res.json(reviews);
+    } catch (error) {
+      console.error("Get reviews error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/reviews/user/:userId/rating", async (req, res) => {
+    try {
+      const rating = await storage.getUserAverageRating(req.params.userId);
+      res.json(rating);
+    } catch (error) {
+      console.error("Get user rating error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/reviews/match/:matchId/check/:reviewerId", async (req, res) => {
+    try {
+      const { matchId, reviewerId } = req.params;
+      const review = await storage.getReviewForMatch(matchId, reviewerId);
+      res.json({ hasReviewed: !!review, review });
+    } catch (error) {
+      console.error("Check review error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/reviews", async (req, res) => {
+    try {
+      const { reviewerId, reviewedUserId, matchId, rating, comment } = req.body;
+      
+      if (!reviewerId || !reviewedUserId || !matchId || rating === undefined) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+      
+      if (rating < 1 || rating > 5) {
+        return res.status(400).json({ error: "Rating must be between 1 and 5" });
+      }
+
+      const existingReview = await storage.getReviewForMatch(matchId, reviewerId);
+      if (existingReview) {
+        return res.status(400).json({ error: "You have already reviewed this swap" });
+      }
+
+      const review = await storage.createReview({
+        reviewerId,
+        reviewedUserId,
+        matchId,
+        rating,
+        comment: comment || null,
+      });
+
+      res.status(201).json(review);
+    } catch (error) {
+      console.error("Create review error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
