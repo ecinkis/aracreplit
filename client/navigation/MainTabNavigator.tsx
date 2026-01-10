@@ -19,9 +19,11 @@ import CreateListingScreen from "@/screens/CreateListingScreen";
 import MatchScreen from "@/screens/MatchScreen";
 import ProfileScreen from "@/screens/ProfileScreen";
 
+import type { FilterValues } from "@/screens/FilterScreen";
+
 export type MainTabParamList = {
   VitrinTab: undefined;
-  SearchTab: undefined;
+  SearchTab: { appliedFilters?: FilterValues } | undefined;
   CreateTab: undefined;
   MatchTab: undefined;
   ProfileTab: undefined;

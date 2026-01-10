@@ -12,6 +12,7 @@ import CorporateApplicationScreen from "@/screens/CorporateApplicationScreen";
 import LegalDocumentScreen from "@/screens/LegalDocumentScreen";
 import NotificationsScreen from "@/screens/NotificationsScreen";
 import CompareScreen from "@/screens/CompareScreen";
+import FilterScreen, { type FilterValues } from "@/screens/FilterScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { useAuth } from "@/contexts/AuthContext";
 import { BrandColors } from "@/constants/theme";
@@ -29,6 +30,7 @@ export type RootStackParamList = {
   LegalDocument: { documentType: string };
   Notifications: undefined;
   Compare: undefined;
+  Filter: { currentFilters?: FilterValues };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -131,6 +133,14 @@ export default function RootStackNavigator() {
             component={CompareScreen}
             options={{
               headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="Filter"
+            component={FilterScreen}
+            options={{
+              headerShown: false,
+              presentation: "modal",
             }}
           />
         </>
