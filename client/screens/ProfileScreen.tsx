@@ -268,6 +268,33 @@ export default function ProfileScreen() {
           </View>
         </View>
 
+        <Pressable
+          style={({ pressed }) => [
+            styles.premiumCard,
+            user?.isPremium && styles.premiumCardActive,
+            pressed && { opacity: 0.9 },
+          ]}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            navigation.navigate("Premium");
+          }}
+        >
+          <View style={styles.premiumIcon}>
+            <Feather name="award" size={24} color={user?.isPremium ? "#FFD700" : BrandColors.primaryBlue} />
+          </View>
+          <View style={styles.premiumContent}>
+            <ThemedText style={[styles.premiumTitle, user?.isPremium && { color: "#FFFFFF" }]}>
+              {user?.isPremium ? "Premium Üye" : "Premium'a Yükselt"}
+            </ThemedText>
+            <ThemedText style={[styles.premiumSubtitle, user?.isPremium && { color: "rgba(255,255,255,0.8)" }]}>
+              {user?.isPremium 
+                ? "Tüm avantajlardan yararlanıyorsunuz" 
+                : "Sınırsız beğeni, öne çıkan ilanlar"}
+            </ThemedText>
+          </View>
+          <Feather name="chevron-right" size={24} color={user?.isPremium ? "#FFFFFF" : BrandColors.primaryBlue} />
+        </Pressable>
+
         <View style={styles.statsRow}>
           <StatCard icon="file-text" label="İlanlarım" value={userListings?.length || 0} />
           <StatCard icon="heart" label="Eşleşmeler" value={matches?.length || 0} />
@@ -977,5 +1004,41 @@ const styles = StyleSheet.create({
   favoriteText: {
     fontSize: 12,
     color: "#6B7280",
+  },
+  premiumCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#EBF4FF",
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    marginBottom: Spacing.lg,
+    borderWidth: 1,
+    borderColor: BrandColors.primaryBlue,
+  },
+  premiumCardActive: {
+    backgroundColor: BrandColors.primaryBlue,
+    borderColor: BrandColors.primaryBlue,
+  },
+  premiumIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(255,255,255,0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  premiumContent: {
+    flex: 1,
+    marginLeft: Spacing.md,
+  },
+  premiumTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: BrandColors.primaryBlue,
+  },
+  premiumSubtitle: {
+    fontSize: 13,
+    color: "#6B7280",
+    marginTop: 2,
   },
 });

@@ -50,6 +50,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Premium subscription
+  app.post("/api/users/:id/premium", async (req, res) => {
+    try {
+      const { days } = req.body;
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + (days || 30));
+      
+      const user = await storage.updateUser(req.params.id, {
+        isPremium: true,
+        premiumExpiresAt: expiresAt,
+      });
+      
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      res.json(user);
+    } catch (error) {
+      console.error("Premium subscription error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   // Listings routes
   app.get("/api/listings", async (req, res) => {
     try {

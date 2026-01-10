@@ -24,6 +24,10 @@ export const users = pgTable("users", {
   authorizedPerson: text("authorized_person"),
   identityVerified: boolean("identity_verified").default(false),
   companyVerified: boolean("company_verified").default(false),
+  isPremium: boolean("is_premium").default(false),
+  premiumExpiresAt: timestamp("premium_expires_at"),
+  dailyLikesUsed: integer("daily_likes_used").default(0),
+  lastLikeResetAt: timestamp("last_like_reset_at"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

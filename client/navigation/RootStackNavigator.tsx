@@ -14,6 +14,7 @@ import NotificationsScreen from "@/screens/NotificationsScreen";
 import CompareScreen from "@/screens/CompareScreen";
 import FilterScreen, { type FilterValues } from "@/screens/FilterScreen";
 import ReviewScreen from "@/screens/ReviewScreen";
+import PremiumScreen from "@/screens/PremiumScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { useAuth } from "@/contexts/AuthContext";
 import { BrandColors } from "@/constants/theme";
@@ -38,6 +39,7 @@ export type RootStackParamList = {
     reviewedUserId: string;
     reviewedUserName: string;
   };
+  Premium: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -153,6 +155,14 @@ export default function RootStackNavigator() {
           <Stack.Screen
             name="Review"
             component={ReviewScreen}
+            options={{
+              headerShown: false,
+              presentation: "modal",
+            }}
+          />
+          <Stack.Screen
+            name="Premium"
+            component={PremiumScreen}
             options={{
               headerShown: false,
               presentation: "modal",
