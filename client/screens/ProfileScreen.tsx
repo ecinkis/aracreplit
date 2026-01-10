@@ -345,7 +345,7 @@ export default function ProfileScreen() {
           <Pressable
             style={({ pressed }) => [
               styles.changeTypeButton,
-              pressed && { opacity: 0.7, backgroundColor: "#FFF7ED" }
+              pressed && { opacity: 0.7, backgroundColor: "#EBF4FF" }
             ]}
             onPress={() => {
               console.log("Button pressed!");
@@ -715,7 +715,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderStyle: "dashed",
     borderColor: BrandColors.primaryBlue,
-    backgroundColor: "#FFF7ED",
+    backgroundColor: "#EBF4FF",
   },
   addListingText: {
     fontSize: 13,

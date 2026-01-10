@@ -7,7 +7,7 @@ export const BrandColors = {
   successGreen: "#00C48C",
   alertRed: "#FF4757",
   skyBlue: "#4A90E2",
-  warning: "#FFA726",
+  warning: "#1C6BF9",
 };
 
 const tintColorLight = BrandColors.primaryBlue;
