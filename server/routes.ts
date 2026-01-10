@@ -195,6 +195,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Image upload endpoint
+  app.post("/api/upload", async (req, res) => {
+    try {
+      const { image } = req.body;
+      if (!image) {
+        return res.status(400).json({ error: "No image provided" });
+      }
+
+      // Extract base64 data
+      const matches = image.match(/^data:image\/([a-zA-Z+]+);base64,(.+)$/);
+      if (!matches) {
+        return res.status(400).json({ error: "Invalid image format" });
+      }
+
+      const ext = matches[1] === "jpeg" ? "jpg" : matches[1];
+      const data = matches[2];
+      const buffer = Buffer.from(data, "base64");
+
+      // Generate unique filename
+      const filename = `${crypto.randomUUID()}.${ext}`;
+      const uploadDir = path.join(process.cwd(), "server", "uploads");
+      
+      // Ensure upload directory exists
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+
+      const filePath = path.join(uploadDir, filename);
+      fs.writeFileSync(filePath, buffer);
+
+      // Return the URL for the uploaded file
+      const url = `/uploads/${filename}`;
+      res.json({ url });
+    } catch (error) {
+      console.error("Upload error:", error);
+      res.status(500).json({ error: "Upload failed" });
+    }
+  });
+
   app.post("/api/listings", async (req, res) => {
     try {
       const listing = await storage.createListing(req.body);

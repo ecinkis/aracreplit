@@ -229,9 +229,19 @@ export default function ListingDetailScreen() {
         <View style={styles.content}>
           <View style={styles.titleRow}>
             <View style={styles.titleContent}>
-              <ThemedText style={styles.title}>
-                {listing.brand} {listing.model}
-              </ThemedText>
+              <View style={styles.titleWithBadge}>
+                <ThemedText style={styles.title} numberOfLines={1}>
+                  {listing.brand} {listing.model}
+                </ThemedText>
+                {listing.swapActive ? (
+                  <View style={styles.swapBadgeInline}>
+                    <Feather name="repeat" size={12} color="#FFFFFF" />
+                    <ThemedText style={styles.swapBadgeTextSmall}>
+                      {listing.onlySwap ? "Takas" : "Takas + Nakit"}
+                    </ThemedText>
+                  </View>
+                ) : null}
+              </View>
               <ThemedText style={[styles.subtitle, { color: theme.textSecondary }]}>
                 {listing.year} - {listing.km.toLocaleString("tr-TR")} km
               </ThemedText>
@@ -287,15 +297,6 @@ export default function ListingDetailScreen() {
               </View>
             )}
           </View>
-
-          {listing.swapActive ? (
-            <View style={styles.swapBadge}>
-              <Feather name="repeat" size={16} color="#FFFFFF" />
-              <ThemedText style={styles.swapBadgeText}>
-                {listing.onlySwap ? "Sadece Takas" : "Takas + Nakit"}
-              </ThemedText>
-            </View>
-          ) : null}
 
           <View style={styles.tabContainer}>
             <Pressable
@@ -900,9 +901,29 @@ const styles = StyleSheet.create({
   titleContent: {
     flex: 1,
   },
+  titleWithBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginBottom: Spacing.xs,
+  },
   title: {
     ...Typography.h2,
-    marginBottom: Spacing.xs,
+    flexShrink: 1,
+  },
+  swapBadgeInline: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: BrandColors.successGreen,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.full,
+  },
+  swapBadgeTextSmall: {
+    fontSize: 11,
+    color: "#FFFFFF",
+    fontWeight: "600",
   },
   subtitle: {
     ...Typography.body,

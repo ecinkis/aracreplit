@@ -18,6 +18,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as Haptics from "expo-haptics";
+import * as FileSystem from "expo-file-system";
+import * as ImageManipulator from "expo-image-manipulator";
 import Animated, { FadeIn, FadeOut, SlideInRight, SlideOutLeft } from "react-native-reanimated";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -25,7 +27,7 @@ import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollV
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
 import { Spacing, BorderRadius, Typography, BrandColors } from "@/constants/theme";
-import { apiRequest } from "@/lib/query-client";
+import { apiRequest, getApiUrl } from "@/lib/query-client";
 import { 
   BRAND_NAMES, 
   getModelsByBrand, 
@@ -394,31 +396,68 @@ export default function CreateListingScreen() {
     setCurrentStep(currentStep - 1);
   };
 
-  const handleSubmit = () => {
-    createMutation.mutate({
-      userId: user?.id,
-      brand,
-      model,
-      year: parseInt(year),
-      km: parseInt(km.replace(/\D/g, "")),
-      bodyType,
-      fuelType,
-      transmission,
-      variant,
-      trimPackage,
-      city,
-      photos,
-      swapActive,
-      onlySwap,
-      acceptsCashDiff: !onlySwap,
-      preferredBrands,
-      tramerRecord: tramerRecord ? parseInt(tramerRecord.replace(/\D/g, "")) : 0,
-      accidentFree,
-      paintedParts,
-      replacedParts,
-      description,
-      estimatedValue: estimatedValue ? parseInt(estimatedValue.replace(/\D/g, "")) : null,
-    });
+  const [isUploading, setIsUploading] = useState(false);
+
+  const uploadPhoto = async (uri: string): Promise<string> => {
+    try {
+      const base64 = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      
+      const ext = uri.split('.').pop()?.toLowerCase() || 'jpg';
+      const mimeType = ext === 'png' ? 'image/png' : 'image/jpeg';
+      const dataUrl = `data:${mimeType};base64,${base64}`;
+      
+      const response = await fetch(new URL("/api/upload", getApiUrl()).toString(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: dataUrl }),
+      });
+      
+      if (!response.ok) throw new Error("Upload failed");
+      const data = await response.json();
+      return new URL(data.url, getApiUrl()).toString();
+    } catch (error) {
+      console.error("Photo upload error:", error);
+      throw error;
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      setIsUploading(true);
+      
+      const uploadedUrls = await Promise.all(photos.map(uploadPhoto));
+      
+      createMutation.mutate({
+        userId: user?.id,
+        brand,
+        model,
+        year: parseInt(year),
+        km: parseInt(km.replace(/\D/g, "")),
+        bodyType,
+        fuelType,
+        transmission,
+        variant,
+        trimPackage,
+        city,
+        photos: uploadedUrls,
+        swapActive,
+        onlySwap,
+        acceptsCashDiff: !onlySwap,
+        preferredBrands,
+        tramerRecord: tramerRecord ? parseInt(tramerRecord.replace(/\D/g, "")) : 0,
+        accidentFree,
+        paintedParts,
+        replacedParts,
+        description,
+        estimatedValue: estimatedValue ? parseInt(estimatedValue.replace(/\D/g, "")) : null,
+      });
+    } catch (error) {
+      Alert.alert("Hata", "Fotoğraflar yüklenirken bir hata oluştu.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const renderStepContent = () => {
@@ -881,11 +920,11 @@ export default function CreateListingScreen() {
           </Pressable>
         ) : (
           <Pressable
-            style={[styles.submitButton, createMutation.isPending && { opacity: 0.7 }]}
+            style={[styles.submitButton, (createMutation.isPending || isUploading) && { opacity: 0.7 }]}
             onPress={handleSubmit}
-            disabled={createMutation.isPending}
+            disabled={createMutation.isPending || isUploading}
           >
-            {createMutation.isPending ? (
+            {(createMutation.isPending || isUploading) ? (
               <ActivityIndicator color="#FFFFFF" />
             ) : (
               <>
