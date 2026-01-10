@@ -5,12 +5,18 @@ import * as crypto from "crypto";
 import * as fs from "fs";
 import * as path from "path";
 
-const ADMIN_SECRET = process.env.SESSION_SECRET || "admin-secret-key";
+function getAdminSecret(): string {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret) {
+    throw new Error("SESSION_SECRET environment variable is required for admin authentication");
+  }
+  return secret;
+}
 
 function generateToken(email: string): string {
   const payload = { email, exp: Date.now() + 24 * 60 * 60 * 1000 };
   const data = JSON.stringify(payload);
-  const signature = crypto.createHmac("sha256", ADMIN_SECRET).update(data).digest("hex");
+  const signature = crypto.createHmac("sha256", getAdminSecret()).update(data).digest("hex");
   return Buffer.from(data).toString("base64") + "." + signature;
 }
 
@@ -18,7 +24,7 @@ function verifyToken(token: string): { email: string } | null {
   try {
     const [dataB64, signature] = token.split(".");
     const data = Buffer.from(dataB64, "base64").toString();
-    const expectedSig = crypto.createHmac("sha256", ADMIN_SECRET).update(data).digest("hex");
+    const expectedSig = crypto.createHmac("sha256", getAdminSecret()).update(data).digest("hex");
     if (signature !== expectedSig) return null;
     const payload = JSON.parse(data);
     if (payload.exp < Date.now()) return null;
@@ -29,7 +35,7 @@ function verifyToken(token: string): { email: string } | null {
 }
 
 function hashPassword(password: string): string {
-  return crypto.createHash("sha256").update(password + ADMIN_SECRET).digest("hex");
+  return crypto.createHash("sha256").update(password + getAdminSecret()).digest("hex");
 }
 
 function adminAuth(req: Request, res: Response, next: NextFunction) {
