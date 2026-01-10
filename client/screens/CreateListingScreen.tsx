@@ -1005,11 +1005,12 @@ const styles = StyleSheet.create({
   chipContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: Spacing.sm,
+    gap: Spacing.md,
+    rowGap: Spacing.md,
   },
   chip: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm + 2,
     borderRadius: BorderRadius.full,
   },
   chipSelected: {
@@ -1184,7 +1185,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
-    backgroundColor: BrandColors.primaryBlue,
+    backgroundColor: "#0A0A0A",
   },
   fullWidthButton: {
     flex: 1,
