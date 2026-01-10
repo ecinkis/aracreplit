@@ -41,7 +41,6 @@ function CreateMenuModal({
   onDetailedCreate: () => void;
 }) {
   const insets = useSafeAreaInsets();
-  const tabBarHeight = Platform.OS === "ios" ? 88 : 60;
 
   if (!visible) return null;
 
@@ -55,43 +54,73 @@ function CreateMenuModal({
         />
       </Pressable>
       <Animated.View 
-        entering={SlideInDown.springify().damping(20)}
+        entering={SlideInDown.springify().damping(18).stiffness(120)}
         exiting={SlideOutDown.duration(200)}
         style={[
-          styles.menuContainer,
-          { bottom: tabBarHeight + insets.bottom + 20 }
+          styles.bottomSheet,
+          { paddingBottom: insets.bottom + Spacing.lg }
         ]}
       >
-        <Pressable 
-          style={({ pressed }) => [
-            styles.menuItem,
-            pressed && styles.menuItemPressed
-          ]}
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            onDetailedCreate();
-          }}
-        >
-          <View style={styles.menuIconContainer}>
-            <Feather name="file-text" size={20} color="#000000" />
-          </View>
-          <ThemedText style={styles.menuText}>Detayli ilan ver</ThemedText>
-        </Pressable>
-        <Pressable 
-          style={({ pressed }) => [
-            styles.menuItem,
-            pressed && styles.menuItemPressed
-          ]}
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            onQuickCreate();
-          }}
-        >
-          <View style={styles.menuIconContainer}>
-            <Feather name="zap" size={20} color="#000000" />
-          </View>
-          <ThemedText style={styles.menuText}>Hizli ilan ver</ThemedText>
-        </Pressable>
+        <View style={styles.sheetHandle} />
+        
+        <View style={styles.sheetHeader}>
+          <ThemedText style={styles.sheetTitle}>İlan Ver</ThemedText>
+          <Pressable 
+            onPress={onClose}
+            style={({ pressed }) => [
+              styles.closeButton,
+              pressed && { opacity: 0.7 }
+            ]}
+          >
+            <Feather name="x" size={24} color="#374151" />
+          </Pressable>
+        </View>
+
+        <View style={styles.optionsContainer}>
+          <Pressable 
+            style={({ pressed }) => [
+              styles.optionCard,
+              pressed && styles.optionCardPressed
+            ]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              onQuickCreate();
+            }}
+          >
+            <View style={[styles.optionIconContainer, { backgroundColor: "#10B981" }]}>
+              <Feather name="zap" size={24} color="#FFFFFF" />
+            </View>
+            <View style={styles.optionContent}>
+              <ThemedText style={styles.optionTitle}>Hızlı İlan Ver</ThemedText>
+              <ThemedText style={styles.optionDescription}>
+                Çok detaya girmeden kısa sürede ilan ver
+              </ThemedText>
+            </View>
+            <Feather name="chevron-right" size={24} color="#9CA3AF" />
+          </Pressable>
+
+          <Pressable 
+            style={({ pressed }) => [
+              styles.optionCard,
+              pressed && styles.optionCardPressed
+            ]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              onDetailedCreate();
+            }}
+          >
+            <View style={[styles.optionIconContainer, { backgroundColor: "#1F2937" }]}>
+              <Feather name="file-text" size={24} color="#FFFFFF" />
+            </View>
+            <View style={styles.optionContent}>
+              <ThemedText style={styles.optionTitle}>Detaylı İlan Ver</ThemedText>
+              <ThemedText style={styles.optionDescription}>
+                Tüm özellikleri detaylıca belirterek ilan ver
+              </ThemedText>
+            </View>
+            <Feather name="chevron-right" size={24} color="#9CA3AF" />
+          </Pressable>
+        </View>
       </Animated.View>
     </Modal>
   );
@@ -248,43 +277,75 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.3)",
+    backgroundColor: "rgba(0,0,0,0.4)",
   },
-  menuContainer: {
+  bottomSheet: {
     position: "absolute",
-    left: "50%",
-    transform: [{ translateX: -100 }],
-    width: 200,
+    bottom: 0,
+    left: 0,
+    right: 0,
     backgroundColor: "#FFFFFF",
-    borderRadius: BorderRadius.lg,
-    paddingVertical: Spacing.sm,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 24,
-    elevation: 16,
-  },
-  menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: Spacing.md,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingTop: Spacing.sm,
     paddingHorizontal: Spacing.lg,
+  },
+  sheetHandle: {
+    width: 36,
+    height: 4,
+    backgroundColor: "#D1D5DB",
+    borderRadius: 2,
+    alignSelf: "center",
+    marginBottom: Spacing.md,
+  },
+  sheetHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: Spacing.lg,
+  },
+  sheetTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#111827",
+  },
+  closeButton: {
+    padding: Spacing.xs,
+  },
+  optionsContainer: {
     gap: Spacing.md,
   },
-  menuItemPressed: {
-    backgroundColor: "#F3F4F6",
+  optionCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F9FAFB",
+    borderRadius: 16,
+    padding: Spacing.md,
+    gap: Spacing.md,
   },
-  menuIconContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+  optionCardPressed: {
     backgroundColor: "#F3F4F6",
+    transform: [{ scale: 0.98 }],
+  },
+  optionIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
   },
-  menuText: {
-    fontSize: 15,
-    fontWeight: "500",
-    color: "#000000",
+  optionContent: {
+    flex: 1,
+  },
+  optionTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#111827",
+    marginBottom: 2,
+  },
+  optionDescription: {
+    fontSize: 13,
+    color: "#6B7280",
+    lineHeight: 18,
   },
 });
