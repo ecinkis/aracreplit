@@ -486,7 +486,7 @@ export default function CreateListingScreen() {
       case 2:
         const availableModels = brand ? getModelsByBrand(brand) : [];
         const currentYear = new Date().getFullYear();
-        const yearOptions = Array.from({ length: currentYear - 1989 }, (_, i) => String(currentYear + 1 - i));
+        const yearOptions = Array.from({ length: currentYear - 1989 }, (_, i) => String(currentYear - i));
         return (
           <Animated.View entering={FadeIn} style={styles.stepContent}>
             <View style={styles.stepHeader}>
