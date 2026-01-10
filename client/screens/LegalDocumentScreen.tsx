@@ -18,15 +18,15 @@ type LegalDocumentRouteProp = RouteProp<RootStackParamList, "LegalDocument">;
 const LEGAL_DOCUMENTS: Record<string, { title: string; content: string }> = {
   "kullanim-kosullari": {
     title: "Kullanım Koşulları",
-    content: `TakasApp Kullanım Koşulları
+    content: `Araç Takası Kullanım Koşulları
 
 Son Güncelleme: Ocak 2026
 
 1. Giriş
-TakasApp uygulamasını ("Uygulama") kullanarak bu kullanım koşullarını kabul etmiş olursunuz. Bu koşulları kabul etmiyorsanız, lütfen uygulamayı kullanmayın.
+Araç Takası uygulamasını ("Uygulama") kullanarak bu kullanım koşullarını kabul etmiş olursunuz. Bu koşulları kabul etmiyorsanız, lütfen uygulamayı kullanmayın.
 
 2. Hizmet Tanımı
-TakasApp, kullanıcıların araçlarını takas etmelerine olanak sağlayan bir platformdur. Platform, alıcı ve satıcıları bir araya getirmekte olup, takas işlemlerinin doğrudan tarafı değildir.
+Araç Takası, kullanıcıların araçlarını takas etmelerine olanak sağlayan bir platformdur. Platform, alıcı ve satıcıları bir araya getirmekte olup, takas işlemlerinin doğrudan tarafı değildir.
 
 3. Üyelik
 - Üye olmak için 18 yaşından büyük olmanız gerekmektedir
@@ -47,22 +47,22 @@ TakasApp, kullanıcıların araçlarını takas etmelerine olanak sağlayan bir 
 - Platformu kötüye kullanmak
 
 6. Sorumluluk Reddi
-TakasApp, kullanıcılar arasındaki işlemlerden sorumlu değildir. Takas işlemleri tamamen kullanıcıların kendi sorumluluğundadır.
+Araç Takası, kullanıcılar arasındaki işlemlerden sorumlu değildir. Takas işlemleri tamamen kullanıcıların kendi sorumluluğundadır.
 
 7. Değişiklikler
 Bu kullanım koşulları önceden haber vermeksizin değiştirilebilir. Güncel koşulları takip etmek kullanıcının sorumluluğundadır.
 
 8. İletişim
-Sorularınız için: destek@takasapp.com`,
+Sorularınız için: info@aractakasi.com`,
   },
   "gizlilik-politikasi": {
     title: "Gizlilik Politikası",
-    content: `TakasApp Gizlilik Politikası
+    content: `Araç Takası Gizlilik Politikası
 
 Son Güncelleme: Ocak 2026
 
 1. Toplanan Veriler
-TakasApp olarak aşağıdaki kişisel verileri topluyoruz:
+Araç Takası olarak aşağıdaki kişisel verileri topluyoruz:
 - Ad, soyad, telefon numarası
 - E-posta adresi (opsiyonel)
 - Araç bilgileri ve fotoğrafları
@@ -97,18 +97,18 @@ Kişisel verileriniz:
 Uygulama, kullanıcı deneyimini iyileştirmek için çerezler kullanmaktadır. Detaylar için Çerez Politikamızı inceleyiniz.
 
 7. İletişim
-Gizlilik sorularınız için: gizlilik@takasapp.com`,
+Gizlilik sorularınız için: info@aractakasi.com`,
   },
   "kvkk": {
     title: "KVKK Aydınlatma Metni",
-    content: `TakasApp KVKK Aydınlatma Metni
+    content: `Araç Takası KVKK Aydınlatma Metni
 
 6698 Sayılı Kişisel Verilerin Korunması Kanunu Kapsamında Aydınlatma Metni
 
 Son Güncelleme: Ocak 2026
 
 1. Veri Sorumlusu
-TakasApp Teknoloji A.Ş. olarak kişisel verilerinizin güvenliği konusunda azami hassasiyet göstermekteyiz.
+Araç Takası Teknoloji A.Ş. olarak kişisel verilerinizin güvenliği konusunda azami hassasiyet göstermekteyiz.
 
 2. Kişisel Verilerin İşlenme Amacı
 Kişisel verileriniz aşağıdaki amaçlarla işlenmektedir:
@@ -142,22 +142,22 @@ h) İşlenen verilerin münhasıran otomatik sistemler vasıtasıyla analiz edil
 i) Kanuna aykırı işleme sebebiyle zarara uğramanız halinde zararın giderilmesini talep etme
 
 6. Başvuru
-Haklarınızı kullanmak için kvkk@takasapp.com adresine başvurabilirsiniz.`,
+Haklarınızı kullanmak için info@aractakasi.com adresine başvurabilirsiniz.`,
   },
   "mesafeli-satis": {
     title: "Mesafeli Satış Sözleşmesi",
-    content: `TakasApp Mesafeli Satış Sözleşmesi
+    content: `Araç Takası Mesafeli Satış Sözleşmesi
 
 Son Güncelleme: Ocak 2026
 
 1. Taraflar
-İşbu sözleşme, TakasApp Teknoloji A.Ş. ("Platform") ile platform üzerinden hizmet alan kullanıcı ("Kullanıcı") arasında akdedilmiştir.
+İşbu sözleşme, Araç Takası Teknoloji A.Ş. ("Platform") ile platform üzerinden hizmet alan kullanıcı ("Kullanıcı") arasında akdedilmiştir.
 
 2. Sözleşmenin Konusu
 Bu sözleşme, 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği hükümleri gereğince tarafların hak ve yükümlülüklerini düzenler.
 
 3. Hizmetin Özellikleri
-TakasApp, araç takas hizmeti sunan bir aracı platformdur:
+Araç Takası, araç takas hizmeti sunan bir aracı platformdur:
 - Ücretsiz üyelik ve ilan yayınlama
 - Premium üyelik özellikleri (opsiyonel)
 - Eşleştirme ve mesajlaşma hizmetleri
@@ -186,11 +186,11 @@ TakasApp, araç takas hizmeti sunan bir aracı platformdur:
 Uyuşmazlıklarda Tüketici Hakem Heyetleri ve Tüketici Mahkemeleri yetkilidir.
 
 9. İletişim
-Sözleşme ile ilgili sorularınız için: hukuk@takasapp.com`,
+Sözleşme ile ilgili sorularınız için: info@aractakasi.com`,
   },
   "cerez-politikasi": {
     title: "Çerez Politikası",
-    content: `TakasApp Çerez Politikası
+    content: `Araç Takası Çerez Politikası
 
 Son Güncelleme: Ocak 2026
 
@@ -235,7 +235,7 @@ Uygulamamızda aşağıdaki üçüncü taraf hizmetleri kullanılabilir:
 Bu politika gerektiğinde güncellenebilir. Önemli değişiklikler uygulama içinden bildirilir.
 
 7. İletişim
-Çerez politikası hakkında sorularınız için: gizlilik@takasapp.com`,
+Çerez politikası hakkında sorularınız için: info@aractakasi.com`,
   },
 };
 
