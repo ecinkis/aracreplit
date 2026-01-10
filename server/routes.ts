@@ -625,8 +625,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin Panel HTML
+  // Robots.txt - block admin paths from search engines
+  app.get("/robots.txt", (req, res) => {
+    res.type("text/plain");
+    res.send(`User-agent: *
+Disallow: /panel-yonetim-x7k9m/
+Disallow: /api/admin/
+`);
+  });
+
+  // Hidden admin path - return 404 for obvious /admin route
   app.get("/admin", (req, res) => {
+    res.status(404).json({ error: "Not found" });
+  });
+
+  // Secret Admin Panel HTML - obscure URL
+  app.get("/panel-yonetim-x7k9m", (req, res) => {
+    res.set("X-Robots-Tag", "noindex, nofollow");
+    res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
     const adminHtml = fs.readFileSync(
       path.join(process.cwd(), "server", "templates", "admin-panel.html"),
       "utf-8"

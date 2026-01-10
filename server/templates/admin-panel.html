@@ -3,15 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Araç Takası - Admin Panel</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="bingbot" content="noindex, nofollow">
+  <title>Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #f5f5f5;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0a1628 0%, #1a365d 50%, #1C6BF9 100%);
       min-height: 100vh;
+      overflow-x: hidden;
     }
+
+    .animated-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.4;
+      animation: float 20s ease-in-out infinite;
+    }
+    .orb-1 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, #1C6BF9 0%, transparent 70%);
+      top: -200px;
+      left: -200px;
+      animation-delay: 0s;
+    }
+    .orb-2 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, #60a5fa 0%, transparent 70%);
+      top: 50%;
+      right: -100px;
+      animation-delay: -5s;
+    }
+    .orb-3 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, #818cf8 0%, transparent 70%);
+      bottom: -100px;
+      left: 30%;
+      animation-delay: -10s;
+    }
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(50px, -30px) scale(1.1); }
+      50% { transform: translate(-20px, 50px) scale(0.95); }
+      75% { transform: translate(-40px, -20px) scale(1.05); }
+    }
+
+    .particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 50%;
+      animation: rise 15s linear infinite;
+    }
+    @keyframes rise {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+    }
+
     .login-container {
+      position: relative;
+      z-index: 1;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -19,62 +94,153 @@
       padding: 20px;
     }
     .login-box {
-      background: white;
-      padding: 40px;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 48px 40px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255,255,255,0.1);
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
+      animation: slideUp 0.6s ease-out;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .login-logo {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #1C6BF9, #60a5fa);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      box-shadow: 0 10px 30px rgba(28, 107, 249, 0.4);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 10px 30px rgba(28, 107, 249, 0.4); }
+      50% { box-shadow: 0 15px 40px rgba(28, 107, 249, 0.6); }
+    }
+    .login-logo svg {
+      width: 32px;
+      height: 32px;
+      fill: white;
     }
     .login-box h1 {
-      font-size: 24px;
+      font-size: 28px;
       margin-bottom: 8px;
-      color: #1C6BF9;
+      color: white;
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: -0.5px;
     }
-    .login-box p {
-      color: #666;
-      margin-bottom: 24px;
+    .login-box .subtitle {
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 32px;
+      text-align: center;
+      font-size: 15px;
     }
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
     .form-group label {
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       font-weight: 500;
-      color: #333;
+      color: rgba(255,255,255,0.9);
+      font-size: 14px;
+    }
+    .input-wrapper {
+      position: relative;
+    }
+    .input-wrapper svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      stroke: rgba(255,255,255,0.5);
+      transition: stroke 0.3s;
     }
     .form-group input {
       width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
+      padding: 14px 14px 14px 48px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
       font-size: 16px;
+      color: white;
+      transition: all 0.3s;
+    }
+    .form-group input::placeholder {
+      color: rgba(255,255,255,0.4);
     }
     .form-group input:focus {
       outline: none;
       border-color: #1C6BF9;
+      background: rgba(255,255,255,0.15);
+      box-shadow: 0 0 0 4px rgba(28,107,249,0.2);
+    }
+    .form-group input:focus + svg,
+    .input-wrapper:focus-within svg {
+      stroke: #60a5fa;
     }
     .btn-primary {
       width: 100%;
-      padding: 14px;
-      background: #1C6BF9;
+      padding: 16px;
+      background: linear-gradient(135deg, #1C6BF9, #3b82f6);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.3s;
+      margin-top: 8px;
+      position: relative;
+      overflow: hidden;
     }
-    .btn-primary:hover { background: #1557d4; }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(28,107,249,0.4);
+    }
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+    .btn-primary:active {
+      transform: translateY(0);
+    }
     .error-message {
-      background: #fee;
-      color: #c00;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 16px;
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      padding: 14px;
+      border-radius: 12px;
+      margin-bottom: 20px;
       display: none;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      font-size: 14px;
+      text-align: center;
+    }
+    .login-footer {
+      margin-top: 32px;
+      text-align: center;
+      color: rgba(255,255,255,0.4);
+      font-size: 13px;
     }
 
     .admin-container { display: none; }
@@ -282,24 +448,61 @@
   </style>
 </head>
 <body>
+  <div class="animated-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="particles" id="particles"></div>
+  </div>
+
   <div class="login-container" id="loginContainer">
     <div class="login-box">
-      <h1>Araç Takası</h1>
-      <p>Admin paneline giriş yapın</p>
+      <div class="login-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <h1>Yetki Merkezi</h1>
+      <p class="subtitle">Devam etmek icin giris yapın</p>
       <div class="error-message" id="loginError"></div>
       <form id="loginForm">
         <div class="form-group">
-          <label>E-posta</label>
-          <input type="email" id="loginEmail" required placeholder="admin@aractakasi.com">
+          <label>E-posta Adresi</label>
+          <div class="input-wrapper">
+            <input type="email" id="loginEmail" required placeholder="ornek@email.com">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/></svg>
+          </div>
         </div>
         <div class="form-group">
-          <label>Şifre</label>
-          <input type="password" id="loginPassword" required placeholder="Şifrenizi girin">
+          <label>Parola</label>
+          <div class="input-wrapper">
+            <input type="password" id="loginPassword" required placeholder="Parolanizi girin">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          </div>
         </div>
-        <button type="submit" class="btn-primary">Giriş Yap</button>
+        <button type="submit" class="btn-primary">Giris Yap</button>
       </form>
+      <div class="login-footer">
+        Guvenli baglanti ile korunmaktadir
+      </div>
     </div>
   </div>
+
+  <script>
+    (function() {
+      const particles = document.getElementById('particles');
+      for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+        particles.appendChild(particle);
+      }
+    })();
+  </script>
 
   <div class="admin-container" id="adminContainer">
     <aside class="sidebar">
