@@ -398,6 +398,114 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <ThemedText style={styles.sectionTitle}>Mesajlarım</ThemedText>
+            <ThemedText style={styles.sectionCount}>
+              {matches?.length || 0}
+            </ThemedText>
+          </View>
+          {matches && matches.length > 0 ? (
+            <View style={styles.messagesContainer}>
+              {matches.slice(0, 3).map((match) => (
+                <Pressable
+                  key={match.id}
+                  style={({ pressed }) => [
+                    styles.messageItem,
+                    pressed && { opacity: 0.7 },
+                  ]}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    navigation.navigate("Chat", { 
+                      matchId: match.id, 
+                      otherUserName: "Kullanıcı" 
+                    });
+                  }}
+                >
+                  <View style={styles.messageAvatar}>
+                    <Feather name="message-circle" size={20} color={BrandColors.primaryBlue} />
+                  </View>
+                  <View style={styles.messageContent}>
+                    <ThemedText style={styles.messageTitle}>Takas Görüşmesi</ThemedText>
+                    <ThemedText style={styles.messageSubtitle}>
+                      Mesajlaşmak için tıklayın
+                    </ThemedText>
+                  </View>
+                  <Feather name="chevron-right" size={20} color="#9CA3AF" />
+                </Pressable>
+              ))}
+              {matches.length > 3 && (
+                <Pressable
+                  style={styles.seeAllButton}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    (navigation.getParent() as any)?.navigate("MatchTab");
+                  }}
+                >
+                  <ThemedText style={styles.seeAllText}>
+                    Tüm mesajları gör ({matches.length})
+                  </ThemedText>
+                </Pressable>
+              )}
+            </View>
+          ) : (
+            <View style={styles.emptySection}>
+              <Feather name="message-circle" size={32} color="#D1D5DB" />
+              <ThemedText style={styles.emptySectionText}>
+                Henüz mesajınız yok
+              </ThemedText>
+              <ThemedText style={styles.emptySectionSubtext}>
+                Eşleşme sayfasından araç takası yapın
+              </ThemedText>
+            </View>
+          )}
+        </View>
+
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <ThemedText style={styles.sectionTitle}>Favorilerim</ThemedText>
+            <ThemedText style={styles.sectionCount}>
+              {favorites?.length || 0}
+            </ThemedText>
+          </View>
+          {favorites && favorites.length > 0 ? (
+            <FlatList
+              data={favorites.slice(0, 5)}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.favoriteCard,
+                    pressed && { opacity: 0.8 },
+                  ]}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    handleListingPress(item.listingId);
+                  }}
+                >
+                  <View style={styles.favoriteIconContainer}>
+                    <Feather name="heart" size={20} color="#EF4444" />
+                  </View>
+                  <ThemedText style={styles.favoriteText}>Favori İlan</ThemedText>
+                </Pressable>
+              )}
+              contentContainerStyle={styles.horizontalList}
+            />
+          ) : (
+            <View style={styles.emptySection}>
+              <Feather name="heart" size={32} color="#D1D5DB" />
+              <ThemedText style={styles.emptySectionText}>
+                Henüz favoriniz yok
+              </ThemedText>
+              <ThemedText style={styles.emptySectionSubtext}>
+                Beğendiğiniz ilanları favorilere ekleyin
+              </ThemedText>
+            </View>
+          )}
+        </View>
+
+        <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Sözleşmeler ve Politikalar</ThemedText>
           
           <Pressable
@@ -739,5 +847,87 @@ const styles = StyleSheet.create({
   legalItemText: {
     fontSize: 15,
     color: "#374151",
+  },
+  messagesContainer: {
+    backgroundColor: "#F9FAFB",
+    borderRadius: BorderRadius.md,
+    overflow: "hidden",
+  },
+  messageItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
+  messageAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "#EBF4FF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: Spacing.md,
+  },
+  messageContent: {
+    flex: 1,
+  },
+  messageTitle: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#111827",
+  },
+  messageSubtitle: {
+    fontSize: 13,
+    color: "#6B7280",
+    marginTop: 2,
+  },
+  seeAllButton: {
+    padding: Spacing.md,
+    alignItems: "center",
+  },
+  seeAllText: {
+    fontSize: 14,
+    color: BrandColors.primaryBlue,
+    fontWeight: "500",
+  },
+  emptySection: {
+    backgroundColor: "#F9FAFB",
+    borderRadius: BorderRadius.md,
+    padding: Spacing.xl,
+    alignItems: "center",
+  },
+  emptySectionText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#6B7280",
+    marginTop: Spacing.md,
+  },
+  emptySectionSubtext: {
+    fontSize: 13,
+    color: "#9CA3AF",
+    marginTop: Spacing.xs,
+    textAlign: "center",
+  },
+  favoriteCard: {
+    width: 100,
+    height: 100,
+    borderRadius: BorderRadius.md,
+    backgroundColor: "#FEF2F2",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  favoriteIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: Spacing.sm,
+  },
+  favoriteText: {
+    fontSize: 12,
+    color: "#6B7280",
   },
 });
