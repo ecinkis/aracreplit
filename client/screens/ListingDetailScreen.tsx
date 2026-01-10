@@ -173,7 +173,7 @@ export default function ListingDetailScreen() {
   const isOwner = listing.userId === user?.id;
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={[styles.container, { backgroundColor: "#FFFFFF" }]}>
       <ScrollView
         contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.xl }}
         showsVerticalScrollIndicator={false}
@@ -511,7 +511,7 @@ export default function ListingDetailScreen() {
           </View>
         </View>
       </Modal>
-    </ThemedView>
+    </View>
   );
 }
 
