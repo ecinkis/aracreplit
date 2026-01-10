@@ -333,6 +333,118 @@ export default function CompareScreen() {
               value1={vehicle1.acceptsCashDiff ? "Kabul Ediyor" : "Kabul Etmiyor"} 
               value2={vehicle2.acceptsCashDiff ? "Kabul Ediyor" : "Kabul Etmiyor"}
             />
+
+            <View style={styles.swapCalculator}>
+              <View style={styles.calculatorHeader}>
+                <Feather name="calculator" size={20} color={BrandColors.primaryBlue} />
+                <ThemedText style={styles.calculatorTitle}>Takas Değer Hesaplayıcı</ThemedText>
+              </View>
+
+              <View style={styles.valueRow}>
+                <View style={styles.valueCard}>
+                  <ThemedText style={styles.valueLabel}>{vehicle1.brand} {vehicle1.model}</ThemedText>
+                  <ThemedText style={styles.valueAmount}>
+                    {vehicle1.estimatedValue 
+                      ? `${vehicle1.estimatedValue.toLocaleString("tr-TR")} TL` 
+                      : "Değer Belirtilmemiş"}
+                  </ThemedText>
+                </View>
+                <View style={styles.valueCard}>
+                  <ThemedText style={styles.valueLabel}>{vehicle2.brand} {vehicle2.model}</ThemedText>
+                  <ThemedText style={styles.valueAmount}>
+                    {vehicle2.estimatedValue 
+                      ? `${vehicle2.estimatedValue.toLocaleString("tr-TR")} TL` 
+                      : "Değer Belirtilmemiş"}
+                  </ThemedText>
+                </View>
+              </View>
+
+              {vehicle1.estimatedValue && vehicle2.estimatedValue ? (
+                <View style={styles.differenceContainer}>
+                  <View style={styles.differenceHeader}>
+                    <Feather name="repeat" size={16} color="#FFFFFF" />
+                    <ThemedText style={styles.differenceTitle}>Takas Farkı</ThemedText>
+                  </View>
+                  
+                  {vehicle1.estimatedValue === vehicle2.estimatedValue ? (
+                    <View style={styles.equalValueBadge}>
+                      <Feather name="check-circle" size={20} color={BrandColors.successGreen} />
+                      <ThemedText style={styles.equalValueText}>
+                        Araçlar Eşit Değerde!
+                      </ThemedText>
+                    </View>
+                  ) : (
+                    <>
+                      <ThemedText style={styles.differenceAmount}>
+                        {Math.abs(vehicle1.estimatedValue - vehicle2.estimatedValue).toLocaleString("tr-TR")} TL
+                      </ThemedText>
+                      <View style={styles.differenceDirection}>
+                        <Feather 
+                          name="arrow-right" 
+                          size={16} 
+                          color={vehicle1.estimatedValue > vehicle2.estimatedValue ? BrandColors.successGreen : BrandColors.alertRed} 
+                        />
+                        <ThemedText style={styles.differenceDescription}>
+                          {vehicle1.estimatedValue > vehicle2.estimatedValue 
+                            ? `${vehicle2.brand} ${vehicle2.model} sahibi ${Math.abs(vehicle1.estimatedValue - vehicle2.estimatedValue).toLocaleString("tr-TR")} TL fark ödemeli`
+                            : `${vehicle1.brand} ${vehicle1.model} sahibi ${Math.abs(vehicle1.estimatedValue - vehicle2.estimatedValue).toLocaleString("tr-TR")} TL fark ödemeli`
+                          }
+                        </ThemedText>
+                      </View>
+                    </>
+                  )}
+
+                  <View style={styles.compatibilitySection}>
+                    <ThemedText style={styles.compatibilityLabel}>Takas Uyumu</ThemedText>
+                    {(() => {
+                      const diff = Math.abs(vehicle1.estimatedValue - vehicle2.estimatedValue);
+                      const maxValue = Math.max(vehicle1.estimatedValue, vehicle2.estimatedValue);
+                      const diffPercentage = (diff / maxValue) * 100;
+                      const compatibility = 100 - Math.min(diffPercentage, 100);
+                      
+                      return (
+                        <>
+                          <View style={styles.compatibilityBar}>
+                            <View 
+                              style={[
+                                styles.compatibilityFill, 
+                                { 
+                                  width: `${compatibility}%`,
+                                  backgroundColor: compatibility > 70 
+                                    ? BrandColors.successGreen 
+                                    : compatibility > 40 
+                                      ? "#F59E0B" 
+                                      : BrandColors.alertRed
+                                }
+                              ]} 
+                            />
+                          </View>
+                          <ThemedText style={[
+                            styles.compatibilityPercent,
+                            { 
+                              color: compatibility > 70 
+                                ? BrandColors.successGreen 
+                                : compatibility > 40 
+                                  ? "#F59E0B" 
+                                  : BrandColors.alertRed 
+                            }
+                          ]}>
+                            %{Math.round(compatibility)} Uyumlu
+                          </ThemedText>
+                        </>
+                      );
+                    })()}
+                  </View>
+                </View>
+              ) : (
+                <View style={styles.noValueWarning}>
+                  <Feather name="alert-circle" size={20} color="#F59E0B" />
+                  <ThemedText style={styles.noValueText}>
+                    Her iki araç için de tahmini değer girilmeli
+                  </ThemedText>
+                </View>
+              )}
+            </View>
           </View>
         ) : (
           <View style={styles.instructionContainer}>
@@ -618,5 +730,138 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "#9CA3AF",
     marginTop: Spacing.md,
+  },
+  swapCalculator: {
+    marginTop: Spacing.lg,
+    paddingTop: Spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: "#E5E7EB",
+  },
+  calculatorHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginBottom: Spacing.md,
+  },
+  calculatorTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#111827",
+  },
+  valueRow: {
+    flexDirection: "row",
+    gap: Spacing.sm,
+    marginBottom: Spacing.md,
+  },
+  valueCard: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    padding: Spacing.md,
+    borderRadius: BorderRadius.sm,
+    alignItems: "center",
+  },
+  valueLabel: {
+    fontSize: 12,
+    color: "#6B7280",
+    marginBottom: Spacing.xs,
+    textAlign: "center",
+  },
+  valueAmount: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#111827",
+  },
+  differenceContainer: {
+    backgroundColor: BrandColors.primaryBlue,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+  },
+  differenceHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.xs,
+    marginBottom: Spacing.sm,
+  },
+  differenceTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  differenceAmount: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    textAlign: "center",
+    marginBottom: Spacing.sm,
+  },
+  differenceDirection: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.xs,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    padding: Spacing.sm,
+    borderRadius: BorderRadius.sm,
+    marginBottom: Spacing.md,
+  },
+  differenceDescription: {
+    fontSize: 12,
+    color: "#FFFFFF",
+    flex: 1,
+  },
+  equalValueBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    padding: Spacing.md,
+    borderRadius: BorderRadius.sm,
+  },
+  equalValueText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  compatibilitySection: {
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderRadius: BorderRadius.sm,
+    padding: Spacing.md,
+    alignItems: "center",
+  },
+  compatibilityLabel: {
+    fontSize: 12,
+    color: "rgba(255,255,255,0.7)",
+    marginBottom: Spacing.sm,
+  },
+  compatibilityBar: {
+    width: "100%",
+    height: 8,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderRadius: 4,
+    overflow: "hidden",
+    marginBottom: Spacing.sm,
+  },
+  compatibilityFill: {
+    height: "100%",
+    borderRadius: 4,
+  },
+  compatibilityPercent: {
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  noValueWarning: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    backgroundColor: "#FEF3C7",
+    padding: Spacing.md,
+    borderRadius: BorderRadius.sm,
+  },
+  noValueText: {
+    fontSize: 13,
+    color: "#92400E",
   },
 });
