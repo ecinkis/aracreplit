@@ -404,7 +404,7 @@ export default function ProfileScreen() {
             style={({ pressed }) => [styles.legalItem, pressed && { opacity: 0.7 }]}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              Alert.alert("Kullanım Koşulları", "Kullanım koşulları içeriği burada görüntülenecek.");
+              navigation.navigate("LegalDocument", { documentType: "kullanim-kosullari" });
             }}
           >
             <View style={styles.legalItemLeft}>
@@ -418,7 +418,7 @@ export default function ProfileScreen() {
             style={({ pressed }) => [styles.legalItem, pressed && { opacity: 0.7 }]}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              Alert.alert("Gizlilik Politikası", "Gizlilik politikası içeriği burada görüntülenecek.");
+              navigation.navigate("LegalDocument", { documentType: "gizlilik-politikasi" });
             }}
           >
             <View style={styles.legalItemLeft}>
@@ -432,7 +432,7 @@ export default function ProfileScreen() {
             style={({ pressed }) => [styles.legalItem, pressed && { opacity: 0.7 }]}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              Alert.alert("KVKK Aydınlatma Metni", "KVKK aydınlatma metni içeriği burada görüntülenecek.");
+              navigation.navigate("LegalDocument", { documentType: "kvkk" });
             }}
           >
             <View style={styles.legalItemLeft}>
@@ -446,7 +446,7 @@ export default function ProfileScreen() {
             style={({ pressed }) => [styles.legalItem, pressed && { opacity: 0.7 }]}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              Alert.alert("Mesafeli Satış Sözleşmesi", "Mesafeli satış sözleşmesi içeriği burada görüntülenecek.");
+              navigation.navigate("LegalDocument", { documentType: "mesafeli-satis" });
             }}
           >
             <View style={styles.legalItemLeft}>
@@ -460,7 +460,7 @@ export default function ProfileScreen() {
             style={({ pressed }) => [styles.legalItem, pressed && { opacity: 0.7 }]}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              Alert.alert("Çerez Politikası", "Çerez politikası içeriği burada görüntülenecek.");
+              navigation.navigate("LegalDocument", { documentType: "cerez-politikasi" });
             }}
           >
             <View style={styles.legalItemLeft}>

@@ -9,6 +9,7 @@ import EditProfileScreen from "@/screens/EditProfileScreen";
 import CreateListingScreen from "@/screens/CreateListingScreen";
 import QuickCreateListingScreen from "@/screens/QuickCreateListingScreen";
 import CorporateApplicationScreen from "@/screens/CorporateApplicationScreen";
+import LegalDocumentScreen from "@/screens/LegalDocumentScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { useAuth } from "@/contexts/AuthContext";
 import { BrandColors } from "@/constants/theme";
@@ -23,6 +24,7 @@ export type RootStackParamList = {
   CreateListing: undefined;
   QuickCreateListing: undefined;
   CorporateApplication: undefined;
+  LegalDocument: { documentType: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -102,6 +104,13 @@ export default function RootStackNavigator() {
           <Stack.Screen
             name="CorporateApplication"
             component={CorporateApplicationScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="LegalDocument"
+            component={LegalDocumentScreen}
             options={{
               headerShown: false,
             }}
