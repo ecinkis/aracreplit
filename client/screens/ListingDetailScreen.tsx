@@ -58,6 +58,7 @@ export default function ListingDetailScreen() {
   const [targetPrice, setTargetPrice] = useState("");
   const [offerModalVisible, setOfferModalVisible] = useState(false);
   const [customOfferPrice, setCustomOfferPrice] = useState("");
+  const [activeTab, setActiveTab] = useState<"info" | "description">("info");
 
   const { data: listing, isLoading } = useQuery<Listing>({
     queryKey: ["/api/listings", listingId],
@@ -285,23 +286,110 @@ export default function ListingDetailScreen() {
             )}
           </View>
 
-          {listing.swapActive && (
+          {listing.swapActive ? (
             <View style={styles.swapBadge}>
               <Feather name="repeat" size={16} color="#FFFFFF" />
               <ThemedText style={styles.swapBadgeText}>
                 {listing.onlySwap ? "Sadece Takas" : "Takas + Nakit"}
               </ThemedText>
             </View>
-          )}
+          ) : null}
 
-          <View style={styles.specsGrid}>
-            <SpecItem icon="calendar" label="Yıl" value={listing.year.toString()} />
-            <SpecItem icon="activity" label="Kilometre" value={`${listing.km.toLocaleString("tr-TR")} km`} />
-            <SpecItem icon="droplet" label="Yakıt" value={listing.fuelType} />
-            <SpecItem icon="settings" label="Vites" value={listing.transmission} />
-            <SpecItem icon="map-pin" label="Şehir" value={listing.city} />
-            <SpecItem icon="eye" label="Görüntülenme" value={(listing.viewCount || 0).toString()} />
+          <View style={styles.tabContainer}>
+            <Pressable
+              style={[
+                styles.tabButton,
+                activeTab === "info" && styles.tabButtonActive,
+              ]}
+              onPress={() => {
+                Haptics.selectionAsync();
+                setActiveTab("info");
+              }}
+            >
+              <ThemedText style={[
+                styles.tabButtonText,
+                activeTab === "info" && styles.tabButtonTextActive,
+              ]}>
+                İlan Bilgileri
+              </ThemedText>
+            </Pressable>
+            <Pressable
+              style={[
+                styles.tabButton,
+                activeTab === "description" && styles.tabButtonActive,
+              ]}
+              onPress={() => {
+                Haptics.selectionAsync();
+                setActiveTab("description");
+              }}
+            >
+              <ThemedText style={[
+                styles.tabButtonText,
+                activeTab === "description" && styles.tabButtonTextActive,
+              ]}>
+                Açıklama
+              </ThemedText>
+            </Pressable>
           </View>
+
+          {activeTab === "info" ? (
+            <>
+              <View style={styles.specsGrid}>
+                <SpecItem icon="calendar" label="Yıl" value={listing.year.toString()} />
+                <SpecItem icon="activity" label="Kilometre" value={`${listing.km.toLocaleString("tr-TR")} km`} />
+                <SpecItem icon="droplet" label="Yakıt" value={listing.fuelType} />
+                <SpecItem icon="settings" label="Vites" value={listing.transmission} />
+                <SpecItem icon="map-pin" label="Şehir" value={listing.city} />
+                <SpecItem icon="eye" label="Görüntülenme" value={(listing.viewCount || 0).toString()} />
+              </View>
+
+              {listing.swapActive ? (
+                <View style={[styles.swapPreferencesCard, { backgroundColor: theme.backgroundSecondary }]}>
+                  <View style={styles.swapPreferencesHeader}>
+                    <Feather name="repeat" size={18} color={BrandColors.primaryBlue} />
+                    <ThemedText style={styles.swapPreferencesTitle}>Takas Tercihleri</ThemedText>
+                  </View>
+                  <View style={styles.swapPreferencesContent}>
+                    <View style={styles.swapPreferenceRow}>
+                      <ThemedText style={[styles.swapPreferenceLabel, { color: theme.textSecondary }]}>
+                        Takas Tipi
+                      </ThemedText>
+                      <ThemedText style={styles.swapPreferenceValue}>
+                        {listing.onlySwap ? "Sadece Takas" : "Takas + Nakit Fark"}
+                      </ThemedText>
+                    </View>
+                    {listing.acceptsCashDiff ? (
+                      <View style={styles.swapPreferenceRow}>
+                        <ThemedText style={[styles.swapPreferenceLabel, { color: theme.textSecondary }]}>
+                          Nakit Fark
+                        </ThemedText>
+                        <View style={styles.acceptsBadge}>
+                          <Feather name="check" size={12} color="#FFFFFF" />
+                          <ThemedText style={styles.acceptsBadgeText}>Kabul Ediyor</ThemedText>
+                        </View>
+                      </View>
+                    ) : null}
+                    {listing.estimatedValue ? (
+                      <View style={styles.swapPreferenceRow}>
+                        <ThemedText style={[styles.swapPreferenceLabel, { color: theme.textSecondary }]}>
+                          Tahmini Değer
+                        </ThemedText>
+                        <ThemedText style={[styles.swapPreferenceValue, { color: BrandColors.primaryBlue, fontWeight: "700" }]}>
+                          {listing.estimatedValue.toLocaleString("tr-TR")} TL
+                        </ThemedText>
+                      </View>
+                    ) : null}
+                  </View>
+                </View>
+              ) : null}
+            </>
+          ) : (
+            <View style={styles.descriptionContainer}>
+              <ThemedText style={styles.descriptionText}>
+                {listing.description || "Bu ilan için açıklama girilmemiş."}
+              </ThemedText>
+            </View>
+          )}
 
           {listing.preferredBrands && listing.preferredBrands.length > 0 && (
             <View style={styles.section}>
@@ -1073,33 +1161,112 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: "row",
-    paddingHorizontal: Spacing.sm,
+    paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm,
     borderTopWidth: 1,
     borderTopColor: "#E5E8EB",
     backgroundColor: "#FFFFFF",
-    gap: Spacing.xs,
+    gap: Spacing.sm,
   },
   footerButton: {
     flex: 1,
-    flexDirection: "column",
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.md,
-    backgroundColor: "#F3F4F6",
-    gap: 4,
+    gap: 6,
   },
   footerButtonPrimary: {
     backgroundColor: BrandColors.primaryBlue,
+    borderRadius: BorderRadius.sm,
   },
   footerButtonText: {
-    ...Typography.caption,
-    fontWeight: "600",
-    color: BrandColors.primaryBlue,
+    fontSize: 12,
+    fontWeight: "500",
+    color: "#6B7280",
   },
   footerButtonTextPrimary: {
-    ...Typography.caption,
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  tabContainer: {
+    flexDirection: "row",
+    backgroundColor: "#F3F4F6",
+    borderRadius: BorderRadius.md,
+    padding: 4,
+    marginBottom: Spacing.md,
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: Spacing.sm,
+    alignItems: "center",
+    borderRadius: BorderRadius.sm,
+  },
+  tabButtonActive: {
+    backgroundColor: "#FFFFFF",
+  },
+  tabButtonText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#6B7280",
+  },
+  tabButtonTextActive: {
+    color: BrandColors.primaryBlue,
+    fontWeight: "600",
+  },
+  descriptionContainer: {
+    backgroundColor: "#F9FAFB",
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    marginBottom: Spacing.md,
+  },
+  descriptionText: {
+    fontSize: 14,
+    lineHeight: 22,
+    color: "#374151",
+  },
+  swapPreferencesCard: {
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    marginBottom: Spacing.md,
+  },
+  swapPreferencesHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginBottom: Spacing.md,
+  },
+  swapPreferencesTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  swapPreferencesContent: {
+    gap: Spacing.sm,
+  },
+  swapPreferenceRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  swapPreferenceLabel: {
+    fontSize: 14,
+  },
+  swapPreferenceValue: {
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  acceptsBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: BrandColors.successGreen,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.full,
+  },
+  acceptsBadgeText: {
+    fontSize: 12,
     fontWeight: "600",
     color: "#FFFFFF",
   },
