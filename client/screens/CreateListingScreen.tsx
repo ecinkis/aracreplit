@@ -350,12 +350,16 @@ export default function CreateListingScreen() {
         }
         return true;
       case 2:
+        if (!year || parseInt(year) < 1980 || parseInt(year) > new Date().getFullYear() + 1) {
+          Alert.alert("Uyarı", "Geçerli bir yıl girin.");
+          return false;
+        }
         if (!brand || !model) {
           Alert.alert("Uyarı", "Marka ve model seçmelisiniz.");
           return false;
         }
-        if (!year || parseInt(year) < 1980 || parseInt(year) > new Date().getFullYear() + 1) {
-          Alert.alert("Uyarı", "Geçerli bir yıl girin.");
+        if (!variant) {
+          Alert.alert("Uyarı", "Varyant bilgisi girin.");
           return false;
         }
         if (!km) {
@@ -364,8 +368,8 @@ export default function CreateListingScreen() {
         }
         return true;
       case 3:
-        if (!bodyType || !fuelType || !transmission || !city) {
-          Alert.alert("Uyarı", "Kasa tipi, yakıt, vites ve şehir seçin.");
+        if (!bodyType || !fuelType || !transmission || !trimPackage || !city) {
+          Alert.alert("Uyarı", "Kasa tipi, yakıt, vites, donanım ve şehir seçin.");
           return false;
         }
         return true;
@@ -790,10 +794,10 @@ export default function CreateListingScreen() {
               )}
               <View style={styles.previewContent}>
                 <ThemedText style={styles.previewTitle}>
-                  {year} {brand} {model} {variant}
+                  {[year, brand, model, variant].filter(Boolean).join(" ")}
                 </ThemedText>
                 <ThemedText style={[styles.previewSubtitle, { color: theme.textSecondary }]}>
-                  {trimPackage} | {km ? parseInt(km).toLocaleString("tr-TR") : "0"} km
+                  {[trimPackage, `${km ? parseInt(km).toLocaleString("tr-TR") : "0"} km`].filter(Boolean).join(" | ")}
                 </ThemedText>
 
                 <View style={styles.previewTags}>
