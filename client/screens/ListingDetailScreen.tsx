@@ -160,6 +160,53 @@ export default function ListingDetailScreen() {
     );
   };
 
+  const isOwner = listing?.userId === user?.id;
+
+  useLayoutEffect(() => {
+    if (!listing || isOwner) return;
+    
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={{ flexDirection: "row", gap: 8 }}>
+          <HeaderButton
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              if (priceAlertData?.hasAlert) {
+                Alert.alert(
+                  "Fiyat Alarmı",
+                  "Bu ilan için fiyat alarmı mevcut. Kaldırmak ister misiniz?",
+                  [
+                    { text: "İptal", style: "cancel" },
+                    { 
+                      text: "Kaldır", 
+                      style: "destructive", 
+                      onPress: () => deletePriceAlertMutation.mutate(priceAlertData.alert.id) 
+                    },
+                  ]
+                );
+              } else {
+                setPriceAlertModalVisible(true);
+              }
+            }}
+          >
+            <Feather
+              name="bell"
+              size={22}
+              color={priceAlertData?.hasAlert ? BrandColors.primaryBlue : "#666666"}
+            />
+          </HeaderButton>
+          <HeaderButton onPress={() => favoriteMutation.mutate()}>
+            <Feather
+              name="heart"
+              size={22}
+              color={isFavorite?.isFavorite ? BrandColors.alertRed : "#666666"}
+            />
+          </HeaderButton>
+        </View>
+      ),
+    });
+  }, [navigation, listing, isOwner, priceAlertData, isFavorite, favoriteMutation, deletePriceAlertMutation]);
+
   if (isLoading) {
     return (
       <ThemedView style={styles.loadingContainer}>
@@ -177,7 +224,6 @@ export default function ListingDetailScreen() {
   }
 
   const photos = listing.photos && listing.photos.length > 0 ? listing.photos : [];
-  const isOwner = listing.userId === user?.id;
 
   return (
     <View style={[styles.container, { backgroundColor: "#FFFFFF" }]}>
@@ -247,56 +293,6 @@ export default function ListingDetailScreen() {
                 {listing.year} - {listing.km.toLocaleString("tr-TR")} km
               </ThemedText>
             </View>
-            {!isOwner && (
-              <View style={styles.actionButtonsRow}>
-                <Pressable
-                  style={[
-                    styles.favoriteButton,
-                    { backgroundColor: theme.backgroundSecondary },
-                  ]}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    if (priceAlertData?.hasAlert) {
-                      Alert.alert(
-                        "Fiyat Alarmı",
-                        "Bu ilan için fiyat alarmı mevcut. Kaldırmak ister misiniz?",
-                        [
-                          { text: "İptal", style: "cancel" },
-                          { 
-                            text: "Kaldır", 
-                            style: "destructive", 
-                            onPress: () => deletePriceAlertMutation.mutate(priceAlertData.alert.id) 
-                          },
-                        ]
-                      );
-                    } else {
-                      setPriceAlertModalVisible(true);
-                    }
-                  }}
-                >
-                  <Feather
-                    name="bell"
-                    size={24}
-                    color={priceAlertData?.hasAlert ? BrandColors.primaryBlue : theme.textSecondary}
-                    style={{ opacity: priceAlertData?.hasAlert ? 1 : 0.5 }}
-                  />
-                </Pressable>
-                <Pressable
-                  style={[
-                    styles.favoriteButton,
-                    { backgroundColor: theme.backgroundSecondary },
-                  ]}
-                  onPress={() => favoriteMutation.mutate()}
-                >
-                  <Feather
-                    name={isFavorite?.isFavorite ? "heart" : "heart"}
-                    size={24}
-                    color={isFavorite?.isFavorite ? BrandColors.alertRed : theme.textSecondary}
-                    style={{ opacity: isFavorite?.isFavorite ? 1 : 0.5 }}
-                  />
-                </Pressable>
-              </View>
-            )}
           </View>
 
           <View style={styles.tabContainer}>

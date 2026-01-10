@@ -72,7 +72,7 @@ export default function RootStackNavigator() {
             component={ListingDetailScreen}
             options={{
               headerTitle: "İlan Detayı",
-              headerTintColor: BrandColors.primaryBlue,
+              headerTintColor: "#000000",
             }}
           />
           <Stack.Screen
