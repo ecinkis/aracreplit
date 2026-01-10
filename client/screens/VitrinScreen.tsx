@@ -32,12 +32,12 @@ const CARD_GAP = 8;
 const CARD_WIDTH = (SCREEN_WIDTH - Spacing.lg * 2 - CARD_GAP * 2) / 3;
 
 const DEMO_STORIES = [
-  { id: "1", username: "BMW Turkiye", hasNewStory: true, timeAgo: "2s" },
-  { id: "2", username: "Mercedes", hasNewStory: true, timeAgo: "5s" },
-  { id: "3", username: "Audi TR", hasNewStory: true, timeAgo: "8s" },
-  { id: "4", username: "Volkswagen", hasNewStory: false, timeAgo: "12s" },
-  { id: "5", username: "Toyota", hasNewStory: true, timeAgo: "18s" },
-  { id: "6", username: "Honda", hasNewStory: false, timeAgo: "22s" },
+  { id: "1", username: "BMW Turkiye", hasNewStory: true, timeAgo: "2s", avatar: "https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=100" },
+  { id: "2", username: "Mercedes", hasNewStory: true, timeAgo: "5s", avatar: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=100" },
+  { id: "3", username: "Audi TR", hasNewStory: true, timeAgo: "8s", avatar: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=100" },
+  { id: "4", username: "Volkswagen", hasNewStory: false, timeAgo: "12s", avatar: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=100" },
+  { id: "5", username: "Toyota", hasNewStory: true, timeAgo: "18s", avatar: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=100" },
+  { id: "6", username: "Honda", hasNewStory: false, timeAgo: "22s", avatar: "https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=100" },
 ];
 
 function ListingCard({ item, index, onPress }: { item: Listing; index: number; onPress: () => void }) {
@@ -194,9 +194,11 @@ export default function VitrinScreen() {
               styles.storyRing,
               story.hasNewStory ? styles.storyRingActive : styles.storyRingInactive,
             ]}>
-              <View style={styles.storyCircle}>
-                <Feather name="user" size={20} color="#9CA3AF" />
-              </View>
+              <Image 
+                source={{ uri: story.avatar }} 
+                style={styles.storyAvatar}
+                resizeMode="cover"
+              />
             </View>
             <ThemedText style={styles.storyUsername} numberOfLines={1}>
               {story.username}
@@ -360,6 +362,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#F3F4F6",
     alignItems: "center",
     justifyContent: "center",
+  },
+  storyAvatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
   },
   storyUsername: {
     fontSize: 10,
