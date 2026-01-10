@@ -58,6 +58,10 @@ export const listings = pgTable("listings", {
   kmMax: integer("km_max"),
   status: text("status").default("active"),
   viewCount: integer("view_count").default(0),
+  tramerRecord: integer("tramer_record").default(0),
+  paintedParts: jsonb("painted_parts").$type<string[]>().default([]),
+  replacedParts: jsonb("replaced_parts").$type<string[]>().default([]),
+  accidentFree: boolean("accident_free").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

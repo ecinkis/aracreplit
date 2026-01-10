@@ -233,6 +233,83 @@ export default function ListingDetailScreen() {
             </View>
           )}
 
+          <View style={[styles.historyCard, { backgroundColor: theme.backgroundSecondary }]}>
+            <View style={styles.historyHeader}>
+              <Feather name="file-text" size={20} color={BrandColors.primaryBlue} />
+              <ThemedText style={styles.historyTitle}>Araç Geçmişi</ThemedText>
+            </View>
+
+            <View style={styles.historyRow}>
+              <ThemedText style={[styles.historyLabel, { color: theme.textSecondary }]}>Kaza Durumu</ThemedText>
+              <View style={[
+                styles.historyBadge,
+                { backgroundColor: listing.accidentFree ? BrandColors.successGreen : BrandColors.alertRed }
+              ]}>
+                <Feather 
+                  name={listing.accidentFree ? "check" : "x"} 
+                  size={14} 
+                  color="#FFFFFF" 
+                />
+                <ThemedText style={styles.historyBadgeText}>
+                  {listing.accidentFree ? "Kazasız" : "Kazalı"}
+                </ThemedText>
+              </View>
+            </View>
+
+            <View style={styles.historyRow}>
+              <ThemedText style={[styles.historyLabel, { color: theme.textSecondary }]}>Tramer Kaydı</ThemedText>
+              <ThemedText style={styles.historyValue}>
+                {(listing.tramerRecord || 0) > 0 
+                  ? `${(listing.tramerRecord || 0).toLocaleString("tr-TR")} TL` 
+                  : "Kayıt Yok"}
+              </ThemedText>
+            </View>
+
+            {listing.paintedParts && listing.paintedParts.length > 0 && (
+              <View style={styles.historySection}>
+                <ThemedText style={[styles.historySubLabel, { color: theme.textSecondary }]}>
+                  Boyalı Parçalar ({listing.paintedParts.length})
+                </ThemedText>
+                <View style={styles.partsContainer}>
+                  {listing.paintedParts.map((part, index) => (
+                    <View key={index} style={[styles.partChip, { backgroundColor: "#FFF3E0" }]}>
+                      <Feather name="droplet" size={12} color="#FF9800" />
+                      <ThemedText style={[styles.partChipText, { color: "#E65100" }]}>{part}</ThemedText>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            )}
+
+            {listing.replacedParts && listing.replacedParts.length > 0 && (
+              <View style={styles.historySection}>
+                <ThemedText style={[styles.historySubLabel, { color: theme.textSecondary }]}>
+                  Değişen Parçalar ({listing.replacedParts.length})
+                </ThemedText>
+                <View style={styles.partsContainer}>
+                  {listing.replacedParts.map((part, index) => (
+                    <View key={index} style={[styles.partChip, { backgroundColor: "#FFEBEE" }]}>
+                      <Feather name="refresh-cw" size={12} color="#F44336" />
+                      <ThemedText style={[styles.partChipText, { color: "#C62828" }]}>{part}</ThemedText>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            )}
+
+            {(!listing.paintedParts || listing.paintedParts.length === 0) && 
+             (!listing.replacedParts || listing.replacedParts.length === 0) && 
+             listing.accidentFree && 
+             (listing.tramerRecord || 0) === 0 && (
+              <View style={styles.cleanHistoryBadge}>
+                <Feather name="award" size={20} color={BrandColors.successGreen} />
+                <ThemedText style={[styles.cleanHistoryText, { color: BrandColors.successGreen }]}>
+                  Temiz Geçmiş
+                </ThemedText>
+              </View>
+            )}
+          </View>
+
           {!isOwner && (
             <View style={[styles.userCard, { backgroundColor: theme.cardBackground }]}>
               <Image source={defaultAvatarImage} style={styles.userAvatar} />
@@ -462,5 +539,82 @@ const styles = StyleSheet.create({
   },
   actionButtonText: {
     ...Typography.button,
+  },
+  historyCard: {
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+    marginBottom: Spacing.lg,
+  },
+  historyHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginBottom: Spacing.md,
+  },
+  historyTitle: {
+    ...Typography.body,
+    fontWeight: "600",
+  },
+  historyRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: Spacing.sm,
+  },
+  historyLabel: {
+    ...Typography.small,
+  },
+  historyValue: {
+    ...Typography.body,
+    fontWeight: "600",
+  },
+  historyBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.full,
+  },
+  historyBadgeText: {
+    ...Typography.caption,
+    color: "#FFFFFF",
+    fontWeight: "600",
+  },
+  historySection: {
+    marginTop: Spacing.md,
+  },
+  historySubLabel: {
+    ...Typography.caption,
+    marginBottom: Spacing.sm,
+  },
+  partsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.xs,
+  },
+  partChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.sm,
+  },
+  partChipText: {
+    ...Typography.caption,
+    fontWeight: "500",
+  },
+  cleanHistoryBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    marginTop: Spacing.md,
+    paddingVertical: Spacing.sm,
+  },
+  cleanHistoryText: {
+    ...Typography.body,
+    fontWeight: "600",
   },
 });

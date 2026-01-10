@@ -27,6 +27,7 @@ const BRANDS = ["Audi", "BMW", "Mercedes", "Volkswagen", "Toyota", "Honda", "For
 const FUEL_TYPES = ["Benzin", "Dizel", "Hibrit", "Elektrik", "LPG"];
 const TRANSMISSIONS = ["Manuel", "Otomatik"];
 const CITIES = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Adana", "Konya", "Gaziantep", "Şanlıurfa", "Kocaeli", "Mersin", "Diyarbakır", "Hatay", "Manisa", "Kayseri"];
+const CAR_PARTS = ["Ön Tampon", "Arka Tampon", "Ön Kaput", "Ön Çamurluk Sol", "Ön Çamurluk Sağ", "Ön Kapı Sol", "Ön Kapı Sağ", "Arka Kapı Sol", "Arka Kapı Sağ", "Tavan", "Bagaj Kapağı", "Arka Çamurluk Sol", "Arka Çamurluk Sağ"];
 
 function ChipSelect({
   options,
@@ -92,6 +93,10 @@ export default function CreateListingScreen() {
   const [onlySwap, setOnlySwap] = useState(true);
   const [preferredBrands, setPreferredBrands] = useState<string[]>([]);
   const [swapActive, setSwapActive] = useState(true);
+  const [tramerRecord, setTramerRecord] = useState("");
+  const [accidentFree, setAccidentFree] = useState(true);
+  const [paintedParts, setPaintedParts] = useState<string[]>([]);
+  const [replacedParts, setReplacedParts] = useState<string[]>([]);
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -147,6 +152,22 @@ export default function CreateListingScreen() {
     }
   };
 
+  const handlePaintedPartToggle = (part: string) => {
+    if (paintedParts.includes(part)) {
+      setPaintedParts(paintedParts.filter((p) => p !== part));
+    } else {
+      setPaintedParts([...paintedParts, part]);
+    }
+  };
+
+  const handleReplacedPartToggle = (part: string) => {
+    if (replacedParts.includes(part)) {
+      setReplacedParts(replacedParts.filter((p) => p !== part));
+    } else {
+      setReplacedParts([...replacedParts, part]);
+    }
+  };
+
   const handleSubmit = () => {
     if (photos.length < 3) {
       Alert.alert("Uyarı", "En az 3 fotoğraf eklemelisiniz.");
@@ -171,6 +192,10 @@ export default function CreateListingScreen() {
       onlySwap,
       acceptsCashDiff: !onlySwap,
       preferredBrands,
+      tramerRecord: tramerRecord ? parseInt(tramerRecord.replace(/\D/g, "")) : 0,
+      accidentFree,
+      paintedParts,
+      replacedParts,
     });
   };
 
@@ -314,6 +339,60 @@ export default function CreateListingScreen() {
           onSelect={handlePreferredBrandToggle}
           multiSelect
         />
+
+        <View style={[styles.historySection, { backgroundColor: theme.backgroundSecondary }]}>
+          <View style={styles.historySectionHeader}>
+            <Feather name="file-text" size={20} color={BrandColors.primaryBlue} />
+            <ThemedText style={styles.historySectionTitle}>Araç Geçmişi</ThemedText>
+          </View>
+
+          <View style={styles.historyRow}>
+            <ThemedText style={styles.historyLabel}>Kazasız</ThemedText>
+            <Pressable
+              style={[
+                styles.switch,
+                accidentFree ? styles.switchOn : styles.switchOff,
+              ]}
+              onPress={() => {
+                Haptics.selectionAsync();
+                setAccidentFree(!accidentFree);
+              }}
+            >
+              <View
+                style={[
+                  styles.switchThumb,
+                  accidentFree ? styles.switchThumbOn : styles.switchThumbOff,
+                ]}
+              />
+            </Pressable>
+          </View>
+
+          <ThemedText style={styles.historyLabel}>Tramer Kaydı (TL)</ThemedText>
+          <TextInput
+            style={[styles.input, { backgroundColor: theme.backgroundRoot, color: theme.text }]}
+            value={tramerRecord}
+            onChangeText={(text) => setTramerRecord(text.replace(/\D/g, ""))}
+            placeholder="0"
+            placeholderTextColor={theme.textSecondary}
+            keyboardType="number-pad"
+          />
+
+          <ThemedText style={[styles.historyLabel, { marginTop: Spacing.md }]}>Boyalı Parçalar</ThemedText>
+          <ChipSelect
+            options={CAR_PARTS}
+            selected={paintedParts}
+            onSelect={handlePaintedPartToggle}
+            multiSelect
+          />
+
+          <ThemedText style={[styles.historyLabel, { marginTop: Spacing.md }]}>Değişen Parçalar</ThemedText>
+          <ChipSelect
+            options={CAR_PARTS}
+            selected={replacedParts}
+            onSelect={handleReplacedPartToggle}
+            multiSelect
+          />
+        </View>
 
         <View style={styles.swapActiveRow}>
           <ThemedText style={styles.swapActiveLabel}>Takas için aktif</ThemedText>
@@ -516,5 +595,31 @@ const styles = StyleSheet.create({
   submitButtonText: {
     ...Typography.button,
     color: "#FFFFFF",
+  },
+  historySection: {
+    marginTop: Spacing.xl,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+  },
+  historySectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginBottom: Spacing.md,
+  },
+  historySectionTitle: {
+    ...Typography.body,
+    fontWeight: "600",
+  },
+  historyRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: Spacing.md,
+  },
+  historyLabel: {
+    ...Typography.small,
+    fontWeight: "500",
+    marginBottom: Spacing.xs,
   },
 });
