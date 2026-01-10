@@ -20,7 +20,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { useAuth } from "@/contexts/AuthContext";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
-import { Listing, Match, Favorite } from "@shared/schema";
+import { Listing, Match, Favorite, Notification } from "@shared/schema";
 import defaultAvatarImage from "../assets/images/default-avatar.png";
 import defaultVehicleImage from "../assets/images/default-vehicle.png";
 
@@ -179,6 +179,13 @@ export default function ProfileScreen() {
     enabled: !!user?.id,
   });
 
+  const { data: notificationCount } = useQuery<{ count: number }>({
+    queryKey: ["/api/notifications", user?.id, "count"],
+    enabled: !!user?.id,
+  });
+
+  const unreadCount = notificationCount?.count || 0;
+
   const handleListingPress = (listingId: string) => {
     navigation.navigate("ListingDetail", { listingId });
   };
@@ -187,15 +194,33 @@ export default function ProfileScreen() {
     <View style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top + Spacing.sm }]}>
         <ThemedText style={styles.headerTitle}>Profil</ThemedText>
-        <Pressable
-          style={({ pressed }) => [styles.settingsButton, pressed && { opacity: 0.7 }]}
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            navigation.navigate("Settings");
-          }}
-        >
-          <Feather name="settings" size={22} color="#000000" />
-        </Pressable>
+        <View style={styles.headerActions}>
+          <Pressable
+            style={({ pressed }) => [styles.headerButton, pressed && { opacity: 0.7 }]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.navigate("Notifications");
+            }}
+          >
+            <Feather name="bell" size={22} color="#000000" />
+            {unreadCount > 0 && (
+              <View style={styles.notificationBadge}>
+                <ThemedText style={styles.notificationBadgeText}>
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </ThemedText>
+              </View>
+            )}
+          </Pressable>
+          <Pressable
+            style={({ pressed }) => [styles.headerButton, pressed && { opacity: 0.7 }]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.navigate("Settings");
+            }}
+          >
+            <Feather name="settings" size={22} color="#000000" />
+          </Pressable>
+        </View>
       </View>
 
       <ScrollView
@@ -600,8 +625,31 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#000000",
   },
-  settingsButton: {
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  headerButton: {
     padding: Spacing.sm,
+    position: "relative",
+  },
+  notificationBadge: {
+    position: "absolute",
+    top: 4,
+    right: 4,
+    backgroundColor: "#EF4444",
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 4,
+  },
+  notificationBadgeText: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
   content: {
     paddingHorizontal: Spacing.md,

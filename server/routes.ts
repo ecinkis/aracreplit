@@ -258,6 +258,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Notifications routes
+  app.get("/api/notifications/:userId", async (req, res) => {
+    try {
+      const notifications = await storage.getNotificationsByUser(req.params.userId);
+      res.json(notifications);
+    } catch (error) {
+      console.error("Get notifications error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/notifications/:userId/count", async (req, res) => {
+    try {
+      const count = await storage.getUnreadNotificationCount(req.params.userId);
+      res.json({ count });
+    } catch (error) {
+      console.error("Get notification count error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/notifications", async (req, res) => {
+    try {
+      const notification = await storage.createNotification(req.body);
+      res.status(201).json(notification);
+    } catch (error) {
+      console.error("Create notification error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/notifications/:notificationId/read", async (req, res) => {
+    try {
+      await storage.markNotificationAsRead(req.params.notificationId);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Mark notification read error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/notifications/:userId/read-all", async (req, res) => {
+    try {
+      await storage.markAllNotificationsAsRead(req.params.userId);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Mark all notifications read error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

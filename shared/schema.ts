@@ -182,6 +182,40 @@ export const favoritesRelations = relations(favorites, ({ one }) => ({
   }),
 }));
 
+export const notifications = pgTable("notifications", {
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  type: text("type").notNull(),
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  relatedMatchId: varchar("related_match_id").references(() => matches.id, { onDelete: "cascade" }),
+  relatedListingId: varchar("related_listing_id").references(() => listings.id, { onDelete: "cascade" }),
+  read: boolean("read").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(users, {
+    fields: [notifications.userId],
+    references: [users.id],
+  }),
+  match: one(matches, {
+    fields: [notifications.relatedMatchId],
+    references: [matches.id],
+  }),
+  listing: one(listings, {
+    fields: [notifications.relatedListingId],
+    references: [listings.id],
+  }),
+}));
+
+export const insertNotificationSchema = createInsertSchema(notifications).omit({
+  id: true,
+  createdAt: true,
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   phone: true,
   name: true,
@@ -214,3 +248,5 @@ export type Match = typeof matches.$inferSelect;
 export type Message = typeof messages.$inferSelect;
 export type InsertMessage = z.infer<typeof insertMessageSchema>;
 export type Favorite = typeof favorites.$inferSelect;
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = z.infer<typeof insertNotificationSchema>;
