@@ -31,6 +31,7 @@ export interface IStorage {
   updateUser(id: string, data: Partial<User>): Promise<User | undefined>;
 
   getListings(filters?: { city?: string; brand?: string; swapActive?: boolean }): Promise<Listing[]>;
+  getFeaturedListings(): Promise<Listing[]>;
   getListing(id: string): Promise<Listing | undefined>;
   getListingsByUser(userId: string): Promise<Listing[]>;
   createListing(listing: InsertListing): Promise<Listing>;
@@ -109,6 +110,16 @@ export class DatabaseStorage implements IStorage {
     }
     
     return filtered;
+  }
+
+  async getFeaturedListings(): Promise<Listing[]> {
+    const now = new Date();
+    return db.select().from(listings).where(
+      and(
+        eq(listings.status, "active"),
+        eq(listings.isFeatured, true)
+      )
+    ).orderBy(desc(listings.createdAt));
   }
 
   async getListing(id: string): Promise<Listing | undefined> {

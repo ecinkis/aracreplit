@@ -73,6 +73,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Listings routes
+  app.get("/api/listings/featured", async (req, res) => {
+    try {
+      const featuredListings = await storage.getFeaturedListings();
+      res.json(featuredListings);
+    } catch (error) {
+      console.error("Get featured listings error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/listings/:id/feature", async (req, res) => {
+    try {
+      const { days } = req.body;
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + (days || 7));
+      
+      const listing = await storage.updateListing(req.params.id, {
+        isFeatured: true,
+        featuredExpiresAt: expiresAt,
+      });
+      
+      if (!listing) {
+        return res.status(404).json({ error: "Listing not found" });
+      }
+      res.json(listing);
+    } catch (error) {
+      console.error("Feature listing error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.get("/api/listings", async (req, res) => {
     try {
       const { city, brand, swapActive } = req.query;

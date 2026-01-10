@@ -66,6 +66,8 @@ export const listings = pgTable("listings", {
   paintedParts: jsonb("painted_parts").$type<string[]>().default([]),
   replacedParts: jsonb("replaced_parts").$type<string[]>().default([]),
   accidentFree: boolean("accident_free").default(true),
+  isFeatured: boolean("is_featured").default(false),
+  featuredExpiresAt: timestamp("featured_expires_at"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

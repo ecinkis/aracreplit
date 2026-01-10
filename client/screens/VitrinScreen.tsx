@@ -142,6 +142,10 @@ export default function VitrinScreen() {
     queryKey: ["/api/listings"],
   });
 
+  const { data: featuredListings } = useQuery<Listing[]>({
+    queryKey: ["/api/listings/featured"],
+  });
+
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -203,6 +207,60 @@ export default function VitrinScreen() {
           </Pressable>
         ))}
       </ScrollView>
+
+      {featuredListings && featuredListings.length > 0 ? (
+        <View style={styles.featuredSection}>
+          <View style={styles.featuredHeader}>
+            <View style={styles.featuredTitleRow}>
+              <Feather name="star" size={18} color="#FFD700" />
+              <ThemedText style={styles.featuredTitle}>Vitrin İlanları</ThemedText>
+            </View>
+            <ThemedText style={styles.featuredSubtitle}>Öne çıkan araçlar</ThemedText>
+          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.featuredList}
+          >
+            {featuredListings.map((item, index) => (
+              <Pressable
+                key={item.id}
+                style={styles.featuredCard}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  handleListingPress(item.id);
+                }}
+              >
+                <View style={styles.featuredBadge}>
+                  <Feather name="star" size={10} color="#FFFFFF" />
+                  <ThemedText style={styles.featuredBadgeText}>VİTRİN</ThemedText>
+                </View>
+                <Image
+                  source={item.photos && item.photos.length > 0 ? { uri: item.photos[0] } : defaultVehicleImage}
+                  style={styles.featuredImage}
+                  resizeMode="cover"
+                />
+                <View style={styles.featuredInfo}>
+                  <ThemedText style={styles.featuredCardTitle} numberOfLines={1}>
+                    {item.brand} {item.model}
+                  </ThemedText>
+                  <ThemedText style={styles.featuredCardSubtitle}>
+                    {item.year} · {item.km.toLocaleString("tr-TR")} km
+                  </ThemedText>
+                  <View style={styles.featuredCityRow}>
+                    <Feather name="map-pin" size={10} color={BrandColors.primaryBlue} />
+                    <ThemedText style={styles.featuredCityText}>{item.city}</ThemedText>
+                  </View>
+                </View>
+              </Pressable>
+            ))}
+          </ScrollView>
+        </View>
+      ) : null}
+
+      <View style={styles.allListingsHeader}>
+        <ThemedText style={styles.allListingsTitle}>Tüm İlanlar</ThemedText>
+      </View>
     </View>
   );
 
@@ -386,5 +444,94 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  featuredSection: {
+    marginTop: Spacing.md,
+    marginBottom: Spacing.md,
+  },
+  featuredHeader: {
+    marginBottom: Spacing.sm,
+  },
+  featuredTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+  },
+  featuredTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#000000",
+  },
+  featuredSubtitle: {
+    fontSize: 12,
+    color: "#9CA3AF",
+    marginTop: 2,
+  },
+  featuredList: {
+    paddingRight: Spacing.lg,
+  },
+  featuredCard: {
+    width: 160,
+    backgroundColor: "#FFFFFF",
+    borderRadius: BorderRadius.md,
+    overflow: "hidden",
+    marginRight: Spacing.sm,
+    borderWidth: 2,
+    borderColor: "#FFD700",
+  },
+  featuredBadge: {
+    position: "absolute",
+    top: 8,
+    left: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "#FFD700",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.full,
+    zIndex: 10,
+  },
+  featuredBadgeText: {
+    fontSize: 9,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+  featuredImage: {
+    width: "100%",
+    height: 100,
+    backgroundColor: "#F9FAFB",
+  },
+  featuredInfo: {
+    padding: Spacing.sm,
+  },
+  featuredCardTitle: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#000000",
+  },
+  featuredCardSubtitle: {
+    fontSize: 11,
+    color: "#6B7280",
+    marginTop: 2,
+  },
+  featuredCityRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    marginTop: 4,
+  },
+  featuredCityText: {
+    fontSize: 11,
+    color: BrandColors.primaryBlue,
+  },
+  allListingsHeader: {
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.sm,
+  },
+  allListingsTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#000000",
   },
 });
