@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Pressable,
   Alert,
+  ScrollView,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -149,7 +150,11 @@ export default function PremiumScreen() {
         <View style={{ width: 24 }} />
       </View>
 
-      <View style={styles.content}>
+      <ScrollView 
+        style={styles.content} 
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+      >
         <LinearGradient
           colors={[BrandColors.primaryBlue, "#4A90E2"]}
           start={{ x: 0, y: 0 }}
@@ -189,7 +194,7 @@ export default function PremiumScreen() {
             </View>
           </>
         )}
-      </View>
+      </ScrollView>
 
       {!isPremium && (
         <View style={[styles.footer, { paddingBottom: insets.bottom + Spacing.md }]}>
@@ -238,7 +243,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  contentContainer: {
     paddingHorizontal: Spacing.md,
+    paddingBottom: Spacing.xl,
   },
   heroCard: {
     padding: Spacing.xl,
