@@ -10,6 +10,7 @@ import {
   TextInput,
   ScrollView,
   Dimensions,
+  Modal,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -137,6 +138,7 @@ export default function VitrinScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedStory, setSelectedStory] = useState<typeof DEMO_STORIES[0] | null>(null);
 
   const { data: listings, isLoading, refetch } = useQuery<Listing[]>({
     queryKey: ["/api/listings"],
@@ -189,7 +191,14 @@ export default function VitrinScreen() {
         contentContainerStyle={styles.storiesContainer}
       >
         {DEMO_STORIES.map((story) => (
-          <Pressable key={story.id} style={styles.storyItem}>
+          <Pressable 
+            key={story.id} 
+            style={styles.storyItem}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setSelectedStory(story);
+            }}
+          >
             <View style={[
               styles.storyRing,
               story.hasNewStory ? styles.storyRingActive : styles.storyRingInactive,
@@ -295,6 +304,57 @@ export default function VitrinScreen() {
           }
         />
       )}
+
+      <Modal
+        visible={selectedStory !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSelectedStory(null)}
+      >
+        <Pressable
+          style={styles.storyModalOverlay}
+          onPress={() => setSelectedStory(null)}
+        >
+          <View style={styles.storyModalContent}>
+            <View style={styles.storyModalHeader}>
+              <View style={styles.storyModalUserInfo}>
+                <Image
+                  source={{ uri: selectedStory?.avatar }}
+                  style={styles.storyModalAvatar}
+                  resizeMode="cover"
+                />
+                <View>
+                  <ThemedText style={styles.storyModalUsername}>
+                    {selectedStory?.username}
+                  </ThemedText>
+                  <ThemedText style={styles.storyModalTime}>
+                    {selectedStory?.timeAgo}
+                  </ThemedText>
+                </View>
+              </View>
+              <Pressable
+                onPress={() => setSelectedStory(null)}
+                style={styles.storyModalClose}
+              >
+                <Feather name="x" size={24} color="#FFFFFF" />
+              </Pressable>
+            </View>
+            <View style={styles.storyProgressContainer}>
+              <View style={styles.storyProgressBar} />
+            </View>
+            <Image
+              source={{ uri: selectedStory?.avatar.replace("w=100", "w=800") }}
+              style={styles.storyModalImage}
+              resizeMode="cover"
+            />
+            <View style={styles.storyModalFooter}>
+              <ThemedText style={styles.storyModalFooterText}>
+                {selectedStory?.username} - Yeni Araç Kampanyası
+              </ThemedText>
+            </View>
+          </View>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
@@ -540,5 +600,85 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     color: "#000000",
+  },
+  storyModalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.95)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  storyModalContent: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+  },
+  storyModalHeader: {
+    position: "absolute",
+    top: 60,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: Spacing.md,
+    zIndex: 10,
+  },
+  storyModalUserInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  storyModalAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: "#FFFFFF",
+  },
+  storyModalUsername: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  storyModalTime: {
+    fontSize: 12,
+    color: "rgba(255,255,255,0.7)",
+  },
+  storyModalClose: {
+    padding: Spacing.sm,
+  },
+  storyProgressContainer: {
+    position: "absolute",
+    top: 50,
+    left: Spacing.md,
+    right: Spacing.md,
+    height: 3,
+    backgroundColor: "rgba(255,255,255,0.3)",
+    borderRadius: 2,
+    zIndex: 10,
+  },
+  storyProgressBar: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 2,
+  },
+  storyModalImage: {
+    width: "100%",
+    height: "70%",
+  },
+  storyModalFooter: {
+    position: "absolute",
+    bottom: 80,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    paddingHorizontal: Spacing.lg,
+  },
+  storyModalFooterText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FFFFFF",
+    textAlign: "center",
   },
 });
