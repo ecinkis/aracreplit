@@ -622,9 +622,9 @@
     /* Ad Slider */
     .ad-slider {
       position: relative;
-      height: 120px;
+      height: 140px;
       overflow: hidden;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: var(--gray-900);
     }
 
     .ad-slides {
@@ -636,21 +636,31 @@
     .ad-slide {
       min-width: 100%;
       height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 24px;
+      position: relative;
+      background-size: cover;
+      background-position: center;
     }
 
-    .ad-slide-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-    .ad-slide-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-    .ad-slide-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-    .ad-slide-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
-    .ad-slide-5 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    .ad-slide-1 { background-image: url('https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1600&h=300&fit=crop'); }
+    .ad-slide-2 { background-image: url('https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=1600&h=300&fit=crop'); }
+    .ad-slide-3 { background-image: url('https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=1600&h=300&fit=crop'); }
+    .ad-slide-4 { background-image: url('https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=1600&h=300&fit=crop'); }
+    .ad-slide-5 { background-image: url('https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=1600&h=300&fit=crop'); }
+
+    .ad-slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%);
+    }
 
     .ad-content {
+      position: relative;
       max-width: 1200px;
       width: 100%;
+      height: 100%;
+      margin: 0 auto;
+      padding: 0 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -658,23 +668,22 @@
     }
 
     .ad-text h3 {
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 700;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .ad-text p {
       font-size: 14px;
-      opacity: 0.9;
+      opacity: 0.85;
     }
 
     .ad-cta {
       padding: 10px 24px;
-      background: rgba(255,255,255,0.2);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.3);
+      background: var(--white);
+      border: none;
       border-radius: 24px;
-      color: var(--white);
+      color: var(--black);
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
@@ -682,17 +691,18 @@
     }
 
     .ad-cta:hover {
-      background: rgba(255,255,255,0.3);
+      background: var(--gray-100);
       text-decoration: none;
     }
 
     .ad-dots {
       position: absolute;
-      bottom: 12px;
+      bottom: 14px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
       gap: 8px;
+      z-index: 10;
     }
 
     .ad-dot {
@@ -714,9 +724,9 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      width: 36px;
-      height: 36px;
-      background: rgba(255,255,255,0.2);
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.15);
       backdrop-filter: blur(10px);
       border: none;
       border-radius: 50%;
@@ -726,18 +736,29 @@
       align-items: center;
       justify-content: center;
       transition: all 0.2s ease;
+      z-index: 10;
     }
 
     .ad-nav:hover {
-      background: rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.25);
     }
 
-    .ad-nav.prev { left: 16px; }
-    .ad-nav.next { right: 16px; }
+    .ad-nav.prev { left: 24px; }
+    .ad-nav.next { right: 24px; }
 
     .ad-nav svg {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Hero Button Gray Style */
+    .hero .btn-post {
+      background: var(--gray-600);
+      color: var(--white) !important;
+    }
+
+    .hero .btn-post:hover {
+      background: var(--gray-500);
     }
 
     /* Homepage */
