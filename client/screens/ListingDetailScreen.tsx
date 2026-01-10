@@ -33,7 +33,7 @@ function SpecItem({ icon, label, value }: { icon: string; label: string; value: 
   const { theme } = useTheme();
   return (
     <View style={[styles.specItem, { backgroundColor: theme.backgroundSecondary }]}>
-      <Feather name={icon as any} size={18} color={BrandColors.primaryOrange} />
+      <Feather name={icon as any} size={18} color={BrandColors.primaryBlue} />
       <View style={styles.specContent}>
         <ThemedText style={[styles.specLabel, { color: theme.textSecondary }]}>{label}</ThemedText>
         <ThemedText style={styles.specValue}>{value}</ThemedText>
@@ -110,7 +110,7 @@ export default function ListingDetailScreen() {
   if (isLoading) {
     return (
       <ThemedView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={BrandColors.primaryOrange} />
+        <ActivityIndicator size="large" color={BrandColors.primaryBlue} />
       </ThemedView>
     );
   }
@@ -248,7 +248,7 @@ export default function ListingDetailScreen() {
                 )}
               </View>
               <Pressable
-                style={[styles.messageButton, { backgroundColor: BrandColors.primaryOrange }]}
+                style={[styles.messageButton, { backgroundColor: BrandColors.primaryBlue }]}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                   Alert.alert("Bilgi", "Mesaj göndermek için önce eşleşmeniz gerekiyor.");

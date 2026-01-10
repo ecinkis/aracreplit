@@ -126,7 +126,7 @@ function MockListingCard({ index }: { index: number }) {
 function LoadingState() {
   return (
     <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color={BrandColors.primaryOrange} />
+      <ActivityIndicator size="large" color={BrandColors.primaryBlue} />
     </View>
   );
 }
@@ -230,7 +230,7 @@ export default function VitrinScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor={BrandColors.primaryOrange}
+              tintColor={BrandColors.primaryBlue}
             />
           }
         />

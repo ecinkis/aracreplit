@@ -78,7 +78,7 @@ function MenuRow({
 function StatCard({ icon, label, value }: { icon: string; label: string; value: number }) {
   return (
     <View style={styles.statCard}>
-      <Feather name={icon as any} size={20} color={BrandColors.primaryOrange} />
+      <Feather name={icon as any} size={20} color={BrandColors.primaryBlue} />
       <ThemedText style={styles.statValue}>{value}</ThemedText>
       <ThemedText style={styles.statLabel}>{label}</ThemedText>
     </View>
@@ -138,10 +138,10 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id] });
-      Alert.alert("Basarili", "Uyelik tipiniz degistirildi.");
+      Alert.alert("Başarılı", "Üyelik tipiniz değiştirildi.");
     },
     onError: () => {
-      Alert.alert("Hata", "Uyelik tipi degistirilemedi. Lutfen tekrar deneyin.");
+      Alert.alert("Hata", "Üyelik tipi değiştirilemedi. Lütfen tekrar deneyin.");
     },
   });
 
@@ -149,12 +149,12 @@ export default function ProfileScreen() {
     if (isKurumsal) {
       const newType = "bireysel";
       Alert.alert(
-        "Uyelik Tipi Degistir",
-        "Bireysel uyelige gecmek istediginize emin misiniz?",
+        "Üyelik Tipi Değiştir",
+        "Bireysel üyeliğe geçmek istediğinize emin misiniz?",
         [
-          { text: "Iptal", style: "cancel" },
+          { text: "İptal", style: "cancel" },
           { 
-            text: "Evet, Degistir", 
+            text: "Evet, Değiştir", 
             onPress: () => changeUserTypeMutation.mutate(newType) 
           },
         ]
@@ -206,14 +206,14 @@ export default function ProfileScreen() {
           <Image source={defaultAvatarImage} style={styles.avatar} />
           <View style={styles.profileInfo}>
             <ThemedText style={styles.profileName}>
-              {user?.name || "Isim belirtilmedi"}
+              {user?.name || "İsim belirtilmedi"}
             </ThemedText>
             <ThemedText style={styles.profilePhone}>
               {user?.phone}
             </ThemedText>
             <View style={styles.userTypeBadge}>
               <ThemedText style={styles.userTypeText}>
-                {isKurumsal ? "Kurumsal Uye" : "Bireysel Uye"}
+                {isKurumsal ? "Kurumsal Üye" : "Bireysel Üye"}
               </ThemedText>
             </View>
           </View>
@@ -224,7 +224,7 @@ export default function ProfileScreen() {
               navigation.navigate("EditProfile");
             }}
           >
-            <Feather name="edit-2" size={18} color={BrandColors.primaryOrange} />
+            <Feather name="edit-2" size={18} color={BrandColors.primaryBlue} />
           </Pressable>
         </View>
 
@@ -244,8 +244,8 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.statsRow}>
-          <StatCard icon="file-text" label="Ilanlarim" value={userListings?.length || 0} />
-          <StatCard icon="heart" label="Eslesmeler" value={matches?.length || 0} />
+          <StatCard icon="file-text" label="İlanlarım" value={userListings?.length || 0} />
+          <StatCard icon="heart" label="Eşleşmeler" value={matches?.length || 0} />
           <StatCard icon="star" label="Favoriler" value={favorites?.length || 0} />
         </View>
 
@@ -335,11 +335,11 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.sectionCard}>
-          <ThemedText style={styles.sectionTitle}>Uyelik Tipi</ThemedText>
+          <ThemedText style={styles.sectionTitle}>Üyelik Tipi</ThemedText>
           <ThemedText style={styles.sectionSubtitle}>
             {isKurumsal 
-              ? "Kurumsal uye olarak kayitlisiniz" 
-              : "Bireysel uye olarak kayitlisiniz"}
+              ? "Kurumsal üye olarak kayıtlısınız" 
+              : "Bireysel üye olarak kayıtlısınız"}
           </ThemedText>
           
           <Pressable
@@ -355,20 +355,20 @@ export default function ProfileScreen() {
             testID="change-user-type-button"
           >
             <ThemedText style={styles.changeTypeButtonText}>
-              {isKurumsal ? "Bireysel Uyelige Gec" : "Kurumsal Uyelige Gec"}
+              {isKurumsal ? "Bireysel Üyeliğe Geç" : "Kurumsal Üyeliğe Geç"}
             </ThemedText>
           </Pressable>
         </View>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>Ilanlarim</ThemedText>
+            <ThemedText style={styles.sectionTitle}>İlanlarım</ThemedText>
             <ThemedText style={styles.sectionCount}>
               {userListings?.length || 0}/5
             </ThemedText>
           </View>
           {listingsLoading ? (
-            <ActivityIndicator size="small" color={BrandColors.primaryOrange} />
+            <ActivityIndicator size="small" color={BrandColors.primaryBlue} />
           ) : userListings && userListings.length > 0 ? (
             <FlatList
               data={userListings}
@@ -391,25 +391,25 @@ export default function ProfileScreen() {
                 (navigation.getParent() as any)?.navigate("CreateTab");
               }}
             >
-              <Feather name="plus" size={32} color={BrandColors.primaryOrange} />
-              <ThemedText style={styles.addListingText}>Ilan Ekle</ThemedText>
+              <Feather name="plus" size={32} color={BrandColors.primaryBlue} />
+              <ThemedText style={styles.addListingText}>İlan Ekle</ThemedText>
             </Pressable>
           )}
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Sozlesmeler ve Politikalar</ThemedText>
+          <ThemedText style={styles.sectionTitle}>Sözleşmeler ve Politikalar</ThemedText>
           
           <Pressable
             style={({ pressed }) => [styles.legalItem, pressed && { opacity: 0.7 }]}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              Alert.alert("Kullanim Kosullari", "Kullanim kosullari icerigi burada goruntulenecek.");
+              Alert.alert("Kullanım Koşulları", "Kullanım koşulları içeriği burada görüntülenecek.");
             }}
           >
             <View style={styles.legalItemLeft}>
               <Feather name="file-text" size={20} color="#374151" />
-              <ThemedText style={styles.legalItemText}>Kullanim Kosullari</ThemedText>
+              <ThemedText style={styles.legalItemText}>Kullanım Koşulları</ThemedText>
             </View>
             <Feather name="chevron-right" size={20} color="#9CA3AF" />
           </Pressable>
@@ -418,12 +418,12 @@ export default function ProfileScreen() {
             style={({ pressed }) => [styles.legalItem, pressed && { opacity: 0.7 }]}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              Alert.alert("Gizlilik Politikasi", "Gizlilik politikasi icerigi burada goruntulenecek.");
+              Alert.alert("Gizlilik Politikası", "Gizlilik politikası içeriği burada görüntülenecek.");
             }}
           >
             <View style={styles.legalItemLeft}>
               <Feather name="shield" size={20} color="#374151" />
-              <ThemedText style={styles.legalItemText}>Gizlilik Politikasi</ThemedText>
+              <ThemedText style={styles.legalItemText}>Gizlilik Politikası</ThemedText>
             </View>
             <Feather name="chevron-right" size={20} color="#9CA3AF" />
           </Pressable>
@@ -432,12 +432,12 @@ export default function ProfileScreen() {
             style={({ pressed }) => [styles.legalItem, pressed && { opacity: 0.7 }]}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              Alert.alert("KVKK Aydinlatma Metni", "KVKK aydinlatma metni icerigi burada goruntulenecek.");
+              Alert.alert("KVKK Aydınlatma Metni", "KVKK aydınlatma metni içeriği burada görüntülenecek.");
             }}
           >
             <View style={styles.legalItemLeft}>
               <Feather name="lock" size={20} color="#374151" />
-              <ThemedText style={styles.legalItemText}>KVKK Aydinlatma Metni</ThemedText>
+              <ThemedText style={styles.legalItemText}>KVKK Aydınlatma Metni</ThemedText>
             </View>
             <Feather name="chevron-right" size={20} color="#9CA3AF" />
           </Pressable>
@@ -446,12 +446,12 @@ export default function ProfileScreen() {
             style={({ pressed }) => [styles.legalItem, pressed && { opacity: 0.7 }]}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              Alert.alert("Mesafeli Satis Sozlesmesi", "Mesafeli satis sozlesmesi icerigi burada goruntulenecek.");
+              Alert.alert("Mesafeli Satış Sözleşmesi", "Mesafeli satış sözleşmesi içeriği burada görüntülenecek.");
             }}
           >
             <View style={styles.legalItemLeft}>
               <Feather name="clipboard" size={20} color="#374151" />
-              <ThemedText style={styles.legalItemText}>Mesafeli Satis Sozlesmesi</ThemedText>
+              <ThemedText style={styles.legalItemText}>Mesafeli Satış Sözleşmesi</ThemedText>
             </View>
             <Feather name="chevron-right" size={20} color="#9CA3AF" />
           </Pressable>
@@ -460,12 +460,12 @@ export default function ProfileScreen() {
             style={({ pressed }) => [styles.legalItem, pressed && { opacity: 0.7 }]}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              Alert.alert("Cerez Politikasi", "Cerez politikasi icerigi burada goruntulenecek.");
+              Alert.alert("Çerez Politikası", "Çerez politikası içeriği burada görüntülenecek.");
             }}
           >
             <View style={styles.legalItemLeft}>
               <Feather name="info" size={20} color="#374151" />
-              <ThemedText style={styles.legalItemText}>Cerez Politikasi</ThemedText>
+              <ThemedText style={styles.legalItemText}>Çerez Politikası</ThemedText>
             </View>
             <Feather name="chevron-right" size={20} color="#9CA3AF" />
           </Pressable>
@@ -527,7 +527,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   userTypeBadge: {
-    backgroundColor: BrandColors.primaryOrange + "20",
+    backgroundColor: BrandColors.primaryBlue + "20",
     paddingHorizontal: Spacing.sm,
     paddingVertical: 4,
     borderRadius: BorderRadius.full,
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
   userTypeText: {
     fontSize: 12,
     fontWeight: "600",
-    color: BrandColors.primaryOrange,
+    color: BrandColors.primaryBlue,
   },
   editButton: {
     padding: Spacing.sm,
@@ -561,7 +561,7 @@ const styles = StyleSheet.create({
   trustScoreValue: {
     fontSize: 18,
     fontWeight: "700",
-    color: BrandColors.primaryOrange,
+    color: BrandColors.primaryBlue,
   },
   trustScoreBar: {
     height: 8,
@@ -571,7 +571,7 @@ const styles = StyleSheet.create({
   },
   trustScoreFill: {
     height: "100%",
-    backgroundColor: BrandColors.primaryOrange,
+    backgroundColor: BrandColors.primaryBlue,
     borderRadius: BorderRadius.full,
   },
   statsRow: {
@@ -673,12 +673,12 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: BrandColors.primaryOrange,
+    borderColor: BrandColors.primaryBlue,
   },
   changeTypeButtonText: {
     fontSize: 14,
     fontWeight: "600",
-    color: BrandColors.primaryOrange,
+    color: BrandColors.primaryBlue,
   },
   horizontalList: {
     gap: Spacing.sm,
@@ -714,12 +714,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 2,
     borderStyle: "dashed",
-    borderColor: BrandColors.primaryOrange,
+    borderColor: BrandColors.primaryBlue,
     backgroundColor: "#FFF7ED",
   },
   addListingText: {
     fontSize: 13,
-    color: BrandColors.primaryOrange,
+    color: BrandColors.primaryBlue,
     marginTop: Spacing.sm,
     fontWeight: "500",
   },

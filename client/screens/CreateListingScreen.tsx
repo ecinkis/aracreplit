@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.full,
   },
   chipSelected: {
-    backgroundColor: BrandColors.primaryOrange,
+    backgroundColor: BrandColors.primaryBlue,
   },
   chipText: {
     ...Typography.small,
@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   toggleButtonSelected: {
-    backgroundColor: BrandColors.primaryOrange,
+    backgroundColor: BrandColors.primaryBlue,
   },
   toggleText: {
     ...Typography.small,
@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
     transform: [{ translateX: 0 }],
   },
   submitButton: {
-    backgroundColor: BrandColors.primaryOrange,
+    backgroundColor: BrandColors.primaryBlue,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.sm,
     alignItems: "center",

@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.full,
   },
   cityChipSelected: {
-    backgroundColor: BrandColors.primaryOrange,
+    backgroundColor: BrandColors.primaryBlue,
   },
   cityChipText: {
     ...Typography.small,
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   saveButton: {
-    backgroundColor: BrandColors.primaryOrange,
+    backgroundColor: BrandColors.primaryBlue,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.sm,
     alignItems: "center",

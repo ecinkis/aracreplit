@@ -55,7 +55,7 @@ export default function RootStackNavigator() {
             component={ListingDetailScreen}
             options={{
               headerTitle: "İlan Detayı",
-              headerTintColor: BrandColors.primaryOrange,
+              headerTintColor: BrandColors.primaryBlue,
             }}
           />
           <Stack.Screen
@@ -63,7 +63,7 @@ export default function RootStackNavigator() {
             component={ChatScreen}
             options={({ route }) => ({
               headerTitle: route.params.otherUserName,
-              headerTintColor: BrandColors.primaryOrange,
+              headerTintColor: BrandColors.primaryBlue,
             })}
           />
           <Stack.Screen
@@ -71,7 +71,7 @@ export default function RootStackNavigator() {
             component={SettingsScreen}
             options={{
               headerTitle: "Ayarlar",
-              headerTintColor: BrandColors.primaryOrange,
+              headerTintColor: BrandColors.primaryBlue,
             }}
           />
           <Stack.Screen
@@ -79,7 +79,7 @@ export default function RootStackNavigator() {
             component={EditProfileScreen}
             options={{
               headerTitle: "Profil Düzenle",
-              headerTintColor: BrandColors.primaryOrange,
+              headerTintColor: BrandColors.primaryBlue,
               presentation: "modal",
             }}
           />
@@ -88,7 +88,7 @@ export default function RootStackNavigator() {
             component={CreateListingScreen}
             options={{
               headerTitle: "Detayli Ilan Ver",
-              headerTintColor: BrandColors.primaryOrange,
+              headerTintColor: BrandColors.primaryBlue,
               presentation: "modal",
             }}
           />

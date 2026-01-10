@@ -66,13 +66,13 @@ export default function CorporateApplicationScreen() {
     },
     onSuccess: () => {
       Alert.alert(
-        "Basarili",
-        "Kurumsal basvurunuz alindi. Evraklariniz incelendikten sonra hesabiniz aktif edilecektir.",
+        "Başarılı",
+        "Kurumsal başvurunuz alındı. Evraklarınız incelendikten sonra hesabınız aktif edilecektir.",
         [{ text: "Tamam", onPress: () => navigation.goBack() }]
       );
     },
     onError: () => {
-      Alert.alert("Hata", "Basvuru gonderilemedi. Lutfen tekrar deneyin.");
+      Alert.alert("Hata", "Başvuru gönderilemedi. Lütfen tekrar deneyin.");
     },
   });
 
@@ -93,7 +93,7 @@ export default function CorporateApplicationScreen() {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
     } catch (error) {
-      Alert.alert("Hata", "Belge secilirken bir hata olustu.");
+      Alert.alert("Hata", "Belge seçilirken bir hata oluştu.");
     }
   };
 
@@ -105,11 +105,11 @@ export default function CorporateApplicationScreen() {
 
   const handleSubmit = () => {
     if (!companyName.trim()) {
-      Alert.alert("Hata", "Firma adi zorunludur.");
+      Alert.alert("Hata", "Firma adı zorunludur.");
       return;
     }
     if (!taxNumber.trim()) {
-      Alert.alert("Hata", "Vergi numarasi zorunludur.");
+      Alert.alert("Hata", "Vergi numarası zorunludur.");
       return;
     }
     if (!taxOffice.trim()) {
@@ -118,12 +118,12 @@ export default function CorporateApplicationScreen() {
     }
 
     Alert.alert(
-      "Basvuruyu Onayla",
-      "Kurumsal uyelik basvurunuzu gondermek istediginize emin misiniz?",
+      "Başvuruyu Onayla",
+      "Kurumsal üyelik başvurunuzu göndermek istediğinize emin misiniz?",
       [
-        { text: "Iptal", style: "cancel" },
+        { text: "İptal", style: "cancel" },
         {
-          text: "Gonder",
+          text: "Gönder",
           onPress: () => {
             submitMutation.mutate({
               companyName,
@@ -151,7 +151,7 @@ export default function CorporateApplicationScreen() {
         >
           <Feather name="arrow-left" size={24} color="#000000" />
         </Pressable>
-        <ThemedText style={styles.headerTitle}>Kurumsal Basvuru</ThemedText>
+        <ThemedText style={styles.headerTitle}>Kurumsal Başvuru</ThemedText>
         <View style={styles.backButton} />
       </View>
 
@@ -162,7 +162,7 @@ export default function CorporateApplicationScreen() {
         <View style={styles.infoCard}>
           <Feather name="info" size={20} color={BrandColors.secondaryBlue} />
           <ThemedText style={styles.infoText}>
-            Kurumsal uyelik icin asagidaki bilgileri doldurun ve gerekli evraklari yukleyin.
+            Kurumsal üyelik için aşağıdaki bilgileri doldurun ve gerekli evrakları yükleyin.
           </ThemedText>
         </View>
 
@@ -170,18 +170,18 @@ export default function CorporateApplicationScreen() {
           <ThemedText style={styles.sectionTitle}>Firma Bilgileri</ThemedText>
 
           <View style={styles.inputGroup}>
-            <ThemedText style={styles.inputLabel}>Firma Adi *</ThemedText>
+            <ThemedText style={styles.inputLabel}>Firma Adı *</ThemedText>
             <TextInput
               style={styles.input}
               value={companyName}
               onChangeText={setCompanyName}
-              placeholder="Ornek Otomotiv A.S."
+              placeholder="Örnek Otomotiv A.Ş."
               placeholderTextColor="#9CA3AF"
             />
           </View>
 
           <View style={styles.inputGroup}>
-            <ThemedText style={styles.inputLabel}>Vergi Numarasi *</ThemedText>
+            <ThemedText style={styles.inputLabel}>Vergi Numarası *</ThemedText>
             <TextInput
               style={styles.input}
               value={taxNumber}
@@ -198,7 +198,7 @@ export default function CorporateApplicationScreen() {
               style={styles.input}
               value={taxOffice}
               onChangeText={setTaxOffice}
-              placeholder="Kadikoy Vergi Dairesi"
+              placeholder="Kadıköy Vergi Dairesi"
               placeholderTextColor="#9CA3AF"
             />
           </View>
@@ -231,7 +231,7 @@ export default function CorporateApplicationScreen() {
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Evraklar</ThemedText>
           <ThemedText style={styles.sectionSubtitle}>
-            Ticaret sicil gazetesi, vergi levhasi ve imza sirkuleri yukleyin
+            Ticaret sicil gazetesi, vergi levhası ve imza sirküleri yükleyin
           </ThemedText>
 
           {documents.map((doc, index) => (
@@ -262,7 +262,7 @@ export default function CorporateApplicationScreen() {
             }}
           >
             <Feather name="upload" size={20} color={BrandColors.secondaryBlue} />
-            <ThemedText style={styles.uploadButtonText}>Evrak Yukle</ThemedText>
+            <ThemedText style={styles.uploadButtonText}>Evrak Yükle</ThemedText>
           </Pressable>
         </View>
 
@@ -281,7 +281,7 @@ export default function CorporateApplicationScreen() {
           {submitMutation.isPending ? (
             <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <ThemedText style={styles.submitButtonText}>Basvuruyu Gonder</ThemedText>
+            <ThemedText style={styles.submitButtonText}>Başvuruyu Gönder</ThemedText>
           )}
         </Pressable>
       </KeyboardAwareScrollViewCompat>

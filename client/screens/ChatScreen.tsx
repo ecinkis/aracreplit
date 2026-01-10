@@ -120,7 +120,7 @@ export default function ChatScreen() {
     <ThemedView style={styles.container}>
       {isLoading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={BrandColors.primaryOrange} />
+          <ActivityIndicator size="large" color={BrandColors.primaryBlue} />
         </View>
       ) : (
         <FlatList
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   ownBubble: {
-    backgroundColor: BrandColors.primaryOrange,
+    backgroundColor: BrandColors.primaryBlue,
     alignSelf: "flex-end",
     borderBottomRightRadius: 4,
   },
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: BorderRadius.full,
-    backgroundColor: BrandColors.primaryOrange,
+    backgroundColor: BrandColors.primaryBlue,
     justifyContent: "center",
     alignItems: "center",
   },

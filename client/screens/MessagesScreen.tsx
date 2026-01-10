@@ -118,7 +118,7 @@ export default function MessagesScreen() {
 
       {isLoading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={BrandColors.primaryOrange} />
+          <ActivityIndicator size="large" color={BrandColors.primaryBlue} />
         </View>
       ) : !matches || matches.length === 0 ? (
         <EmptyState />
@@ -136,7 +136,7 @@ export default function MessagesScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor={BrandColors.primaryOrange}
+              tintColor={BrandColors.primaryBlue}
             />
           }
           ItemSeparatorComponent={() => (

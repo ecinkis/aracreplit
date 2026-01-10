@@ -1,7 +1,7 @@
 import { Platform } from "react-native";
 
 export const BrandColors = {
-  primaryOrange: "#FF6B35",
+  primaryBlue: "#1C6BF9",
   secondaryBlue: "#1C6BF9",
   deepNavy: "#1A2332",
   successGreen: "#00C48C",
@@ -10,8 +10,8 @@ export const BrandColors = {
   warning: "#FFA726",
 };
 
-const tintColorLight = BrandColors.primaryOrange;
-const tintColorDark = BrandColors.primaryOrange;
+const tintColorLight = BrandColors.primaryBlue;
+const tintColorDark = BrandColors.primaryBlue;
 
 export const Colors = {
   light: {
@@ -21,7 +21,7 @@ export const Colors = {
     tabIconDefault: "#687076",
     tabIconSelected: tintColorLight,
     link: BrandColors.skyBlue,
-    primary: BrandColors.primaryOrange,
+    primary: BrandColors.primaryBlue,
     success: BrandColors.successGreen,
     error: BrandColors.alertRed,
     warning: BrandColors.warning,
@@ -39,7 +39,7 @@ export const Colors = {
     tabIconDefault: "#9BA1A6",
     tabIconSelected: tintColorDark,
     link: BrandColors.skyBlue,
-    primary: BrandColors.primaryOrange,
+    primary: BrandColors.primaryBlue,
     success: BrandColors.successGreen,
     error: BrandColors.alertRed,
     warning: BrandColors.warning,
