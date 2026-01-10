@@ -4,7 +4,6 @@ import { storage } from "./storage";
 import * as crypto from "crypto";
 import * as fs from "fs";
 import * as path from "path";
-import Jimp from "jimp";
 
 function getAdminSecret(): string {
   const secret = process.env.SESSION_SECRET;
@@ -214,42 +213,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const data = matches[2];
       const buffer = Buffer.from(data, "base64");
 
-      // Add watermark using Jimp
-      let finalBuffer = buffer;
-      try {
-        const jimpImage = await Jimp.read(buffer);
-        const width = jimpImage.getWidth();
-        const height = jimpImage.getHeight();
-        
-        // Load font for watermark text
-        const font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
-        const watermarkText = "araç takası";
-        
-        // Print watermark at bottom right with semi-transparent background
-        const textWidth = Jimp.measureText(font, watermarkText);
-        const textHeight = Jimp.measureTextHeight(font, watermarkText, textWidth);
-        const padding = 10;
-        const x = width - textWidth - padding - 20;
-        const y = height - textHeight - padding - 20;
-        
-        // Create semi-transparent overlay for text background
-        jimpImage.scan(x - padding, y - padding, textWidth + padding * 2, textHeight + padding * 2, function(px, py, idx) {
-          if (px >= 0 && px < width && py >= 0 && py < height) {
-            this.bitmap.data[idx + 0] = Math.floor(this.bitmap.data[idx + 0] * 0.5);
-            this.bitmap.data[idx + 1] = Math.floor(this.bitmap.data[idx + 1] * 0.5);
-            this.bitmap.data[idx + 2] = Math.floor(this.bitmap.data[idx + 2] * 0.5);
-          }
-        });
-        
-        // Print the watermark text
-        jimpImage.print(font, x, y, watermarkText);
-        
-        finalBuffer = await jimpImage.getBufferAsync(ext === "png" ? Jimp.MIME_PNG : Jimp.MIME_JPEG);
-      } catch (watermarkError) {
-        console.error("Watermark error (using original image):", watermarkError);
-        // Continue with original buffer if watermarking fails
-      }
-
       // Generate unique filename
       const filename = `${crypto.randomUUID()}.${ext}`;
       const uploadDir = path.join(process.cwd(), "server", "uploads");
@@ -260,7 +223,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const filePath = path.join(uploadDir, filename);
-      fs.writeFileSync(filePath, finalBuffer);
+      fs.writeFileSync(filePath, buffer);
 
       // Return the URL for the uploaded file
       const url = `/uploads/${filename}`;
