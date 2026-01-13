@@ -137,28 +137,21 @@ export default function SearchScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchRow}>
-        <View style={styles.searchContainer}>
-          <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchInput}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Marka, model veya ilan no ara..."
-            placeholderTextColor="#9CA3AF"
-            testID="input-search"
-            returnKeyType="search"
-            onSubmitEditing={handleSearch}
-          />
-          {searchQuery.length > 0 ? (
-            <Pressable onPress={() => setSearchQuery("")} testID="button-clear-search">
-              <Feather name="x" size={18} color="#9CA3AF" />
-            </Pressable>
-          ) : null}
-        </View>
+      <View style={styles.searchContainer}>
+        <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchInput}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder="Marka, model veya ilan no ara..."
+          placeholderTextColor="#9CA3AF"
+          testID="input-search"
+          returnKeyType="search"
+          onSubmitEditing={handleSearch}
+        />
         {searchQuery.length > 0 ? (
-          <Pressable style={styles.searchButton} onPress={handleSearch}>
-            <ThemedText style={styles.searchButtonText}>Ara</ThemedText>
+          <Pressable onPress={() => setSearchQuery("")} testID="button-clear-search">
+            <Feather name="x" size={18} color="#9CA3AF" />
           </Pressable>
         ) : null}
       </View>
@@ -242,7 +235,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   searchContainer: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#F9FAFB",
@@ -251,6 +243,8 @@ const styles = StyleSheet.create({
     borderColor: "#E5E7EB",
     paddingHorizontal: Spacing.md,
     height: 48,
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.lg,
   },
   searchIcon: {
     marginRight: Spacing.sm,
