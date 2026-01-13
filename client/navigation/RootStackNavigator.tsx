@@ -112,8 +112,9 @@ export default function RootStackNavigator() {
             options={{
               headerTitle: "Detayli Ilan Ver",
               headerTintColor: "#FFFFFF",
-              headerStyle: { backgroundColor: "#000000" },
+              headerStyle: { backgroundColor: "#000000", height: 110 },
               headerTitleAlign: "left",
+              headerTitleStyle: { marginTop: 20 },
               presentation: "modal",
             }}
           />
