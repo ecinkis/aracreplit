@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
   ScrollView,
   Pressable,
-  Image,
+  TextInput,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
@@ -19,68 +19,71 @@ import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type BrandListRouteProp = RouteProp<RootStackParamList, "BrandList">;
 
-const BRANDS_BY_CATEGORY: Record<string, Array<{ id: string; name: string; logo?: string }>> = {
+const BRANDS_BY_CATEGORY: Record<string, Array<{ id: string; name: string }>> = {
   otomobil: [
-    { id: "bmw", name: "BMW" },
-    { id: "mercedes", name: "Mercedes-Benz" },
     { id: "audi", name: "Audi" },
-    { id: "volkswagen", name: "Volkswagen" },
-    { id: "toyota", name: "Toyota" },
-    { id: "honda", name: "Honda" },
-    { id: "ford", name: "Ford" },
-    { id: "renault", name: "Renault" },
+    { id: "bmw", name: "BMW" },
     { id: "fiat", name: "Fiat" },
+    { id: "ford", name: "Ford" },
+    { id: "honda", name: "Honda" },
     { id: "hyundai", name: "Hyundai" },
     { id: "kia", name: "Kia" },
-    { id: "peugeot", name: "Peugeot" },
-    { id: "opel", name: "Opel" },
-    { id: "skoda", name: "Skoda" },
-    { id: "seat", name: "Seat" },
+    { id: "mercedes", name: "Mercedes-Benz" },
     { id: "nissan", name: "Nissan" },
+    { id: "opel", name: "Opel" },
+    { id: "peugeot", name: "Peugeot" },
+    { id: "renault", name: "Renault" },
+    { id: "seat", name: "Seat" },
+    { id: "skoda", name: "Skoda" },
+    { id: "toyota", name: "Toyota" },
+    { id: "volkswagen", name: "Volkswagen" },
   ],
   suv: [
+    { id: "audi", name: "Audi" },
+    { id: "bmw", name: "BMW" },
+    { id: "ford", name: "Ford" },
+    { id: "hyundai", name: "Hyundai" },
     { id: "jeep", name: "Jeep" },
     { id: "land-rover", name: "Land Rover" },
-    { id: "toyota", name: "Toyota" },
-    { id: "nissan", name: "Nissan" },
-    { id: "ford", name: "Ford" },
-    { id: "bmw", name: "BMW" },
     { id: "mercedes", name: "Mercedes-Benz" },
-    { id: "audi", name: "Audi" },
+    { id: "nissan", name: "Nissan" },
+    { id: "toyota", name: "Toyota" },
     { id: "volkswagen", name: "Volkswagen" },
-    { id: "hyundai", name: "Hyundai" },
   ],
   elektrikli: [
-    { id: "tesla", name: "Tesla" },
-    { id: "bmw", name: "BMW i" },
-    { id: "mercedes", name: "Mercedes EQ" },
     { id: "audi", name: "Audi e-tron" },
-    { id: "volkswagen", name: "Volkswagen ID" },
-    { id: "porsche", name: "Porsche Taycan" },
+    { id: "bmw", name: "BMW i" },
     { id: "hyundai", name: "Hyundai Ioniq" },
     { id: "kia", name: "Kia EV" },
+    { id: "mercedes", name: "Mercedes EQ" },
+    { id: "porsche", name: "Porsche Taycan" },
+    { id: "tesla", name: "Tesla" },
     { id: "togg", name: "TOGG" },
+    { id: "volkswagen", name: "Volkswagen ID" },
   ],
   motosiklet: [
-    { id: "honda", name: "Honda" },
-    { id: "yamaha", name: "Yamaha" },
-    { id: "kawasaki", name: "Kawasaki" },
-    { id: "suzuki", name: "Suzuki" },
     { id: "bmw", name: "BMW Motorrad" },
     { id: "ducati", name: "Ducati" },
     { id: "harley", name: "Harley-Davidson" },
+    { id: "honda", name: "Honda" },
+    { id: "kawasaki", name: "Kawasaki" },
     { id: "ktm", name: "KTM" },
+    { id: "suzuki", name: "Suzuki" },
     { id: "triumph", name: "Triumph" },
+    { id: "yamaha", name: "Yamaha" },
   ],
 };
 
 export default function BrandListScreen() {
-  const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<BrandListRouteProp>();
   const { categoryId, categoryName } = route.params;
+  const [searchQuery, setSearchQuery] = useState("");
 
   const brands = BRANDS_BY_CATEGORY[categoryId] || [];
+  const filteredBrands = brands.filter((brand) =>
+    brand.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleBrandPress = (brandId: string, brandName: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -89,38 +92,50 @@ export default function BrandListScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.searchRow}>
+        <View style={styles.searchContainer}>
+          <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Marka ara..."
+            placeholderTextColor="#9CA3AF"
+            testID="input-brand-search"
+          />
+          {searchQuery.length > 0 ? (
+            <Pressable onPress={() => setSearchQuery("")} testID="button-clear-brand-search">
+              <Feather name="x" size={18} color="#9CA3AF" />
+            </Pressable>
+          ) : null}
+        </View>
+      </View>
+
       <ScrollView
-        contentContainerStyle={[
-          styles.listContent,
-          { paddingBottom: insets.bottom + Spacing.xl },
-        ]}
+        contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>{categoryName}</ThemedText>
-          <ThemedText style={styles.sectionSubtitle}>Marka seçin</ThemedText>
-        </View>
+        {filteredBrands.map((brand) => (
+          <Pressable
+            key={brand.id}
+            style={({ pressed }) => [
+              styles.brandRow,
+              pressed && styles.brandRowPressed,
+            ]}
+            onPress={() => handleBrandPress(brand.id, brand.name)}
+            testID={`row-brand-${brand.id}`}
+          >
+            <ThemedText style={styles.brandName}>{brand.name}</ThemedText>
+            <Feather name="chevron-right" size={20} color="#9CA3AF" />
+          </Pressable>
+        ))}
 
-        <View style={styles.brandsGrid}>
-          {brands.map((brand) => (
-            <Pressable
-              key={brand.id}
-              style={({ pressed }) => [
-                styles.brandCard,
-                pressed && styles.brandCardPressed,
-              ]}
-              onPress={() => handleBrandPress(brand.id, brand.name)}
-              testID={`card-brand-${brand.id}`}
-            >
-              <View style={styles.brandIconContainer}>
-                <ThemedText style={styles.brandInitial}>
-                  {brand.name.charAt(0)}
-                </ThemedText>
-              </View>
-              <ThemedText style={styles.brandName} numberOfLines={1}>{brand.name}</ThemedText>
-            </Pressable>
-          ))}
-        </View>
+        {filteredBrands.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Feather name="inbox" size={48} color="#9CA3AF" />
+            <ThemedText style={styles.emptyText}>Marka bulunamadı</ThemedText>
+          </View>
+        ) : null}
       </ScrollView>
     </View>
   );
@@ -131,60 +146,60 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
     paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.sm,
   },
-  listContent: {
-    flexGrow: 1,
-  },
-  section: {
-    marginBottom: Spacing.lg,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#000000",
-  },
-  sectionSubtitle: {
-    fontSize: 13,
-    color: "#6B7280",
-    marginTop: 4,
-  },
-  brandsGrid: {
+  searchRow: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    gap: Spacing.md,
-  },
-  brandCard: {
-    width: "30%",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
+    gap: Spacing.sm,
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.md,
+  },
+  searchContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F9FAFB",
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
     borderColor: "#E5E7EB",
-    padding: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    height: 48,
   },
-  brandCardPressed: {
-    backgroundColor: "#F9FAFB",
-    transform: [{ scale: 0.98 }],
+  searchIcon: {
+    marginRight: Spacing.sm,
   },
-  brandIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "#000000",
+  searchInput: {
+    flex: 1,
+    fontSize: 15,
+    color: "#000000",
+  },
+  listContent: {
+    flexGrow: 1,
+    paddingBottom: Spacing.xl,
+  },
+  brandRow: {
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    marginBottom: Spacing.sm,
+    justifyContent: "space-between",
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6",
   },
-  brandInitial: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#FFFFFF",
+  brandRowPressed: {
+    backgroundColor: "#F9FAFB",
   },
   brandName: {
-    fontSize: 12,
-    fontWeight: "500",
-    color: "#374151",
-    textAlign: "center",
+    fontSize: 16,
+    color: "#000000",
+  },
+  emptyState: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: Spacing.xl * 2,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: "#6B7280",
+    marginTop: Spacing.md,
   },
 });
