@@ -975,7 +975,8 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   stepIndicatorContainer: {
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.lg,
     paddingBottom: Spacing.md,
   },
   stepProgressBar: {
@@ -995,7 +996,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   scrollContent: {
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
   },
   stepContent: {
     flex: 1,
