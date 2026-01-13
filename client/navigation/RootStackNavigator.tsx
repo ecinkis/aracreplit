@@ -15,6 +15,9 @@ import CompareScreen from "@/screens/CompareScreen";
 import FilterScreen, { type FilterValues } from "@/screens/FilterScreen";
 import ReviewScreen from "@/screens/ReviewScreen";
 import PremiumScreen from "@/screens/PremiumScreen";
+import BrandListScreen from "@/screens/BrandListScreen";
+import ModelListScreen from "@/screens/ModelListScreen";
+import SearchResultsScreen from "@/screens/SearchResultsScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { useAuth } from "@/contexts/AuthContext";
 import { BrandColors } from "@/constants/theme";
@@ -40,6 +43,9 @@ export type RootStackParamList = {
     reviewedUserName: string;
   };
   Premium: undefined;
+  BrandList: { categoryId: string; categoryName: string };
+  ModelList: { categoryId: string; categoryName: string; brandId: string; brandName: string };
+  SearchResults: { categoryId: string; categoryName: string; brandId: string; brandName: string; modelId: string; modelName: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -167,6 +173,36 @@ export default function RootStackNavigator() {
               headerShown: false,
               presentation: "modal",
             }}
+          />
+          <Stack.Screen
+            name="BrandList"
+            component={BrandListScreen}
+            options={({ route }) => ({
+              headerTitle: route.params.categoryName,
+              headerStyle: { backgroundColor: "#000000" },
+              headerTitleStyle: { color: "#FFFFFF" },
+              headerTintColor: "#FFFFFF",
+            })}
+          />
+          <Stack.Screen
+            name="ModelList"
+            component={ModelListScreen}
+            options={({ route }) => ({
+              headerTitle: route.params.brandName,
+              headerStyle: { backgroundColor: "#000000" },
+              headerTitleStyle: { color: "#FFFFFF" },
+              headerTintColor: "#FFFFFF",
+            })}
+          />
+          <Stack.Screen
+            name="SearchResults"
+            component={SearchResultsScreen}
+            options={({ route }) => ({
+              headerTitle: `${route.params.brandName} ${route.params.modelName}`,
+              headerStyle: { backgroundColor: "#000000" },
+              headerTitleStyle: { color: "#FFFFFF" },
+              headerTintColor: "#FFFFFF",
+            })}
           />
         </>
       )}
