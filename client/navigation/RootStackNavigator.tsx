@@ -102,7 +102,7 @@ export default function RootStackNavigator() {
             component={EditProfileScreen}
             options={{
               headerTitle: "Profil Düzenle",
-              headerTintColor: BrandColors.primaryBlue,
+              headerTintColor: "#000000",
               presentation: "modal",
             }}
           />

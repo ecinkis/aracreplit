@@ -20,7 +20,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Spacing, BorderRadius, Typography, BrandColors } from "@/constants/theme";
 import { apiRequest } from "@/lib/query-client";
 
-const CITIES = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Adana", "Konya", "Gaziantep", "Şanlıurfa", "Kocaeli", "Mersin", "Diyarbakır", "Hatay", "Manisa", "Kayseri"];
+const CITIES = [
+  "İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Adana", "Konya", "Gaziantep", 
+  "Şanlıurfa", "Kocaeli", "Mersin", "Diyarbakır", "Hatay", "Manisa", "Kayseri",
+  "Samsun", "Balıkesir", "Kahramanmaraş", "Van", "Aydın", "Denizli", "Sakarya",
+  "Tekirdağ", "Muğla", "Eskişehir", "Mardin", "Trabzon", "Malatya", "Erzurum",
+  "Ordu", "Afyonkarahisar", "Sivas", "Tokat", "Çorum", "Aksaray", "Elazığ",
+  "Kütahya", "Kırıkkale", "Osmaniye", "Düzce", "Zonguldak", "Edirne", "Çanakkale",
+  "Isparta", "Bolu", "Rize", "Giresun", "Nevşehir", "Uşak", "Niğde"
+];
 
 export default function EditProfileScreen() {
   const insets = useSafeAreaInsets();
