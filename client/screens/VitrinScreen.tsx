@@ -397,7 +397,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   searchContainer: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#F9FAFB",
@@ -406,6 +405,8 @@ const styles = StyleSheet.create({
     borderColor: "#E5E7EB",
     paddingHorizontal: Spacing.md,
     height: 48,
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.lg,
   },
   searchButton: {
     backgroundColor: "#000000",
