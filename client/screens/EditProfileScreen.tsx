@@ -65,6 +65,8 @@ export default function EditProfileScreen() {
           { paddingBottom: insets.bottom + Spacing.xl },
         ]}
       >
+        <View style={{ height: Spacing.xl }} />
+        
         <View style={styles.field}>
           <ThemedText style={styles.label}>Ad Soyad</ThemedText>
           <TextInput
@@ -169,7 +171,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   saveButton: {
-    backgroundColor: BrandColors.primaryBlue,
+    backgroundColor: "#000000",
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.sm,
     alignItems: "center",
