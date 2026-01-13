@@ -42,13 +42,15 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CITIES = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Adana", "Konya", "Gaziantep", "Şanlıurfa", "Kocaeli", "Mersin", "Diyarbakır", "Hatay", "Manisa", "Kayseri"];
 const CAR_PARTS = ["Ön Tampon", "Arka Tampon", "Ön Kaput", "Ön Çamurluk Sol", "Ön Çamurluk Sağ", "Ön Kapı Sol", "Ön Kapı Sağ", "Arka Kapı Sol", "Arka Kapı Sağ", "Tavan", "Bagaj Kapağı", "Arka Çamurluk Sol", "Arka Çamurluk Sağ"];
 
+const HEADER_HEIGHT = 110;
+
 const STEPS = [
-  { id: 1, title: "Fotoğraflar", icon: "camera" },
-  { id: 2, title: "Araç Bilgileri", icon: "truck" },
-  { id: 3, title: "Teknik Özellikler", icon: "settings" },
+  { id: 1, title: "Fotograflar", icon: "camera" },
+  { id: 2, title: "Arac Bilgileri", icon: "truck" },
+  { id: 3, title: "Teknik Ozellikler", icon: "settings" },
   { id: 4, title: "Takas Tercihleri", icon: "refresh-cw" },
-  { id: 5, title: "Araç Geçmişi", icon: "file-text" },
-  { id: 6, title: "Önizleme", icon: "eye" },
+  { id: 5, title: "Arac Gecmisi", icon: "file-text" },
+  { id: 6, title: "Onizleme", icon: "eye" },
 ];
 
 function StepIndicator({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) {
@@ -101,7 +103,6 @@ function SearchablePicker({
       <Pressable
         style={[
           styles.pickerButton,
-          { backgroundColor: theme.backgroundSecondary },
           disabled && { opacity: 0.5 },
         ]}
         onPress={() => {
@@ -162,7 +163,7 @@ function SearchablePicker({
               <Pressable
                 style={[
                   styles.optionItem,
-                  selected === item && { backgroundColor: `${BrandColors.primaryBlue}15` },
+                  selected === item && { backgroundColor: "#F3F4F6" },
                 ]}
                 onPress={() => {
                   Haptics.selectionAsync();
@@ -174,13 +175,13 @@ function SearchablePicker({
                 <ThemedText
                   style={[
                     styles.optionText,
-                    selected === item && { color: BrandColors.primaryBlue, fontWeight: "600" },
+                    selected === item && { color: "#000000", fontWeight: "600" },
                   ]}
                 >
                   {item}
                 </ThemedText>
                 {selected === item && (
-                  <Feather name="check" size={20} color={BrandColors.primaryBlue} />
+                  <Feather name="check" size={20} color="#000000" />
                 )}
               </Pressable>
             )}
@@ -209,7 +210,6 @@ function ChipSelect({
   onSelect: (value: string) => void;
   multiSelect?: boolean;
 }) {
-  const { theme } = useTheme();
   const isSelected = (option: string) =>
     multiSelect
       ? (selected as string[]).includes(option)
@@ -222,7 +222,6 @@ function ChipSelect({
           key={option}
           style={[
             styles.chip,
-            { backgroundColor: theme.backgroundSecondary },
             isSelected(option) && styles.chipSelected,
           ]}
           onPress={() => {
@@ -479,8 +478,8 @@ export default function CreateListingScreen() {
         return (
           <Animated.View entering={FadeIn} style={styles.stepContent}>
             <View style={styles.stepHeader}>
-              <View style={[styles.stepIconContainer, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
-                <Feather name="camera" size={28} color={BrandColors.primaryBlue} />
+              <View style={styles.stepIconContainer}>
+                <Feather name="camera" size={24} color="#000000" />
               </View>
               <ThemedText style={styles.stepTitle}>Araç Fotoğrafları</ThemedText>
               <ThemedText style={[styles.stepDescription, { color: theme.textSecondary }]}>
@@ -507,10 +506,10 @@ export default function CreateListingScreen() {
               ))}
               {photos.length < 10 && (
                 <Pressable
-                  style={[styles.addPhotoButton, { backgroundColor: theme.backgroundSecondary }]}
+                  style={styles.addPhotoButton}
                   onPress={pickImage}
                 >
-                  <Feather name="plus" size={32} color={BrandColors.primaryBlue} />
+                  <Feather name="plus" size={32} color="#9CA3AF" />
                   <ThemedText style={[styles.addPhotoText, { color: theme.textSecondary }]}>
                     Fotoğraf Ekle
                   </ThemedText>
@@ -542,10 +541,10 @@ export default function CreateListingScreen() {
         return (
           <Animated.View entering={FadeIn} style={styles.stepContent}>
             <View style={styles.stepHeader}>
-              <View style={[styles.stepIconContainer, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
-                <Feather name="truck" size={28} color={BrandColors.primaryBlue} />
+              <View style={styles.stepIconContainer}>
+                <Feather name="truck" size={24} color="#000000" />
               </View>
-              <ThemedText style={styles.stepTitle}>Araç Bilgileri</ThemedText>
+              <ThemedText style={styles.stepTitle}>Arac Bilgileri</ThemedText>
               <ThemedText style={[styles.stepDescription, { color: theme.textSecondary }]}>
                 Aracınızın marka, model ve varyant bilgilerini seçin.
               </ThemedText>
@@ -584,7 +583,7 @@ export default function CreateListingScreen() {
 
             <ThemedText style={styles.fieldLabel}>Varyant (Motor)</ThemedText>
             <TextInput
-              style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
+              style={styles.input}
               value={variant}
               onChangeText={setVariant}
               placeholder="Örn: 320i, 1.6 TDI, 2.0 Hybrid"
@@ -593,7 +592,7 @@ export default function CreateListingScreen() {
 
             <ThemedText style={styles.fieldLabel}>Kilometre</ThemedText>
             <TextInput
-              style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
+              style={styles.input}
               value={km ? `${parseInt(km).toLocaleString("tr-TR")}` : ""}
               onChangeText={(text) => setKm(text.replace(/\D/g, ""))}
               placeholder="50.000"
@@ -607,10 +606,10 @@ export default function CreateListingScreen() {
         return (
           <Animated.View entering={FadeIn} style={styles.stepContent}>
             <View style={styles.stepHeader}>
-              <View style={[styles.stepIconContainer, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
-                <Feather name="settings" size={28} color={BrandColors.primaryBlue} />
+              <View style={styles.stepIconContainer}>
+                <Feather name="settings" size={24} color="#000000" />
               </View>
-              <ThemedText style={styles.stepTitle}>Teknik Özellikler</ThemedText>
+              <ThemedText style={styles.stepTitle}>Teknik Ozellikler</ThemedText>
               <ThemedText style={[styles.stepDescription, { color: theme.textSecondary }]}>
                 Kasa tipi, yakıt ve donanım bilgilerini seçin.
               </ThemedText>
@@ -645,7 +644,7 @@ export default function CreateListingScreen() {
 
             <ThemedText style={styles.fieldLabel}>Tahmini Değer (TL) - Opsiyonel</ThemedText>
             <TextInput
-              style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
+              style={styles.input}
               value={estimatedValue ? `${parseInt(estimatedValue).toLocaleString("tr-TR")}` : ""}
               onChangeText={(text) => setEstimatedValue(text.replace(/\D/g, ""))}
               placeholder="500.000"
@@ -655,7 +654,7 @@ export default function CreateListingScreen() {
 
             <ThemedText style={styles.fieldLabel}>Açıklama (Opsiyonel)</ThemedText>
             <TextInput
-              style={[styles.textArea, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
+              style={styles.textArea}
               value={description}
               onChangeText={setDescription}
               placeholder="Aracınız hakkında ek bilgiler yazın..."
@@ -671,8 +670,8 @@ export default function CreateListingScreen() {
         return (
           <Animated.View entering={FadeIn} style={styles.stepContent}>
             <View style={styles.stepHeader}>
-              <View style={[styles.stepIconContainer, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
-                <Feather name="refresh-cw" size={28} color={BrandColors.primaryBlue} />
+              <View style={styles.stepIconContainer}>
+                <Feather name="refresh-cw" size={24} color="#000000" />
               </View>
               <ThemedText style={styles.stepTitle}>Takas Tercihleri</ThemedText>
               <ThemedText style={[styles.stepDescription, { color: theme.textSecondary }]}>
@@ -685,7 +684,6 @@ export default function CreateListingScreen() {
               <Pressable
                 style={[
                   styles.toggleButton,
-                  { backgroundColor: theme.backgroundSecondary },
                   onlySwap && styles.toggleButtonSelected,
                 ]}
                 onPress={() => {
@@ -701,7 +699,6 @@ export default function CreateListingScreen() {
               <Pressable
                 style={[
                   styles.toggleButton,
-                  { backgroundColor: theme.backgroundSecondary },
                   !onlySwap && styles.toggleButtonSelected,
                 ]}
                 onPress={() => {
@@ -751,10 +748,10 @@ export default function CreateListingScreen() {
         return (
           <Animated.View entering={FadeIn} style={styles.stepContent}>
             <View style={styles.stepHeader}>
-              <View style={[styles.stepIconContainer, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
-                <Feather name="file-text" size={28} color={BrandColors.primaryBlue} />
+              <View style={styles.stepIconContainer}>
+                <Feather name="file-text" size={24} color="#000000" />
               </View>
-              <ThemedText style={styles.stepTitle}>Araç Geçmişi</ThemedText>
+              <ThemedText style={styles.stepTitle}>Arac Gecmisi</ThemedText>
               <ThemedText style={[styles.stepDescription, { color: theme.textSecondary }]}>
                 Aracınızın hasar geçmişi ve tramer kayıtlarını belirtin.
               </ThemedText>
@@ -780,7 +777,7 @@ export default function CreateListingScreen() {
 
             <ThemedText style={styles.fieldLabel}>Tramer Kaydı (TL)</ThemedText>
             <TextInput
-              style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
+              style={styles.input}
               value={tramerRecord ? `${parseInt(tramerRecord).toLocaleString("tr-TR")}` : ""}
               onChangeText={(text) => setTramerRecord(text.replace(/\D/g, ""))}
               placeholder="0"
@@ -816,10 +813,10 @@ export default function CreateListingScreen() {
         return (
           <Animated.View entering={FadeIn} style={styles.stepContent}>
             <View style={styles.stepHeader}>
-              <View style={[styles.stepIconContainer, { backgroundColor: `${BrandColors.successGreen}15` }]}>
-                <Feather name="check-circle" size={28} color={BrandColors.successGreen} />
+              <View style={styles.stepIconContainer}>
+                <Feather name="eye" size={24} color="#000000" />
               </View>
-              <ThemedText style={styles.stepTitle}>Önizleme</ThemedText>
+              <ThemedText style={styles.stepTitle}>Onizleme</ThemedText>
               <ThemedText style={[styles.stepDescription, { color: theme.textSecondary }]}>
                 İlan bilgilerinizi kontrol edin ve yayınlayın.
               </ThemedText>
@@ -838,17 +835,17 @@ export default function CreateListingScreen() {
                 </ThemedText>
 
                 <View style={styles.previewTags}>
-                  <View style={[styles.previewTag, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
-                    <ThemedText style={[styles.previewTagText, { color: BrandColors.primaryBlue }]}>{bodyType}</ThemedText>
+                  <View style={styles.previewTag}>
+                    <ThemedText style={styles.previewTagText}>{bodyType}</ThemedText>
                   </View>
-                  <View style={[styles.previewTag, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
-                    <ThemedText style={[styles.previewTagText, { color: BrandColors.primaryBlue }]}>{fuelType}</ThemedText>
+                  <View style={styles.previewTag}>
+                    <ThemedText style={styles.previewTagText}>{fuelType}</ThemedText>
                   </View>
-                  <View style={[styles.previewTag, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
-                    <ThemedText style={[styles.previewTagText, { color: BrandColors.primaryBlue }]}>{transmission}</ThemedText>
+                  <View style={styles.previewTag}>
+                    <ThemedText style={styles.previewTagText}>{transmission}</ThemedText>
                   </View>
-                  <View style={[styles.previewTag, { backgroundColor: `${BrandColors.primaryBlue}15` }]}>
-                    <ThemedText style={[styles.previewTagText, { color: BrandColors.primaryBlue }]}>{city}</ThemedText>
+                  <View style={styles.previewTag}>
+                    <ThemedText style={styles.previewTagText}>{city}</ThemedText>
                   </View>
                 </View>
 
@@ -895,33 +892,35 @@ export default function CreateListingScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + Spacing.sm }]}>
-        <Pressable onPress={() => navigation.goBack()} style={styles.headerButton}>
-          <Feather name="x" size={24} color={theme.text} />
-        </Pressable>
-        <View style={styles.headerCenter}>
+    <View style={styles.container}>
+      <View style={[styles.header, { height: HEADER_HEIGHT + insets.top, paddingTop: insets.top }]}>
+        <View style={styles.headerContent}>
+          <Pressable 
+            onPress={() => navigation.goBack()} 
+            style={styles.headerBackButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Feather name="x" size={24} color="#FFFFFF" />
+          </Pressable>
           <ThemedText style={styles.headerTitle}>{STEPS[currentStep - 1].title}</ThemedText>
         </View>
-        <View style={styles.headerButton} />
       </View>
 
       <StepIndicator currentStep={currentStep} totalSteps={STEPS.length} />
 
       <KeyboardAwareScrollViewCompat
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }]}
         showsVerticalScrollIndicator={false}
       >
         {renderStepContent()}
       </KeyboardAwareScrollViewCompat>
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + Spacing.md }]}>
-        {currentStep > 1 && (
-          <Pressable style={[styles.backButton, { borderColor: theme.border }]} onPress={prevStep}>
-            <Feather name="arrow-left" size={20} color={theme.text} />
-            <ThemedText style={styles.backButtonText}>Geri</ThemedText>
+        {currentStep > 1 ? (
+          <Pressable style={styles.backButton} onPress={prevStep}>
+            <Feather name="arrow-left" size={20} color="#000000" />
           </Pressable>
-        )}
+        ) : null}
 
         {currentStep < STEPS.length ? (
           <Pressable
@@ -941,39 +940,39 @@ export default function CreateListingScreen() {
               <ActivityIndicator color="#FFFFFF" />
             ) : (
               <>
-                <Feather name="check" size={20} color="#FFFFFF" />
-                <ThemedText style={styles.submitButtonText}>İlanı Yayınla</ThemedText>
+                <Feather name="zap" size={20} color="#FFFFFF" />
+                <ThemedText style={styles.submitButtonText}>Yayinla</ThemedText>
               </>
             )}
           </Pressable>
         )}
       </View>
-    </ThemedView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#FFFFFF",
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingBottom: Spacing.sm,
+    backgroundColor: "#000000",
   },
-  headerButton: {
-    width: 40,
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  headerCenter: {
+  headerContent: {
     flex: 1,
-    alignItems: "center",
+    flexDirection: "row",
+    alignItems: "flex-end",
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.md,
+  },
+  headerBackButton: {
+    marginRight: Spacing.md,
   },
   headerTitle: {
-    ...Typography.h3,
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
   stepIndicatorContainer: {
     paddingHorizontal: Spacing.md,
@@ -987,7 +986,7 @@ const styles = StyleSheet.create({
   },
   stepProgressFill: {
     height: "100%",
-    backgroundColor: BrandColors.primaryBlue,
+    backgroundColor: "#000000",
     borderRadius: 2,
   },
   stepText: {
@@ -1006,12 +1005,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   stepIconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: Spacing.md,
+    backgroundColor: "#F3F4F6",
   },
   stepTitle: {
     ...Typography.h2,
@@ -1052,7 +1052,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 4,
     left: 4,
-    backgroundColor: BrandColors.primaryBlue,
+    backgroundColor: "#000000",
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: BorderRadius.sm,
@@ -1079,7 +1079,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 2,
     borderStyle: "dashed",
-    borderColor: BrandColors.primaryBlue,
+    borderColor: "#E5E7EB",
+    backgroundColor: "#F9FAFB",
   },
   addPhotoText: {
     ...Typography.caption,
@@ -1107,9 +1108,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm + 2,
     borderRadius: BorderRadius.full,
+    backgroundColor: "#F3F4F6",
   },
   chipSelected: {
-    backgroundColor: BrandColors.primaryBlue,
+    backgroundColor: "#000000",
   },
   chipText: {
     ...Typography.small,
@@ -1119,17 +1121,23 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   input: {
-    height: 52,
+    height: 56,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
-    fontSize: 16,
+    fontSize: 17,
+    backgroundColor: "#F9FAFB",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
   },
   textArea: {
     minHeight: 100,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
-    fontSize: 16,
+    fontSize: 15,
+    backgroundColor: "#F9FAFB",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
   },
   row: {
     flexDirection: "row",
@@ -1150,9 +1158,10 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
+    backgroundColor: "#F3F4F6",
   },
   toggleButtonSelected: {
-    backgroundColor: BrandColors.primaryBlue,
+    backgroundColor: "#000000",
   },
   toggleText: {
     ...Typography.small,
@@ -1229,10 +1238,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     paddingVertical: 4,
     borderRadius: BorderRadius.full,
+    backgroundColor: "#F3F4F6",
   },
   previewTagText: {
     ...Typography.caption,
     fontWeight: "500",
+    color: "#374151",
   },
   previewDivider: {
     height: 1,
@@ -1254,53 +1265,49 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: "row",
     gap: Spacing.sm,
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: "#E5E8EB",
+    backgroundColor: "#FFFFFF",
   },
   backButton: {
+    width: 52,
+    height: 52,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: BorderRadius.md,
+    backgroundColor: "#F3F4F6",
+  },
+  nextButton: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: Spacing.sm,
-    paddingVertical: Spacing.md,
+    height: 52,
     borderRadius: BorderRadius.md,
-    borderWidth: 1,
-  },
-  backButtonText: {
-    ...Typography.button,
-  },
-  nextButton: {
-    flex: 2,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: Spacing.sm,
-    paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.md,
-    backgroundColor: "#0A0A0A",
+    backgroundColor: "#000000",
   },
   fullWidthButton: {
     flex: 1,
   },
   nextButtonText: {
-    ...Typography.button,
+    fontSize: 16,
+    fontWeight: "600",
     color: "#FFFFFF",
   },
   submitButton: {
-    flex: 2,
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: Spacing.sm,
-    paddingVertical: Spacing.md,
+    height: 52,
     borderRadius: BorderRadius.md,
-    backgroundColor: BrandColors.successGreen,
+    backgroundColor: "#000000",
   },
   submitButtonText: {
-    ...Typography.button,
+    fontSize: 16,
+    fontWeight: "600",
     color: "#FFFFFF",
   },
   pickerButton: {
@@ -1308,8 +1315,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.md,
+    height: 56,
     borderRadius: BorderRadius.md,
+    backgroundColor: "#F9FAFB",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
   },
   pickerButtonText: {
     ...Typography.body,
