@@ -18,6 +18,8 @@ import {
   type InsertStory,
   type AdminUser,
   type InsertAdminUser,
+  type VerificationDocument,
+  type InsertVerificationDocument,
   users,
   listings,
   likes,
@@ -29,6 +31,7 @@ import {
   priceAlerts,
   stories,
   adminUsers,
+  verificationDocuments,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, desc, sql, ne, notInArray } from "drizzle-orm";
@@ -99,6 +102,11 @@ export interface IStorage {
   getAllMatches(): Promise<Match[]>;
   getMessageStats(): Promise<{ total: number; today: number }>;
   getRecentMessagesByMatch(): Promise<any[]>;
+
+  getVerificationDocumentsByUser(userId: string): Promise<VerificationDocument[]>;
+  createVerificationDocument(doc: InsertVerificationDocument): Promise<VerificationDocument>;
+  updateVerificationDocument(id: string, data: Partial<VerificationDocument>): Promise<VerificationDocument | undefined>;
+  getAllPendingVerifications(): Promise<VerificationDocument[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -512,6 +520,36 @@ export class DatabaseStorage implements IStorage {
       .limit(20);
     
     return result;
+  }
+
+  async getVerificationDocumentsByUser(userId: string): Promise<VerificationDocument[]> {
+    return db
+      .select()
+      .from(verificationDocuments)
+      .where(eq(verificationDocuments.userId, userId))
+      .orderBy(desc(verificationDocuments.createdAt));
+  }
+
+  async createVerificationDocument(doc: InsertVerificationDocument): Promise<VerificationDocument> {
+    const [created] = await db.insert(verificationDocuments).values(doc).returning();
+    return created;
+  }
+
+  async updateVerificationDocument(id: string, data: Partial<VerificationDocument>): Promise<VerificationDocument | undefined> {
+    const [updated] = await db
+      .update(verificationDocuments)
+      .set(data)
+      .where(eq(verificationDocuments.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  async getAllPendingVerifications(): Promise<VerificationDocument[]> {
+    return db
+      .select()
+      .from(verificationDocuments)
+      .where(eq(verificationDocuments.status, "pending"))
+      .orderBy(desc(verificationDocuments.createdAt));
   }
 }
 

@@ -385,6 +385,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Verification documents routes
+  app.get("/api/verification/:userId", async (req, res) => {
+    try {
+      const documents = await storage.getVerificationDocumentsByUser(req.params.userId);
+      res.json(documents);
+    } catch (error) {
+      console.error("Get verification documents error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/verification", async (req, res) => {
+    try {
+      const { userId, documentType, documentUrl } = req.body;
+      if (!userId || !documentType || !documentUrl) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+      const document = await storage.createVerificationDocument({
+        userId,
+        documentType,
+        documentUrl,
+      });
+      res.status(201).json(document);
+    } catch (error) {
+      console.error("Create verification document error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.patch("/api/verification/:id", async (req, res) => {
+    try {
+      const document = await storage.updateVerificationDocument(req.params.id, req.body);
+      if (!document) {
+        return res.status(404).json({ error: "Document not found" });
+      }
+      res.json(document);
+    } catch (error) {
+      console.error("Update verification document error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   // Favorites routes
   app.get("/api/favorites/:userId", async (req, res) => {
     try {

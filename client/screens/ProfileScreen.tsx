@@ -21,8 +21,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
 import { Listing, Match, Favorite, Notification } from "@shared/schema";
-import defaultAvatarImage from "../assets/images/default-avatar.png";
-import defaultVehicleImage from "../assets/images/default-vehicle.png";
+const defaultAvatarImage = require("../assets/images/default-avatar.png");
+const defaultVehicleImage = require("../assets/images/default-vehicle.png");
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -289,13 +289,13 @@ export default function ProfileScreen() {
                 icon="briefcase" 
                 label="Sirket Dogrulama" 
                 verified={companyVerified}
-                onPress={showComingSoon}
+                onPress={() => navigation.navigate("Verification", { documentType: "company_registration" })}
               />
               <MenuRow 
                 icon="file-text" 
                 label="Vergi Levhasi Yukleme" 
                 verified={companyVerified}
-                onPress={showComingSoon}
+                onPress={() => navigation.navigate("Verification", { documentType: "tax_certificate" })}
               />
             </>
           ) : null}

@@ -18,6 +18,7 @@ import PremiumScreen from "@/screens/PremiumScreen";
 import BrandListScreen from "@/screens/BrandListScreen";
 import ModelListScreen from "@/screens/ModelListScreen";
 import SearchResultsScreen from "@/screens/SearchResultsScreen";
+import VerificationScreen from "@/screens/VerificationScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { useAuth } from "@/contexts/AuthContext";
 import { BrandColors } from "@/constants/theme";
@@ -46,6 +47,7 @@ export type RootStackParamList = {
   BrandList: { categoryId: string; categoryName: string };
   ModelList: { categoryId: string; categoryName: string; brandId: string; brandName: string };
   SearchResults: { categoryId: string; categoryName: string; brandId: string; brandName: string; modelId: string; modelName: string };
+  Verification: { documentType: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -187,6 +189,14 @@ export default function RootStackNavigator() {
             name="SearchResults"
             component={SearchResultsScreen}
             options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Verification"
+            component={VerificationScreen}
+            options={{
+              headerTitle: "Belge Doğrulama",
+              headerTintColor: "#000000",
+            }}
           />
         </>
       )}
