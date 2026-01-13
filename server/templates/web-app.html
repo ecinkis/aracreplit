@@ -929,6 +929,234 @@
       background: var(--gray-500);
     }
 
+    /* Stories */
+    .stories-section {
+      padding: 24px 0;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stories-container {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding: 8px 0;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .stories-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .story-item {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .story-item:hover {
+      transform: scale(1.05);
+    }
+
+    .story-ring {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      padding: 3px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .story-ring.viewed {
+      background: var(--gray-300);
+    }
+
+    .story-avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 3px solid var(--white);
+      object-fit: cover;
+      background: var(--gray-100);
+    }
+
+    .story-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      max-width: 80px;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Story Modal */
+    .story-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .story-modal.active {
+      display: flex;
+    }
+
+    .story-viewer {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      height: 90vh;
+      max-height: 750px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--black);
+    }
+
+    .story-progress {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      gap: 4px;
+      z-index: 10;
+    }
+
+    .story-progress-bar {
+      flex: 1;
+      height: 3px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .story-progress-fill {
+      height: 100%;
+      background: var(--white);
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    .story-header {
+      position: absolute;
+      top: 32px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+    }
+
+    .story-brand-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .story-brand-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--white);
+    }
+
+    .story-brand-name {
+      color: var(--white);
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .story-time {
+      color: rgba(255,255,255,0.7);
+      font-size: 12px;
+    }
+
+    .story-close {
+      background: none;
+      border: none;
+      color: var(--white);
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    .story-close svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .story-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .story-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 80px 24px 32px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    }
+
+    .story-title {
+      color: var(--white);
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .story-desc {
+      color: rgba(255,255,255,0.8);
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .story-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white);
+      color: var(--black);
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .story-cta:hover {
+      transform: scale(1.05);
+      text-decoration: none;
+    }
+
+    .story-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 50%;
+      height: 60%;
+      cursor: pointer;
+      z-index: 5;
+    }
+
+    .story-nav.prev { left: 0; }
+    .story-nav.next { right: 0; }
+
     /* Homepage */
     .hero {
       background: var(--black);
@@ -1361,6 +1589,930 @@
     .btn-action svg {
       width: 20px;
       height: 20px;
+    }
+
+    /* Match/Swipe Page */
+    .match-page-content {
+      padding: 32px 0;
+      min-height: calc(100vh - 200px);
+    }
+
+    .match-container {
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    .match-sidebar {
+      width: 280px;
+      flex-shrink: 0;
+    }
+
+    .match-card-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 500px;
+    }
+
+    .match-listing-selector {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .match-listing-selector h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text-secondary);
+    }
+
+    .my-listing-preview {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: var(--gray-50);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .my-listing-preview:hover {
+      background: var(--gray-100);
+    }
+
+    .my-listing-preview img {
+      width: 56px;
+      height: 42px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .my-listing-preview-info h5 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .my-listing-preview-info p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .swipe-card-stack {
+      position: relative;
+      width: 100%;
+      max-width: 380px;
+      height: 520px;
+    }
+
+    .swipe-card {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: var(--white);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      cursor: grab;
+    }
+
+    .swipe-card:active {
+      cursor: grabbing;
+    }
+
+    .swipe-card.swiping-left {
+      transform: translateX(-100px) rotate(-10deg);
+      opacity: 0;
+    }
+
+    .swipe-card.swiping-right {
+      transform: translateX(100px) rotate(10deg);
+      opacity: 0;
+    }
+
+    .swipe-card-image {
+      width: 100%;
+      height: 65%;
+      object-fit: cover;
+    }
+
+    .swipe-card-content {
+      padding: 20px;
+    }
+
+    .swipe-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .swipe-card-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .swipe-card-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .swipe-card-match-badge {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: var(--white);
+      padding: 6px 12px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .swipe-card-specs {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .swipe-card-spec {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .swipe-card-spec svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .swipe-actions {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 24px;
+    }
+
+    .swipe-btn {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    .swipe-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .swipe-btn.pass {
+      background: var(--white);
+      border: 2px solid #ff6b6b;
+      color: #ff6b6b;
+    }
+
+    .swipe-btn.like {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: var(--white);
+    }
+
+    .swipe-btn.super {
+      background: var(--white);
+      border: 2px solid #ffd43b;
+      color: #ffd43b;
+    }
+
+    .swipe-btn svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .match-empty-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .match-empty-state svg {
+      width: 80px;
+      height: 80px;
+      color: var(--gray-300);
+      margin-bottom: 20px;
+    }
+
+    .match-empty-state h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .match-empty-state p {
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    /* Match Success Modal */
+    .match-success-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .match-success-modal.active {
+      display: flex;
+    }
+
+    .match-success-content {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .match-success-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .match-success-subtitle {
+      font-size: 16px;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 32px;
+    }
+
+    .match-success-cars {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .match-success-car {
+      width: 140px;
+      height: 100px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 3px solid var(--white);
+    }
+
+    .match-success-car img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .match-success-heart {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+    }
+
+    .match-success-heart svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .match-success-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .match-success-btn {
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .match-success-btn.primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: var(--white);
+    }
+
+    .match-success-btn.secondary {
+      background: rgba(255,255,255,0.1);
+      color: var(--white);
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .match-success-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* Messages Page */
+    .messages-page-content {
+      padding: 32px 0;
+      min-height: calc(100vh - 200px);
+    }
+
+    .messages-layout {
+      display: flex;
+      gap: 24px;
+      height: calc(100vh - 280px);
+      min-height: 500px;
+    }
+
+    .messages-sidebar {
+      width: 340px;
+      flex-shrink: 0;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .messages-sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .messages-sidebar-header h3 {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .messages-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .message-preview {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .message-preview:hover {
+      background: var(--gray-50);
+    }
+
+    .message-preview.active {
+      background: var(--gray-100);
+    }
+
+    .message-preview-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .message-preview-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .message-preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .message-preview-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .message-preview-time {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .message-preview-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .message-preview-unread {
+      width: 8px;
+      height: 8px;
+      background: var(--black);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .chat-container {
+      flex: 1;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chat-header-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chat-header-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .chat-header-name {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .chat-header-status {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .chat-header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-header-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: var(--gray-50);
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .chat-header-btn:hover {
+      background: var(--gray-100);
+    }
+
+    .chat-header-btn svg {
+      width: 20px;
+      height: 20px;
+      color: var(--text-secondary);
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chat-message {
+      max-width: 70%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .chat-message.sent {
+      align-self: flex-end;
+      background: var(--black);
+      color: var(--white);
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-message.received {
+      align-self: flex-start;
+      background: var(--gray-100);
+      color: var(--black);
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-message-time {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    .chat-input-container {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 14px 20px;
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--gray-50);
+      transition: all 0.2s ease;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      background: var(--white);
+      border-color: var(--black);
+    }
+
+    .chat-send-btn {
+      width: 48px;
+      height: 48px;
+      background: var(--black);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      transition: all 0.2s ease;
+    }
+
+    .chat-send-btn:hover {
+      background: var(--gray-800);
+      transform: scale(1.05);
+    }
+
+    .chat-send-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .chat-empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .chat-empty-state svg {
+      width: 64px;
+      height: 64px;
+      color: var(--gray-300);
+      margin-bottom: 16px;
+    }
+
+    .chat-empty-state h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .chat-empty-state p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* Notifications Page */
+    .notifications-page-content {
+      padding: 32px 0;
+    }
+
+    .notifications-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .notifications-header h2 {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .notifications-list {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .notification-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .notification-item:hover {
+      background: var(--gray-50);
+    }
+
+    .notification-item.unread {
+      background: rgba(102, 126, 234, 0.05);
+    }
+
+    .notification-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .notification-icon.match {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: var(--white);
+    }
+
+    .notification-icon.message {
+      background: var(--gray-100);
+      color: var(--text-secondary);
+    }
+
+    .notification-icon.like {
+      background: #fff0f0;
+      color: #ff6b6b;
+    }
+
+    .notification-icon.system {
+      background: var(--gray-100);
+      color: var(--text-secondary);
+    }
+
+    .notification-icon svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-title {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .notification-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .notification-time {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Compare Page */
+    .compare-page-content {
+      padding: 32px 0;
+    }
+
+    .compare-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .compare-header h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .compare-header p {
+      color: var(--text-secondary);
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 60px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .compare-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .compare-card-empty {
+      padding: 60px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .compare-card-empty:hover {
+      background: var(--gray-50);
+    }
+
+    .compare-card-empty svg {
+      width: 48px;
+      height: 48px;
+      color: var(--gray-300);
+      margin-bottom: 16px;
+    }
+
+    .compare-card-empty h4 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .compare-card-empty p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .compare-card-filled img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .compare-card-info {
+      padding: 20px;
+    }
+
+    .compare-card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .compare-card-specs {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .compare-spec-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+
+    .compare-spec-row .label {
+      color: var(--text-muted);
+    }
+
+    .compare-spec-row .value {
+      font-weight: 600;
+    }
+
+    .compare-vs {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--gray-400);
+      padding-top: 120px;
+    }
+
+    /* Corporate Application */
+    .corporate-page-content {
+      padding: 48px 0;
+    }
+
+    .corporate-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 48px;
+    }
+
+    .corporate-header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .corporate-header p {
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+
+    .corporate-form {
+      max-width: 700px;
+      margin: 0 auto;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+    }
+
+    .corporate-form-section {
+      margin-bottom: 32px;
+    }
+
+    .corporate-form-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .corporate-form-section h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-family: inherit;
+      background: var(--gray-50);
+      transition: all 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      background: var(--white);
+      border-color: var(--black);
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
     }
 
     /* Dashboard */
@@ -2155,10 +3307,11 @@
       <div class="subheader-inner">
         <div class="subheader-links">
           <a href="#" class="subheader-link active" onclick="navigateTo('home')">Ana Sayfa</a>
+          <a href="#" class="subheader-link" onclick="navigateTo('match')">Takas Bul</a>
+          <a href="#" class="subheader-link" onclick="navigateTo('messages')">Mesajlar</a>
           <a href="#" class="subheader-link" onclick="filterByCategory('Otomobil')">Otomobil</a>
           <a href="#" class="subheader-link" onclick="filterByCategory('SUV')">SUV / Arazi</a>
           <a href="#" class="subheader-link" onclick="filterByCategory('Ticari')">Ticari</a>
-          <a href="#" class="subheader-link" onclick="filterByCategory('Motosiklet')">Motosiklet</a>
         </div>
         <div class="subheader-right">
           <span class="subheader-info"><strong id="totalListingCount">0</strong> aktif ilan</span>
@@ -2234,6 +3387,15 @@
         <div class="ad-dot" onclick="goToSlide(2)"></div>
         <div class="ad-dot" onclick="goToSlide(3)"></div>
         <div class="ad-dot" onclick="goToSlide(4)"></div>
+      </div>
+    </div>
+
+    <!-- Stories -->
+    <div class="stories-section">
+      <div class="container">
+        <div class="stories-container" id="storiesContainer">
+          <!-- Stories will be loaded dynamically -->
+        </div>
       </div>
     </div>
 
@@ -2508,6 +3670,312 @@
     </div>
   </div>
 
+  <!-- MATCH PAGE -->
+  <div id="matchPage" class="page">
+    <div class="match-page-content">
+      <div class="container">
+        <div class="match-container">
+          <aside class="match-sidebar">
+            <div class="match-listing-selector">
+              <h4>Takaslanacak Aracım</h4>
+              <div id="myListingPreview">
+                <div class="match-empty-state" style="padding: 20px;">
+                  <p style="font-size: 13px;">Önce bir ilanınız olmalı</p>
+                  <a href="#" class="btn-post" onclick="openModal('post')" style="font-size: 13px; padding: 10px 16px;">İlan Ver</a>
+                </div>
+              </div>
+            </div>
+            
+            <div class="match-listing-selector">
+              <h4>Eşleşme İstatistikleri</h4>
+              <div style="padding: 12px 0;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                  <span style="color: var(--text-muted); font-size: 13px;">Bugün Beğeni</span>
+                  <span style="font-weight: 600;" id="matchTodayLikes">0 / 10</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                  <span style="color: var(--text-muted); font-size: 13px;">Toplam Eşleşme</span>
+                  <span style="font-weight: 600;" id="matchTotalMatches">0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span style="color: var(--text-muted); font-size: 13px;">Bekleyen</span>
+                  <span style="font-weight: 600;" id="matchPending">0</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <div class="match-card-container">
+            <div class="swipe-card-stack" id="swipeCardStack">
+              <!-- Cards will be loaded dynamically -->
+            </div>
+            
+            <div class="swipe-actions" id="swipeActions" style="display: none;">
+              <button class="swipe-btn pass" onclick="swipeCard('left')" title="Geç">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+              <button class="swipe-btn super" onclick="swipeCard('super')" title="Süper Beğeni">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </button>
+              <button class="swipe-btn like" onclick="swipeCard('right')" title="Beğen">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS PAGE -->
+  <div id="notificationsPage" class="page">
+    <div class="notifications-page-content">
+      <div class="container">
+        <div class="notifications-header">
+          <h2>Bildirimler</h2>
+          <button onclick="markAllNotificationsRead()" style="padding: 10px 16px; border: 1px solid var(--border); border-radius: 50px; background: var(--white); font-size: 13px; cursor: pointer;">Tümünü Okundu İşaretle</button>
+        </div>
+        <div class="notifications-list" id="notificationsList">
+          <!-- Notifications will be loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARE PAGE -->
+  <div id="comparePage" class="page">
+    <div class="compare-page-content">
+      <div class="container">
+        <div class="compare-header">
+          <h2>Araç Karşılaştırma</h2>
+          <p>İki aracı yan yana karşılaştırarak en iyi seçimi yapın</p>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-card" id="compareCard1">
+            <div class="compare-card-empty" onclick="openCompareSelector(1)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <h4>İlk Aracı Seçin</h4>
+              <p>Karşılaştırmak için araç ekleyin</p>
+            </div>
+          </div>
+          <div class="compare-vs">VS</div>
+          <div class="compare-card" id="compareCard2">
+            <div class="compare-card-empty" onclick="openCompareSelector(2)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <h4>İkinci Aracı Seçin</h4>
+              <p>Karşılaştırmak için araç ekleyin</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CORPORATE PAGE -->
+  <div id="corporatePage" class="page">
+    <div class="corporate-page-content">
+      <div class="container">
+        <div class="corporate-header">
+          <h1>Kurumsal Başvuru</h1>
+          <p>Galeri veya bayi olarak Araç Takası platformuna katılın ve avantajlardan yararlanın</p>
+        </div>
+        <form class="corporate-form" onsubmit="submitCorporateApplication(event)">
+          <div class="corporate-form-section">
+            <h3>Şirket Bilgileri</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Şirket Adı *</label>
+                <input type="text" id="corpCompanyName" required placeholder="Şirket adını girin">
+              </div>
+              <div class="form-group">
+                <label>Vergi Numarası *</label>
+                <input type="text" id="corpTaxNumber" required placeholder="Vergi numarası">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Vergi Dairesi *</label>
+                <input type="text" id="corpTaxOffice" required placeholder="Vergi dairesi adı">
+              </div>
+              <div class="form-group">
+                <label>İşletme Türü *</label>
+                <select id="corpBusinessType" required>
+                  <option value="">Seçiniz</option>
+                  <option value="galeri">Oto Galeri</option>
+                  <option value="bayi">Yetkili Bayi</option>
+                  <option value="kiralama">Araç Kiralama</option>
+                  <option value="diger">Diğer</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Şirket Adresi *</label>
+              <textarea id="corpAddress" required placeholder="Açık adres"></textarea>
+            </div>
+          </div>
+
+          <div class="corporate-form-section">
+            <h3>Yetkili Kişi Bilgileri</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Ad Soyad *</label>
+                <input type="text" id="corpContactName" required placeholder="Yetkili kişi adı">
+              </div>
+              <div class="form-group">
+                <label>Telefon *</label>
+                <input type="tel" id="corpContactPhone" required placeholder="5XX XXX XX XX">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>E-posta *</label>
+                <input type="email" id="corpContactEmail" required placeholder="email@sirket.com">
+              </div>
+              <div class="form-group">
+                <label>Pozisyon</label>
+                <input type="text" id="corpContactPosition" placeholder="Örn: Genel Müdür">
+              </div>
+            </div>
+          </div>
+
+          <div class="corporate-form-section">
+            <h3>Ek Bilgiler</h3>
+            <div class="form-group">
+              <label>Notlar veya Sorularınız</label>
+              <textarea id="corpNotes" placeholder="Eklemek istediğiniz bilgiler..."></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-post" style="width: 100%; justify-content: center;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+              <path d="M22 2L11 13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+            Başvuru Gönder
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MESSAGES PAGE -->
+  <div id="messagesPage" class="page">
+    <div class="messages-page-content">
+      <div class="container">
+        <div class="messages-layout">
+          <aside class="messages-sidebar">
+            <div class="messages-sidebar-header">
+              <h3>Mesajlar</h3>
+            </div>
+            <div class="messages-list" id="messagesList">
+              <!-- Conversations will be loaded here -->
+            </div>
+          </aside>
+
+          <div class="chat-container" id="chatContainer">
+            <div class="chat-empty-state" id="chatEmptyState">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              <h3>Mesaj seçin</h3>
+              <p>Sohbet başlatmak için soldaki listeden bir eşleşme seçin</p>
+            </div>
+
+            <div id="activeChatArea" style="display: none; flex: 1; display: flex; flex-direction: column;">
+              <div class="chat-header">
+                <div class="chat-header-info">
+                  <img src="" alt="" class="chat-header-avatar" id="chatAvatar">
+                  <div>
+                    <div class="chat-header-name" id="chatName"></div>
+                    <div class="chat-header-status" id="chatStatus">Çevrimiçi</div>
+                  </div>
+                </div>
+                <div class="chat-header-actions">
+                  <button class="chat-header-btn" title="Araç Detayı">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="11" cy="11" r="8"/>
+                      <path d="m21 21-4.3-4.3"/>
+                    </svg>
+                  </button>
+                  <button class="chat-header-btn" title="Seçenekler">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="1"/>
+                      <circle cx="19" cy="12" r="1"/>
+                      <circle cx="5" cy="12" r="1"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be loaded here -->
+              </div>
+
+              <div class="chat-input-container">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Mesajınızı yazın..." onkeypress="if(event.key==='Enter')sendMessage()">
+                <button class="chat-send-btn" onclick="sendMessage()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="22" y1="2" x2="11" y2="13"/>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compare Select Modal -->
+  <div class="modal" id="compareSelectModal">
+    <div class="modal-content" style="max-width: 700px; max-height: 80vh;">
+      <div class="modal-header">
+        <span class="modal-title">Araç Seçin</span>
+        <button class="modal-close" onclick="closeModal('compareSelect')">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow-y: auto; max-height: 60vh;">
+        <div id="compareSelectList" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+          <!-- Listings will be loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Match Success Modal -->
+  <div class="match-success-modal" id="matchSuccessModal">
+    <div class="match-success-content">
+      <div class="match-success-title">Eşleşme!</div>
+      <div class="match-success-subtitle">Artık mesajlaşmaya başlayabilirsiniz</div>
+      <div class="match-success-cars">
+        <div class="match-success-car" id="matchSuccessCar1"></div>
+        <div class="match-success-heart">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <div class="match-success-car" id="matchSuccessCar2"></div>
+      </div>
+      <div class="match-success-actions">
+        <button class="match-success-btn secondary" onclick="closeMatchSuccess()">Kaydırmaya Devam Et</button>
+        <button class="match-success-btn primary" onclick="goToMessages()">Mesaj Gönder</button>
+      </div>
+    </div>
+  </div>
+
   <!-- DASHBOARD PAGE -->
   <div id="dashboardPage" class="page">
     <div class="dashboard-header">
@@ -2713,6 +4181,41 @@
     </div>
   </footer>
 
+  <!-- Story Modal -->
+  <div class="story-modal" id="storyModal">
+    <div class="story-viewer">
+      <div class="story-progress" id="storyProgress"></div>
+      <div class="story-header">
+        <div class="story-brand-info">
+          <img src="" alt="" class="story-brand-avatar" id="storyBrandAvatar">
+          <div>
+            <div class="story-brand-name" id="storyBrandName"></div>
+            <div class="story-time" id="storyTime"></div>
+          </div>
+        </div>
+        <button class="story-close" onclick="closeStoryModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <img src="" alt="" class="story-image" id="storyImage">
+      <div class="story-content">
+        <div class="story-title" id="storyTitle"></div>
+        <div class="story-desc" id="storyDesc"></div>
+        <a href="#" class="story-cta" id="storyCta">
+          Detayları Gör
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </a>
+      </div>
+      <div class="story-nav prev" onclick="prevStory()"></div>
+      <div class="story-nav next" onclick="nextStory()"></div>
+    </div>
+  </div>
+
   <!-- Modals -->
   <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
     <div class="modal" id="loginModal" style="display: none;" onclick="event.stopPropagation()">
@@ -2845,6 +4348,805 @@
     const API_BASE = '';
     let currentUser = null;
     let allListings = [];
+    let storiesData = [];
+    let currentStoryIndex = 0;
+    let storyTimer = null;
+    const STORY_DURATION = 5000;
+
+    // Default stories data
+    const defaultStories = [
+      {
+        id: '1',
+        brandName: 'BMW',
+        title: 'BMW Premium Takas Fırsatları',
+        imageUrl: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&h=1200&fit=crop',
+        linkUrl: '#',
+        viewCount: 1250
+      },
+      {
+        id: '2',
+        brandName: 'Mercedes',
+        title: 'Mercedes-Benz Özel Kampanya',
+        imageUrl: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&h=1200&fit=crop',
+        linkUrl: '#',
+        viewCount: 980
+      },
+      {
+        id: '3',
+        brandName: 'Audi',
+        title: 'Audi Takas Günleri Başladı',
+        imageUrl: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&h=1200&fit=crop',
+        linkUrl: '#',
+        viewCount: 756
+      },
+      {
+        id: '4',
+        brandName: 'Volkswagen',
+        title: 'VW ID Elektrikli Serisi',
+        imageUrl: 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800&h=1200&fit=crop',
+        linkUrl: '#',
+        viewCount: 542
+      },
+      {
+        id: '5',
+        brandName: 'Toyota',
+        title: 'Toyota Hibrit Avantajları',
+        imageUrl: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&h=1200&fit=crop',
+        linkUrl: '#',
+        viewCount: 423
+      },
+      {
+        id: '6',
+        brandName: 'Volvo',
+        title: 'Volvo Güvenlik Teknolojileri',
+        imageUrl: 'https://images.unsplash.com/photo-1619976215249-0a76e0ae496a?w=800&h=1200&fit=crop',
+        linkUrl: '#',
+        viewCount: 312
+      }
+    ];
+
+    function getBrandLogo(brand) {
+      const logos = {
+        'BMW': 'https://www.carlogos.org/car-logos/bmw-logo-2020-grey.png',
+        'Mercedes': 'https://www.carlogos.org/car-logos/mercedes-benz-logo-2011-1920x1080.png',
+        'Audi': 'https://www.carlogos.org/car-logos/audi-logo-2016-1920x1080.png',
+        'Volkswagen': 'https://www.carlogos.org/car-logos/volkswagen-logo-2019-1500x1500.png',
+        'Toyota': 'https://www.carlogos.org/car-logos/toyota-logo-2019-3700x1200.png',
+        'Volvo': 'https://www.carlogos.org/car-logos/volvo-logo-2014-1920x1080.png'
+      };
+      return logos[brand] || 'https://via.placeholder.com/40';
+    }
+
+    async function loadStories() {
+      try {
+        const res = await fetch(`${API_BASE}/api/stories`);
+        if (res.ok) {
+          const data = await res.json();
+          storiesData = data.length > 0 ? data : defaultStories;
+        } else {
+          storiesData = defaultStories;
+        }
+      } catch (e) {
+        storiesData = defaultStories;
+      }
+      renderStories();
+    }
+
+    function renderStories() {
+      const container = document.getElementById('storiesContainer');
+      if (!container) return;
+      
+      container.innerHTML = storiesData.map((story, index) => `
+        <div class="story-item" onclick="openStory(${index})">
+          <div class="story-ring">
+            <img src="${story.imageUrl}" alt="${story.brandName}" class="story-avatar">
+          </div>
+          <span class="story-name">${story.brandName}</span>
+        </div>
+      `).join('');
+    }
+
+    function openStory(index) {
+      currentStoryIndex = index;
+      showStory(index);
+      document.getElementById('storyModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function showStory(index) {
+      const story = storiesData[index];
+      if (!story) return;
+
+      document.getElementById('storyBrandAvatar').src = getBrandLogo(story.brandName);
+      document.getElementById('storyBrandName').textContent = story.brandName;
+      document.getElementById('storyTime').textContent = '2 saat önce';
+      document.getElementById('storyImage').src = story.imageUrl;
+      document.getElementById('storyTitle').textContent = story.title;
+      document.getElementById('storyDesc').textContent = `${story.viewCount || 0} görüntülenme`;
+      document.getElementById('storyCta').href = story.linkUrl || '#';
+
+      // Update progress bars
+      const progressContainer = document.getElementById('storyProgress');
+      progressContainer.innerHTML = storiesData.map((_, i) => `
+        <div class="story-progress-bar">
+          <div class="story-progress-fill" style="width: ${i < index ? '100' : '0'}%"></div>
+        </div>
+      `).join('');
+
+      // Start progress animation
+      startStoryTimer(index);
+    }
+
+    function startStoryTimer(index) {
+      if (storyTimer) clearInterval(storyTimer);
+      
+      const progressBars = document.querySelectorAll('.story-progress-fill');
+      const currentBar = progressBars[index];
+      if (!currentBar) return;
+
+      let progress = 0;
+      storyTimer = setInterval(() => {
+        progress += 2;
+        currentBar.style.width = progress + '%';
+        
+        if (progress >= 100) {
+          clearInterval(storyTimer);
+          nextStory();
+        }
+      }, STORY_DURATION / 50);
+    }
+
+    function nextStory() {
+      if (currentStoryIndex < storiesData.length - 1) {
+        currentStoryIndex++;
+        showStory(currentStoryIndex);
+      } else {
+        closeStoryModal();
+      }
+    }
+
+    function prevStory() {
+      if (currentStoryIndex > 0) {
+        currentStoryIndex--;
+        showStory(currentStoryIndex);
+      }
+    }
+
+    function closeStoryModal() {
+      if (storyTimer) clearInterval(storyTimer);
+      document.getElementById('storyModal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Close story modal on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.getElementById('storyModal').classList.contains('active')) {
+        closeStoryModal();
+      }
+      if (e.key === 'Escape' && document.getElementById('matchSuccessModal').classList.contains('active')) {
+        closeMatchSuccess();
+      }
+    });
+
+    // Match/Swipe variables
+    let swipeListings = [];
+    let currentSwipeIndex = 0;
+    let mySelectedListing = null;
+    let dailyLikesUsed = 0;
+    const MAX_DAILY_LIKES = 10;
+
+    async function loadMatchPage() {
+      // Load user's listings
+      if (currentUser) {
+        try {
+          const res = await fetch(`${API_BASE}/api/users/${currentUser.id}/listings`);
+          const myListings = await res.json();
+          
+          if (myListings && myListings.length > 0) {
+            mySelectedListing = myListings[0];
+            renderMyListingPreview();
+            loadSwipeListings();
+          } else {
+            document.getElementById('myListingPreview').innerHTML = `
+              <div class="match-empty-state" style="padding: 20px;">
+                <p style="font-size: 13px;">Önce bir ilanınız olmalı</p>
+                <a href="#" class="btn-post" onclick="openModal('post')" style="font-size: 13px; padding: 10px 16px;">İlan Ver</a>
+              </div>
+            `;
+            document.getElementById('swipeCardStack').innerHTML = `
+              <div class="match-empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+                <h3>İlan Gerekli</h3>
+                <p>Takas yapabilmek için önce bir ilan oluşturmalısınız</p>
+              </div>
+            `;
+            document.getElementById('swipeActions').style.display = 'none';
+          }
+        } catch (e) {
+          console.error('Failed to load user listings:', e);
+        }
+      }
+      
+      // Update stats
+      document.getElementById('matchTodayLikes').textContent = `${dailyLikesUsed} / ${MAX_DAILY_LIKES}`;
+    }
+
+    function renderMyListingPreview() {
+      if (!mySelectedListing) return;
+      
+      document.getElementById('myListingPreview').innerHTML = `
+        <div class="my-listing-preview">
+          <img src="${mySelectedListing.photos?.[0] || 'https://via.placeholder.com/56x42?text=Araç'}" alt="">
+          <div class="my-listing-preview-info">
+            <h5>${mySelectedListing.brand} ${mySelectedListing.model}</h5>
+            <p>${mySelectedListing.year} · ${formatNumber(mySelectedListing.km)} km</p>
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadSwipeListings() {
+      try {
+        const res = await fetch(`${API_BASE}/api/listings`);
+        const listings = await res.json();
+        
+        // Filter out user's own listings
+        swipeListings = listings.filter(l => l.userId !== currentUser?.id);
+        currentSwipeIndex = 0;
+        
+        if (swipeListings.length > 0) {
+          renderSwipeCards();
+          document.getElementById('swipeActions').style.display = 'flex';
+        } else {
+          document.getElementById('swipeCardStack').innerHTML = `
+            <div class="match-empty-state">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.3-4.3"/>
+              </svg>
+              <h3>Şu an ilan yok</h3>
+              <p>Yeni ilanlar eklendiğinde burada görünecek</p>
+            </div>
+          `;
+          document.getElementById('swipeActions').style.display = 'none';
+        }
+      } catch (e) {
+        console.error('Failed to load swipe listings:', e);
+      }
+    }
+
+    function renderSwipeCards() {
+      const stack = document.getElementById('swipeCardStack');
+      const remaining = swipeListings.slice(currentSwipeIndex, currentSwipeIndex + 3);
+      
+      if (remaining.length === 0) {
+        stack.innerHTML = `
+          <div class="match-empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <h3>Tüm ilanları gördünüz!</h3>
+            <p>Daha sonra tekrar kontrol edin</p>
+          </div>
+        `;
+        document.getElementById('swipeActions').style.display = 'none';
+        return;
+      }
+      
+      stack.innerHTML = remaining.map((listing, index) => {
+        const matchScore = Math.floor(Math.random() * 30) + 70;
+        return `
+          <div class="swipe-card" style="z-index: ${3 - index}; transform: scale(${1 - index * 0.05}) translateY(${index * 10}px);">
+            <img src="${listing.photos?.[0] || 'https://via.placeholder.com/380x340?text=Araç'}" alt="" class="swipe-card-image">
+            <div class="swipe-card-content">
+              <div class="swipe-card-header">
+                <div>
+                  <div class="swipe-card-title">${listing.brand} ${listing.model}</div>
+                  <div class="swipe-card-subtitle">${listing.city}</div>
+                </div>
+                <div class="swipe-card-match-badge">%${matchScore} Uyumlu</div>
+              </div>
+              <div class="swipe-card-specs">
+                <div class="swipe-card-spec">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  ${listing.year}
+                </div>
+                <div class="swipe-card-spec">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  ${formatNumber(listing.km)} km
+                </div>
+                <div class="swipe-card-spec">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  ${listing.fuelType}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function swipeCard(direction) {
+      if (currentSwipeIndex >= swipeListings.length) return;
+      if (!mySelectedListing) {
+        showToast('Önce bir ilan oluşturmalısınız', 'error');
+        return;
+      }
+      
+      if (direction === 'right' || direction === 'super') {
+        if (dailyLikesUsed >= MAX_DAILY_LIKES) {
+          showToast('Günlük beğeni limitinize ulaştınız', 'error');
+          return;
+        }
+        dailyLikesUsed++;
+        document.getElementById('matchTodayLikes').textContent = `${dailyLikesUsed} / ${MAX_DAILY_LIKES}`;
+      }
+      
+      const card = document.querySelector('.swipe-card');
+      if (card) {
+        card.classList.add(direction === 'left' ? 'swiping-left' : 'swiping-right');
+      }
+      
+      const currentListing = swipeListings[currentSwipeIndex];
+      
+      // Send like to API
+      if (direction === 'right' || direction === 'super') {
+        try {
+          const res = await fetch(`${API_BASE}/api/likes`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              fromUserId: currentUser.id,
+              toUserId: currentListing.userId,
+              fromListingId: mySelectedListing.id,
+              toListingId: currentListing.id,
+              liked: true
+            })
+          });
+          
+          const result = await res.json();
+          
+          if (result.matched) {
+            showMatchSuccess(mySelectedListing, currentListing);
+          }
+        } catch (e) {
+          console.error('Failed to send like:', e);
+        }
+      }
+      
+      setTimeout(() => {
+        currentSwipeIndex++;
+        renderSwipeCards();
+      }, 300);
+    }
+
+    function showMatchSuccess(myListing, theirListing) {
+      document.getElementById('matchSuccessCar1').innerHTML = `
+        <img src="${myListing.photos?.[0] || 'https://via.placeholder.com/140x100'}" alt="">
+      `;
+      document.getElementById('matchSuccessCar2').innerHTML = `
+        <img src="${theirListing.photos?.[0] || 'https://via.placeholder.com/140x100'}" alt="">
+      `;
+      document.getElementById('matchSuccessModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMatchSuccess() {
+      document.getElementById('matchSuccessModal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function goToMessages() {
+      closeMatchSuccess();
+      navigateTo('messages');
+    }
+
+    // Messages variables
+    let userMatches = [];
+    let currentMatchId = null;
+    let currentChatMessages = [];
+
+    async function loadMessagesPage() {
+      try {
+        const res = await fetch(`${API_BASE}/api/users/${currentUser.id}/matches`);
+        userMatches = await res.json();
+        renderMessagesList();
+      } catch (e) {
+        console.error('Failed to load matches:', e);
+        renderMessagesList();
+      }
+    }
+
+    function renderMessagesList() {
+      const container = document.getElementById('messagesList');
+      
+      if (!userMatches || userMatches.length === 0) {
+        container.innerHTML = `
+          <div class="chat-empty-state" style="padding: 40px 20px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <h3 style="font-size: 16px;">Henüz eşleşme yok</h3>
+            <p style="font-size: 13px;">Takas Bul sayfasından araçları beğenmeye başlayın</p>
+            <a href="#" class="btn-post" onclick="navigateTo('match')" style="margin-top: 16px; font-size: 13px;">Takas Bul</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = userMatches.map(match => {
+        const otherUser = match.user1Id === currentUser.id ? match.user2 : match.user1;
+        const otherListing = match.user1Id === currentUser.id ? match.listing2 : match.listing1;
+        const lastMessage = match.lastMessage || 'Henüz mesaj yok';
+        const isActive = currentMatchId === match.id;
+        
+        return `
+          <div class="message-preview ${isActive ? 'active' : ''}" onclick="openChat('${match.id}')">
+            <img src="${otherListing?.photos?.[0] || 'https://via.placeholder.com/52'}" alt="" class="message-preview-avatar">
+            <div class="message-preview-content">
+              <div class="message-preview-header">
+                <span class="message-preview-name">${otherUser?.name || 'Kullanıcı'}</span>
+                <span class="message-preview-time">${formatTimeAgo(match.createdAt)}</span>
+              </div>
+              <div class="message-preview-text">${otherListing?.brand || ''} ${otherListing?.model || ''}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function openChat(matchId) {
+      currentMatchId = matchId;
+      const match = userMatches.find(m => m.id === matchId);
+      if (!match) return;
+
+      const otherUser = match.user1Id === currentUser.id ? match.user2 : match.user1;
+      const otherListing = match.user1Id === currentUser.id ? match.listing2 : match.listing1;
+
+      // Update header
+      document.getElementById('chatAvatar').src = otherListing?.photos?.[0] || 'https://via.placeholder.com/44';
+      document.getElementById('chatName').textContent = `${otherUser?.name || 'Kullanıcı'} - ${otherListing?.brand || ''} ${otherListing?.model || ''}`;
+      
+      // Show chat area
+      document.getElementById('chatEmptyState').style.display = 'none';
+      document.getElementById('activeChatArea').style.display = 'flex';
+
+      // Load messages
+      try {
+        const res = await fetch(`${API_BASE}/api/matches/${matchId}/messages`);
+        currentChatMessages = await res.json();
+        renderChatMessages();
+      } catch (e) {
+        console.error('Failed to load messages:', e);
+      }
+
+      // Update active state in list
+      renderMessagesList();
+    }
+
+    function renderChatMessages() {
+      const container = document.getElementById('chatMessages');
+      
+      if (!currentChatMessages || currentChatMessages.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <p>Sohbete başlamak için bir mesaj gönderin</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = currentChatMessages.map(msg => {
+        const isSent = msg.senderId === currentUser.id;
+        return `
+          <div class="chat-message ${isSent ? 'sent' : 'received'}">
+            ${msg.content}
+            <div class="chat-message-time">${formatTime(msg.createdAt)}</div>
+          </div>
+        `;
+      }).join('');
+
+      // Scroll to bottom
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const content = input.value.trim();
+      
+      if (!content || !currentMatchId) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            matchId: currentMatchId,
+            senderId: currentUser.id,
+            content: content,
+            messageType: 'text'
+          })
+        });
+
+        if (res.ok) {
+          input.value = '';
+          // Add message to UI immediately
+          currentChatMessages.push({
+            id: Date.now().toString(),
+            senderId: currentUser.id,
+            content: content,
+            createdAt: new Date().toISOString()
+          });
+          renderChatMessages();
+        }
+      } catch (e) {
+        console.error('Failed to send message:', e);
+        showToast('Mesaj gönderilemedi', 'error');
+      }
+    }
+
+    function formatTimeAgo(dateStr) {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      const now = new Date();
+      const diff = Math.floor((now - date) / 1000);
+      
+      if (diff < 60) return 'Az önce';
+      if (diff < 3600) return Math.floor(diff / 60) + ' dk';
+      if (diff < 86400) return Math.floor(diff / 3600) + ' sa';
+      return Math.floor(diff / 86400) + ' gün';
+    }
+
+    function formatTime(dateStr) {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      return date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Notifications
+    let userNotifications = [];
+
+    function loadNotificationsPage() {
+      // Demo notifications
+      userNotifications = [
+        { id: 1, type: 'match', title: 'Yeni Eşleşme!', text: 'BMW 320i ile eşleştiniz', time: new Date(Date.now() - 3600000), unread: true },
+        { id: 2, type: 'message', title: 'Yeni Mesaj', text: 'Ahmet: Merhaba, takas için uygun musunuz?', time: new Date(Date.now() - 7200000), unread: true },
+        { id: 3, type: 'like', title: 'Aracınız Beğenildi', text: 'Birisi aracınızı beğendi', time: new Date(Date.now() - 86400000), unread: false },
+        { id: 4, type: 'system', title: 'Hoş Geldiniz!', text: 'Araç Takası platformuna hoş geldiniz', time: new Date(Date.now() - 172800000), unread: false }
+      ];
+      renderNotifications();
+    }
+
+    function renderNotifications() {
+      const container = document.getElementById('notificationsList');
+      
+      if (!userNotifications.length) {
+        container.innerHTML = `
+          <div style="padding: 60px; text-align: center; color: var(--text-muted);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48" style="margin-bottom: 16px; color: var(--gray-300);">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <p>Henüz bildirim yok</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = userNotifications.map(n => `
+        <div class="notification-item ${n.unread ? 'unread' : ''}" onclick="handleNotificationClick(${n.id})">
+          <div class="notification-icon ${n.type}">
+            ${getNotificationIcon(n.type)}
+          </div>
+          <div class="notification-content">
+            <div class="notification-title">${n.title}</div>
+            <div class="notification-text">${n.text}</div>
+            <div class="notification-time">${formatTimeAgo(n.time)}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function getNotificationIcon(type) {
+      const icons = {
+        match: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+        message: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+        like: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+        system: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+      };
+      return icons[type] || icons.system;
+    }
+
+    function handleNotificationClick(id) {
+      const n = userNotifications.find(x => x.id === id);
+      if (n) {
+        n.unread = false;
+        renderNotifications();
+        if (n.type === 'match' || n.type === 'message') navigateTo('messages');
+      }
+    }
+
+    function markAllNotificationsRead() {
+      userNotifications.forEach(n => n.unread = false);
+      renderNotifications();
+      showToast('Tüm bildirimler okundu işaretlendi');
+    }
+
+    // Compare
+    let compareVehicle1 = null;
+    let compareVehicle2 = null;
+    let compareSelectingSlot = 0;
+
+    function loadComparePage() {
+      renderCompareCards();
+    }
+
+    function renderCompareCards() {
+      const card1 = document.getElementById('compareCard1');
+      const card2 = document.getElementById('compareCard2');
+      
+      if (compareVehicle1) {
+        card1.innerHTML = renderCompareVehicleCard(compareVehicle1, 1);
+      } else {
+        card1.innerHTML = `
+          <div class="compare-card-empty" onclick="openCompareSelector(1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <h4>İlk Aracı Seçin</h4>
+            <p>Karşılaştırmak için araç ekleyin</p>
+          </div>
+        `;
+      }
+      
+      if (compareVehicle2) {
+        card2.innerHTML = renderCompareVehicleCard(compareVehicle2, 2);
+      } else {
+        card2.innerHTML = `
+          <div class="compare-card-empty" onclick="openCompareSelector(2)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <h4>İkinci Aracı Seçin</h4>
+            <p>Karşılaştırmak için araç ekleyin</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderCompareVehicleCard(vehicle, slot) {
+      return `
+        <div class="compare-card-filled">
+          <img src="${vehicle.photos?.[0] || 'https://via.placeholder.com/400x200'}" alt="">
+          <div class="compare-card-info">
+            <div class="compare-card-title">${vehicle.brand} ${vehicle.model}</div>
+            <div class="compare-card-specs">
+              <div class="compare-spec-row"><span class="label">Yıl</span><span class="value">${vehicle.year || '-'}</span></div>
+              <div class="compare-spec-row"><span class="label">Km</span><span class="value">${formatNumber(vehicle.mileage)} km</span></div>
+              <div class="compare-spec-row"><span class="label">Yakıt</span><span class="value">${vehicle.fuelType || '-'}</span></div>
+              <div class="compare-spec-row"><span class="label">Vites</span><span class="value">${vehicle.transmission || '-'}</span></div>
+              <div class="compare-spec-row"><span class="label">Motor</span><span class="value">${vehicle.engineSize || '-'}</span></div>
+              <div class="compare-spec-row"><span class="label">Fiyat</span><span class="value">${formatNumber(vehicle.estimatedValue)} TL</span></div>
+            </div>
+            <button onclick="removeFromCompare(${slot})" style="margin-top: 16px; width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--white); cursor: pointer; font-size: 13px;">Kaldır</button>
+          </div>
+        </div>
+      `;
+    }
+
+    let compareListingsCache = [];
+
+    async function openCompareSelector(slot) {
+      compareSelectingSlot = slot;
+      
+      // Load listings for selection
+      try {
+        const res = await fetch(`${API_BASE}/api/listings?limit=20`);
+        const data = await res.json();
+        compareListingsCache = data.listings || data || [];
+        
+        const container = document.getElementById('compareSelectList');
+        container.innerHTML = compareListingsCache.map((l, idx) => `
+          <div class="compare-select-item" data-index="${idx}" style="cursor: pointer; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: all 0.2s ease;">
+            <img src="${l.photos?.[0] || 'https://via.placeholder.com/300x150'}" alt="" style="width: 100%; height: 120px; object-fit: cover;">
+            <div style="padding: 12px;">
+              <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">${l.brand} ${l.model}</div>
+              <div style="font-size: 12px; color: var(--text-muted);">${l.year} - ${formatNumber(l.mileage)} km</div>
+            </div>
+          </div>
+        `).join('');
+        
+        // Bind click events safely
+        container.querySelectorAll('.compare-select-item').forEach(el => {
+          el.addEventListener('click', function() {
+            const idx = parseInt(this.dataset.index);
+            selectForCompare(compareListingsCache[idx]);
+          });
+          el.addEventListener('mouseenter', function() { this.style.borderColor = 'var(--black)'; });
+          el.addEventListener('mouseleave', function() { this.style.borderColor = 'var(--border)'; });
+        });
+        
+        openModal('compareSelect');
+      } catch (e) {
+        console.error('Failed to load listings for compare:', e);
+        showToast('Araçlar yüklenemedi', 'error');
+      }
+    }
+
+    function selectForCompare(listing) {
+      if (compareSelectingSlot === 1) compareVehicle1 = listing;
+      else if (compareSelectingSlot === 2) compareVehicle2 = listing;
+      closeModal('compareSelect');
+      renderCompareCards();
+    }
+
+    function removeFromCompare(slot) {
+      if (slot === 1) compareVehicle1 = null;
+      else if (slot === 2) compareVehicle2 = null;
+      renderCompareCards();
+    }
+
+    function addToCompare(listing) {
+      if (!compareVehicle1) compareVehicle1 = listing;
+      else if (!compareVehicle2) compareVehicle2 = listing;
+      else {
+        showToast('Karşılaştırma listesi dolu', 'error');
+        return;
+      }
+      showToast('Karşılaştırmaya eklendi');
+    }
+
+    // Corporate Application
+    async function submitCorporateApplication(event) {
+      event.preventDefault();
+      
+      const data = {
+        companyName: document.getElementById('corpCompanyName').value,
+        taxNumber: document.getElementById('corpTaxNumber').value,
+        taxOffice: document.getElementById('corpTaxOffice').value,
+        businessType: document.getElementById('corpBusinessType').value,
+        address: document.getElementById('corpAddress').value,
+        contactName: document.getElementById('corpContactName').value,
+        contactPhone: document.getElementById('corpContactPhone').value,
+        contactEmail: document.getElementById('corpContactEmail').value,
+        contactPosition: document.getElementById('corpContactPosition').value,
+        notes: document.getElementById('corpNotes').value
+      };
+
+      try {
+        // In a real app, this would send to an API
+        console.log('Corporate application:', data);
+        showToast('Başvurunuz alındı! En kısa sürede sizinle iletişime geçeceğiz.');
+        event.target.reset();
+        navigateTo('home');
+      } catch (e) {
+        showToast('Başvuru gönderilemedi. Lütfen tekrar deneyin.', 'error');
+      }
+    }
+
+    function formatNumber(num) {
+      if (!num) return '0';
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
     let currentSlide = 0;
     const totalSlides = 5;
     let slideInterval;
@@ -3034,6 +5336,36 @@
 
       if (page === 'browse') loadListings();
       else if (page === 'detail' && params.id) loadListingDetail(params.id);
+      else if (page === 'match') {
+        if (!currentUser) {
+          openModal('login');
+          navigateTo('home');
+          return;
+        }
+        loadMatchPage();
+      }
+      else if (page === 'messages') {
+        if (!currentUser) {
+          openModal('login');
+          navigateTo('home');
+          return;
+        }
+        loadMessagesPage();
+      }
+      else if (page === 'notifications') {
+        if (!currentUser) {
+          openModal('login');
+          navigateTo('home');
+          return;
+        }
+        loadNotificationsPage();
+      }
+      else if (page === 'compare') {
+        loadComparePage();
+      }
+      else if (page === 'corporate') {
+        // No loading needed, form is static
+      }
       else if (page === 'dashboard') {
         if (!currentUser) {
           openModal('login');
@@ -3055,6 +5387,9 @@
 
     async function loadHomeData() {
       try {
+        // Load stories
+        loadStories();
+        
         const res = await fetch(`${API_BASE}/api/listings`);
         allListings = await res.json();
         
