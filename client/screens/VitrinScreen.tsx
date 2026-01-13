@@ -545,7 +545,7 @@ const styles = StyleSheet.create({
     paddingRight: Spacing.lg,
   },
   featuredCard: {
-    width: 160,
+    width: 130,
     backgroundColor: "#FFFFFF",
     borderRadius: BorderRadius.md,
     overflow: "hidden",
@@ -573,7 +573,7 @@ const styles = StyleSheet.create({
   },
   featuredImage: {
     width: "100%",
-    height: 100,
+    height: 75,
     backgroundColor: "#F9FAFB",
   },
   featuredInfo: {
