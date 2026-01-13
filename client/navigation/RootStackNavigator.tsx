@@ -111,7 +111,9 @@ export default function RootStackNavigator() {
             component={CreateListingScreen}
             options={{
               headerTitle: "Detayli Ilan Ver",
-              headerTintColor: "#000000",
+              headerTintColor: "#FFFFFF",
+              headerStyle: { backgroundColor: "#000000" },
+              headerTitleAlign: "left",
               presentation: "modal",
             }}
           />
