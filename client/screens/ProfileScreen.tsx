@@ -298,61 +298,7 @@ export default function ProfileScreen() {
                 onPress={showComingSoon}
               />
             </>
-          ) : (
-            <MenuRow 
-              icon="user" 
-              label="Kimlik Dogrulama" 
-              verified={identityVerified}
-              onPress={showComingSoon}
-            />
-          )}
-        </View>
-
-        <View style={styles.sectionCard}>
-          <ThemedText style={styles.sectionTitle}>Profil Duzenleme</ThemedText>
-          
-          {isKurumsal ? (
-            <>
-              <MenuRow 
-                icon="briefcase" 
-                label="Sirket Bilgileri" 
-                onPress={showComingSoon}
-              />
-              <MenuRow 
-                icon="map-pin" 
-                label="Sirket Adresi" 
-                onPress={showComingSoon}
-              />
-              <MenuRow 
-                icon="user" 
-                label="Yetkili Kisi Bilgileri" 
-                onPress={showComingSoon}
-              />
-              <MenuRow 
-                icon="mail" 
-                label="Iletisim Bilgileri" 
-                onPress={showComingSoon}
-              />
-            </>
-          ) : (
-            <>
-              <MenuRow 
-                icon="user" 
-                label="Kisisel Bilgiler" 
-                onPress={showComingSoon}
-              />
-              <MenuRow 
-                icon="map-pin" 
-                label="Adres Bilgileri" 
-                onPress={showComingSoon}
-              />
-              <MenuRow 
-                icon="mail" 
-                label="Iletisim Bilgileri" 
-                onPress={showComingSoon}
-              />
-            </>
-          )}
+          ) : null}
         </View>
 
         <View style={styles.sectionCard}>
