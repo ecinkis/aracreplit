@@ -112,10 +112,12 @@ export default function RootStackNavigator() {
             options={{
               headerTitle: "Detayli Ilan Ver",
               headerTintColor: "#FFFFFF",
-              headerStyle: { backgroundColor: "#000000", height: 110 },
+              headerStyle: { backgroundColor: "#000000" },
               headerTitleAlign: "left",
-              headerTitleStyle: { marginTop: 20 },
+              headerLargeTitle: true,
+              headerLargeTitleStyle: { color: "#FFFFFF" },
               presentation: "modal",
+              contentStyle: { paddingTop: 20 },
             }}
           />
           <Stack.Screen
