@@ -179,9 +179,8 @@ export default function RootStackNavigator() {
             component={BrandListScreen}
             options={({ route }) => ({
               headerTitle: route.params.categoryName,
-              headerStyle: { backgroundColor: "#000000", height: 110 },
+              headerStyle: { backgroundColor: "#000000" },
               headerTitleStyle: { color: "#FFFFFF", fontSize: 20, fontWeight: "600" },
-              headerTitleAlign: "left",
               headerTintColor: "#FFFFFF",
               headerShadowVisible: false,
             })}
@@ -191,9 +190,8 @@ export default function RootStackNavigator() {
             component={ModelListScreen}
             options={({ route }) => ({
               headerTitle: route.params.brandName,
-              headerStyle: { backgroundColor: "#000000", height: 110 },
+              headerStyle: { backgroundColor: "#000000" },
               headerTitleStyle: { color: "#FFFFFF", fontSize: 20, fontWeight: "600" },
-              headerTitleAlign: "left",
               headerTintColor: "#FFFFFF",
               headerShadowVisible: false,
             })}
@@ -203,9 +201,8 @@ export default function RootStackNavigator() {
             component={SearchResultsScreen}
             options={({ route }) => ({
               headerTitle: `${route.params.brandName} ${route.params.modelName}`,
-              headerStyle: { backgroundColor: "#000000", height: 110 },
+              headerStyle: { backgroundColor: "#000000" },
               headerTitleStyle: { color: "#FFFFFF", fontSize: 20, fontWeight: "600" },
-              headerTitleAlign: "left",
               headerTintColor: "#FFFFFF",
               headerShadowVisible: false,
             })}

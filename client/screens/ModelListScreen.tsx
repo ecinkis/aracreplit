@@ -6,6 +6,7 @@ import {
   Pressable,
   TextInput,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
@@ -82,6 +83,7 @@ const MODELS_BY_BRAND: Record<string, Array<{ id: string; name: string; years: s
 };
 
 export default function ModelListScreen() {
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<ModelListRouteProp>();
   const { categoryId, categoryName, brandId, brandName } = route.params;
@@ -126,7 +128,7 @@ export default function ModelListScreen() {
       </View>
 
       <ScrollView
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + Spacing.xl }]}
         showsVerticalScrollIndicator={false}
       >
         {filteredModels.map((model) => (
@@ -168,7 +170,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
-    marginTop: Spacing.sm,
+    paddingTop: Spacing.sm,
     marginBottom: Spacing.md,
   },
   searchContainer: {
@@ -192,7 +194,6 @@ const styles = StyleSheet.create({
   },
   listContent: {
     flexGrow: 1,
-    paddingBottom: Spacing.xl,
   },
   modelRow: {
     flexDirection: "row",

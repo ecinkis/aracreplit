@@ -6,7 +6,7 @@ import {
   Pressable,
   TextInput,
 } from "react-native";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
@@ -75,6 +75,7 @@ const BRANDS_BY_CATEGORY: Record<string, Array<{ id: string; name: string }>> = 
 };
 
 export default function BrandListScreen() {
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<BrandListRouteProp>();
   const { categoryId, categoryName } = route.params;
@@ -112,7 +113,7 @@ export default function BrandListScreen() {
       </View>
 
       <ScrollView
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + Spacing.xl }]}
         showsVerticalScrollIndicator={false}
       >
         {filteredBrands.map((brand) => (
@@ -151,7 +152,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
-    marginTop: Spacing.sm,
+    paddingTop: Spacing.sm,
     marginBottom: Spacing.md,
   },
   searchContainer: {
@@ -175,7 +176,6 @@ const styles = StyleSheet.create({
   },
   listContent: {
     flexGrow: 1,
-    paddingBottom: Spacing.xl,
   },
   brandRow: {
     flexDirection: "row",
