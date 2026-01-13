@@ -1,9 +1,9 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -13,20 +13,35 @@ import RootStackNavigator from "@/navigation/RootStackNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AuthProvider } from "@/contexts/AuthContext";
 
+function SafeAreaHeader() {
+  const insets = useSafeAreaInsets();
+  
+  return (
+    <View style={[styles.safeHeader, { height: insets.top }]} />
+  );
+}
+
+function AppContent() {
+  return (
+    <GestureHandlerRootView style={styles.root}>
+      <SafeAreaHeader />
+      <KeyboardProvider>
+        <NavigationContainer>
+          <RootStackNavigator />
+        </NavigationContainer>
+        <StatusBar style="light" />
+      </KeyboardProvider>
+    </GestureHandlerRootView>
+  );
+}
+
 export default function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <SafeAreaProvider>
-            <GestureHandlerRootView style={styles.root}>
-              <KeyboardProvider>
-                <NavigationContainer>
-                  <RootStackNavigator />
-                </NavigationContainer>
-                <StatusBar style="auto" />
-              </KeyboardProvider>
-            </GestureHandlerRootView>
+            <AppContent />
           </SafeAreaProvider>
         </AuthProvider>
       </QueryClientProvider>
@@ -37,5 +52,10 @@ export default function App() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    backgroundColor: "#000000",
+  },
+  safeHeader: {
+    backgroundColor: "#000000",
+    width: "100%",
   },
 });
