@@ -28,17 +28,38 @@ export default function SearchResultsScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<SearchResultsRouteProp>();
-  const { brandName, modelName } = route.params;
+  const { brandName, modelName, brand, model, query } = route.params;
+
+  const searchBrand = brand || brandName || "";
+  const searchModel = model || modelName || "";
+  const searchQuery = query || "";
 
   const { data: listings, isLoading } = useQuery<Listing[]>({
     queryKey: ["/api/listings"],
   });
 
-  const filteredListings = listings?.filter(
-    (listing) =>
-      listing.brand.toLowerCase().includes(brandName.toLowerCase()) ||
-      listing.model.toLowerCase().includes(modelName.toLowerCase())
-  ) || [];
+  const filteredListings = listings?.filter((listing) => {
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      return (
+        listing.brand.toLowerCase().includes(q) ||
+        listing.model.toLowerCase().includes(q) ||
+        (listing.description && listing.description.toLowerCase().includes(q))
+      );
+    }
+    if (searchBrand && searchModel) {
+      return (
+        listing.brand.toLowerCase() === searchBrand.toLowerCase() &&
+        listing.model.toLowerCase() === searchModel.toLowerCase()
+      );
+    }
+    if (searchBrand) {
+      return listing.brand.toLowerCase().includes(searchBrand.toLowerCase());
+    }
+    return true;
+  }) || [];
+
+  const headerText = searchQuery || (searchBrand && searchModel ? `${searchBrand} ${searchModel}` : searchBrand) || "Arama Sonuçları";
 
   const handleListingPress = (listingId: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -57,7 +78,7 @@ export default function SearchResultsScreen() {
             >
               <Feather name="arrow-left" size={24} color="#FFFFFF" />
             </Pressable>
-            <ThemedText style={styles.headerTitle}>{brandName} {modelName}</ThemedText>
+            <ThemedText style={styles.headerTitle}>{headerText}</ThemedText>
           </View>
         </View>
         <View style={styles.loadingContainer}>
@@ -78,7 +99,7 @@ export default function SearchResultsScreen() {
           >
             <Feather name="arrow-left" size={24} color="#FFFFFF" />
           </Pressable>
-          <ThemedText style={styles.headerTitle}>{brandName} {modelName}</ThemedText>
+          <ThemedText style={styles.headerTitle}>{headerText}</ThemedText>
         </View>
       </View>
 

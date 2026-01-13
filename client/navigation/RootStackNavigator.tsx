@@ -45,8 +45,8 @@ export type RootStackParamList = {
   };
   Premium: undefined;
   BrandList: { categoryId: string; categoryName: string };
-  ModelList: { categoryId: string; categoryName: string; brandId: string; brandName: string };
-  SearchResults: { categoryId: string; categoryName: string; brandId: string; brandName: string; modelId: string; modelName: string };
+  ModelList: { categoryId?: string; categoryName?: string; brandId: string; brandName: string };
+  SearchResults: { categoryId?: string; categoryName?: string; brandId?: string; brandName?: string; modelId?: string; modelName?: string; brand?: string; model?: string; query?: string };
   Verification: { documentType: string };
 };
 
