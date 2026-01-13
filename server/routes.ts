@@ -79,6 +79,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/auth/apple", async (req, res) => {
+    try {
+      const { appleId, email, fullName } = req.body;
+      if (!appleId) {
+        return res.status(400).json({ error: "Apple ID is required" });
+      }
+
+      let user = await storage.getUserByAppleId(appleId);
+      
+      if (!user && email) {
+        user = await storage.getUserByEmail(email);
+        if (user) {
+          await storage.updateUser(user.id, { appleId });
+        }
+      }
+
+      if (!user) {
+        const tempPhone = `apple_${appleId.substring(0, 15)}`;
+        user = await storage.createUser({ 
+          phone: tempPhone, 
+          name: fullName || null, 
+          email: email || null,
+          appleId,
+          city: null 
+        });
+      }
+
+      res.json({ user });
+    } catch (error) {
+      console.error("Apple login error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/auth/google", async (req, res) => {
+    try {
+      const { googleId, email, name, photo } = req.body;
+      if (!googleId) {
+        return res.status(400).json({ error: "Google ID is required" });
+      }
+
+      let user = await storage.getUserByGoogleId(googleId);
+      
+      if (!user && email) {
+        user = await storage.getUserByEmail(email);
+        if (user) {
+          await storage.updateUser(user.id, { googleId });
+        }
+      }
+
+      if (!user) {
+        const tempPhone = `google_${googleId.substring(0, 14)}`;
+        user = await storage.createUser({ 
+          phone: tempPhone, 
+          name: name || null, 
+          email: email || null,
+          googleId,
+          avatarUrl: photo || null,
+          city: null 
+        });
+      }
+
+      res.json({ user });
+    } catch (error) {
+      console.error("Google login error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.get("/api/users/:id", async (req, res) => {
     try {
       const user = await storage.getUser(req.params.id);

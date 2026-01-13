@@ -7,6 +7,8 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (phone: string) => Promise<void>;
+  loginWithApple: (appleId: string, email?: string, fullName?: string) => Promise<void>;
+  loginWithGoogle: (googleId: string, email?: string, name?: string, photo?: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (data: Partial<User>) => void;
   selectedListingId: string | null;
@@ -66,6 +68,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const loginWithApple = async (appleId: string, email?: string, fullName?: string) => {
+    try {
+      const { getApiUrl } = await import("@/lib/query-client");
+      const response = await fetch(new URL("/api/auth/apple", getApiUrl()).toString(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ appleId, email, fullName }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Apple login failed");
+      }
+
+      const { user: loggedInUser } = await response.json();
+      setUser(loggedInUser);
+      await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(loggedInUser));
+    } catch (error) {
+      console.error("Apple login error:", error);
+      throw error;
+    }
+  };
+
+  const loginWithGoogle = async (googleId: string, email?: string, name?: string, photo?: string) => {
+    try {
+      const { getApiUrl } = await import("@/lib/query-client");
+      const response = await fetch(new URL("/api/auth/google", getApiUrl()).toString(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ googleId, email, name, photo }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Google login failed");
+      }
+
+      const { user: loggedInUser } = await response.json();
+      setUser(loggedInUser);
+      await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(loggedInUser));
+    } catch (error) {
+      console.error("Google login error:", error);
+      throw error;
+    }
+  };
+
   const logout = async () => {
     try {
       await AsyncStorage.removeItem(USER_STORAGE_KEY);
@@ -101,6 +147,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         isAuthenticated: !!user,
         login,
+        loginWithApple,
+        loginWithGoogle,
         logout,
         updateUser,
         selectedListingId,

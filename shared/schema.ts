@@ -24,6 +24,8 @@ export const users = pgTable("users", {
   authorizedPerson: text("authorized_person"),
   identityVerified: boolean("identity_verified").default(false),
   companyVerified: boolean("company_verified").default(false),
+  appleId: text("apple_id"),
+  googleId: text("google_id"),
   isPremium: boolean("is_premium").default(false),
   premiumExpiresAt: timestamp("premium_expires_at"),
   dailyLikesUsed: integer("daily_likes_used").default(0),
@@ -360,6 +362,10 @@ export const insertUserSchema = createInsertSchema(users).pick({
   phone: true,
   name: true,
   city: true,
+  email: true,
+  appleId: true,
+  googleId: true,
+  avatarUrl: true,
 });
 
 export const insertListingSchema = createInsertSchema(listings).omit({
