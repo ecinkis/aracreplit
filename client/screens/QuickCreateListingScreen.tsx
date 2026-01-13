@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   View,
   StyleSheet,
@@ -7,7 +7,8 @@ import {
   Image,
   Alert,
   ActivityIndicator,
-  Platform,
+  Modal,
+  FlatList,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -16,102 +17,118 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as Haptics from "expo-haptics";
-import { BlurView } from "expo-blur";
 import { ThemedText } from "@/components/ThemedText";
 import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
 import { useAuth } from "@/contexts/AuthContext";
-import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
+import { Spacing, BorderRadius } from "@/constants/theme";
 import { apiRequest } from "@/lib/query-client";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-const BRANDS = ["Audi", "BMW", "Mercedes", "Volkswagen", "Toyota", "Honda", "Ford", "Renault", "Fiat", "Hyundai", "Kia", "Opel", "Peugeot", "Citroen"];
-const FUEL_TYPES = ["Benzin", "Dizel", "Hibrit", "Elektrik", "LPG"];
-const TRANSMISSIONS = ["Manuel", "Otomatik"];
+const BRANDS = [
+  "Audi", "BMW", "Citroen", "Dacia", "Fiat", "Ford", "Honda", "Hyundai", 
+  "Kia", "Mercedes", "Nissan", "Opel", "Peugeot", "Renault", "Seat", 
+  "Skoda", "Toyota", "Volkswagen", "Volvo", "Diger"
+];
 
-function ChipSelect({
+const CATEGORIES = [
+  { id: "otomobil", name: "Otomobil", icon: "truck" },
+  { id: "suv", name: "SUV / Pickup", icon: "compass" },
+  { id: "elektrikli", name: "Elektrikli", icon: "zap" },
+  { id: "motosiklet", name: "Motosiklet", icon: "wind" },
+];
+
+const HEADER_HEIGHT = 110;
+
+function QuickPicker({
+  label,
+  placeholder,
   options,
   selected,
   onSelect,
-  multiSelect = false,
 }: {
+  label: string;
+  placeholder: string;
   options: string[];
-  selected: string | string[];
+  selected: string;
   onSelect: (value: string) => void;
-  multiSelect?: boolean;
 }) {
-  const isSelected = (option: string) =>
-    multiSelect
-      ? (selected as string[]).includes(option)
-      : selected === option;
-
-  return (
-    <View style={styles.chipContainer}>
-      {options.map((option) => (
-        <Pressable
-          key={option}
-          style={[
-            styles.chip,
-            isSelected(option) && styles.chipSelected,
-          ]}
-          onPress={() => {
-            Haptics.selectionAsync();
-            onSelect(option);
-          }}
-        >
-          <ThemedText
-            style={[
-              styles.chipText,
-              isSelected(option) && styles.chipTextSelected,
-            ]}
-          >
-            {option}
-          </ThemedText>
-        </Pressable>
-      ))}
-    </View>
-  );
-}
-
-function BottomTabBar() {
-  const navigation = useNavigation<NavigationProp>();
   const insets = useSafeAreaInsets();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const handleTabPress = (tab: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    navigation.navigate("Main");
-  };
+  const filteredOptions = useMemo(() => {
+    if (!searchQuery) return options;
+    return options.filter((option) =>
+      option.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [options, searchQuery]);
 
   return (
-    <View style={[styles.tabBar, { paddingBottom: insets.bottom > 0 ? insets.bottom : 8 }]}>
-      {Platform.OS === "ios" ? (
-        <BlurView intensity={100} tint="light" style={StyleSheet.absoluteFill} />
-      ) : null}
-      <View style={styles.tabBarContent}>
-        <Pressable style={styles.tabItem} onPress={() => handleTabPress("vitrin")}>
-          <Feather name="home" size={22} color="#6B7280" />
-          <ThemedText style={styles.tabLabel}>vitrin</ThemedText>
-        </Pressable>
-        <Pressable style={styles.tabItem} onPress={() => handleTabPress("arama")}>
-          <Feather name="search" size={22} color="#6B7280" />
-          <ThemedText style={styles.tabLabel}>arama</ThemedText>
-        </Pressable>
-        <View style={styles.tabItemCenter}>
-          <View style={styles.createButtonActive}>
-            <Feather name="plus" size={28} color="#FFFFFF" />
+    <>
+      <Pressable
+        style={[styles.pickerButton, selected && styles.pickerButtonSelected]}
+        onPress={() => {
+          Haptics.selectionAsync();
+          setModalVisible(true);
+        }}
+      >
+        <ThemedText style={[styles.pickerText, !selected && styles.pickerPlaceholder]}>
+          {selected || placeholder}
+        </ThemedText>
+        <Feather name="chevron-down" size={20} color="#6B7280" />
+      </Pressable>
+
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={[styles.modalContainer, { paddingTop: insets.top }]}>
+          <View style={styles.modalHeader}>
+            <ThemedText style={styles.modalTitle}>{label}</ThemedText>
+            <Pressable onPress={() => setModalVisible(false)}>
+              <Feather name="x" size={24} color="#000000" />
+            </Pressable>
           </View>
+
+          <View style={styles.modalSearchContainer}>
+            <Feather name="search" size={20} color="#9CA3AF" />
+            <TextInput
+              style={styles.modalSearchInput}
+              placeholder="Ara..."
+              placeholderTextColor="#9CA3AF"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
+
+          <FlatList
+            data={filteredOptions}
+            keyExtractor={(item) => item}
+            contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.lg }}
+            renderItem={({ item }) => (
+              <Pressable
+                style={[styles.optionItem, selected === item && styles.optionItemSelected]}
+                onPress={() => {
+                  Haptics.selectionAsync();
+                  onSelect(item);
+                  setModalVisible(false);
+                  setSearchQuery("");
+                }}
+              >
+                <ThemedText style={[styles.optionText, selected === item && styles.optionTextSelected]}>
+                  {item}
+                </ThemedText>
+                {selected === item ? <Feather name="check" size={20} color="#000000" /> : null}
+              </Pressable>
+            )}
+          />
         </View>
-        <Pressable style={styles.tabItem} onPress={() => handleTabPress("esles")}>
-          <Feather name="layers" size={22} color="#6B7280" />
-          <ThemedText style={styles.tabLabel}>esles</ThemedText>
-        </Pressable>
-        <Pressable style={styles.tabItem} onPress={() => handleTabPress("profil")}>
-          <Feather name="user" size={22} color="#6B7280" />
-          <ThemedText style={styles.tabLabel}>profil</ThemedText>
-        </Pressable>
-      </View>
-    </View>
+      </Modal>
+    </>
   );
 }
 
@@ -121,17 +138,14 @@ export default function QuickCreateListingScreen() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  const [photos, setPhotos] = useState<string[]>([]);
+  const [photo, setPhoto] = useState<string | null>(null);
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
   const [year, setYear] = useState("");
-  const [km, setKm] = useState("");
-  const [fuelType, setFuelType] = useState("");
-  const [transmission, setTransmission] = useState("");
-  const [onlySwap, setOnlySwap] = useState(true);
-  const [preferredBrands, setPreferredBrands] = useState<string[]>([]);
+  const [category, setCategory] = useState("");
 
-  const tabBarHeight = Platform.OS === "ios" ? 88 : 60;
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: 30 }, (_, i) => String(currentYear - i));
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -140,13 +154,34 @@ export default function QuickCreateListingScreen() {
         body: JSON.stringify(data),
       });
     },
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["/api/listings"] });
       queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listings"] });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      Alert.alert("Basarili", "Ilaniniz yayinlandi!", [
-        { text: "Tamam", onPress: () => navigation.navigate("Main") },
-      ]);
+      
+      const listingId = data?.id;
+      
+      Alert.alert(
+        "Ilaniniz Yayinda!",
+        "Detaylari ekleyerek ilaninizi zenginlestirebilirsiniz.",
+        [
+          { 
+            text: "Detaylari Ekle", 
+            onPress: () => {
+              if (listingId) {
+                navigation.navigate("ListingDetail", { listingId });
+              } else {
+                navigation.navigate("Main");
+              }
+            }
+          },
+          { 
+            text: "Tamam", 
+            style: "cancel",
+            onPress: () => navigation.navigate("Main") 
+          },
+        ]
+      );
     },
     onError: () => {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -155,186 +190,211 @@ export default function QuickCreateListingScreen() {
   });
 
   const pickImage = async () => {
-    if (photos.length >= 10) {
-      Alert.alert("Uyari", "En fazla 10 fotograf ekleyebilirsiniz.");
-      return;
-    }
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsMultipleSelection: true,
-      selectionLimit: 10 - photos.length,
+      allowsEditing: true,
+      aspect: [4, 3],
       quality: 0.8,
     });
 
     if (!result.canceled) {
-      const newPhotos = result.assets.map((asset) => asset.uri);
-      setPhotos([...photos, ...newPhotos]);
+      setPhoto(result.assets[0].uri);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
   };
 
-  const removePhoto = (index: number) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setPhotos(photos.filter((_, i) => i !== index));
-  };
+  const takePhoto = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Izin Gerekli", "Kamera kullanmak icin izin vermelisiniz.");
+      return;
+    }
 
-  const handlePreferredBrandToggle = (brandName: string) => {
-    if (preferredBrands.includes(brandName)) {
-      setPreferredBrands(preferredBrands.filter((b) => b !== brandName));
-    } else {
-      setPreferredBrands([...preferredBrands, brandName]);
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      setPhoto(result.assets[0].uri);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
   };
 
   const handleSubmit = () => {
-    if (photos.length < 3) {
-      Alert.alert("Uyari", "En az 3 fotograf eklemelisiniz.");
+    if (!brand) {
+      Alert.alert("Uyari", "Lutfen marka secin.");
       return;
     }
-    if (!brand || !model || !year || !km || !fuelType || !transmission) {
-      Alert.alert("Uyari", "Lutfen tum alanlari doldurun.");
+    if (!model.trim()) {
+      Alert.alert("Uyari", "Lutfen model girin.");
+      return;
+    }
+    if (!year) {
+      Alert.alert("Uyari", "Lutfen yil secin.");
+      return;
+    }
+    if (!category) {
+      Alert.alert("Uyari", "Lutfen kategori secin.");
       return;
     }
 
     createMutation.mutate({
       userId: user?.id,
       brand,
-      model,
+      model: model.trim(),
       year: parseInt(year),
-      km: parseInt(km.replace(/\D/g, "")),
-      fuelType,
-      transmission,
-      city: "Istanbul",
-      photos,
+      km: 0,
+      fuelType: "Belirtilmedi",
+      transmission: "Belirtilmedi",
+      city: "Belirtilmedi",
+      photos: photo ? [photo] : [],
       swapActive: true,
-      onlySwap,
-      acceptsCashDiff: !onlySwap,
-      preferredBrands,
+      onlySwap: true,
+      acceptsCashDiff: false,
+      preferredBrands: [],
+      category,
+      needsCompletion: true,
     });
   };
 
-  const isValid =
-    photos.length >= 3 &&
-    brand &&
-    model &&
-    year &&
-    km &&
-    fuelType &&
-    transmission;
+  const isValid = brand && model.trim() && year && category;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + Spacing.md }]}>
+    <View style={styles.container}>
+      <View style={[styles.header, { height: HEADER_HEIGHT + insets.top, paddingTop: insets.top }]}>
+        <View style={styles.headerContent}>
+          <Pressable 
+            onPress={() => navigation.goBack()} 
+            style={styles.backButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Feather name="x" size={24} color="#FFFFFF" />
+          </Pressable>
+          <ThemedText style={styles.headerTitle}>Hizli Ilan</ThemedText>
+        </View>
+      </View>
+
       <KeyboardAwareScrollViewCompat
         contentContainerStyle={[
           styles.content,
-          { paddingBottom: tabBarHeight + Spacing.xl },
+          { paddingBottom: insets.bottom + Spacing.xl },
         ]}
       >
-        <ThemedText style={styles.sectionTitle}>Fotograflar (min 3)</ThemedText>
-        <View style={styles.photosContainer}>
-          {photos.map((photo, index) => (
-            <View key={index} style={styles.photoWrapper}>
-              <Image source={{ uri: photo }} style={styles.photo} />
+        <View style={styles.heroSection}>
+          <ThemedText style={styles.heroTitle}>Hizli ilan olustur</ThemedText>
+          <ThemedText style={styles.heroSubtitle}>
+            4 adimda ilanini yayinla. Detaylari sonra ekleyebilirsin.
+          </ThemedText>
+        </View>
+
+        <View style={styles.photoSection}>
+          {photo ? (
+            <View style={styles.photoPreview}>
+              <Image source={{ uri: photo }} style={styles.photoImage} />
               <Pressable
                 style={styles.removePhotoButton}
-                onPress={() => removePhoto(index)}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setPhoto(null);
+                }}
               >
-                <Feather name="x" size={16} color="#FFFFFF" />
+                <Feather name="x" size={18} color="#FFFFFF" />
               </Pressable>
             </View>
-          ))}
-          {photos.length < 10 ? (
-            <Pressable style={styles.addPhotoButton} onPress={pickImage}>
-              <Feather name="camera" size={24} color="#6B7280" />
-              <ThemedText style={styles.addPhotoText}>Ekle</ThemedText>
-            </Pressable>
-          ) : null}
+          ) : (
+            <View style={styles.photoButtons}>
+              <Pressable style={styles.photoButton} onPress={takePhoto}>
+                <Feather name="camera" size={24} color="#000000" />
+                <ThemedText style={styles.photoButtonText}>Cek</ThemedText>
+              </Pressable>
+              <Pressable style={styles.photoButton} onPress={pickImage}>
+                <Feather name="image" size={24} color="#000000" />
+                <ThemedText style={styles.photoButtonText}>Sec</ThemedText>
+              </Pressable>
+            </View>
+          )}
+          <ThemedText style={styles.optionalText}>Opsiyonel - sonra ekleyebilirsin</ThemedText>
         </View>
 
-        <ThemedText style={styles.sectionTitle}>Marka</ThemedText>
-        <ChipSelect options={BRANDS} selected={brand} onSelect={setBrand} />
-
-        <ThemedText style={styles.sectionTitle}>Model</ThemedText>
-        <TextInput
-          style={styles.input}
-          value={model}
-          onChangeText={setModel}
-          placeholder="Model girin"
-          placeholderTextColor="#9CA3AF"
-        />
-
-        <View style={styles.row}>
-          <View style={styles.halfInput}>
-            <ThemedText style={styles.sectionTitle}>Yil</ThemedText>
-            <TextInput
-              style={styles.input}
-              value={year}
-              onChangeText={setYear}
-              placeholder="2020"
-              placeholderTextColor="#9CA3AF"
-              keyboardType="number-pad"
-              maxLength={4}
-            />
+        <View style={styles.formSection}>
+          <View style={styles.stepIndicator}>
+            <View style={styles.stepNumber}><ThemedText style={styles.stepNumberText}>1</ThemedText></View>
+            <ThemedText style={styles.fieldLabel}>Marka</ThemedText>
           </View>
-          <View style={styles.halfInput}>
-            <ThemedText style={styles.sectionTitle}>Kilometre</ThemedText>
-            <TextInput
-              style={styles.input}
-              value={km}
-              onChangeText={(text) => setKm(text.replace(/\D/g, ""))}
-              placeholder="50000"
-              placeholderTextColor="#9CA3AF"
-              keyboardType="number-pad"
-            />
+          <QuickPicker
+            label="Marka Sec"
+            placeholder="Marka secin"
+            options={BRANDS}
+            selected={brand}
+            onSelect={setBrand}
+          />
+        </View>
+
+        <View style={styles.formSection}>
+          <View style={styles.stepIndicator}>
+            <View style={styles.stepNumber}><ThemedText style={styles.stepNumberText}>2</ThemedText></View>
+            <ThemedText style={styles.fieldLabel}>Model</ThemedText>
+          </View>
+          <TextInput
+            style={styles.textInput}
+            value={model}
+            onChangeText={setModel}
+            placeholder="Ornegin: 320i, Corolla, Focus"
+            placeholderTextColor="#9CA3AF"
+          />
+        </View>
+
+        <View style={styles.formSection}>
+          <View style={styles.stepIndicator}>
+            <View style={styles.stepNumber}><ThemedText style={styles.stepNumberText}>3</ThemedText></View>
+            <ThemedText style={styles.fieldLabel}>Yil</ThemedText>
+          </View>
+          <QuickPicker
+            label="Model Yili"
+            placeholder="Yil secin"
+            options={yearOptions}
+            selected={year}
+            onSelect={setYear}
+          />
+        </View>
+
+        <View style={styles.formSection}>
+          <View style={styles.stepIndicator}>
+            <View style={styles.stepNumber}><ThemedText style={styles.stepNumberText}>4</ThemedText></View>
+            <ThemedText style={styles.fieldLabel}>Kategori</ThemedText>
+          </View>
+          <View style={styles.categoryGrid}>
+            {CATEGORIES.map((cat) => (
+              <Pressable
+                key={cat.id}
+                style={[
+                  styles.categoryCard,
+                  category === cat.id && styles.categoryCardSelected,
+                ]}
+                onPress={() => {
+                  Haptics.selectionAsync();
+                  setCategory(cat.id);
+                }}
+              >
+                <Feather 
+                  name={cat.icon as any} 
+                  size={20} 
+                  color={category === cat.id ? "#FFFFFF" : "#000000"} 
+                />
+                <ThemedText 
+                  style={[
+                    styles.categoryText,
+                    category === cat.id && styles.categoryTextSelected,
+                  ]}
+                >
+                  {cat.name}
+                </ThemedText>
+              </Pressable>
+            ))}
           </View>
         </View>
-
-        <ThemedText style={styles.sectionTitle}>Yakit</ThemedText>
-        <ChipSelect options={FUEL_TYPES} selected={fuelType} onSelect={setFuelType} />
-
-        <ThemedText style={styles.sectionTitle}>Vites</ThemedText>
-        <ChipSelect options={TRANSMISSIONS} selected={transmission} onSelect={setTransmission} />
-
-        <ThemedText style={styles.sectionTitle}>Takas Tercihi</ThemedText>
-        <View style={styles.toggleContainer}>
-          <Pressable
-            style={[
-              styles.toggleButton,
-              onlySwap && styles.toggleButtonSelected,
-            ]}
-            onPress={() => {
-              Haptics.selectionAsync();
-              setOnlySwap(true);
-            }}
-          >
-            <ThemedText style={[styles.toggleText, onlySwap && styles.toggleTextSelected]}>
-              Sadece Takas
-            </ThemedText>
-          </Pressable>
-          <Pressable
-            style={[
-              styles.toggleButton,
-              !onlySwap && styles.toggleButtonSelected,
-            ]}
-            onPress={() => {
-              Haptics.selectionAsync();
-              setOnlySwap(false);
-            }}
-          >
-            <ThemedText style={[styles.toggleText, !onlySwap && styles.toggleTextSelected]}>
-              Takas + Nakit
-            </ThemedText>
-          </Pressable>
-        </View>
-
-        <ThemedText style={styles.sectionTitle}>Kabul Ettigim Markalar</ThemedText>
-        <ChipSelect
-          options={BRANDS}
-          selected={preferredBrands}
-          onSelect={handlePreferredBrandToggle}
-          multiSelect
-        />
 
         <Pressable
           style={({ pressed }) => [
@@ -348,12 +408,26 @@ export default function QuickCreateListingScreen() {
           {createMutation.isPending ? (
             <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <ThemedText style={styles.submitButtonText}>Ilani Yayinla</ThemedText>
+            <>
+              <Feather name="zap" size={20} color="#FFFFFF" />
+              <ThemedText style={styles.submitButtonText}>Yayinla</ThemedText>
+            </>
           )}
         </Pressable>
-      </KeyboardAwareScrollViewCompat>
 
-      <BottomTabBar />
+        <Pressable
+          style={styles.detailedButton}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            navigation.navigate("CreateListing");
+          }}
+        >
+          <ThemedText style={styles.detailedButtonText}>
+            Detayli ilan olustur
+          </ThemedText>
+          <Feather name="arrow-right" size={16} color="#6B7280" />
+        </Pressable>
+      </KeyboardAwareScrollViewCompat>
     </View>
   );
 }
@@ -363,79 +437,138 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
   },
+  header: {
+    backgroundColor: "#000000",
+  },
+  headerContent: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "flex-end",
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.md,
+  },
+  backButton: {
+    marginRight: Spacing.md,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
   content: {
     paddingHorizontal: Spacing.lg,
   },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#000000",
+  heroSection: {
     marginTop: Spacing.lg,
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.md,
   },
-  photosContainer: {
+  heroTitle: {
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#000000",
+    marginBottom: 4,
+  },
+  heroSubtitle: {
+    fontSize: 14,
+    color: "#6B7280",
+  },
+  photoSection: {
+    marginBottom: Spacing.md,
+  },
+  photoButtons: {
     flexDirection: "row",
-    flexWrap: "wrap",
     gap: Spacing.sm,
   },
-  photoWrapper: {
-    width: 80,
+  photoButton: {
+    flex: 1,
     height: 80,
-    borderRadius: BorderRadius.sm,
-    overflow: "hidden",
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    backgroundColor: "#F9FAFB",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 4,
   },
-  photo: {
+  photoButtonText: {
+    fontSize: 12,
+    color: "#374151",
+    fontWeight: "500",
+  },
+  photoPreview: {
+    height: 160,
+    borderRadius: BorderRadius.md,
+    overflow: "hidden",
+    backgroundColor: "#F3F4F6",
+  },
+  photoImage: {
     width: "100%",
     height: "100%",
   },
   removePhotoButton: {
     position: "absolute",
-    top: 4,
-    right: 4,
+    top: Spacing.sm,
+    right: Spacing.sm,
     backgroundColor: "rgba(0,0,0,0.6)",
     borderRadius: BorderRadius.full,
-    padding: 4,
+    padding: 6,
   },
-  addPhotoButton: {
-    width: 80,
-    height: 80,
-    borderRadius: BorderRadius.sm,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 2,
-    borderStyle: "dashed",
-    borderColor: "#E5E7EB",
-    backgroundColor: "#F9FAFB",
+  optionalText: {
+    fontSize: 11,
+    color: "#9CA3AF",
+    marginTop: Spacing.xs,
+    textAlign: "center",
   },
-  addPhotoText: {
-    fontSize: 12,
-    color: "#6B7280",
-    marginTop: 4,
+  formSection: {
+    marginBottom: Spacing.md,
   },
-  chipContainer: {
+  stepIndicator: {
     flexDirection: "row",
-    flexWrap: "wrap",
+    alignItems: "center",
+    marginBottom: Spacing.sm,
     gap: Spacing.sm,
   },
-  chip: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.full,
-    backgroundColor: "#F3F4F6",
-  },
-  chipSelected: {
+  stepNumber: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: "#000000",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  chipText: {
+  stepNumberText: {
     fontSize: 13,
-    color: "#374151",
-  },
-  chipTextSelected: {
+    fontWeight: "700",
     color: "#FFFFFF",
-    fontWeight: "600",
   },
-  input: {
-    height: 48,
+  fieldLabel: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#000000",
+  },
+  pickerButton: {
+    height: 52,
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.md,
+    backgroundColor: "#F9FAFB",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  pickerButtonSelected: {
+    borderColor: "#000000",
+  },
+  pickerText: {
+    fontSize: 16,
+    color: "#000000",
+  },
+  pickerPlaceholder: {
+    color: "#9CA3AF",
+  },
+  textInput: {
+    height: 52,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     fontSize: 16,
@@ -444,33 +577,34 @@ const styles = StyleSheet.create({
     borderColor: "#E5E7EB",
     color: "#000000",
   },
-  row: {
+  categoryGrid: {
     flexDirection: "row",
-    gap: Spacing.md,
-  },
-  halfInput: {
-    flex: 1,
-  },
-  toggleContainer: {
-    flexDirection: "row",
+    flexWrap: "wrap",
     gap: Spacing.sm,
   },
-  toggleButton: {
-    flex: 1,
+  categoryCard: {
+    width: "48%",
     paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.sm,
     borderRadius: BorderRadius.md,
+    backgroundColor: "#F9FAFB",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F3F4F6",
+    justifyContent: "center",
+    gap: Spacing.xs,
   },
-  toggleButtonSelected: {
+  categoryCardSelected: {
     backgroundColor: "#000000",
+    borderColor: "#000000",
   },
-  toggleText: {
-    fontSize: 14,
+  categoryText: {
+    fontSize: 13,
     fontWeight: "500",
-    color: "#374151",
+    color: "#000000",
   },
-  toggleTextSelected: {
+  categoryTextSelected: {
     color: "#FFFFFF",
   },
   submitButton: {
@@ -478,59 +612,81 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
     alignItems: "center",
-    marginTop: Spacing.xl,
+    justifyContent: "center",
+    flexDirection: "row",
+    gap: Spacing.sm,
+    marginTop: Spacing.sm,
   },
   submitButtonDisabled: {
-    opacity: 0.5,
+    opacity: 0.4,
   },
   submitButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 17,
+    fontWeight: "700",
     color: "#FFFFFF",
   },
-  tabBar: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: Platform.OS === "ios" ? "transparent" : "#FFFFFF",
-    borderTopWidth: 0,
-  },
-  tabBarContent: {
+  detailedButton: {
     flexDirection: "row",
-    height: 60,
-    alignItems: "center",
-    justifyContent: "space-around",
-    paddingHorizontal: Spacing.sm,
-  },
-  tabItem: {
-    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 8,
+    paddingVertical: Spacing.md,
+    gap: Spacing.xs,
   },
-  tabItemCenter: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  tabLabel: {
-    fontSize: 11,
+  detailedButtonText: {
+    fontSize: 14,
     color: "#6B7280",
-    marginTop: 2,
   },
-  createButtonActive: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "#000000",
-    justifyContent: "center",
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
+  modalHeader: {
+    flexDirection: "row",
     alignItems: "center",
-    marginTop: -20,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 8,
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#000000",
+  },
+  modalSearchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: Spacing.lg,
+    marginVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    height: 44,
+    borderRadius: BorderRadius.md,
+    backgroundColor: "#F3F4F6",
+    gap: Spacing.sm,
+  },
+  modalSearchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: "#000000",
+  },
+  optionItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6",
+  },
+  optionItemSelected: {
+    backgroundColor: "#F9FAFB",
+  },
+  optionText: {
+    fontSize: 16,
+    color: "#000000",
+  },
+  optionTextSelected: {
+    fontWeight: "600",
   },
 });
