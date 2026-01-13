@@ -339,9 +339,6 @@ export default function MatchScreen() {
             <ThemedText style={styles.headerLocation}>Istanbul, TR</ThemedText>
           </View>
         </View>
-        <Pressable style={styles.filterButton}>
-          <Feather name="sliders" size={20} color="#000000" />
-        </Pressable>
       </View>
 
       {isLoading ? (
@@ -430,12 +427,14 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: Spacing.xl,
+    marginTop: Spacing.md,
     marginBottom: Spacing.sm,
   },
   headerLeft: {
+    alignItems: "center",
     gap: 4,
   },
   headerTitle: {
