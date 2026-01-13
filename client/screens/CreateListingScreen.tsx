@@ -11,6 +11,7 @@ import {
   Dimensions,
   Modal,
   FlatList,
+  Text,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -897,12 +898,12 @@ export default function CreateListingScreen() {
         <View style={styles.headerContent}>
           <Pressable 
             onPress={() => navigation.goBack()} 
-            style={styles.headerBackButton}
+            style={styles.backButton}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <Feather name="x" size={24} color="#FFFFFF" />
           </Pressable>
-          <ThemedText style={styles.headerTitle}>Detayli Ilan</ThemedText>
+          <Text style={styles.headerTitle}>Detayli Ilan</Text>
         </View>
       </View>
 
@@ -917,7 +918,7 @@ export default function CreateListingScreen() {
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + Spacing.md }]}>
         {currentStep > 1 ? (
-          <Pressable style={styles.backButton} onPress={prevStep}>
+          <Pressable style={styles.footerBackButton} onPress={prevStep}>
             <Feather name="arrow-left" size={20} color="#000000" />
           </Pressable>
         ) : null}
@@ -966,7 +967,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.md,
   },
-  headerBackButton: {
+  backButton: {
     marginRight: Spacing.md,
   },
   headerTitle: {
@@ -1271,7 +1272,7 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.md,
     backgroundColor: "#FFFFFF",
   },
-  backButton: {
+  footerBackButton: {
     width: 52,
     height: 52,
     alignItems: "center",
