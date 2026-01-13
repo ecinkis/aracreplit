@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRoute, useNavigation, RouteProp, NavigationProp } from "@react-navigation/native";
-import { HeaderButton } from "@react-navigation/elements";
+import { HeaderButton, useHeaderHeight } from "@react-navigation/elements";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -49,6 +49,7 @@ function SpecItem({ icon, label, value }: { icon: string; label: string; value: 
 
 export default function ListingDetailScreen() {
   const insets = useSafeAreaInsets();
+  const headerHeight = useHeaderHeight();
   const route = useRoute<ListingDetailRouteProp>();
   const navigation = useNavigation<ListingDetailNavigationProp>();
   const { theme } = useTheme();
@@ -228,7 +229,7 @@ export default function ListingDetailScreen() {
   return (
     <View style={[styles.container, { backgroundColor: "#FFFFFF" }]}>
       <ScrollView
-        contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.xl }}
+        contentContainerStyle={{ paddingTop: headerHeight, paddingBottom: insets.bottom + Spacing.xl }}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.imageContainer}>
