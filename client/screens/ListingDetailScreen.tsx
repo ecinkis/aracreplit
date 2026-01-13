@@ -497,39 +497,20 @@ export default function ListingDetailScreen() {
                 )}
               </View>
               <Pressable
-                style={[styles.messageButton, { backgroundColor: BrandColors.primaryBlue }]}
-                onPress={async () => {
+                style={[styles.messageButton, { backgroundColor: "#25D366" }]}
+                onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  if (!user?.id || !listingUser?.id || !listing?.id) {
-                    Alert.alert("Hata", "Mesaj göndermek için giriş yapmanız gerekiyor.");
-                    return;
-                  }
-                  try {
-                    const response = await fetch(
-                      new URL("/api/conversations/start", getApiUrl()).toString(),
-                      {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          fromUserId: user.id,
-                          toUserId: listingUser.id,
-                          listingId: listing.id,
-                        }),
-                      }
-                    );
-                    if (!response.ok) throw new Error("Failed to start conversation");
-                    const { match } = await response.json();
-                    navigation.navigate("Chat", {
-                      matchId: match.id,
-                      otherUserName: listingUser.name || "İlan Sahibi",
-                    });
-                  } catch (error) {
-                    Alert.alert("Hata", "Mesaj başlatılamadı. Lütfen tekrar deneyin.");
+                  if (listingUser?.phone) {
+                    const phoneNumber = listingUser.phone.replace(/\D/g, "");
+                    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(`Merhaba, ${listing.brand} ${listing.model} ilanınızla ilgileniyorum.`)}`;
+                    Linking.openURL(whatsappUrl);
+                  } else {
+                    Alert.alert("Bilgi", "Satıcının telefon numarası bulunamadı.");
                   }
                 }}
               >
                 <Feather name="message-circle" size={18} color="#FFFFFF" />
-                <ThemedText style={styles.messageButtonText}>Mesaj</ThemedText>
+                <ThemedText style={styles.messageButtonText}>WhatsApp</ThemedText>
               </Pressable>
             </View>
           )}
@@ -796,7 +777,7 @@ export default function ListingDetailScreen() {
               }
             }}
           >
-            <Feather name="phone" size={20} color={BrandColors.primaryBlue} />
+            <Feather name="phone" size={20} color="#000000" />
             <ThemedText style={styles.footerButtonText}>Ara</ThemedText>
           </Pressable>
 
@@ -843,7 +824,7 @@ export default function ListingDetailScreen() {
               }
             }}
           >
-            <Feather name="message-circle" size={20} color={BrandColors.primaryBlue} />
+            <Feather name="message-circle" size={20} color="#000000" />
             <ThemedText style={styles.footerButtonText}>Mesaj</ThemedText>
           </Pressable>
         </View>
