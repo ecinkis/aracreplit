@@ -307,6 +307,34 @@ export const insertStorySchema = createInsertSchema(stories).omit({
   viewCount: true,
 });
 
+export const verificationDocuments = pgTable("verification_documents", {
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  documentType: text("document_type").notNull(), // 'tax_certificate', 'identity', 'company_registration'
+  documentUrl: text("document_url").notNull(),
+  status: text("status").default("pending"), // 'pending', 'approved', 'rejected'
+  rejectionReason: text("rejection_reason"),
+  reviewedAt: timestamp("reviewed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const verificationDocumentsRelations = relations(verificationDocuments, ({ one }) => ({
+  user: one(users, {
+    fields: [verificationDocuments.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertVerificationDocumentSchema = createInsertSchema(verificationDocuments).omit({
+  id: true,
+  createdAt: true,
+  status: true,
+  reviewedAt: true,
+  rejectionReason: true,
+});
+
 export const adminUsers = pgTable("admin_users", {
   id: varchar("id")
     .primaryKey()
@@ -370,3 +398,5 @@ export type Story = typeof stories.$inferSelect;
 export type InsertStory = z.infer<typeof insertStorySchema>;
 export type AdminUser = typeof adminUsers.$inferSelect;
 export type InsertAdminUser = z.infer<typeof insertAdminUserSchema>;
+export type VerificationDocument = typeof verificationDocuments.$inferSelect;
+export type InsertVerificationDocument = z.infer<typeof insertVerificationDocumentSchema>;
