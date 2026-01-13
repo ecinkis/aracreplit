@@ -202,6 +202,11 @@ export default function MainTabNavigator() {
             tabBarIcon: ({ color, size }) => (
               <Feather name="home" size={size} color={color} />
             ),
+            headerRight: () => (
+              <ThemedText style={{ color: "#FFFFFF", fontSize: 11, marginRight: 16, fontStyle: "italic" }}>
+                "Yeni nesil ilan sistemi"
+              </ThemedText>
+            ),
           }}
         />
         <Tab.Screen
