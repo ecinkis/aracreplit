@@ -653,8 +653,8 @@ const styles = StyleSheet.create({
   },
   tipSection: {
     alignItems: "center",
-    marginTop: Spacing.lg,
-    marginBottom: Spacing.md,
+    marginTop: Spacing.xs,
+    marginBottom: Spacing.sm,
   },
   tipText: {
     fontSize: 11,
