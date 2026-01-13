@@ -119,12 +119,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
     paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.sm,
   },
   searchRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
+    marginTop: Spacing.sm,
     marginBottom: Spacing.lg,
   },
   searchContainer: {

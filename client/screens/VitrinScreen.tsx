@@ -182,7 +182,6 @@ export default function VitrinScreen() {
 
   const ListHeader = () => (
     <View style={styles.headerContent}>
-      <View style={styles.titleSpacer} />
       <View style={styles.searchContainer}>
         <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
         <TextInput
@@ -377,9 +376,6 @@ const styles = StyleSheet.create({
   headerContent: {
     marginBottom: Spacing.lg,
   },
-  titleSpacer: {
-    height: 44,
-  },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -388,7 +384,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E5E7EB",
     paddingHorizontal: Spacing.md,
-    height: 44,
+    height: 48,
+    marginTop: Spacing.sm,
     marginBottom: Spacing.lg,
   },
   searchIcon: {
