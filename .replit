@@ -77,3 +77,4 @@ ensurePreviewReachable = "/status"
 [userenv]
 
 [userenv.shared]
+EXPO_PUBLIC_GOOGLE_CLIENT_ID = "360159178570-hrbubqqs9ihul2tdv0l55cuue5kvoimf.apps.googleusercontent.com"
