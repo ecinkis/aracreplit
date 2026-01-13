@@ -174,7 +174,18 @@ export default function MainTabNavigator() {
                 style={StyleSheet.absoluteFill}
               />
             ) : null,
-          headerShown: false,
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#000000",
+            height: 110,
+          },
+          headerTitleStyle: {
+            color: "#FFFFFF",
+            fontSize: 20,
+            fontWeight: "600",
+          },
+          headerTitleAlign: "left",
+          headerShadowVisible: false,
           tabBarLabelStyle: {
             fontSize: 11,
             fontWeight: "500",
@@ -185,7 +196,9 @@ export default function MainTabNavigator() {
           name="VitrinTab"
           component={VitrinScreen}
           options={{
-            title: "vitrin",
+            title: "Vitrin",
+            headerTitle: "Vitrin",
+            tabBarLabel: "vitrin",
             tabBarIcon: ({ color, size }) => (
               <Feather name="home" size={size} color={color} />
             ),
@@ -195,9 +208,23 @@ export default function MainTabNavigator() {
           name="SearchTab"
           component={SearchScreen}
           options={{
-            title: "arama",
+            title: "Ara",
+            headerTitle: "Ara",
+            tabBarLabel: "arama",
             tabBarIcon: ({ color, size }) => (
               <Feather name="search" size={size} color={color} />
+            ),
+            headerRight: () => (
+              <Pressable
+                style={{ flexDirection: "row", alignItems: "center", gap: 6, marginRight: 16 }}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  navigation.navigate("Compare");
+                }}
+              >
+                <Feather name="columns" size={18} color="#FFFFFF" />
+                <ThemedText style={{ color: "#FFFFFF", fontSize: 14, fontWeight: "500" }}>Karsilastir</ThemedText>
+              </Pressable>
             ),
           }}
         />
@@ -226,7 +253,9 @@ export default function MainTabNavigator() {
           name="MatchTab"
           component={MatchScreen}
           options={{
-            title: "esles",
+            title: "Eşleş",
+            headerTitle: "Eşleş",
+            tabBarLabel: "eşleş",
             tabBarIcon: ({ color, size }) => (
               <Feather name="layers" size={size} color={color} />
             ),
@@ -236,9 +265,31 @@ export default function MainTabNavigator() {
           name="ProfileTab"
           component={ProfileScreen}
           options={{
-            title: "profil",
+            title: "Profil",
+            headerTitle: "Profil",
+            tabBarLabel: "profil",
             tabBarIcon: ({ color, size }) => (
               <Feather name="user" size={size} color={color} />
+            ),
+            headerRight: () => (
+              <View style={{ flexDirection: "row", gap: 16, marginRight: 16 }}>
+                <Pressable
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    navigation.navigate("Notifications");
+                  }}
+                >
+                  <Feather name="bell" size={22} color="#FFFFFF" />
+                </Pressable>
+                <Pressable
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    navigation.navigate("Settings");
+                  }}
+                >
+                  <Feather name="settings" size={22} color="#FFFFFF" />
+                </Pressable>
+              </View>
             ),
           }}
         />

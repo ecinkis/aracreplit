@@ -192,37 +192,6 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + Spacing.sm }]}>
-        <ThemedText style={styles.headerTitle}>Profil</ThemedText>
-        <View style={styles.headerActions}>
-          <Pressable
-            style={({ pressed }) => [styles.headerButton, pressed && { opacity: 0.7 }]}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              navigation.navigate("Notifications");
-            }}
-          >
-            <Feather name="bell" size={22} color="#000000" />
-            {unreadCount > 0 && (
-              <View style={styles.notificationBadge}>
-                <ThemedText style={styles.notificationBadgeText}>
-                  {unreadCount > 9 ? "9+" : unreadCount}
-                </ThemedText>
-              </View>
-            )}
-          </Pressable>
-          <Pressable
-            style={({ pressed }) => [styles.headerButton, pressed && { opacity: 0.7 }]}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              navigation.navigate("Settings");
-            }}
-          >
-            <Feather name="settings" size={22} color="#000000" />
-          </Pressable>
-        </View>
-      </View>
-
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 100 }]}
         showsVerticalScrollIndicator={false}

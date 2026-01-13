@@ -82,21 +82,7 @@ export default function SearchScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + Spacing.md }]}>
-      <View style={styles.headerRow}>
-        <ThemedText style={styles.headerTitle}>Ara</ThemedText>
-        <Pressable
-          style={({ pressed }) => [styles.compareButton, pressed && { opacity: 0.7 }]}
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            navigation.navigate("Compare");
-          }}
-        >
-          <Feather name="columns" size={18} color={BrandColors.primaryBlue} />
-          <ThemedText style={styles.compareButtonText}>Karsilastir</ThemedText>
-        </Pressable>
-      </View>
-
+    <View style={[styles.container, { paddingTop: Spacing.md }]}>
       <View style={styles.searchRow}>
         <View style={styles.searchContainer}>
           <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
