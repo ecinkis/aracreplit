@@ -894,7 +894,7 @@ export default function CreateListingScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, { height: HEADER_HEIGHT + insets.top, paddingTop: insets.top }]} />
+      <View style={{ height: insets.top, backgroundColor: "#FFFFFF" }} />
 
       <StepIndicator currentStep={currentStep} totalSteps={STEPS.length} />
 
