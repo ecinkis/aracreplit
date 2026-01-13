@@ -1257,7 +1257,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   footerButtonPrimary: {
-    backgroundColor: BrandColors.primaryBlue,
+    backgroundColor: "#000000",
     borderRadius: BorderRadius.sm,
   },
   footerButtonText: {
