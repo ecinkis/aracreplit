@@ -229,7 +229,7 @@ export default function VitrinScreen() {
         <View style={styles.featuredSection}>
           <View style={styles.featuredHeader}>
             <View style={styles.featuredTitleRow}>
-              <Feather name="star" size={18} color="#FFD700" />
+              <Feather name="star" size={18} color="#000000" />
               <ThemedText style={styles.featuredTitle}>Vitrin İlanları</ThemedText>
             </View>
             <ThemedText style={styles.featuredSubtitle}>Öne çıkan araçlar</ThemedText>
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginRight: Spacing.sm,
     borderWidth: 2,
-    borderColor: "#FFD700",
+    borderColor: "#000000",
   },
   featuredBadge: {
     position: "absolute",
@@ -560,7 +560,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: "#FFD700",
+    backgroundColor: "#000000",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: BorderRadius.full,
