@@ -13,6 +13,9 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
+import * as AppleAuthentication from "expo-apple-authentication";
+import * as AuthSession from "expo-auth-session";
+import * as WebBrowser from "expo-web-browser";
 import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,6 +23,8 @@ import { Spacing, BorderRadius } from "@/constants/theme";
 import appIcon from "../assets/images/icon.png";
 import googleLogo from "../assets/images/google-logo.png";
 import appleLogo from "../assets/images/apple-logo.png";
+
+WebBrowser.maybeCompleteAuthSession();
 
 type AuthMode = "login" | "register" | "verify" | "profile" | "forgotPassword" | "forgotVerify";
 type LoginTab = "phone" | "email";
@@ -30,7 +35,7 @@ const RESEND_TIMER = 60;
 
 export default function AuthScreen() {
   const insets = useSafeAreaInsets();
-  const { login } = useAuth();
+  const { login, loginWithApple, loginWithGoogle } = useAuth();
   const [mode, setMode] = useState<AuthMode>("login");
   const [loginTab, setLoginTab] = useState<LoginTab>("phone");
   const [forgotTab, setForgotTab] = useState<ForgotTab>("email");
@@ -214,9 +219,84 @@ export default function AuthScreen() {
     }
   };
 
-  const handleSocialLogin = (provider: "google" | "apple") => {
+  const handleAppleLogin = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    Alert.alert("Bilgi", `${provider === "google" ? "Google" : "Apple"} ile giriş yakında eklenecek`);
+    setIsLoading(true);
+    
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+      
+      const fullNameStr = credential.fullName 
+        ? `${credential.fullName.givenName || ""} ${credential.fullName.familyName || ""}`.trim()
+        : undefined;
+      
+      await loginWithApple(credential.user, credential.email || undefined, fullNameStr || undefined);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (error: any) {
+      if (error.code === "ERR_REQUEST_CANCELED") {
+        return;
+      }
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert("Hata", "Apple ile giriş yapılırken bir hata oluştu.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    
+    if (Platform.OS === "web") {
+      Alert.alert("Bilgi", "Google ile giriş mobil uygulamada kullanılabilir. Lütfen Expo Go ile deneyin.");
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      const redirectUri = AuthSession.makeRedirectUri({
+        scheme: "com.takasapp.app",
+        path: "auth",
+      });
+      
+      const discovery = {
+        authorizationEndpoint: "https://accounts.google.com/o/oauth2/v2/auth",
+        tokenEndpoint: "https://oauth2.googleapis.com/token",
+      };
+      
+      const request = new AuthSession.AuthRequest({
+        clientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || "",
+        scopes: ["openid", "profile", "email"],
+        redirectUri,
+        responseType: AuthSession.ResponseType.Token,
+      });
+      
+      const result = await request.promptAsync(discovery);
+      
+      if (result.type === "success" && result.authentication?.accessToken) {
+        const userInfoResponse = await fetch(
+          "https://www.googleapis.com/oauth2/v3/userinfo",
+          {
+            headers: { Authorization: `Bearer ${result.authentication.accessToken}` },
+          }
+        );
+        const userInfo = await userInfoResponse.json();
+        
+        await loginWithGoogle(userInfo.sub, userInfo.email, userInfo.name, userInfo.picture);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert("Hata", "Google ile giriş yapılırken bir hata oluştu.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const resetToLogin = () => {
@@ -653,10 +733,10 @@ export default function AuthScreen() {
               </Pressable>
 
               <View style={styles.socialContainer}>
-                <Pressable style={styles.socialButton} onPress={() => handleSocialLogin("google")}>
+                <Pressable style={styles.socialButton} onPress={() => handleGoogleLogin()}>
                   <Image source={googleLogo} style={styles.socialLogo} resizeMode="contain" />
                 </Pressable>
-                <Pressable style={styles.socialButton} onPress={() => handleSocialLogin("apple")}>
+                <Pressable style={styles.socialButton} onPress={() => handleAppleLogin()}>
                   <Image source={appleLogo} style={styles.socialLogo} resizeMode="contain" />
                 </Pressable>
               </View>
@@ -777,10 +857,10 @@ export default function AuthScreen() {
             </View>
 
             <View style={styles.socialContainer}>
-              <Pressable style={styles.socialButton} onPress={() => handleSocialLogin("google")}>
+              <Pressable style={styles.socialButton} onPress={() => handleGoogleLogin()}>
                 <Image source={googleLogo} style={styles.socialLogo} resizeMode="contain" />
               </Pressable>
-              <Pressable style={styles.socialButton} onPress={() => handleSocialLogin("apple")}>
+              <Pressable style={styles.socialButton} onPress={() => handleAppleLogin()}>
                 <Image source={appleLogo} style={styles.socialLogo} resizeMode="contain" />
               </Pressable>
             </View>
