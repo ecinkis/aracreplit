@@ -894,8 +894,6 @@ export default function CreateListingScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={{ height: insets.top, backgroundColor: "#FFFFFF" }} />
-
       <StepIndicator currentStep={currentStep} totalSteps={STEPS.length} />
 
       <KeyboardAwareScrollViewCompat
