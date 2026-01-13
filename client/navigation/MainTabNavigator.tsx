@@ -47,17 +47,11 @@ function CreateMenuModal({
   if (!visible) return null;
 
   return (
-    <Modal transparent visible={visible} animationType="none" onRequestClose={onClose}>
+    <Modal transparent visible={visible} animationType="slide" onRequestClose={onClose}>
       <Pressable style={styles.modalOverlay} onPress={onClose}>
-        <Animated.View 
-          entering={FadeIn.duration(200)}
-          exiting={FadeOut.duration(150)}
-          style={StyleSheet.absoluteFill}
-        />
+        <View style={StyleSheet.absoluteFill} />
       </Pressable>
-      <Animated.View 
-        entering={SlideInDown.springify().damping(18).stiffness(120)}
-        exiting={SlideOutDown.duration(200)}
+      <View 
         style={[
           styles.bottomSheet,
           { paddingBottom: insets.bottom + Spacing.lg }
@@ -123,7 +117,7 @@ function CreateMenuModal({
             <Feather name="chevron-right" size={24} color="#9CA3AF" />
           </Pressable>
         </View>
-      </Animated.View>
+      </View>
     </Modal>
   );
 }
