@@ -277,6 +277,7 @@ export default function VitrinScreen() {
 
       <View style={styles.allListingsHeader}>
         <ThemedText style={styles.allListingsTitle}>Tüm İlanlar</ThemedText>
+        <ThemedText style={styles.allListingsSubtitle}>En güncel araç ilanları</ThemedText>
       </View>
     </View>
   );
@@ -607,6 +608,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     color: "#000000",
+  },
+  allListingsSubtitle: {
+    fontSize: 12,
+    color: "#6B7280",
+    marginTop: 2,
   },
   storyModalOverlay: {
     flex: 1,
