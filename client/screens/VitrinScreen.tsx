@@ -189,31 +189,6 @@ export default function VitrinScreen() {
 
   const ListHeader = () => (
     <View style={styles.headerContent}>
-      <View style={styles.searchRow}>
-        <View style={styles.searchContainer}>
-          <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchInput}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Kelime veya ilan No. ile ara"
-            placeholderTextColor="#9CA3AF"
-            returnKeyType="search"
-            onSubmitEditing={handleSearch}
-          />
-          {searchQuery.length > 0 ? (
-            <Pressable onPress={() => setSearchQuery("")}>
-              <Feather name="x" size={18} color="#9CA3AF" />
-            </Pressable>
-          ) : null}
-        </View>
-        {searchQuery.length > 0 ? (
-          <Pressable style={styles.searchButton} onPress={handleSearch}>
-            <ThemedText style={styles.searchButtonText}>Ara</ThemedText>
-          </Pressable>
-        ) : null}
-      </View>
-
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -307,6 +282,30 @@ export default function VitrinScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: 0 }]}>
+      <View style={[styles.searchRow, { marginHorizontal: Spacing.lg }]}>
+        <View style={styles.searchContainer}>
+          <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Kelime veya ilan No. ile ara"
+            placeholderTextColor="#9CA3AF"
+            returnKeyType="search"
+            onSubmitEditing={handleSearch}
+          />
+          {searchQuery.length > 0 ? (
+            <Pressable onPress={() => setSearchQuery("")}>
+              <Feather name="x" size={18} color="#9CA3AF" />
+            </Pressable>
+          ) : null}
+        </View>
+        {searchQuery.length > 0 ? (
+          <Pressable style={styles.searchButton} onPress={handleSearch}>
+            <ThemedText style={styles.searchButtonText}>Ara</ThemedText>
+          </Pressable>
+        ) : null}
+      </View>
       {isLoading ? (
         <LoadingState />
       ) : (
