@@ -902,7 +902,7 @@ export default function CreateListingScreen() {
           >
             <Feather name="x" size={24} color="#FFFFFF" />
           </Pressable>
-          <ThemedText style={styles.headerTitle}>{STEPS[currentStep - 1].title}</ThemedText>
+          <ThemedText style={styles.headerTitle}>Detayli Ilan</ThemedText>
         </View>
       </View>
 
