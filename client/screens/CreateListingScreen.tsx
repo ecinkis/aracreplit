@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -250,6 +250,7 @@ export default function CreateListingScreen() {
   const { theme } = useTheme();
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const scrollRef = useRef<ScrollView>(null);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [photos, setPhotos] = useState<string[]>([]);
@@ -388,12 +389,14 @@ export default function CreateListingScreen() {
     if (validateStep(currentStep)) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       setCurrentStep(currentStep + 1);
+      scrollRef.current?.scrollTo({ y: 0, animated: false });
     }
   };
 
   const prevStep = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setCurrentStep(currentStep - 1);
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
   };
 
   const [isUploading, setIsUploading] = useState(false);
@@ -910,6 +913,7 @@ export default function CreateListingScreen() {
       <StepIndicator currentStep={currentStep} totalSteps={STEPS.length} />
 
       <KeyboardAwareScrollViewCompat
+        ref={scrollRef}
         contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }]}
         showsVerticalScrollIndicator={false}
       >
