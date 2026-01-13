@@ -93,51 +93,66 @@ export default function BrandListScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchRow}>
-        <View style={styles.searchContainer}>
-          <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchInput}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Marka ara..."
-            placeholderTextColor="#9CA3AF"
-            testID="input-brand-search"
-          />
-          {searchQuery.length > 0 ? (
-            <Pressable onPress={() => setSearchQuery("")} testID="button-clear-brand-search">
-              <Feather name="x" size={18} color="#9CA3AF" />
-            </Pressable>
-          ) : null}
+      <View style={[styles.header, { paddingTop: insets.top }]}>
+        <View style={styles.headerContent}>
+          <Pressable 
+            onPress={() => navigation.goBack()} 
+            style={styles.backButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Feather name="arrow-left" size={24} color="#FFFFFF" />
+          </Pressable>
+          <ThemedText style={styles.headerTitle}>{categoryName}</ThemedText>
         </View>
       </View>
 
-      <ScrollView
-        contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + Spacing.xl }]}
-        showsVerticalScrollIndicator={false}
-      >
-        {filteredBrands.map((brand) => (
-          <Pressable
-            key={brand.id}
-            style={({ pressed }) => [
-              styles.brandRow,
-              pressed && styles.brandRowPressed,
-            ]}
-            onPress={() => handleBrandPress(brand.id, brand.name)}
-            testID={`row-brand-${brand.id}`}
-          >
-            <ThemedText style={styles.brandName}>{brand.name}</ThemedText>
-            <Feather name="chevron-right" size={20} color="#9CA3AF" />
-          </Pressable>
-        ))}
-
-        {filteredBrands.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Feather name="inbox" size={48} color="#9CA3AF" />
-            <ThemedText style={styles.emptyText}>Marka bulunamadı</ThemedText>
+      <View style={styles.content}>
+        <View style={styles.searchRow}>
+          <View style={styles.searchContainer}>
+            <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
+            <TextInput
+              style={styles.searchInput}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder="Marka ara..."
+              placeholderTextColor="#9CA3AF"
+              testID="input-brand-search"
+            />
+            {searchQuery.length > 0 ? (
+              <Pressable onPress={() => setSearchQuery("")} testID="button-clear-brand-search">
+                <Feather name="x" size={18} color="#9CA3AF" />
+              </Pressable>
+            ) : null}
           </View>
-        ) : null}
-      </ScrollView>
+        </View>
+
+        <ScrollView
+          contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + Spacing.xl }]}
+          showsVerticalScrollIndicator={false}
+        >
+          {filteredBrands.map((brand) => (
+            <Pressable
+              key={brand.id}
+              style={({ pressed }) => [
+                styles.brandRow,
+                pressed && styles.brandRowPressed,
+              ]}
+              onPress={() => handleBrandPress(brand.id, brand.name)}
+              testID={`row-brand-${brand.id}`}
+            >
+              <ThemedText style={styles.brandName}>{brand.name}</ThemedText>
+              <Feather name="chevron-right" size={20} color="#9CA3AF" />
+            </Pressable>
+          ))}
+
+          {filteredBrands.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Feather name="inbox" size={48} color="#9CA3AF" />
+              <ThemedText style={styles.emptyText}>Marka bulunamadı</ThemedText>
+            </View>
+          ) : null}
+        </ScrollView>
+      </View>
     </View>
   );
 }
@@ -146,13 +161,34 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
+  },
+  header: {
+    backgroundColor: "#000000",
+    paddingBottom: Spacing.lg,
+  },
+  headerContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
+  },
+  backButton: {
+    marginRight: Spacing.md,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  content: {
+    flex: 1,
     paddingHorizontal: Spacing.lg,
   },
   searchRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
-    paddingTop: Spacing.sm,
+    marginTop: Spacing.sm,
     marginBottom: Spacing.md,
   },
   searchContainer: {

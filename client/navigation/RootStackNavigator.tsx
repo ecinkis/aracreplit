@@ -177,35 +177,17 @@ export default function RootStackNavigator() {
           <Stack.Screen
             name="BrandList"
             component={BrandListScreen}
-            options={({ route }) => ({
-              headerTitle: route.params.categoryName,
-              headerStyle: { backgroundColor: "#000000" },
-              headerTitleStyle: { color: "#FFFFFF", fontSize: 20, fontWeight: "600" },
-              headerTintColor: "#FFFFFF",
-              headerShadowVisible: false,
-            })}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="ModelList"
             component={ModelListScreen}
-            options={({ route }) => ({
-              headerTitle: route.params.brandName,
-              headerStyle: { backgroundColor: "#000000" },
-              headerTitleStyle: { color: "#FFFFFF", fontSize: 20, fontWeight: "600" },
-              headerTintColor: "#FFFFFF",
-              headerShadowVisible: false,
-            })}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="SearchResults"
             component={SearchResultsScreen}
-            options={({ route }) => ({
-              headerTitle: `${route.params.brandName} ${route.params.modelName}`,
-              headerStyle: { backgroundColor: "#000000" },
-              headerTitleStyle: { color: "#FFFFFF", fontSize: 20, fontWeight: "600" },
-              headerTintColor: "#FFFFFF",
-              headerShadowVisible: false,
-            })}
+            options={{ headerShown: false }}
           />
         </>
       )}
