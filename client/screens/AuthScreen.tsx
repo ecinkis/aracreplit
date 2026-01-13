@@ -1108,12 +1108,12 @@ const styles = StyleSheet.create({
   },
   codeBoxContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     gap: Spacing.sm,
     marginBottom: Spacing.lg,
   },
   codeBox: {
-    flex: 1,
+    width: 48,
     height: 56,
     backgroundColor: "#F9FAFB",
     borderRadius: BorderRadius.md,
