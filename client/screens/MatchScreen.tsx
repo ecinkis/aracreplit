@@ -330,9 +330,7 @@ export default function MatchScreen() {
   const showEmptyState = remainingListings.length === 0;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + Spacing.md }]}>
-      <View style={styles.titleSpacer} />
-      
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <ThemedText style={styles.headerTitle}>Kesfet</ThemedText>
@@ -435,7 +433,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: Spacing.xl,
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.sm,
   },
   headerLeft: {
     gap: 4,
@@ -478,7 +476,7 @@ const styles = StyleSheet.create({
     aspectRatio: 0.77,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: Spacing.lg,
+    marginTop: Spacing.sm,
     paddingHorizontal: Spacing.xl,
   },
   card: {
