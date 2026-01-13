@@ -180,17 +180,38 @@ export default function VitrinScreen() {
     <MockListingCard index={index} />
   );
 
+  const handleSearch = () => {
+    if (searchQuery.trim().length > 0) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      navigation.navigate("SearchResults", { query: searchQuery.trim() });
+    }
+  };
+
   const ListHeader = () => (
     <View style={styles.headerContent}>
-      <View style={styles.searchContainer}>
-        <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchInput}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholder="Kelime veya ilan No. ile ara"
-          placeholderTextColor="#9CA3AF"
-        />
+      <View style={styles.searchRow}>
+        <View style={styles.searchContainer}>
+          <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Kelime veya ilan No. ile ara"
+            placeholderTextColor="#9CA3AF"
+            returnKeyType="search"
+            onSubmitEditing={handleSearch}
+          />
+          {searchQuery.length > 0 ? (
+            <Pressable onPress={() => setSearchQuery("")}>
+              <Feather name="x" size={18} color="#9CA3AF" />
+            </Pressable>
+          ) : null}
+        </View>
+        {searchQuery.length > 0 ? (
+          <Pressable style={styles.searchButton} onPress={handleSearch}>
+            <ThemedText style={styles.searchButtonText}>Ara</ThemedText>
+          </Pressable>
+        ) : null}
       </View>
 
       <ScrollView
@@ -376,7 +397,15 @@ const styles = StyleSheet.create({
   headerContent: {
     marginBottom: Spacing.lg,
   },
+  searchRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.lg,
+  },
   searchContainer: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#F9FAFB",
@@ -385,8 +414,19 @@ const styles = StyleSheet.create({
     borderColor: "#E5E7EB",
     paddingHorizontal: Spacing.md,
     height: 48,
-    marginTop: Spacing.sm,
-    marginBottom: Spacing.lg,
+  },
+  searchButton: {
+    backgroundColor: "#000000",
+    paddingHorizontal: Spacing.lg,
+    height: 48,
+    borderRadius: BorderRadius.lg,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  searchButtonText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "600",
   },
   searchIcon: {
     marginRight: Spacing.sm,
