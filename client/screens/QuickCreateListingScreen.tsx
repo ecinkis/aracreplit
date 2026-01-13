@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -7,8 +7,6 @@ import {
   Image,
   Alert,
   ActivityIndicator,
-  Modal,
-  FlatList,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -26,12 +24,6 @@ import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-const BRANDS = [
-  "Audi", "BMW", "Citroen", "Dacia", "Fiat", "Ford", "Honda", "Hyundai", 
-  "Kia", "Mercedes", "Nissan", "Opel", "Peugeot", "Renault", "Seat", 
-  "Skoda", "Toyota", "Volkswagen", "Volvo", "Diger"
-];
-
 const CATEGORIES = [
   { id: "otomobil", name: "Otomobil", icon: "truck" },
   { id: "suv", name: "SUV / Pickup", icon: "compass" },
@@ -41,97 +33,6 @@ const CATEGORIES = [
 
 const HEADER_HEIGHT = 110;
 
-function QuickPicker({
-  label,
-  placeholder,
-  options,
-  selected,
-  onSelect,
-}: {
-  label: string;
-  placeholder: string;
-  options: string[];
-  selected: string;
-  onSelect: (value: string) => void;
-}) {
-  const insets = useSafeAreaInsets();
-  const [modalVisible, setModalVisible] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const filteredOptions = useMemo(() => {
-    if (!searchQuery) return options;
-    return options.filter((option) =>
-      option.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [options, searchQuery]);
-
-  return (
-    <>
-      <Pressable
-        style={[styles.pickerButton, selected && styles.pickerButtonSelected]}
-        onPress={() => {
-          Haptics.selectionAsync();
-          setModalVisible(true);
-        }}
-      >
-        <ThemedText style={[styles.pickerText, !selected && styles.pickerPlaceholder]}>
-          {selected || placeholder}
-        </ThemedText>
-        <Feather name="chevron-down" size={20} color="#6B7280" />
-      </Pressable>
-
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={[styles.modalContainer, { paddingTop: insets.top }]}>
-          <View style={styles.modalHeader}>
-            <ThemedText style={styles.modalTitle}>{label}</ThemedText>
-            <Pressable onPress={() => setModalVisible(false)}>
-              <Feather name="x" size={24} color="#000000" />
-            </Pressable>
-          </View>
-
-          <View style={styles.modalSearchContainer}>
-            <Feather name="search" size={20} color="#9CA3AF" />
-            <TextInput
-              style={styles.modalSearchInput}
-              placeholder="Ara..."
-              placeholderTextColor="#9CA3AF"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-          </View>
-
-          <FlatList
-            data={filteredOptions}
-            keyExtractor={(item) => item}
-            contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.lg }}
-            renderItem={({ item }) => (
-              <Pressable
-                style={[styles.optionItem, selected === item && styles.optionItemSelected]}
-                onPress={() => {
-                  Haptics.selectionAsync();
-                  onSelect(item);
-                  setModalVisible(false);
-                  setSearchQuery("");
-                }}
-              >
-                <ThemedText style={[styles.optionText, selected === item && styles.optionTextSelected]}>
-                  {item}
-                </ThemedText>
-                {selected === item ? <Feather name="check" size={20} color="#000000" /> : null}
-              </Pressable>
-            )}
-          />
-        </View>
-      </Modal>
-    </>
-  );
-}
-
 export default function QuickCreateListingScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
@@ -139,13 +40,9 @@ export default function QuickCreateListingScreen() {
   const queryClient = useQueryClient();
 
   const [photo, setPhoto] = useState<string | null>(null);
-  const [brand, setBrand] = useState("");
-  const [model, setModel] = useState("");
-  const [year, setYear] = useState("");
+  const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
-
-  const currentYear = new Date().getFullYear();
-  const yearOptions = Array.from({ length: 30 }, (_, i) => String(currentYear - i));
+  const [estimatedValue, setEstimatedValue] = useState("");
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -222,17 +119,21 @@ export default function QuickCreateListingScreen() {
     }
   };
 
+  const parseTitle = (titleText: string) => {
+    const words = titleText.trim().split(/\s+/);
+    const yearMatch = titleText.match(/\b(19|20)\d{2}\b/);
+    const year = yearMatch ? parseInt(yearMatch[0]) : new Date().getFullYear();
+    
+    const brand = words[0] || "Diger";
+    const modelWords = words.slice(1).filter(w => !w.match(/\b(19|20)\d{2}\b/));
+    const model = modelWords.join(" ") || titleText;
+    
+    return { brand, model, year };
+  };
+
   const handleSubmit = () => {
-    if (!brand) {
-      Alert.alert("Uyari", "Lutfen marka secin.");
-      return;
-    }
-    if (!model.trim()) {
-      Alert.alert("Uyari", "Lutfen model girin.");
-      return;
-    }
-    if (!year) {
-      Alert.alert("Uyari", "Lutfen yil secin.");
+    if (!title.trim()) {
+      Alert.alert("Uyari", "Lutfen ilan basligi girin.");
       return;
     }
     if (!category) {
@@ -240,11 +141,13 @@ export default function QuickCreateListingScreen() {
       return;
     }
 
+    const { brand, model, year } = parseTitle(title);
+
     createMutation.mutate({
       userId: user?.id,
       brand,
-      model: model.trim(),
-      year: parseInt(year),
+      model,
+      year,
       km: 0,
       fuelType: "Belirtilmedi",
       transmission: "Belirtilmedi",
@@ -255,11 +158,12 @@ export default function QuickCreateListingScreen() {
       acceptsCashDiff: false,
       preferredBrands: [],
       category,
+      estimatedValue: estimatedValue ? parseInt(estimatedValue.replace(/\D/g, "")) : null,
       needsCompletion: true,
     });
   };
 
-  const isValid = brand && model.trim() && year && category;
+  const isValid = title.trim().length > 0 && category;
 
   return (
     <View style={styles.container}>
@@ -283,9 +187,9 @@ export default function QuickCreateListingScreen() {
         ]}
       >
         <View style={styles.heroSection}>
-          <ThemedText style={styles.heroTitle}>Hizli ilan olustur</ThemedText>
+          <ThemedText style={styles.heroTitle}>30 saniyede ilan ver</ThemedText>
           <ThemedText style={styles.heroSubtitle}>
-            4 adimda ilanini yayinla. Detaylari sonra ekleyebilirsin.
+            Sadece basligi yaz, kategorini sec. Detaylari sonra ekle.
           </ThemedText>
         </View>
 
@@ -306,65 +210,35 @@ export default function QuickCreateListingScreen() {
           ) : (
             <View style={styles.photoButtons}>
               <Pressable style={styles.photoButton} onPress={takePhoto}>
-                <Feather name="camera" size={24} color="#000000" />
-                <ThemedText style={styles.photoButtonText}>Cek</ThemedText>
+                <Feather name="camera" size={28} color="#000000" />
+                <ThemedText style={styles.photoButtonText}>Fotograf Cek</ThemedText>
               </Pressable>
               <Pressable style={styles.photoButton} onPress={pickImage}>
-                <Feather name="image" size={24} color="#000000" />
-                <ThemedText style={styles.photoButtonText}>Sec</ThemedText>
+                <Feather name="image" size={28} color="#000000" />
+                <ThemedText style={styles.photoButtonText}>Galeriden Sec</ThemedText>
               </Pressable>
             </View>
           )}
-          <ThemedText style={styles.optionalText}>Opsiyonel - sonra ekleyebilirsin</ThemedText>
+          <ThemedText style={styles.optionalText}>Fotograf opsiyonel - sonra ekleyebilirsin</ThemedText>
         </View>
 
         <View style={styles.formSection}>
-          <View style={styles.stepIndicator}>
-            <View style={styles.stepNumber}><ThemedText style={styles.stepNumberText}>1</ThemedText></View>
-            <ThemedText style={styles.fieldLabel}>Marka</ThemedText>
-          </View>
-          <QuickPicker
-            label="Marka Sec"
-            placeholder="Marka secin"
-            options={BRANDS}
-            selected={brand}
-            onSelect={setBrand}
-          />
-        </View>
-
-        <View style={styles.formSection}>
-          <View style={styles.stepIndicator}>
-            <View style={styles.stepNumber}><ThemedText style={styles.stepNumberText}>2</ThemedText></View>
-            <ThemedText style={styles.fieldLabel}>Model</ThemedText>
-          </View>
+          <ThemedText style={styles.fieldLabel}>Ilan Basligi</ThemedText>
           <TextInput
-            style={styles.textInput}
-            value={model}
-            onChangeText={setModel}
-            placeholder="Ornegin: 320i, Corolla, Focus"
+            style={styles.titleInput}
+            value={title}
+            onChangeText={setTitle}
+            placeholder="Ornegin: BMW 320i 2019 Otomatik"
             placeholderTextColor="#9CA3AF"
+            autoFocus
           />
+          <ThemedText style={styles.fieldHint}>
+            Marka, model ve yil bilgisi girmen yeterli
+          </ThemedText>
         </View>
 
         <View style={styles.formSection}>
-          <View style={styles.stepIndicator}>
-            <View style={styles.stepNumber}><ThemedText style={styles.stepNumberText}>3</ThemedText></View>
-            <ThemedText style={styles.fieldLabel}>Yil</ThemedText>
-          </View>
-          <QuickPicker
-            label="Model Yili"
-            placeholder="Yil secin"
-            options={yearOptions}
-            selected={year}
-            onSelect={setYear}
-          />
-        </View>
-
-        <View style={styles.formSection}>
-          <View style={styles.stepIndicator}>
-            <View style={styles.stepNumber}><ThemedText style={styles.stepNumberText}>4</ThemedText></View>
-            <ThemedText style={styles.fieldLabel}>Kategori</ThemedText>
-          </View>
+          <ThemedText style={styles.fieldLabel}>Kategori</ThemedText>
           <View style={styles.categoryGrid}>
             {CATEGORIES.map((cat) => (
               <Pressable
@@ -380,7 +254,7 @@ export default function QuickCreateListingScreen() {
               >
                 <Feather 
                   name={cat.icon as any} 
-                  size={20} 
+                  size={24} 
                   color={category === cat.id ? "#FFFFFF" : "#000000"} 
                 />
                 <ThemedText 
@@ -393,6 +267,21 @@ export default function QuickCreateListingScreen() {
                 </ThemedText>
               </Pressable>
             ))}
+          </View>
+        </View>
+
+        <View style={styles.formSection}>
+          <ThemedText style={styles.fieldLabel}>Tahmini Deger (Opsiyonel)</ThemedText>
+          <View style={styles.priceInputContainer}>
+            <TextInput
+              style={styles.priceInput}
+              value={estimatedValue ? parseInt(estimatedValue).toLocaleString("tr-TR") : ""}
+              onChangeText={(text) => setEstimatedValue(text.replace(/\D/g, ""))}
+              placeholder="500.000"
+              placeholderTextColor="#9CA3AF"
+              keyboardType="number-pad"
+            />
+            <ThemedText style={styles.currencyText}>TL</ThemedText>
           </View>
         </View>
 
@@ -410,7 +299,7 @@ export default function QuickCreateListingScreen() {
           ) : (
             <>
               <Feather name="zap" size={20} color="#FFFFFF" />
-              <ThemedText style={styles.submitButtonText}>Yayinla</ThemedText>
+              <ThemedText style={styles.submitButtonText}>Hemen Yayinla</ThemedText>
             </>
           )}
         </Pressable>
@@ -423,7 +312,7 @@ export default function QuickCreateListingScreen() {
           }}
         >
           <ThemedText style={styles.detailedButtonText}>
-            Detayli ilan olustur
+            Detayli ilan olusturmak istiyorum
           </ThemedText>
           <Feather name="arrow-right" size={16} color="#6B7280" />
         </Pressable>
@@ -459,44 +348,46 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
   },
   heroSection: {
-    marginTop: Spacing.lg,
-    marginBottom: Spacing.md,
+    marginTop: Spacing.xl,
+    marginBottom: Spacing.lg,
   },
   heroTitle: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "800",
     color: "#000000",
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   heroSubtitle: {
-    fontSize: 14,
+    fontSize: 15,
     color: "#6B7280",
+    lineHeight: 22,
   },
   photoSection: {
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.lg,
   },
   photoButtons: {
     flexDirection: "row",
-    gap: Spacing.sm,
+    gap: Spacing.md,
   },
   photoButton: {
     flex: 1,
-    height: 80,
+    height: 100,
     borderRadius: BorderRadius.md,
-    borderWidth: 1,
+    borderWidth: 2,
+    borderStyle: "dashed",
     borderColor: "#E5E7EB",
     backgroundColor: "#F9FAFB",
     justifyContent: "center",
     alignItems: "center",
-    gap: 4,
+    gap: Spacing.xs,
   },
   photoButtonText: {
-    fontSize: 12,
+    fontSize: 13,
     color: "#374151",
     fontWeight: "500",
   },
   photoPreview: {
-    height: 160,
+    height: 200,
     borderRadius: BorderRadius.md,
     overflow: "hidden",
     backgroundColor: "#F3F4F6",
@@ -511,67 +402,33 @@ const styles = StyleSheet.create({
     right: Spacing.sm,
     backgroundColor: "rgba(0,0,0,0.6)",
     borderRadius: BorderRadius.full,
-    padding: 6,
+    padding: 8,
   },
   optionalText: {
-    fontSize: 11,
+    fontSize: 12,
     color: "#9CA3AF",
-    marginTop: Spacing.xs,
+    marginTop: Spacing.sm,
     textAlign: "center",
   },
   formSection: {
-    marginBottom: Spacing.md,
-  },
-  stepIndicator: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: Spacing.sm,
-    gap: Spacing.sm,
-  },
-  stepNumber: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "#000000",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  stepNumberText: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: "#FFFFFF",
+    marginBottom: Spacing.lg,
   },
   fieldLabel: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "600",
     color: "#000000",
+    marginBottom: Spacing.sm,
   },
-  pickerButton: {
-    height: 52,
-    borderRadius: BorderRadius.md,
-    paddingHorizontal: Spacing.md,
-    backgroundColor: "#F9FAFB",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  pickerButtonSelected: {
-    borderColor: "#000000",
-  },
-  pickerText: {
-    fontSize: 16,
-    color: "#000000",
-  },
-  pickerPlaceholder: {
+  fieldHint: {
+    fontSize: 12,
     color: "#9CA3AF",
+    marginTop: Spacing.xs,
   },
-  textInput: {
-    height: 52,
+  titleInput: {
+    height: 56,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
-    fontSize: 16,
+    fontSize: 17,
     backgroundColor: "#F9FAFB",
     borderWidth: 1,
     borderColor: "#E5E7EB",
@@ -585,27 +442,46 @@ const styles = StyleSheet.create({
   categoryCard: {
     width: "48%",
     paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.sm,
+    paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.md,
     backgroundColor: "#F9FAFB",
     borderWidth: 1,
     borderColor: "#E5E7EB",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    gap: Spacing.xs,
+    gap: Spacing.sm,
   },
   categoryCardSelected: {
     backgroundColor: "#000000",
     borderColor: "#000000",
   },
   categoryText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "500",
     color: "#000000",
   },
   categoryTextSelected: {
     color: "#FFFFFF",
+  },
+  priceInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: 56,
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.md,
+    backgroundColor: "#F9FAFB",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+  },
+  priceInput: {
+    flex: 1,
+    fontSize: 17,
+    color: "#000000",
+  },
+  currencyText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#6B7280",
   },
   submitButton: {
     backgroundColor: "#000000",
@@ -615,7 +491,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     gap: Spacing.sm,
-    marginTop: Spacing.sm,
+    marginTop: Spacing.md,
   },
   submitButtonDisabled: {
     opacity: 0.4,
@@ -629,64 +505,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: Spacing.md,
+    paddingVertical: Spacing.lg,
     gap: Spacing.xs,
   },
   detailedButtonText: {
     fontSize: 14,
     color: "#6B7280",
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-  },
-  modalHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#000000",
-  },
-  modalSearchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginHorizontal: Spacing.lg,
-    marginVertical: Spacing.md,
-    paddingHorizontal: Spacing.md,
-    height: 44,
-    borderRadius: BorderRadius.md,
-    backgroundColor: "#F3F4F6",
-    gap: Spacing.sm,
-  },
-  modalSearchInput: {
-    flex: 1,
-    fontSize: 16,
-    color: "#000000",
-  },
-  optionItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
-  },
-  optionItemSelected: {
-    backgroundColor: "#F9FAFB",
-  },
-  optionText: {
-    fontSize: 16,
-    color: "#000000",
-  },
-  optionTextSelected: {
-    fontWeight: "600",
   },
 });
