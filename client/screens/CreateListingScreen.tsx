@@ -894,6 +894,19 @@ export default function CreateListingScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={[styles.header, { height: HEADER_HEIGHT + insets.top, paddingTop: insets.top }]}>
+        <View style={styles.headerContent}>
+          <Pressable 
+            onPress={() => navigation.goBack()} 
+            style={styles.backButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Feather name="x" size={24} color="#FFFFFF" />
+          </Pressable>
+          <Text style={styles.headerTitle}>Detayli Ilan</Text>
+        </View>
+      </View>
+
       <StepIndicator currentStep={currentStep} totalSteps={STEPS.length} />
 
       <KeyboardAwareScrollViewCompat
