@@ -74,6 +74,8 @@ const BRANDS_BY_CATEGORY: Record<string, Array<{ id: string; name: string }>> = 
   ],
 };
 
+const HEADER_HEIGHT = 110;
+
 export default function BrandListScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
@@ -91,9 +93,11 @@ export default function BrandListScreen() {
     navigation.navigate("ModelList", { categoryId, categoryName, brandId, brandName });
   };
 
+  const headerPaddingBottom = Math.max(Spacing.md, HEADER_HEIGHT - insets.top - 44);
+
   return (
     <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top }]}>
+      <View style={[styles.header, { paddingTop: insets.top, paddingBottom: headerPaddingBottom }]}>
         <View style={styles.headerContent}>
           <Pressable 
             onPress={() => navigation.goBack()} 
@@ -164,7 +168,6 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: "#000000",
-    paddingBottom: Spacing.lg,
   },
   headerContent: {
     flexDirection: "row",
@@ -188,7 +191,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
-    marginTop: Spacing.sm,
     marginBottom: Spacing.md,
   },
   searchContainer: {
