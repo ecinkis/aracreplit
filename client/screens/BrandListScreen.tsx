@@ -93,11 +93,9 @@ export default function BrandListScreen() {
     navigation.navigate("ModelList", { categoryId, categoryName, brandId, brandName });
   };
 
-  const headerPaddingBottom = Math.max(Spacing.md, HEADER_HEIGHT - insets.top - 44);
-
   return (
     <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top, paddingBottom: headerPaddingBottom }]}>
+      <View style={[styles.header, { height: HEADER_HEIGHT + insets.top, paddingTop: insets.top }]}>
         <View style={styles.headerContent}>
           <Pressable 
             onPress={() => navigation.goBack()} 
@@ -170,10 +168,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#000000",
   },
   headerContent: {
+    flex: 1,
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
     paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.md,
+    paddingBottom: Spacing.md,
   },
   backButton: {
     marginRight: Spacing.md,
@@ -191,6 +190,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
+    marginTop: Spacing.sm,
     marginBottom: Spacing.md,
   },
   searchContainer: {

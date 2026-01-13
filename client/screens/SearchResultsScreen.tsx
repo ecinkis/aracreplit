@@ -22,6 +22,8 @@ import type { Listing } from "@shared/schema";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type SearchResultsRouteProp = RouteProp<RootStackParamList, "SearchResults">;
 
+const HEADER_HEIGHT = 110;
+
 export default function SearchResultsScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
@@ -46,7 +48,7 @@ export default function SearchResultsScreen() {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <View style={[styles.header, { paddingTop: insets.top }]}>
+        <View style={[styles.header, { height: HEADER_HEIGHT + insets.top, paddingTop: insets.top }]}>
           <View style={styles.headerContent}>
             <Pressable 
               onPress={() => navigation.goBack()} 
@@ -67,7 +69,7 @@ export default function SearchResultsScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top }]}>
+      <View style={[styles.header, { height: HEADER_HEIGHT + insets.top, paddingTop: insets.top }]}>
         <View style={styles.headerContent}>
           <Pressable 
             onPress={() => navigation.goBack()} 
@@ -157,13 +159,13 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: "#000000",
-    paddingBottom: Spacing.lg,
   },
   headerContent: {
+    flex: 1,
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
     paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.md,
+    paddingBottom: Spacing.md,
   },
   backButton: {
     marginRight: Spacing.md,
@@ -183,7 +185,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   resultInfo: {
-    marginTop: Spacing.md,
+    marginTop: Spacing.sm,
     marginBottom: Spacing.sm,
   },
   resultCount: {
