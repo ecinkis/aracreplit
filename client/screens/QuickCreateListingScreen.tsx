@@ -42,6 +42,7 @@ export default function QuickCreateListingScreen() {
   const [photo, setPhoto] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
   const [estimatedValue, setEstimatedValue] = useState("");
 
   const createMutation = useMutation({
@@ -158,6 +159,7 @@ export default function QuickCreateListingScreen() {
       acceptsCashDiff: false,
       preferredBrands: [],
       category,
+      description: description.trim() || null,
       estimatedValue: estimatedValue ? parseInt(estimatedValue.replace(/\D/g, "")) : null,
       needsCompletion: true,
     });
@@ -268,6 +270,20 @@ export default function QuickCreateListingScreen() {
               </Pressable>
             ))}
           </View>
+        </View>
+
+        <View style={styles.formSection}>
+          <ThemedText style={styles.fieldLabel}>Aciklama (Opsiyonel)</ThemedText>
+          <TextInput
+            style={styles.descriptionInput}
+            value={description}
+            onChangeText={setDescription}
+            placeholder="Arac hakkinda kisa bilgi..."
+            placeholderTextColor="#9CA3AF"
+            multiline
+            numberOfLines={3}
+            textAlignVertical="top"
+          />
         </View>
 
         <View style={styles.formSection}>
@@ -429,6 +445,17 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     fontSize: 17,
+    backgroundColor: "#F9FAFB",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    color: "#000000",
+  },
+  descriptionInput: {
+    height: 88,
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    fontSize: 15,
     backgroundColor: "#F9FAFB",
     borderWidth: 1,
     borderColor: "#E5E7EB",
