@@ -8,6 +8,7 @@ import {
   FlatList,
   ActivityIndicator,
   Alert,
+  Platform,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -123,21 +124,27 @@ export default function ProfileScreen() {
   const queryClient = useQueryClient();
 
   const handleLogout = () => {
-    Alert.alert(
-      "Çıkış Yap",
-      "Hesabınızdan çıkış yapmak istediğinize emin misiniz?",
-      [
-        { text: "İptal", style: "cancel" },
-        { 
-          text: "Çıkış Yap", 
-          style: "destructive",
-          onPress: () => {
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            logout();
-          }
-        },
-      ]
-    );
+    if (Platform.OS === "web") {
+      if (window.confirm("Hesabınızdan çıkış yapmak istediğinize emin misiniz?")) {
+        logout();
+      }
+    } else {
+      Alert.alert(
+        "Çıkış Yap",
+        "Hesabınızdan çıkış yapmak istediğinize emin misiniz?",
+        [
+          { text: "İptal", style: "cancel" },
+          { 
+            text: "Çıkış Yap", 
+            style: "destructive",
+            onPress: () => {
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+              logout();
+            }
+          },
+        ]
+      );
+    }
   };
 
   const handleDeleteAccount = () => {
