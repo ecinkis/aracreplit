@@ -275,10 +275,9 @@ export default function VitrinScreen() {
                   <ThemedText style={styles.featuredCardSubtitle}>
                     {item.year} · {item.km.toLocaleString("tr-TR")} km
                   </ThemedText>
-                  <View style={styles.featuredCityRow}>
-                    <Feather name="map-pin" size={10} color={BrandColors.primaryBlue} />
-                    <ThemedText style={styles.featuredCityText}>{item.city}</ThemedText>
-                  </View>
+                  <ThemedText style={styles.featuredPriceText}>
+                    {item.estimatedValue ? `${item.estimatedValue.toLocaleString("tr-TR")} ₺` : "Fiyat belirtilmemiş"}
+                  </ThemedText>
                 </View>
               </Pressable>
             ))}
@@ -648,15 +647,11 @@ const styles = StyleSheet.create({
     color: "#6B7280",
     marginTop: 2,
   },
-  featuredCityRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    marginTop: 4,
-  },
-  featuredCityText: {
-    fontSize: 11,
+  featuredPriceText: {
+    fontSize: 12,
+    fontWeight: "700",
     color: BrandColors.primaryBlue,
+    marginTop: 4,
   },
   allListingsHeader: {
     marginTop: Spacing.sm,
