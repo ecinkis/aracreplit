@@ -14,6 +14,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 import VitrinScreen from "@/screens/VitrinScreen";
+import { TakasLogo } from "@/components/TakasLogo";
 import SearchScreen from "@/screens/SearchScreen";
 import CreateListingScreen from "@/screens/CreateListingScreen";
 import MatchScreen from "@/screens/MatchScreen";
@@ -202,16 +203,7 @@ export default function MainTabNavigator() {
             ),
             headerRight: () => (
               <View style={{ flexDirection: "row", alignItems: "center", marginRight: Spacing.lg, gap: 8 }}>
-                <View style={{ 
-                  width: 28, 
-                  height: 28, 
-                  borderRadius: 6, 
-                  backgroundColor: BrandColors.primaryBlue, 
-                  justifyContent: "center", 
-                  alignItems: "center" 
-                }}>
-                  <Feather name="repeat" size={16} color="#FFFFFF" />
-                </View>
+                <TakasLogo size={28} />
                 <ThemedText style={{ color: "rgba(255,255,255,0.7)", fontSize: 11 }}>
                   v.10
                 </ThemedText>
