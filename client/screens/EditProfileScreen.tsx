@@ -69,9 +69,10 @@ export default function EditProfileScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.log("Profile update error:", error);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert("Hata", "Profil güncellenirken bir hata oluştu.");
+      Alert.alert("Hata", "Profil güncellenirken bir hata oluştu: " + (error?.message || "Bilinmeyen hata"));
     },
   });
 
@@ -118,6 +119,7 @@ export default function EditProfileScreen() {
       updateData.avatarUrl = avatarUri;
     }
 
+    console.log("Updating profile with data:", updateData);
     updateMutation.mutate(updateData);
   };
 
