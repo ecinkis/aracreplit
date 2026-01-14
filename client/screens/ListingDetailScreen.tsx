@@ -168,7 +168,7 @@ export default function ListingDetailScreen() {
     
     navigation.setOptions({
       headerRight: () => (
-        <View style={{ flexDirection: "row", gap: 8 }}>
+        <View style={{ flexDirection: "row", gap: 8, marginRight: -10 }}>
           <HeaderButton
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
