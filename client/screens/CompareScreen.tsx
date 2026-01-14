@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   View,
   ScrollView,
@@ -7,6 +7,7 @@ import {
   Modal,
   FlatList,
   ActivityIndicator,
+  TextInput,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -120,11 +121,26 @@ function ListingPickerModal({
   onSelect: (listing: Listing) => void;
   excludeId?: string;
 }) {
+  const [searchQuery, setSearchQuery] = useState("");
   const { data: listings, isLoading } = useQuery<Listing[]>({
     queryKey: ["/api/listings"],
   });
 
-  const filteredListings = listings?.filter(l => l.id !== excludeId) || [];
+  const filteredListings = useMemo(() => {
+    let result = listings?.filter(l => l.id !== excludeId) || [];
+    
+    if (searchQuery.trim().length > 0) {
+      const query = searchQuery.toLowerCase().trim();
+      result = result.filter(l => 
+        l.brand.toLowerCase().includes(query) ||
+        l.model.toLowerCase().includes(query) ||
+        `${l.brand} ${l.model}`.toLowerCase().includes(query) ||
+        l.city?.toLowerCase().includes(query)
+      );
+    }
+    
+    return result;
+  }, [listings, excludeId, searchQuery]);
 
   return (
     <Modal
@@ -135,13 +151,29 @@ function ListingPickerModal({
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalHeader}>
-          <ThemedText style={styles.modalTitle}>Arac Sec</ThemedText>
+          <ThemedText style={styles.modalTitle}>Araç Seç</ThemedText>
           <Pressable
             style={styles.modalClose}
             onPress={onClose}
           >
             <Feather name="x" size={24} color="#000000" />
           </Pressable>
+        </View>
+
+        <View style={styles.modalSearchContainer}>
+          <Feather name="search" size={18} color="#9CA3AF" style={styles.modalSearchIcon} />
+          <TextInput
+            style={styles.modalSearchInput}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Marka, model veya şehir ara..."
+            placeholderTextColor="#9CA3AF"
+          />
+          {searchQuery.length > 0 ? (
+            <Pressable onPress={() => setSearchQuery("")}>
+              <Feather name="x" size={18} color="#9CA3AF" />
+            </Pressable>
+          ) : null}
         </View>
 
         {isLoading ? (
@@ -197,8 +229,13 @@ function ListingPickerModal({
           <View style={styles.emptyContainer}>
             <Feather name="inbox" size={48} color="#D1D5DB" />
             <ThemedText style={styles.emptyText}>
-              Karsilastirilacak ilan bulunamadi
+              {searchQuery.length > 0 ? "Araç bulunamadı" : "Karşılaştırılacak ilan bulunamadı"}
             </ThemedText>
+            {searchQuery.length > 0 ? (
+              <ThemedText style={styles.emptySubtext}>
+                Farklı bir arama terimi deneyin
+              </ThemedText>
+            ) : null}
           </View>
         )}
       </View>
@@ -676,6 +713,32 @@ const styles = StyleSheet.create({
   },
   modalClose: {
     padding: Spacing.xs,
+  },
+  modalSearchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F9FAFB",
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    marginHorizontal: Spacing.md,
+    marginVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    height: 44,
+  },
+  modalSearchIcon: {
+    marginRight: Spacing.sm,
+  },
+  modalSearchInput: {
+    flex: 1,
+    fontSize: 15,
+    color: "#000000",
+  },
+  emptySubtext: {
+    fontSize: 13,
+    color: "#9CA3AF",
+    marginTop: Spacing.xs,
+    textAlign: "center",
   },
   loadingContainer: {
     flex: 1,
