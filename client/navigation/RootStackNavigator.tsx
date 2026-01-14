@@ -89,6 +89,7 @@ export default function RootStackNavigator() {
             options={({ route }) => ({
               headerTitle: route.params.otherUserName,
               headerTintColor: "#333333",
+              headerBackTitleVisible: false,
             })}
           />
           <Stack.Screen
