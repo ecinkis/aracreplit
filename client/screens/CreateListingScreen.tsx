@@ -285,9 +285,11 @@ export default function CreateListingScreen() {
       queryClient.invalidateQueries({ queryKey: ["/api/listings"] });
       queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listings"] });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      Alert.alert("Başarılı", "İlanınız yayınlandı!", [
-        { text: "Tamam", onPress: () => navigation.goBack() },
-      ]);
+      Alert.alert(
+        "İlanınız Onaya Gönderildi", 
+        "İlanınız kontrolden sonra aktif edilecektir. Onaylandığında bildirim alacaksınız.", 
+        [{ text: "Tamam", onPress: () => navigation.goBack() }]
+      );
     },
     onError: () => {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);

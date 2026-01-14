@@ -52,30 +52,17 @@ export default function QuickCreateListingScreen() {
         body: JSON.stringify(data),
       });
     },
-    onSuccess: (data: any) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/listings"] });
       queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listings"] });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       
-      const listingId = data?.id;
-      
       Alert.alert(
-        "Ilaniniz Yayinda!",
-        "Detaylari ekleyerek ilaninizi zenginlestirebilirsiniz.",
+        "İlanınız Onaya Gönderildi",
+        "İlanınız kontrolden sonra aktif edilecektir. Onaylandığında bildirim alacaksınız.",
         [
           { 
-            text: "Detaylari Ekle", 
-            onPress: () => {
-              if (listingId) {
-                navigation.navigate("ListingDetail", { listingId });
-              } else {
-                navigation.navigate("Main");
-              }
-            }
-          },
-          { 
             text: "Tamam", 
-            style: "cancel",
             onPress: () => navigation.navigate("Main") 
           },
         ]
