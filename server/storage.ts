@@ -98,6 +98,7 @@ export interface IStorage {
   createStory(story: InsertStory): Promise<Story>;
   updateStory(id: string, data: Partial<Story>): Promise<Story | undefined>;
   deleteStory(id: string): Promise<void>;
+  deleteExpiredStories(): Promise<number>;
   incrementStoryViewCount(id: string): Promise<void>;
 
   getAdminUserByEmail(email: string): Promise<AdminUser | undefined>;
@@ -494,6 +495,12 @@ export class DatabaseStorage implements IStorage {
       .update(stories)
       .set({ viewCount: sql`${stories.viewCount} + 1` })
       .where(eq(stories.id, id));
+  }
+
+  async deleteExpiredStories(): Promise<number> {
+    const now = new Date();
+    const result = await db.delete(stories).where(sql`${stories.expiresAt} <= ${now}`).returning();
+    return result.length;
   }
 
   async getAdminUserByEmail(email: string): Promise<AdminUser | undefined> {

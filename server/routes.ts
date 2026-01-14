@@ -1148,13 +1148,14 @@ Disallow: /api/admin/
       
       const matchesWithDetails = allMatches.map(m => ({
         ...m,
+        status: 'active' as string,
         user1Name: userMap.get(m.user1Id) || 'Bilinmiyor',
         user2Name: userMap.get(m.user2Id) || 'Bilinmiyor',
         listing1: listingMap.get(m.listing1Id) || null,
         listing2: listingMap.get(m.listing2Id) || null
       }));
       
-      const active = matchesWithDetails.filter(m => m.status === 'active' || !m.status);
+      const active = matchesWithDetails.filter(m => m.status === 'active');
       const completed = matchesWithDetails.filter(m => m.status === 'completed');
       
       res.json({ all: matchesWithDetails, active, completed });
@@ -1300,5 +1301,22 @@ Disallow: /api/admin/
   });
 
   const httpServer = createServer(app);
+  
+  // Cleanup expired stories every hour
+  const cleanupExpiredStories = async () => {
+    try {
+      const deleted = await storage.deleteExpiredStories();
+      if (deleted > 0) {
+        console.log(`Cleaned up ${deleted} expired stories`);
+      }
+    } catch (error) {
+      console.error("Error cleaning up expired stories:", error);
+    }
+  };
+  
+  // Run cleanup on startup and every hour
+  cleanupExpiredStories();
+  setInterval(cleanupExpiredStories, 60 * 60 * 1000);
+  
   return httpServer;
 }

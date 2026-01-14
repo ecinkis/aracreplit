@@ -1806,12 +1806,22 @@
 
         <section class="section" id="stories">
           <div class="filter-bar">
-            <button class="btn btn-primary" style="margin-left: auto;">
+            <div>
+              <span style="color: var(--text-secondary); font-size: 14px;">Hikayeler 24 saat sonra otomatik olarak silinir</span>
+            </div>
+            <button class="btn btn-primary" style="margin-left: auto;" onclick="openStoryModal()">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
               Yeni Hikaye
             </button>
           </div>
           <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Aktif Hikayeler (<span id="activeStoriesCount">0</span>)</h3>
+              <button class="btn btn-secondary btn-sm" onclick="loadStories()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                Yenile
+              </button>
+            </div>
             <div class="card-body">
               <table class="data-table">
                 <thead>
@@ -1820,31 +1830,55 @@
                     <th>Marka</th>
                     <th>Baslik</th>
                     <th>Goruntulenme</th>
-                    <th>Bitis</th>
+                    <th>Kalan Sure</th>
                     <th>Durum</th>
                     <th>Islemler</th>
                   </tr>
                 </thead>
                 <tbody id="storiesTable">
-                  <tr>
-                    <td><div class="vehicle-thumb" style="background: linear-gradient(135deg, #1C6BF9, #60a5fa);"></div></td>
-                    <td>BMW</td>
-                    <td>Yeni Sezon Kampanyasi</td>
-                    <td>1,234</td>
-                    <td>15 Oca 2026</td>
-                    <td><span class="badge badge-success">Aktif</span></td>
-                    <td>
-                      <div class="actions-cell">
-                        <button class="btn btn-ghost btn-sm"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
-                        <button class="btn btn-ghost btn-sm" style="color: var(--danger);"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
-                      </div>
-                    </td>
-                  </tr>
+                  <tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">Yukleniyor...</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
         </section>
+
+        <!-- Story Modal -->
+        <div class="modal-overlay" id="storyModal">
+          <div class="modal">
+            <div class="modal-header">
+              <h3 class="modal-title">Yeni Hikaye Ekle</h3>
+              <button class="btn btn-ghost btn-sm" onclick="closeStoryModal()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form id="storyForm">
+                <div class="form-group">
+                  <label class="form-label">Marka Adi *</label>
+                  <input type="text" class="form-control" id="storyBrandName" placeholder="Ornek: BMW, Mercedes..." required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Baslik *</label>
+                  <input type="text" class="form-control" id="storyTitle" placeholder="Hikaye basligi" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Gorsel URL *</label>
+                  <input type="url" class="form-control" id="storyImageUrl" placeholder="https://..." required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Link URL (Opsiyonel)</label>
+                  <input type="url" class="form-control" id="storyLinkUrl" placeholder="https://...">
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">Hikaye 24 saat sonra otomatik olarak silinecektir.</p>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" onclick="closeStoryModal()">Iptal</button>
+              <button class="btn btn-primary" onclick="createStory()">Hikaye Olustur</button>
+            </div>
+          </div>
+        </div>
 
         <section class="section" id="moderation">
           <div class="tabs">
@@ -2384,10 +2418,105 @@
 
     async function loadStories() {
       try {
-        const stories = await apiRequest('/stories');
-        console.log('Stories loaded:', stories.length);
+        const stories = await apiRequest('/admin/stories');
+        const tbody = document.getElementById('storiesTable');
+        
+        const activeStories = stories.filter(s => new Date(s.expiresAt) > new Date());
+        document.getElementById('activeStoriesCount').textContent = activeStories.length;
+        
+        if (activeStories.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="48" height="48" style="margin-bottom: 12px; opacity: 0.3;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <div>Aktif hikaye bulunamadi</div>
+          </td></tr>`;
+          return;
+        }
+        
+        tbody.innerHTML = activeStories.map(story => {
+          const expiresAt = new Date(story.expiresAt);
+          const now = new Date();
+          const hoursLeft = Math.max(0, Math.round((expiresAt - now) / (1000 * 60 * 60)));
+          const minutesLeft = Math.max(0, Math.round((expiresAt - now) / (1000 * 60)) % 60);
+          const timeLeft = hoursLeft > 0 ? `${hoursLeft} saat ${minutesLeft} dk` : `${minutesLeft} dk`;
+          
+          const isExpired = expiresAt <= now;
+          const statusBadge = isExpired 
+            ? '<span class="badge badge-secondary">Suresi Doldu</span>' 
+            : '<span class="badge badge-success">Aktif</span>';
+          
+          return `
+            <tr>
+              <td>
+                <div class="vehicle-thumb" style="overflow: hidden;">
+                  <img src="${story.imageUrl}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'">
+                </div>
+              </td>
+              <td style="font-weight: 500;">${story.brandName}</td>
+              <td>${story.title}</td>
+              <td>${new Intl.NumberFormat('tr-TR').format(story.viewCount || 0)}</td>
+              <td style="color: ${hoursLeft < 6 ? 'var(--warning)' : 'var(--text-secondary)'};">${timeLeft}</td>
+              <td>${statusBadge}</td>
+              <td>
+                <div class="actions-cell">
+                  <button class="btn btn-ghost btn-sm" style="color: var(--danger);" onclick="deleteStory('${story.id}')">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
       } catch (error) {
-        console.log('Stories will load from API');
+        console.error('Error loading stories:', error);
+        document.getElementById('storiesTable').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--danger);">Hikayeler yuklenirken hata olustu</td></tr>';
+      }
+    }
+
+    function openStoryModal() {
+      document.getElementById('storyModal').classList.add('active');
+      document.getElementById('storyForm').reset();
+    }
+
+    function closeStoryModal() {
+      document.getElementById('storyModal').classList.remove('active');
+    }
+
+    async function createStory() {
+      const brandName = document.getElementById('storyBrandName').value.trim();
+      const title = document.getElementById('storyTitle').value.trim();
+      const imageUrl = document.getElementById('storyImageUrl').value.trim();
+      const linkUrl = document.getElementById('storyLinkUrl').value.trim();
+      
+      if (!brandName || !title || !imageUrl) {
+        alert('Lutfen zorunlu alanlari doldurun');
+        return;
+      }
+      
+      const expiresAt = new Date();
+      expiresAt.setHours(expiresAt.getHours() + 24);
+      
+      try {
+        await apiRequest('/admin/stories', {
+          method: 'POST',
+          body: JSON.stringify({ brandName, title, imageUrl, linkUrl, expiresAt: expiresAt.toISOString() })
+        });
+        closeStoryModal();
+        loadStories();
+        alert('Hikaye basariyla olusturuldu!');
+      } catch (error) {
+        console.error('Error creating story:', error);
+        alert('Hikaye olusturulurken hata olustu');
+      }
+    }
+
+    async function deleteStory(id) {
+      if (!confirm('Bu hikayeyi silmek istediginizden emin misiniz?')) return;
+      try {
+        await apiRequest(`/admin/stories/${id}`, { method: 'DELETE' });
+        loadStories();
+      } catch (error) {
+        console.error('Error deleting story:', error);
+        alert('Hikaye silinirken hata olustu');
       }
     }
 
