@@ -193,7 +193,7 @@ export default function MainTabNavigator() {
           options={{
             title: "Vitrin",
             headerTitle: () => (
-              <ThemedText style={{ color: "#FFFFFF", fontSize: 20, fontWeight: "600", marginLeft: 6 }}>
+              <ThemedText style={{ color: "#FFFFFF", fontSize: 20, fontWeight: "600", marginLeft: 9 }}>
                 Vitrin
               </ThemedText>
             ),
