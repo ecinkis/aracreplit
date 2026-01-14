@@ -219,19 +219,34 @@ function SwipeCard({
             </View>
           </View>
 
-          <Pressable
-            style={({ pressed }) => [
-              styles.detailButton,
-              pressed && styles.detailButtonPressed,
-            ]}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              onDetailPress();
-            }}
-          >
-            <ThemedText style={styles.detailButtonText}>Detaylari Gor</ThemedText>
-            <Feather name="chevron-right" size={18} color="#FFFFFF" />
-          </Pressable>
+          <View style={styles.ownerSection}>
+            <View style={styles.ownerInfo}>
+              <View style={styles.ownerAvatar}>
+                <Feather name="user" size={16} color="#FFFFFF" />
+              </View>
+              <View>
+                <ThemedText style={styles.ownerName}>Ilan Sahibi</ThemedText>
+                <View style={styles.ratingRow}>
+                  <Feather name="star" size={12} color="#F59E0B" />
+                  <ThemedText style={styles.ratingText}>4.8</ThemedText>
+                  <ThemedText style={styles.reviewCount}>(24 degerlendirme)</ThemedText>
+                </View>
+              </View>
+            </View>
+            <Pressable
+              style={({ pressed }) => [
+                styles.detailButton,
+                pressed && styles.detailButtonPressed,
+              ]}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                onDetailPress();
+              }}
+            >
+              <ThemedText style={styles.detailButtonText}>Detaylari Gor</ThemedText>
+              <Feather name="chevron-right" size={18} color="#FFFFFF" />
+            </Pressable>
+          </View>
         </View>
       </Animated.View>
     </GestureDetector>
@@ -612,6 +627,46 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "700",
     color: "#000000",
+  },
+  ownerSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: Spacing.md,
+  },
+  ownerInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    flex: 1,
+  },
+  ownerAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  ownerName: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  ratingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    marginTop: 2,
+  },
+  ratingText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#F59E0B",
+  },
+  reviewCount: {
+    fontSize: 11,
+    color: "#9CA3AF",
   },
   likeLabel: {
     position: "absolute",
