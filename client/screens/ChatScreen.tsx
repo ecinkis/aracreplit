@@ -15,7 +15,7 @@ import * as FileSystem from "expo-file-system";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { HeaderButton } from "@react-navigation/elements";
+import { HeaderButton, useHeaderHeight } from "@react-navigation/elements";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -259,6 +259,7 @@ function RecordingIndicator({ duration }: { duration: number }) {
 
 export default function ChatScreen() {
   const insets = useSafeAreaInsets();
+  const headerHeight = useHeaderHeight();
   const route = useRoute<ChatRouteProp>();
   const navigation = useNavigation<NavigationProp>();
   const { theme } = useTheme();
@@ -488,7 +489,7 @@ export default function ChatScreen() {
             keyExtractor={(item) => item.id}
             contentContainerStyle={[
               styles.messagesList,
-              { paddingBottom: Spacing.md },
+              { paddingTop: headerHeight + Spacing.sm, paddingBottom: Spacing.md },
             ]}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={
