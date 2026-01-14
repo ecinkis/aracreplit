@@ -578,6 +578,10 @@ const styles = StyleSheet.create({
   featuredSection: {
     marginTop: Spacing.md,
     marginBottom: Spacing.md,
+    marginHorizontal: -Spacing.lg,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    backgroundColor: "#F5F5F5",
   },
   featuredHeader: {
     marginBottom: Spacing.sm,
