@@ -575,7 +575,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   featuredSection: {
-    marginTop: Spacing.md - 7,
+    marginTop: Spacing.md - 12,
     marginBottom: Spacing.md,
     marginHorizontal: -Spacing.lg,
     paddingHorizontal: Spacing.lg,
