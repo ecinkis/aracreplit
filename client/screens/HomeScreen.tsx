@@ -175,6 +175,7 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   categoriesContainer: {
+    paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.md,
     gap: Spacing.md,
   },
