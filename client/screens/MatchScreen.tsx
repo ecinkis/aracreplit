@@ -256,6 +256,7 @@ export default function MatchScreen() {
   const navigation = useNavigation<NavigationProp>();
   const { user, selectedListingId } = useAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [canGoBack, setCanGoBack] = useState(false);
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const cardWidth = screenWidth - Spacing.xl * 2;
   const cardHeight = screenHeight * 0.52;
@@ -314,12 +315,23 @@ export default function MatchScreen() {
     }
 
     setCurrentIndex((prev) => prev + 1);
+    setCanGoBack(true);
   }, [swipeableListings, currentIndex, user?.id, activeListingId, swipeMutation]);
 
   const handleButtonSwipe = (direction: "left" | "right" | "up") => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     handleSwipe(direction);
   };
+
+  const handleUndo = useCallback(() => {
+    if (currentIndex > 0) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setCurrentIndex((prev) => prev - 1);
+      if (currentIndex <= 1) {
+        setCanGoBack(false);
+      }
+    }
+  }, [currentIndex]);
 
   const handleDetailPress = (listingId: string) => {
     navigation.navigate("ListingDetail", { listingId });
@@ -369,6 +381,19 @@ export default function MatchScreen() {
           </View>
 
           <View style={styles.buttonsContainer}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.actionButton,
+                styles.undoButton,
+                pressed && styles.buttonPressed,
+                !canGoBack && styles.buttonDisabled,
+              ]}
+              onPress={handleUndo}
+              disabled={!canGoBack}
+            >
+              <Feather name="rotate-ccw" size={20} color={canGoBack ? "#6B7280" : "#D1D5DB"} />
+            </Pressable>
+
             <Pressable
               style={({ pressed }) => [
                 styles.actionButton,
@@ -687,6 +712,16 @@ const styles = StyleSheet.create({
     height: 52,
     borderRadius: 26,
     borderColor: "#F59E0B",
+  },
+  undoButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderColor: "#9CA3AF",
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+    borderColor: "#E5E7EB",
   },
   emptyContainer: {
     flex: 1,
