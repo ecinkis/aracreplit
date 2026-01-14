@@ -997,7 +997,7 @@ const styles = StyleSheet.create({
   premiumCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#EBF4FF",
+    backgroundColor: "rgba(28, 107, 249, 0.08)",
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     marginBottom: Spacing.lg,
