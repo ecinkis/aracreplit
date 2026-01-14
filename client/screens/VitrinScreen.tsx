@@ -244,7 +244,6 @@ export default function VitrinScreen() {
               <Feather name="star" size={18} color="#000000" />
               <ThemedText style={styles.featuredTitle}>Vitrin İlanları</ThemedText>
             </View>
-            <ThemedText style={styles.featuredSubtitle}>Öne çıkan araçlar</ThemedText>
           </View>
           <ScrollView
             horizontal
