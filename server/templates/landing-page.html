@@ -81,48 +81,6 @@
         opacity: 0.9;
       }
 
-      /* Hero Section */
-      .hero {
-        background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
-        color: #fff;
-        padding: 60px 20px;
-        text-align: center;
-      }
-      .hero-content {
-        max-width: 800px;
-        margin: 0 auto;
-      }
-      .hero h1 {
-        font-size: 36px;
-        font-weight: 700;
-        margin-bottom: 16px;
-        line-height: 1.2;
-      }
-      .hero p {
-        font-size: 18px;
-        color: rgba(255,255,255,0.8);
-        margin-bottom: 32px;
-      }
-      .hero-stats {
-        display: flex;
-        justify-content: center;
-        gap: 40px;
-        margin-top: 40px;
-      }
-      .stat-item {
-        text-align: center;
-      }
-      .stat-number {
-        font-size: 32px;
-        font-weight: 700;
-        color: #fff;
-      }
-      .stat-label {
-        font-size: 14px;
-        color: rgba(255,255,255,0.6);
-        margin-top: 4px;
-      }
-
       /* Search Section */
       .search-section {
         background: #fff;
@@ -519,15 +477,6 @@
 
       /* Responsive */
       @media (max-width: 768px) {
-        .hero h1 {
-          font-size: 28px;
-        }
-        .hero-stats {
-          gap: 24px;
-        }
-        .stat-number {
-          font-size: 24px;
-        }
         .search-filters {
           flex-direction: column;
         }
@@ -560,28 +509,6 @@
         </div>
       </div>
     </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-content">
-        <h1>Aracınızı Takas Edin, Hayalinizdeki Araca Kavuşun</h1>
-        <p>Türkiye'nin ilk ve tek araç takas platformunda binlerce araç sizi bekliyor. Hemen ücretsiz üye olun, aracınızı ilan verin.</p>
-        <div class="hero-stats" id="hero-stats">
-          <div class="stat-item">
-            <div class="stat-number" id="stat-listings">0</div>
-            <div class="stat-label">Aktif İlan</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number" id="stat-users">0</div>
-            <div class="stat-label">Üye</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number" id="stat-matches">0</div>
-            <div class="stat-label">Başarılı Eşleşme</div>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- Search Section -->
     <section class="search-section">
@@ -684,22 +611,6 @@
 
     <script>
       let allListings = [];
-      let stats = { users: 0, listings: 0, matches: 0 };
-
-      // Load stats
-      async function loadStats() {
-        try {
-          const response = await fetch('/api/stats');
-          if (response.ok) {
-            stats = await response.json();
-            document.getElementById('stat-listings').textContent = stats.listings || 0;
-            document.getElementById('stat-users').textContent = stats.users || 0;
-            document.getElementById('stat-matches').textContent = stats.matches || 0;
-          }
-        } catch (error) {
-          console.error('Error loading stats:', error);
-        }
-      }
 
       // Load listings
       async function loadListings() {
@@ -898,7 +809,6 @@
       });
 
       // Initialize
-      loadStats();
       loadListings();
     </script>
   </body>
