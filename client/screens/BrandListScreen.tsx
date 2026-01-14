@@ -170,9 +170,8 @@ const styles = StyleSheet.create({
   headerContent: {
     flex: 1,
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
     paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.md,
   },
   backButton: {
     marginRight: Spacing.md,
