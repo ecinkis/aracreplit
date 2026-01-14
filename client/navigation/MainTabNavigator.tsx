@@ -215,7 +215,7 @@ export default function MainTabNavigator() {
             ),
             headerRight: () => (
               <Pressable
-                style={{ flexDirection: "row", alignItems: "center", gap: 6, marginRight: 16 }}
+                style={{ flexDirection: "row", alignItems: "center", gap: 6, marginRight: 11 }}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   navigation.navigate("Compare");
