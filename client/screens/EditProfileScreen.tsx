@@ -67,7 +67,9 @@ export default function EditProfileScreen() {
     onSuccess: (data) => {
       updateUser(data);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      navigation.goBack();
+      Alert.alert("Başarılı", "Profiliniz başarıyla güncellendi.", [
+        { text: "Tamam", onPress: () => navigation.goBack() }
+      ]);
     },
     onError: (error: any) => {
       console.log("Profile update error:", error);
@@ -97,6 +99,8 @@ export default function EditProfileScreen() {
   };
 
   const handleSave = () => {
+    console.log("handleSave called, name:", name);
+    
     if (!name.trim()) {
       Alert.alert("Uyarı", "Lütfen adınızı girin.");
       return;
