@@ -333,7 +333,6 @@ export default function MatchScreen() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <ThemedText style={styles.headerTitle}>Kesfet</ThemedText>
           <View style={styles.locationRow}>
             <Feather name="map-pin" size={12} color="#6B7280" />
             <ThemedText style={styles.headerLocation}>Istanbul, TR</ThemedText>
