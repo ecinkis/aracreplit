@@ -6,16 +6,22 @@ import {
   FlatList,
   Pressable,
   ScrollView,
-  Image,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
+import { useQuery } from "@tanstack/react-query";
+import { Image } from "expo-image";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
 import { TakasLogo } from "@/components/TakasLogo";
+import type { Listing } from "@shared/schema";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_GAP = 8;
@@ -30,61 +36,76 @@ const CATEGORIES = [
   { id: "6", name: "Van" },
 ];
 
-const MOCK_VEHICLES = [
-  { id: "1", title: "Audi A5", location: "Esenyurt", price: "1.500.000", date: "6 Eylül" },
-  { id: "2", title: "Audi A5", location: "Esenyurt", price: "1.500.000", date: "6 Eylül" },
-  { id: "3", title: "Audi A5", location: "Esenyurt", price: "1.500.000", date: "6 Eylül" },
-  { id: "4", title: "Audi A5", location: "Esenyurt", price: "1.500.000", date: "6 Eylül" },
-  { id: "5", title: "Audi A5", location: "Esenyurt", price: "1.500.000", date: "6 Eylül" },
-  { id: "6", title: "Audi A5", location: "Esenyurt", price: "1.500.000", date: "6 Eylül" },
-  { id: "7", title: "Audi A5", location: "Esenyurt", price: "1.500.000", date: "6 Eylül" },
-  { id: "8", title: "Audi A5", location: "Esenyurt", price: "1.500.000", date: "6 Eylül" },
-  { id: "9", title: "Audi A5", location: "Esenyurt", price: "1.500.000", date: "6 Eylül" },
-];
-
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const renderCategory = ({ item }: { item: typeof CATEGORIES[0] }) => (
-    <Pressable style={styles.categoryItem}>
-      <View style={styles.categoryCircle} />
-      <ThemedText style={styles.categoryText} numberOfLines={1}>
-        {item.name}
-      </ThemedText>
-    </Pressable>
-  );
+  const { data: listings, isLoading } = useQuery<Listing[]>({
+    queryKey: ["/api/listings/active"],
+  });
 
-  const renderVehicle = ({ item }: { item: typeof MOCK_VEHICLES[0] }) => (
-    <Pressable style={styles.vehicleCard}>
-      <View style={styles.vehicleImageContainer}>
-        <View style={styles.vehicleImagePlaceholder}>
-          <Feather name="image" size={24} color="#9CA3AF" />
+  const formatPrice = (price: number | null) => {
+    if (!price) return "Fiyat belirtilmedi";
+    return price.toLocaleString("tr-TR");
+  };
+
+  const formatDate = (date: Date | string | null) => {
+    if (!date) return "";
+    const d = new Date(date);
+    const months = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+    return `${d.getDate()} ${months[d.getMonth()]}`;
+  };
+
+  const renderVehicle = ({ item }: { item: Listing }) => {
+    const photos = item.photos as string[] | null;
+    const firstPhoto = photos && photos.length > 0 ? photos[0] : null;
+
+    return (
+      <Pressable 
+        style={styles.vehicleCard}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          navigation.navigate("ListingDetail", { listingId: item.id });
+        }}
+      >
+        <View style={styles.vehicleImageContainer}>
+          {firstPhoto ? (
+            <Image
+              source={{ uri: firstPhoto }}
+              style={styles.vehicleImage}
+              contentFit="cover"
+            />
+          ) : (
+            <View style={styles.vehicleImagePlaceholder}>
+              <Feather name="image" size={24} color="#9CA3AF" />
+            </View>
+          )}
         </View>
-      </View>
-      <View style={styles.vehicleInfo}>
-        <View style={styles.vehicleTitleRow}>
-          <ThemedText style={styles.vehicleTitle} numberOfLines={1}>
-            {item.title}
-          </ThemedText>
-          <View style={styles.locationBadge}>
-            <Feather name="map-pin" size={8} color="#1C6BF9" />
-            <ThemedText style={styles.locationText} numberOfLines={1}>
-              {item.location}
+        <View style={styles.vehicleInfo}>
+          <View style={styles.vehicleTitleRow}>
+            <ThemedText style={styles.vehicleTitle} numberOfLines={1}>
+              {item.brand} {item.model}
             </ThemedText>
+            <View style={styles.locationBadge}>
+              <Feather name="map-pin" size={8} color="#1C6BF9" />
+              <ThemedText style={styles.locationText} numberOfLines={1}>
+                {item.city || "Türkiye"}
+              </ThemedText>
+            </View>
+          </View>
+          <View style={styles.vehiclePriceRow}>
+            <ThemedText style={styles.vehiclePrice}>₺ {formatPrice(item.estimatedValue)}</ThemedText>
+            <View style={styles.dateBadge}>
+              <Feather name="clock" size={8} color="#9CA3AF" />
+              <ThemedText style={styles.dateText}>{formatDate(item.createdAt)}</ThemedText>
+            </View>
           </View>
         </View>
-        <View style={styles.vehiclePriceRow}>
-          <ThemedText style={styles.vehiclePrice}>₺ {item.price}</ThemedText>
-          <View style={styles.dateBadge}>
-            <Feather name="clock" size={8} color="#9CA3AF" />
-            <ThemedText style={styles.dateText}>{item.date}</ThemedText>
-          </View>
-        </View>
-      </View>
-    </Pressable>
-  );
+      </Pressable>
+    );
+  };
 
   const ListHeader = () => (
     <View style={styles.headerContent}>
@@ -117,19 +138,38 @@ export default function HomeScreen() {
     </View>
   );
 
+  const EmptyListComponent = () => (
+    <View style={styles.emptyContainer}>
+      <Feather name="inbox" size={48} color="#D1D5DB" />
+      <ThemedText style={styles.emptyTitle}>Henüz ilan yok</ThemedText>
+      <ThemedText style={styles.emptySubtitle}>
+        Onaylanan ilanlar burada görünecek
+      </ThemedText>
+    </View>
+  );
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, styles.loadingContainer, { paddingTop: insets.top }]}>
+        <ActivityIndicator size="large" color={BrandColors.primaryBlue} />
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <FlatList
-        data={MOCK_VEHICLES}
+        data={listings || []}
         renderItem={renderVehicle}
         keyExtractor={(item) => item.id}
         numColumns={3}
-        columnWrapperStyle={styles.row}
+        columnWrapperStyle={listings && listings.length > 0 ? styles.row : undefined}
         contentContainerStyle={[
           styles.listContent,
           { paddingBottom: tabBarHeight + Spacing.xl },
         ]}
         ListHeaderComponent={ListHeader}
+        ListEmptyComponent={EmptyListComponent}
         showsVerticalScrollIndicator={false}
       />
     </View>
@@ -258,5 +298,29 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 8,
     color: "#9CA3AF",
+  },
+  vehicleImage: {
+    width: "100%",
+    height: "100%",
+  },
+  loadingContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: Spacing.xl * 2,
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#6B7280",
+    marginTop: Spacing.md,
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    color: "#9CA3AF",
+    marginTop: Spacing.xs,
   },
 });

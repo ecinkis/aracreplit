@@ -197,6 +197,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Listings routes
+  app.get("/api/listings/active", async (req, res) => {
+    try {
+      const allListings = await storage.getAllListings();
+      const activeListings = allListings.filter(l => l.status === "active");
+      res.json(activeListings);
+    } catch (error) {
+      console.error("Get active listings error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.get("/api/listings/featured", async (req, res) => {
     try {
       const featuredListings = await storage.getFeaturedListings();
