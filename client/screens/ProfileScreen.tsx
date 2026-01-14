@@ -119,8 +119,43 @@ function ListingMiniCard({ listing, onPress }: { listing: Listing; onPress: () =
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const queryClient = useQueryClient();
+
+  const handleLogout = () => {
+    Alert.alert(
+      "Çıkış Yap",
+      "Hesabınızdan çıkış yapmak istediğinize emin misiniz?",
+      [
+        { text: "İptal", style: "cancel" },
+        { 
+          text: "Çıkış Yap", 
+          style: "destructive",
+          onPress: () => {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            logout();
+          }
+        },
+      ]
+    );
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Hesabımı Sil",
+      "Hesabınızı silmek istediğinize emin misiniz? Bu işlem geri alınamaz ve tüm verileriniz silinecektir.",
+      [
+        { text: "İptal", style: "cancel" },
+        { 
+          text: "Hesabımı Sil", 
+          style: "destructive",
+          onPress: () => {
+            Alert.alert("Bilgi", "Hesap silme talebi alındı. En kısa sürede işleme alınacaktır.");
+          }
+        },
+      ]
+    );
+  };
 
   const userType = (user as any)?.userType || "bireysel";
   const isKurumsal = userType === "kurumsal";
@@ -545,6 +580,30 @@ export default function ProfileScreen() {
             <Feather name="chevron-right" size={20} color="#9CA3AF" />
           </Pressable>
         </View>
+
+        <View style={styles.accountActionsSection}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.logoutButton,
+              pressed && { opacity: 0.8 },
+            ]}
+            onPress={handleLogout}
+          >
+            <Feather name="log-out" size={20} color="#374151" />
+            <ThemedText style={styles.logoutButtonText}>Çıkış Yap</ThemedText>
+          </Pressable>
+
+          <Pressable
+            style={({ pressed }) => [
+              styles.deleteAccountButton,
+              pressed && { opacity: 0.8 },
+            ]}
+            onPress={handleDeleteAccount}
+          >
+            <Feather name="trash-2" size={20} color="#EF4444" />
+            <ThemedText style={styles.deleteAccountButtonText}>Hesabımı Sil</ThemedText>
+          </Pressable>
+        </View>
       </ScrollView>
     </View>
   );
@@ -955,5 +1014,38 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: "#6B7280",
     marginTop: 2,
+  },
+  accountActionsSection: {
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.xl,
+    gap: Spacing.md,
+  },
+  logoutButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    backgroundColor: "#F3F4F6",
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+  },
+  logoutButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#374151",
+  },
+  deleteAccountButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    backgroundColor: "#FEF2F2",
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+  },
+  deleteAccountButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#EF4444",
   },
 });

@@ -273,30 +273,14 @@ export default function MainTabNavigator() {
           component={ProfileScreen}
           options={{
             title: "Profil",
-            headerTitle: "Profil",
+            headerTitle: () => (
+              <ThemedText style={{ color: "#FFFFFF", fontSize: 20, fontWeight: "600", marginLeft: Spacing.lg }}>
+                Profil
+              </ThemedText>
+            ),
             tabBarLabel: "profil",
             tabBarIcon: ({ color, size }) => (
               <Feather name="user" size={size} color={color} />
-            ),
-            headerRight: () => (
-              <View style={{ flexDirection: "row", gap: 16, marginRight: 16 }}>
-                <Pressable
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    navigation.navigate("Notifications");
-                  }}
-                >
-                  <Feather name="bell" size={22} color="#FFFFFF" />
-                </Pressable>
-                <Pressable
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    navigation.navigate("Settings");
-                  }}
-                >
-                  <Feather name="settings" size={22} color="#FFFFFF" />
-                </Pressable>
-              </View>
             ),
           }}
         />
