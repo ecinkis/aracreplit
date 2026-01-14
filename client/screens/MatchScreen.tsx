@@ -219,34 +219,19 @@ function SwipeCard({
             </View>
           </View>
 
-          <View style={styles.ownerSection}>
-            <View style={styles.ownerInfo}>
-              <View style={styles.ownerAvatar}>
-                <Feather name="user" size={16} color="#FFFFFF" />
-              </View>
-              <View>
-                <ThemedText style={styles.ownerName}>Ilan Sahibi</ThemedText>
-                <View style={styles.ratingRow}>
-                  <Feather name="star" size={12} color="#F59E0B" />
-                  <ThemedText style={styles.ratingText}>4.8</ThemedText>
-                  <ThemedText style={styles.reviewCount}>(24 degerlendirme)</ThemedText>
-                </View>
-              </View>
-            </View>
-            <Pressable
-              style={({ pressed }) => [
-                styles.detailButton,
-                pressed && styles.detailButtonPressed,
-              ]}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                onDetailPress();
-              }}
-            >
-              <ThemedText style={styles.detailButtonText}>Detaylari Gor</ThemedText>
-              <Feather name="chevron-right" size={18} color="#FFFFFF" />
-            </Pressable>
-          </View>
+          <Pressable
+            style={({ pressed }) => [
+              styles.detailButton,
+              pressed && styles.detailButtonPressed,
+            ]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              onDetailPress();
+            }}
+          >
+            <ThemedText style={styles.detailButtonText}>Detaylari Gor</ThemedText>
+            <Feather name="chevron-right" size={18} color="#FFFFFF" />
+          </Pressable>
         </View>
       </Animated.View>
     </GestureDetector>
@@ -442,6 +427,20 @@ export default function MatchScreen() {
               <Feather name="star" size={22} color="#F59E0B" />
             </Pressable>
           </View>
+
+          <View style={styles.ownerSection}>
+            <View style={styles.ownerAvatar}>
+              <Feather name="user" size={18} color="#6B7280" />
+            </View>
+            <View style={styles.ownerInfo}>
+              <ThemedText style={styles.ownerName}>Ilan Sahibi</ThemedText>
+              <View style={styles.ratingRow}>
+                <Feather name="star" size={12} color="#F59E0B" />
+                <ThemedText style={styles.ratingText}>4.8</ThemedText>
+                <ThemedText style={styles.reviewCount}>(24 degerlendirme)</ThemedText>
+              </View>
+            </View>
+          </View>
         </View>
       )}
     </View>
@@ -631,27 +630,25 @@ const styles = StyleSheet.create({
   ownerSection: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    gap: Spacing.md,
+    justifyContent: "center",
+    marginTop: Spacing.lg,
+    gap: Spacing.sm,
   },
   ownerInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-    flex: 1,
+    alignItems: "flex-start",
   },
   ownerAvatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "rgba(255,255,255,0.2)",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#F3F4F6",
     justifyContent: "center",
     alignItems: "center",
   },
   ownerName: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: "#000000",
   },
   ratingRow: {
     flexDirection: "row",
@@ -666,7 +663,7 @@ const styles = StyleSheet.create({
   },
   reviewCount: {
     fontSize: 11,
-    color: "#9CA3AF",
+    color: "#6B7280",
   },
   likeLabel: {
     position: "absolute",
