@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
@@ -54,22 +54,24 @@ export default function PremiumScreen() {
   const navigation = useNavigation();
   const { theme } = useTheme();
   const { user } = useAuth();
-  const queryClient = useQueryClient();
 
   const subscribeMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest(`/api/users/${user?.id}/premium`, {
+      return apiRequest("/api/applications", {
         method: "POST",
-        body: JSON.stringify({ days: 30 }),
+        body: JSON.stringify({
+          userId: user?.id,
+          type: "premium",
+          planType: "monthly",
+        }),
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id] });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert(
-        "Tebrikler!",
-        "Premium üyeliğiniz aktif edildi. Tüm avantajlardan yararlanmaya başlayabilirsiniz.",
-        [{ text: "Harika", onPress: () => navigation.goBack() }]
+        "Başvuru Alındı",
+        "Premium üyelik başvurunuz incelemeye alındı. Onaylandığında size bildirim gönderilecektir.",
+        [{ text: "Tamam", onPress: () => navigation.goBack() }]
       );
     },
     onError: () => {
@@ -80,11 +82,11 @@ export default function PremiumScreen() {
 
   const handleSubscribe = () => {
     Alert.alert(
-      "Premium Üyelik",
-      "Bu bir demo uygulamasıdır. Gerçek ödeme sistemi entegre edilmemiştir. Premium üyelik simüle edilsin mi?",
+      "Premium Başvurusu",
+      "Aylık 149 TL premium üyelik başvurusu yapmak istiyor musunuz? Başvurunuz onaylandığında ödeme bilgileri için sizinle iletişime geçilecektir.",
       [
         { text: "İptal", style: "cancel" },
-        { text: "Evet, Aktif Et", onPress: () => subscribeMutation.mutate() },
+        { text: "Başvur", onPress: () => subscribeMutation.mutate() },
       ]
     );
   };

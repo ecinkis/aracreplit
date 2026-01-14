@@ -1423,6 +1423,11 @@
             Guven & Moderasyon
             <span class="badge">3</span>
           </a>
+          <a class="nav-item" data-section="applications">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Basvurular
+            <span class="badge" id="applicationsBadge">0</span>
+          </a>
           <a class="nav-item" data-section="messages">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
             Mesajlar
@@ -2123,6 +2128,55 @@
           </div>
         </section>
 
+        <section class="section" id="applications">
+          <div class="grid-2" style="gap: 24px;">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Kurumsal Basvurular</h3>
+                <span class="badge" id="corporateCount">0</span>
+              </div>
+              <div class="card-body" style="padding: 0;">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Basvuran</th>
+                      <th>Sirket Adi</th>
+                      <th>Vergi No</th>
+                      <th>Tarih</th>
+                      <th>Islemler</th>
+                    </tr>
+                  </thead>
+                  <tbody id="corporateApplicationsTable">
+                    <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Bekleyen basvuru yok</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Premium Basvurular</h3>
+                <span class="badge" id="premiumCount">0</span>
+              </div>
+              <div class="card-body" style="padding: 0;">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Basvuran</th>
+                      <th>Telefon</th>
+                      <th>Plan</th>
+                      <th>Tarih</th>
+                      <th>Islemler</th>
+                    </tr>
+                  </thead>
+                  <tbody id="premiumApplicationsTable">
+                    <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Bekleyen basvuru yok</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section class="section" id="messages">
           <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
             <div class="stat-card">
@@ -2402,6 +2456,7 @@
         case 'vehicles': loadListings(); break;
         case 'messages': loadMessages(); break;
         case 'moderation': loadPendingListings(); break;
+        case 'applications': loadApplications(); break;
       }
     }
 
@@ -2422,6 +2477,87 @@
         console.log('Stories loaded:', stories.length);
       } catch (error) {
         console.log('Stories will load from API');
+      }
+    }
+
+    async function loadApplications() {
+      try {
+        const [corporate, premium] = await Promise.all([
+          apiRequest('/applications/pending/corporate'),
+          apiRequest('/applications/pending/premium')
+        ]);
+        
+        const totalPending = corporate.length + premium.length;
+        document.getElementById('applicationsBadge').textContent = totalPending;
+        document.getElementById('corporateCount').textContent = corporate.length;
+        document.getElementById('premiumCount').textContent = premium.length;
+        
+        const corporateTable = document.getElementById('corporateApplicationsTable');
+        if (corporate.length > 0) {
+          corporateTable.innerHTML = corporate.map(app => `
+            <tr>
+              <td>${app.userId.substring(0, 8)}...</td>
+              <td>${app.companyName || '-'}</td>
+              <td>${app.taxNumber || '-'}</td>
+              <td>${new Date(app.createdAt).toLocaleDateString('tr-TR')}</td>
+              <td>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-sm btn-success" onclick="approveApplication('${app.id}')">Onayla</button>
+                  <button class="btn btn-sm btn-danger" onclick="rejectApplication('${app.id}')">Reddet</button>
+                </div>
+              </td>
+            </tr>
+          `).join('');
+        } else {
+          corporateTable.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Bekleyen basvuru yok</td></tr>';
+        }
+        
+        const premiumTable = document.getElementById('premiumApplicationsTable');
+        if (premium.length > 0) {
+          premiumTable.innerHTML = premium.map(app => `
+            <tr>
+              <td>${app.userId.substring(0, 8)}...</td>
+              <td>-</td>
+              <td>Aylik (149 TL)</td>
+              <td>${new Date(app.createdAt).toLocaleDateString('tr-TR')}</td>
+              <td>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-sm btn-success" onclick="approveApplication('${app.id}')">Onayla</button>
+                  <button class="btn btn-sm btn-danger" onclick="rejectApplication('${app.id}')">Reddet</button>
+                </div>
+              </td>
+            </tr>
+          `).join('');
+        } else {
+          premiumTable.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Bekleyen basvuru yok</td></tr>';
+        }
+      } catch (error) {
+        console.log('Applications will load from API');
+      }
+    }
+
+    async function approveApplication(id) {
+      if (!confirm('Bu basvuruyu onaylamak istediginize emin misiniz?')) return;
+      try {
+        await apiRequest(`/applications/${id}/approve`, { method: 'POST' });
+        alert('Basvuru onaylandi!');
+        loadApplications();
+      } catch (error) {
+        alert('Hata: ' + error.message);
+      }
+    }
+
+    async function rejectApplication(id) {
+      const reason = prompt('Red sebebi (opsiyonel):');
+      try {
+        await apiRequest(`/applications/${id}/reject`, { 
+          method: 'POST',
+          body: JSON.stringify({ reason: reason || 'Basvuru reddedildi' })
+        });
+        alert('Basvuru reddedildi!');
+        loadApplications();
+      } catch (error) {
+        alert('Hata: ' + error.message);
       }
     }
 

@@ -337,6 +337,50 @@ export const insertVerificationDocumentSchema = createInsertSchema(verificationD
   rejectionReason: true,
 });
 
+export const applications = pgTable("applications", {
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  type: text("type").notNull(), // 'corporate' veya 'premium'
+  status: text("status").default("pending"), // 'pending', 'approved', 'rejected'
+  // Kurumsal başvuru için ek bilgiler
+  companyName: text("company_name"),
+  taxNumber: text("tax_number"),
+  taxOffice: text("tax_office"),
+  companyAddress: text("company_address"),
+  authorizedPerson: text("authorized_person"),
+  companyPhone: text("company_phone"),
+  documents: jsonb("documents").$type<string[]>().default([]),
+  // Premium başvuru için
+  planType: text("plan_type"), // 'monthly'
+  // Admin işlemleri
+  rejectionReason: text("rejection_reason"),
+  reviewedBy: varchar("reviewed_by").references(() => adminUsers.id),
+  reviewedAt: timestamp("reviewed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const applicationsRelations = relations(applications, ({ one }) => ({
+  user: one(users, {
+    fields: [applications.userId],
+    references: [users.id],
+  }),
+  reviewer: one(adminUsers, {
+    fields: [applications.reviewedBy],
+    references: [adminUsers.id],
+  }),
+}));
+
+export const insertApplicationSchema = createInsertSchema(applications).omit({
+  id: true,
+  createdAt: true,
+  status: true,
+  reviewedAt: true,
+  reviewedBy: true,
+  rejectionReason: true,
+});
+
 export const adminUsers = pgTable("admin_users", {
   id: varchar("id")
     .primaryKey()
@@ -406,3 +450,5 @@ export type AdminUser = typeof adminUsers.$inferSelect;
 export type InsertAdminUser = z.infer<typeof insertAdminUserSchema>;
 export type VerificationDocument = typeof verificationDocuments.$inferSelect;
 export type InsertVerificationDocument = z.infer<typeof insertVerificationDocumentSchema>;
+export type Application = typeof applications.$inferSelect;
+export type InsertApplication = z.infer<typeof insertApplicationSchema>;

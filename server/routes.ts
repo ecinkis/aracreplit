@@ -984,6 +984,64 @@ Disallow: /api/admin/
     }
   });
 
+  // Applications (Corporate & Premium) endpoints
+  app.post("/api/applications", async (req, res) => {
+    try {
+      const application = await storage.createApplication(req.body);
+      res.status(201).json(application);
+    } catch (error) {
+      console.error("Create application error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/applications/user/:userId", async (req, res) => {
+    try {
+      const applications = await storage.getApplicationsByUser(req.params.userId);
+      res.json(applications);
+    } catch (error) {
+      console.error("Get user applications error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/applications/pending/:type", adminAuth, async (req, res) => {
+    try {
+      const applications = await storage.getPendingApplications(req.params.type);
+      res.json(applications);
+    } catch (error) {
+      console.error("Get pending applications error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/applications/:id/approve", adminAuth, async (req, res) => {
+    try {
+      const application = await storage.approveApplication(req.params.id, (req as any).adminEmail);
+      if (!application) {
+        return res.status(404).json({ error: "Application not found" });
+      }
+      res.json(application);
+    } catch (error) {
+      console.error("Approve application error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/applications/:id/reject", adminAuth, async (req, res) => {
+    try {
+      const { reason } = req.body;
+      const application = await storage.rejectApplication(req.params.id, reason, (req as any).adminEmail);
+      if (!application) {
+        return res.status(404).json({ error: "Application not found" });
+      }
+      res.json(application);
+    } catch (error) {
+      console.error("Reject application error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

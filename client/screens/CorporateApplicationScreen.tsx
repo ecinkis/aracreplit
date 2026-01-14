@@ -13,11 +13,10 @@ import { useMutation } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import * as DocumentPicker from "expo-document-picker";
-import * as FileSystem from "expo-file-system";
 import { ThemedText } from "@/components/ThemedText";
 import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
 import { useAuth } from "@/contexts/AuthContext";
-import { getApiUrl } from "@/lib/query-client";
+import { apiRequest } from "@/lib/query-client";
 import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
 
 interface DocumentFile {
@@ -40,38 +39,30 @@ export default function CorporateApplicationScreen() {
 
   const submitMutation = useMutation({
     mutationFn: async (data: any) => {
-      const formData = new FormData();
-      formData.append("userType", "kurumsal");
-      formData.append("companyName", data.companyName);
-      formData.append("taxNumber", data.taxNumber);
-      formData.append("taxOffice", data.taxOffice);
-      formData.append("companyAddress", data.companyAddress || "");
-      formData.append("authorizedPerson", data.authorizedPerson || "");
-      
-      for (const doc of data.documents) {
-        const file = new FileSystem.File(doc.uri);
-        formData.append("documents", file);
-      }
-      
-      const response = await fetch(new URL(`/api/users/${user?.id}`, getApiUrl()).toString(), {
-        method: "PATCH",
-        body: formData,
+      return apiRequest("/api/applications", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: user?.id,
+          type: "corporate",
+          companyName: data.companyName,
+          taxNumber: data.taxNumber,
+          taxOffice: data.taxOffice,
+          companyAddress: data.companyAddress || null,
+          authorizedPerson: data.authorizedPerson || null,
+          documents: data.documents.map((d: DocumentFile) => d.name),
+        }),
       });
-      
-      if (!response.ok) {
-        throw new Error("Failed to submit");
-      }
-      
-      return response.json();
     },
     onSuccess: () => {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert(
-        "Başarılı",
-        "Kurumsal başvurunuz alındı. Evraklarınız incelendikten sonra hesabınız aktif edilecektir.",
+        "Başvuru Alındı",
+        "Kurumsal üyelik başvurunuz incelemeye alındı. Onaylandığında size bildirim gönderilecektir.",
         [{ text: "Tamam", onPress: () => navigation.goBack() }]
       );
     },
     onError: () => {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert("Hata", "Başvuru gönderilemedi. Lütfen tekrar deneyin.");
     },
   });

@@ -20,6 +20,8 @@ import {
   type InsertAdminUser,
   type VerificationDocument,
   type InsertVerificationDocument,
+  type Application,
+  type InsertApplication,
   users,
   listings,
   likes,
@@ -32,6 +34,7 @@ import {
   stories,
   adminUsers,
   verificationDocuments,
+  applications,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, desc, sql, ne, notInArray } from "drizzle-orm";
@@ -110,6 +113,13 @@ export interface IStorage {
   createVerificationDocument(doc: InsertVerificationDocument): Promise<VerificationDocument>;
   updateVerificationDocument(id: string, data: Partial<VerificationDocument>): Promise<VerificationDocument | undefined>;
   getAllPendingVerifications(): Promise<VerificationDocument[]>;
+
+  // Applications
+  createApplication(application: InsertApplication): Promise<Application>;
+  getApplicationsByUser(userId: string): Promise<Application[]>;
+  getPendingApplications(type: string): Promise<Application[]>;
+  approveApplication(id: string, adminEmail: string): Promise<Application | undefined>;
+  rejectApplication(id: string, reason: string, adminEmail: string): Promise<Application | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -568,6 +578,92 @@ export class DatabaseStorage implements IStorage {
       .from(verificationDocuments)
       .where(eq(verificationDocuments.status, "pending"))
       .orderBy(desc(verificationDocuments.createdAt));
+  }
+
+  // Applications
+  async createApplication(application: InsertApplication): Promise<Application> {
+    const [created] = await db.insert(applications).values(application).returning();
+    return created;
+  }
+
+  async getApplicationsByUser(userId: string): Promise<Application[]> {
+    return db
+      .select()
+      .from(applications)
+      .where(eq(applications.userId, userId))
+      .orderBy(desc(applications.createdAt));
+  }
+
+  async getPendingApplications(type: string): Promise<Application[]> {
+    return db
+      .select()
+      .from(applications)
+      .where(and(eq(applications.type, type), eq(applications.status, "pending")))
+      .orderBy(desc(applications.createdAt));
+  }
+
+  async approveApplication(id: string, adminEmail: string): Promise<Application | undefined> {
+    const [application] = await db
+      .select()
+      .from(applications)
+      .where(eq(applications.id, id));
+    
+    if (!application) return undefined;
+
+    const admin = await this.getAdminUserByEmail(adminEmail);
+    
+    const [updated] = await db
+      .update(applications)
+      .set({
+        status: "approved",
+        reviewedBy: admin?.id,
+        reviewedAt: new Date(),
+      })
+      .where(eq(applications.id, id))
+      .returning();
+
+    if (updated) {
+      // Premium onaylandıysa kullanıcıyı premium yap
+      if (application.type === "premium") {
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + 30);
+        await this.updateUser(application.userId, {
+          isPremium: true,
+          premiumExpiresAt: expiresAt,
+        });
+      }
+      // Kurumsal onaylandıysa kullanıcıyı kurumsal yap
+      if (application.type === "corporate") {
+        await this.updateUser(application.userId, {
+          userType: "kurumsal",
+          companyName: application.companyName,
+          taxNumber: application.taxNumber,
+          taxOffice: application.taxOffice,
+          companyAddress: application.companyAddress,
+          authorizedPerson: application.authorizedPerson,
+          companyVerified: true,
+        });
+      }
+    }
+
+    return updated || undefined;
+  }
+
+  async rejectApplication(id: string, reason: string, adminEmail: string): Promise<Application | undefined> {
+    const admin = await this.getAdminUserByEmail(adminEmail);
+    
+    const [updated] = await db
+      .update(applications)
+      .set({
+        status: "rejected",
+        rejectionReason: reason,
+        reviewedBy: admin?.id,
+        reviewedAt: new Date(),
+      })
+      .where(eq(applications.id, id))
+      .returning();
+
+    return updated || undefined;
   }
 }
 
