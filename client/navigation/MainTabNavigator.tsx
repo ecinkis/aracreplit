@@ -262,7 +262,7 @@ export default function MainTabNavigator() {
             ),
             tabBarLabel: "eşleş",
             tabBarIcon: ({ color, size }) => (
-              <Feather name="layers" size={size} color={color} />
+              <Feather name="repeat" size={size} color={color} />
             ),
             headerRight: () => (
               <View style={{ flexDirection: "row", alignItems: "center", marginRight: Spacing.lg }}>
