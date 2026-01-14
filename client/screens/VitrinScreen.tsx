@@ -608,7 +608,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginRight: Spacing.sm,
     borderWidth: 2,
-    borderColor: "#000000",
+    borderColor: "#9CA3AF",
   },
   featuredBadge: {
     position: "absolute",
