@@ -270,6 +270,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   section: {
+    marginTop: 15,
     marginBottom: Spacing.md,
   },
   sectionTitle: {
