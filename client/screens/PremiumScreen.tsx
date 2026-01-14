@@ -201,22 +201,18 @@ export default function PremiumScreen() {
           <Pressable
             style={({ pressed }) => [
               styles.subscribeButton,
+              { backgroundColor: "#000000" },
               pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
             ]}
             onPress={handleSubscribe}
             disabled={subscribeMutation.isPending}
           >
-            <LinearGradient
-              colors={[BrandColors.primaryBlue, "#4A90E2"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.subscribeButtonGradient}
-            >
+            <View style={styles.subscribeButtonGradient}>
               <Feather name="zap" size={20} color="#FFFFFF" />
               <ThemedText style={styles.subscribeButtonText}>
                 {subscribeMutation.isPending ? "İşleniyor..." : "Premium'a Yükselt"}
               </ThemedText>
-            </LinearGradient>
+            </View>
           </Pressable>
           <ThemedText style={[styles.disclaimer, { color: theme.textSecondary }]}>
             İstediğiniz zaman iptal edebilirsiniz
