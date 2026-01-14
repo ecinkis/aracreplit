@@ -320,7 +320,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/listings/:id", async (req, res) => {
     try {
-      const listing = await storage.updateListing(req.params.id, req.body);
+      // Güncellenen ilanlar tekrar onaya düşsün
+      const updateData = { ...req.body, status: "pending" };
+      const listing = await storage.updateListing(req.params.id, updateData);
       if (!listing) {
         return res.status(404).json({ error: "Listing not found" });
       }
@@ -843,10 +845,53 @@ Disallow: /api/admin/
 
   app.get("/api/admin/listings", adminAuth, async (req, res) => {
     try {
+      const { status } = req.query;
       const allListings = await storage.getAllListings();
+      if (status) {
+        const filtered = allListings.filter(l => l.status === status);
+        return res.json(filtered);
+      }
       res.json(allListings);
     } catch (error) {
       console.error("Admin listings error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/admin/listings/pending", adminAuth, async (req, res) => {
+    try {
+      const allListings = await storage.getAllListings();
+      const pendingListings = allListings.filter(l => l.status === "pending");
+      res.json(pendingListings);
+    } catch (error) {
+      console.error("Admin pending listings error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.patch("/api/admin/listings/:id/approve", adminAuth, async (req, res) => {
+    try {
+      const listing = await storage.updateListing(req.params.id, { status: "active" });
+      if (!listing) {
+        return res.status(404).json({ error: "Listing not found" });
+      }
+      res.json(listing);
+    } catch (error) {
+      console.error("Admin approve listing error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.patch("/api/admin/listings/:id/reject", adminAuth, async (req, res) => {
+    try {
+      const { reason } = req.body;
+      const listing = await storage.updateListing(req.params.id, { status: "rejected" });
+      if (!listing) {
+        return res.status(404).json({ error: "Listing not found" });
+      }
+      res.json(listing);
+    } catch (error) {
+      console.error("Admin reject listing error:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   });

@@ -62,7 +62,7 @@ export const listings = pgTable("listings", {
   yearRangeMin: integer("year_range_min"),
   yearRangeMax: integer("year_range_max"),
   kmMax: integer("km_max"),
-  status: text("status").default("active"),
+  status: text("status").default("pending"), // pending, active, rejected
   viewCount: integer("view_count").default(0),
   tramerRecord: integer("tramer_record").default(0),
   paintedParts: jsonb("painted_parts").$type<string[]>().default([]),

@@ -1936,40 +1936,20 @@
 
         <section class="section" id="moderation">
           <div class="tabs">
-            <div class="tab active">Inceleme Bekleyen (3)</div>
-            <div class="tab">Sikayetler</div>
-            <div class="tab">Engellenenler</div>
+            <div class="tab active" onclick="loadPendingListings()">Onay Bekleyen Ilanlar (<span id="pendingCount">0</span>)</div>
           </div>
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title">Inceleme Kuyrugu</h3>
+              <h3 class="card-title">Onay Bekleyen Ilanlar</h3>
+              <button class="btn btn-secondary btn-sm" onclick="loadPendingListings()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                Yenile
+              </button>
             </div>
-            <div class="card-body">
-              <div class="alert-item">
-                <div class="alert-icon warning">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                </div>
-                <div class="alert-content">
-                  <div class="alert-title">Supheli Fiyatlandirma</div>
-                  <div class="alert-desc">BMW 320i - Piyasa degerinin %40 altinda fiyat</div>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                  <button class="btn btn-secondary btn-sm">Onayla</button>
-                  <button class="btn btn-danger btn-sm">Reddet</button>
-                </div>
-              </div>
-              <div class="alert-item">
-                <div class="alert-icon danger">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
-                </div>
-                <div class="alert-content">
-                  <div class="alert-title">Kullanici Sikayeti</div>
-                  <div class="alert-desc">Mehmet K. - 3 kullanicidan dolandiricilik sikayeti</div>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                  <button class="btn btn-secondary btn-sm">Incele</button>
-                  <button class="btn btn-danger btn-sm">Engelle</button>
-                </div>
+            <div class="card-body" id="pendingListingsContainer">
+              <div class="state-loading" style="padding: 40px; text-align: center;">
+                <div class="loading-spinner"></div>
+                <div style="color: var(--text-muted); margin-top: 12px;">Yukleniyor...</div>
               </div>
             </div>
           </div>
@@ -2421,6 +2401,7 @@
         case 'users': loadUsers(); break;
         case 'vehicles': loadListings(); break;
         case 'messages': loadMessages(); break;
+        case 'moderation': loadPendingListings(); break;
       }
     }
 
@@ -2469,6 +2450,76 @@
         if (data.today) document.getElementById('todayMessages').textContent = new Intl.NumberFormat('tr-TR').format(data.today);
       } catch (error) {
         console.log('Messages will load from API');
+      }
+    }
+
+    async function loadPendingListings() {
+      const container = document.getElementById('pendingListingsContainer');
+      container.innerHTML = '<div style="padding: 40px; text-align: center;"><div class="loading-spinner"></div><div style="color: var(--text-muted); margin-top: 12px;">Yukleniyor...</div></div>';
+      
+      try {
+        const listings = await apiRequest('/listings/pending');
+        document.getElementById('pendingCount').textContent = listings.length;
+        
+        if (listings.length === 0) {
+          container.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--text-muted);"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="48" height="48" style="margin-bottom: 12px; opacity: 0.5;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><div>Onay bekleyen ilan bulunmuyor</div></div>';
+          return;
+        }
+        
+        let html = '';
+        for (const listing of listings) {
+          const photo = listing.photos && listing.photos.length > 0 ? listing.photos[0] : '';
+          const createdAt = new Date(listing.createdAt).toLocaleDateString('tr-TR');
+          html += `
+            <div class="alert-item" style="padding: 16px; border-radius: var(--radius-md); background: var(--bg-tertiary); margin-bottom: 12px;">
+              <div style="display: flex; gap: 16px; align-items: flex-start;">
+                <div style="width: 80px; height: 60px; border-radius: var(--radius-sm); background: var(--bg-hover); overflow: hidden; flex-shrink: 0;">
+                  ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover;">` : '<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24" style="opacity: 0.3;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>'}
+                </div>
+                <div style="flex: 1;">
+                  <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">${listing.brand} ${listing.model}</div>
+                  <div style="font-size: 12px; color: var(--text-secondary);">${listing.year} • ${new Intl.NumberFormat('tr-TR').format(listing.km)} km • ${listing.city}</div>
+                  <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Olusturulma: ${createdAt}</div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-sm" style="background: var(--success); color: white;" onclick="approveListing('${listing.id}')">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Onayla
+                  </button>
+                  <button class="btn btn-danger btn-sm" onclick="rejectListing('${listing.id}')">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    Reddet
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+        container.innerHTML = html;
+      } catch (error) {
+        console.error('Error loading pending listings:', error);
+        container.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--danger);">Ilanlar yuklenirken hata olustu</div>';
+      }
+    }
+
+    async function approveListing(id) {
+      try {
+        await apiRequest(`/listings/${id}/approve`, { method: 'PATCH' });
+        loadPendingListings();
+      } catch (error) {
+        console.error('Error approving listing:', error);
+        alert('Ilan onaylanirken hata olustu');
+      }
+    }
+
+    async function rejectListing(id) {
+      if (!confirm('Bu ilani reddetmek istediginizden emin misiniz?')) return;
+      try {
+        await apiRequest(`/listings/${id}/reject`, { method: 'PATCH' });
+        loadPendingListings();
+      } catch (error) {
+        console.error('Error rejecting listing:', error);
+        alert('Ilan reddedilirken hata olustu');
       }
     }
 
