@@ -59,10 +59,17 @@ export default function EditProfileScreen() {
 
   const updateMutation = useMutation({
     mutationFn: async (data: { name?: string; city?: string; email?: string; phone?: string; avatarUrl?: string }) => {
-      return apiRequest(`/api/users/${user?.id}`, {
-        method: "PATCH",
-        body: JSON.stringify(data),
-      });
+      try {
+        const result = await apiRequest(`/api/users/${user?.id}`, {
+          method: "PATCH",
+          body: JSON.stringify(data),
+        });
+        console.log("API response:", result);
+        return result;
+      } catch (err: any) {
+        console.log("API error details:", err?.message, err);
+        throw err;
+      }
     },
     onSuccess: (data) => {
       updateUser(data);
