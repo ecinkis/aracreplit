@@ -167,7 +167,7 @@ export class DatabaseStorage implements IStorage {
       );
     }
     
-    const result = await query.orderBy(desc(listings.createdAt));
+    const result = await query.orderBy(desc(listings.updatedAt));
     
     let filtered = result;
     if (filters?.city) {
