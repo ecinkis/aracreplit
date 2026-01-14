@@ -284,13 +284,18 @@ export default function MainTabNavigator() {
           options={{
             title: "Profil",
             headerTitle: () => (
-              <ThemedText style={{ color: "#FFFFFF", fontSize: 20, fontWeight: "600", marginLeft: Spacing.lg }}>
+              <ThemedText style={{ color: "#FFFFFF", fontSize: 20, fontWeight: "600", marginLeft: 9 }}>
                 Profil
               </ThemedText>
             ),
             tabBarLabel: "profil",
             tabBarIcon: ({ color, size }) => (
               <Feather name="user" size={size} color={color} />
+            ),
+            headerRight: () => (
+              <View style={{ flexDirection: "row", alignItems: "center", marginRight: Spacing.lg }}>
+                <TakasLogo size={28} />
+              </View>
             ),
           }}
         />
