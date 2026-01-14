@@ -835,11 +835,32 @@ Disallow: /api/admin/
         storage.getActiveStories(),
       ]);
       
+      const now = new Date();
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const weekAgo = new Date(todayStart.getTime() - 7 * 24 * 60 * 60 * 1000);
+      
+      const pendingListings = allListings.filter(l => l.status === "pending");
+      const activeListings = allListings.filter(l => l.status === "active");
+      const todayUsers = allUsers.filter(u => u.createdAt && new Date(u.createdAt) >= todayStart);
+      const todayListings = allListings.filter(l => l.createdAt && new Date(l.createdAt) >= todayStart);
+      const weekUsers = allUsers.filter(u => u.createdAt && new Date(u.createdAt) >= weekAgo);
+      const weekListings = allListings.filter(l => l.createdAt && new Date(l.createdAt) >= weekAgo);
+      const corporateUsers = allUsers.filter(u => u.userType === "corporate");
+      const premiumUsers = allUsers.filter(u => u.userType === "premium");
+      
       res.json({
         users: allUsers.length,
         listings: allListings.length,
         matches: allMatches.length,
         stories: allStories.length,
+        pendingListings: pendingListings.length,
+        activeListings: activeListings.length,
+        todayUsers: todayUsers.length,
+        todayListings: todayListings.length,
+        weekUsers: weekUsers.length,
+        weekListings: weekListings.length,
+        corporateUsers: corporateUsers.length,
+        premiumUsers: premiumUsers.length,
       });
     } catch (error) {
       console.error("Admin stats error:", error);

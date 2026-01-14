@@ -503,6 +503,11 @@
     .stat-change.up { color: var(--success); }
     .stat-change.down { color: var(--danger); }
     .stat-change svg { width: 14px; height: 14px; }
+    .stat-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
 
     .card {
       background: var(--bg-secondary);
@@ -1470,13 +1475,10 @@
                 <span class="label">Toplam Kullanici</span>
                 <div class="icon blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg></div>
               </div>
-              <div class="stat-value" id="totalUsers">2,847</div>
+              <div class="stat-value" id="totalUsers">0</div>
               <div style="display: flex; align-items: center; justify-content: space-between;">
-                <span class="trend-indicator up">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
-                  +12.5%
-                </span>
-                <div class="sparkline" id="sparkline1"></div>
+                <span class="stat-sub" id="todayUsers">Bugun: 0</span>
+                <span class="stat-sub" id="weekUsers">Bu hafta: 0</span>
               </div>
             </div>
             <div class="stat-card">
@@ -1484,13 +1486,10 @@
                 <span class="label">Aktif Ilan</span>
                 <div class="icon green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg></div>
               </div>
-              <div class="stat-value" id="totalListings">1,234</div>
+              <div class="stat-value" id="activeListings">0</div>
               <div style="display: flex; align-items: center; justify-content: space-between;">
-                <span class="trend-indicator up">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
-                  +8.2%
-                </span>
-                <div class="sparkline" id="sparkline2"></div>
+                <span class="stat-sub" id="todayListings">Bugun: 0</span>
+                <span class="stat-sub" id="weekListings">Bu hafta: 0</span>
               </div>
             </div>
             <div class="stat-card">
@@ -1498,13 +1497,10 @@
                 <span class="label">Basarili Takas</span>
                 <div class="icon yellow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg></div>
               </div>
-              <div class="stat-value" id="totalMatches">342</div>
+              <div class="stat-value" id="totalMatches">0</div>
               <div style="display: flex; align-items: center; justify-content: space-between;">
-                <span class="trend-indicator up">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
-                  +23.1%
-                </span>
-                <div class="sparkline" id="sparkline3"></div>
+                <span class="stat-sub" id="corporateUsers">Kurumsal: 0</span>
+                <span class="stat-sub" id="premiumUsers">Premium: 0</span>
               </div>
             </div>
             <div class="stat-card">
@@ -1512,13 +1508,10 @@
                 <span class="label">Bekleyen Islem</span>
                 <div class="icon red"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
               </div>
-              <div class="stat-value">18</div>
+              <div class="stat-value" id="pendingListings">0</div>
               <div style="display: flex; align-items: center; justify-content: space-between;">
-                <span class="trend-indicator down">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
-                  -5.3%
-                </span>
-                <div class="sparkline" id="sparkline4"></div>
+                <span class="stat-sub" id="totalListings">Toplam ilan: 0</span>
+                <span class="stat-sub" id="totalStories">Hikaye: 0</span>
               </div>
             </div>
           </div>
@@ -2455,9 +2448,23 @@
     async function loadDashboard() {
       try {
         const stats = await apiRequest('/stats');
-        if (stats.users) document.getElementById('totalUsers').textContent = new Intl.NumberFormat('tr-TR').format(stats.users);
-        if (stats.listings) document.getElementById('totalListings').textContent = new Intl.NumberFormat('tr-TR').format(stats.listings);
-        if (stats.matches) document.getElementById('totalMatches').textContent = new Intl.NumberFormat('tr-TR').format(stats.matches);
+        const fmt = (n) => new Intl.NumberFormat('tr-TR').format(n || 0);
+        
+        document.getElementById('totalUsers').textContent = fmt(stats.users);
+        document.getElementById('todayUsers').textContent = 'Bugun: ' + fmt(stats.todayUsers);
+        document.getElementById('weekUsers').textContent = 'Bu hafta: ' + fmt(stats.weekUsers);
+        
+        document.getElementById('activeListings').textContent = fmt(stats.activeListings);
+        document.getElementById('todayListings').textContent = 'Bugun: ' + fmt(stats.todayListings);
+        document.getElementById('weekListings').textContent = 'Bu hafta: ' + fmt(stats.weekListings);
+        
+        document.getElementById('totalMatches').textContent = fmt(stats.matches);
+        document.getElementById('corporateUsers').textContent = 'Kurumsal: ' + fmt(stats.corporateUsers);
+        document.getElementById('premiumUsers').textContent = 'Premium: ' + fmt(stats.premiumUsers);
+        
+        document.getElementById('pendingListings').textContent = fmt(stats.pendingListings);
+        document.getElementById('totalListings').textContent = 'Toplam ilan: ' + fmt(stats.listings);
+        document.getElementById('totalStories').textContent = 'Hikaye: ' + fmt(stats.stories);
       } catch (error) {
         console.log('Dashboard data will load from API');
       }
