@@ -235,15 +235,17 @@ export default function MainTabNavigator() {
             tabBarIcon: () => null,
             tabBarButton: (props) => (
               <View style={[props.style, styles.createButtonWrapper]}>
-                <Pressable
-                  onPress={handleCreatePress}
-                  style={({ pressed }) => [
-                    styles.createButton,
-                    pressed && styles.createButtonPressed,
-                  ]}
-                >
-                  <Feather name="plus" size={28} color="#FFFFFF" />
-                </Pressable>
+                <View style={[styles.createButtonOuter, { backgroundColor: isDark ? "#1C1C1E" : "#FFFFFF" }]}>
+                  <Pressable
+                    onPress={handleCreatePress}
+                    style={({ pressed }) => [
+                      styles.createButton,
+                      pressed && styles.createButtonPressed,
+                    ]}
+                  >
+                    <Feather name="plus" size={28} color="#FFFFFF" />
+                  </Pressable>
+                </View>
               </View>
             ),
           }}
@@ -307,6 +309,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  createButtonOuter: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: -28,
+  },
   createButton: {
     width: 56,
     height: 56,
@@ -314,7 +324,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#000000",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: -20,
     shadowColor: "#000000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
