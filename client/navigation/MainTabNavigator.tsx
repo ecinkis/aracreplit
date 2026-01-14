@@ -202,11 +202,8 @@ export default function MainTabNavigator() {
               <Feather name="home" size={size} color={color} />
             ),
             headerRight: () => (
-              <View style={{ flexDirection: "row", alignItems: "center", marginRight: Spacing.lg, gap: 8 }}>
+              <View style={{ flexDirection: "row", alignItems: "center", marginRight: Spacing.lg }}>
                 <TakasLogo size={28} />
-                <ThemedText style={{ color: "rgba(255,255,255,0.7)", fontSize: 11 }}>
-                  v.10
-                </ThemedText>
               </View>
             ),
           }}
