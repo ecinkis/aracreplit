@@ -868,6 +868,112 @@ Disallow: /api/admin/
     }
   });
 
+  app.get("/api/admin/analytics", adminAuth, async (req, res) => {
+    try {
+      const [allUsers, allListings, allMatches] = await Promise.all([
+        storage.getAllUsers(),
+        storage.getAllListings(),
+        storage.getAllMatches(),
+      ]);
+      
+      const now = new Date();
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      
+      // Son 7 günlük veriler
+      const dailyData = [];
+      for (let i = 6; i >= 0; i--) {
+        const dayStart = new Date(todayStart.getTime() - i * 24 * 60 * 60 * 1000);
+        const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
+        
+        const dayUsers = allUsers.filter(u => {
+          const created = u.createdAt ? new Date(u.createdAt) : null;
+          return created && created >= dayStart && created < dayEnd;
+        }).length;
+        
+        const dayListings = allListings.filter(l => {
+          const created = l.createdAt ? new Date(l.createdAt) : null;
+          return created && created >= dayStart && created < dayEnd;
+        }).length;
+        
+        dailyData.push({ 
+          day: ['Paz', 'Pzt', 'Sal', 'Car', 'Per', 'Cum', 'Cmt'][dayStart.getDay()],
+          users: dayUsers, 
+          listings: dayListings 
+        });
+      }
+      
+      // Marka istatistikleri
+      const brandCounts: Record<string, number> = {};
+      allListings.forEach(l => {
+        if (l.brand) {
+          brandCounts[l.brand] = (brandCounts[l.brand] || 0) + 1;
+        }
+      });
+      const topBrands = Object.entries(brandCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([brand, count]) => ({ brand, count }));
+      
+      // Şehir istatistikleri
+      const cityCounts: Record<string, number> = {};
+      allListings.forEach(l => {
+        if (l.city) {
+          cityCounts[l.city] = (cityCounts[l.city] || 0) + 1;
+        }
+      });
+      const topCities = Object.entries(cityCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([city, count]) => ({ city, count }));
+      
+      // Takas oranı (matches / listings)
+      const matchRate = allListings.length > 0 
+        ? ((allMatches.length / allListings.length) * 100).toFixed(1) 
+        : "0";
+      
+      // Son ay ve önceki ay karşılaştırma
+      const monthAgo = new Date(todayStart.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const twoMonthsAgo = new Date(todayStart.getTime() - 60 * 24 * 60 * 60 * 1000);
+      
+      const thisMonthUsers = allUsers.filter(u => u.createdAt && new Date(u.createdAt) >= monthAgo).length;
+      const lastMonthUsers = allUsers.filter(u => {
+        const created = u.createdAt ? new Date(u.createdAt) : null;
+        return created && created >= twoMonthsAgo && created < monthAgo;
+      }).length;
+      
+      const thisMonthListings = allListings.filter(l => l.createdAt && new Date(l.createdAt) >= monthAgo).length;
+      const lastMonthListings = allListings.filter(l => {
+        const created = l.createdAt ? new Date(l.createdAt) : null;
+        return created && created >= twoMonthsAgo && created < monthAgo;
+      }).length;
+      
+      const userGrowth = lastMonthUsers > 0 
+        ? (((thisMonthUsers - lastMonthUsers) / lastMonthUsers) * 100).toFixed(1)
+        : thisMonthUsers > 0 ? "100" : "0";
+      
+      const listingGrowth = lastMonthListings > 0
+        ? (((thisMonthListings - lastMonthListings) / lastMonthListings) * 100).toFixed(1)
+        : thisMonthListings > 0 ? "100" : "0";
+      
+      res.json({
+        dailyData,
+        topBrands,
+        topCities,
+        matchRate,
+        thisMonthUsers,
+        thisMonthListings,
+        userGrowth,
+        listingGrowth,
+        totalUsers: allUsers.length,
+        totalListings: allListings.length,
+        totalMatches: allMatches.length,
+      });
+    } catch (error) {
+      console.error("Admin analytics error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.get("/api/admin/users", adminAuth, async (req, res) => {
     try {
       const limit = parseInt(req.query.limit as string) || 100;

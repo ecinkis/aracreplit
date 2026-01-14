@@ -1951,165 +1951,70 @@
           <div class="stats-grid">
             <div class="stat-card">
               <div class="stat-header">
-                <span class="label">Aylik Gelir</span>
-                <div class="icon green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+                <span class="label">Toplam Kullanici</span>
+                <div class="icon blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg></div>
               </div>
-              <div class="stat-value">284.500 TL</div>
-              <div class="stat-change up">+18.2% gecen aya gore</div>
+              <div class="stat-value" id="analyticsUsers">0</div>
+              <div class="stat-change" id="userGrowthIndicator">Bu ay: <span id="thisMonthUsers">0</span></div>
             </div>
             <div class="stat-card">
               <div class="stat-header">
-                <span class="label">Donusum Orani</span>
-                <div class="icon blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div>
+                <span class="label">Toplam Ilan</span>
+                <div class="icon green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg></div>
               </div>
-              <div class="stat-value">4.8%</div>
-              <div class="stat-change up">+0.6% gecen aya gore</div>
+              <div class="stat-value" id="analyticsListings">0</div>
+              <div class="stat-change" id="listingGrowthIndicator">Bu ay: <span id="thisMonthListings">0</span></div>
             </div>
             <div class="stat-card">
               <div class="stat-header">
-                <span class="label">Ort. Oturum Suresi</span>
-                <div class="icon yellow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+                <span class="label">Takas Orani</span>
+                <div class="icon yellow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg></div>
               </div>
-              <div class="stat-value">8m 32s</div>
-              <div class="stat-change up">+1m 12s gecen aya gore</div>
+              <div class="stat-value" id="matchRate">0%</div>
+              <div class="stat-change">Toplam takas: <span id="analyticsMatches">0</span></div>
             </div>
             <div class="stat-card">
               <div class="stat-header">
-                <span class="label">Hemen Cikma Orani</span>
-                <div class="icon red"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0l-4 4m4-4l-4-4m0-6H4m0 0l4-4m-4 4l4 4"/></svg></div>
+                <span class="label">Kullanici Buyumesi</span>
+                <div class="icon red"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></div>
               </div>
-              <div class="stat-value">24.3%</div>
-              <div class="stat-change down">-2.1% gecen aya gore</div>
+              <div class="stat-value" id="userGrowthRate">0%</div>
+              <div class="stat-change" id="listingGrowthRate">Ilan buyumesi: 0%</div>
             </div>
           </div>
           <div class="grid-2">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Kullanici Buyumesi</h3>
+                <h3 class="card-title">Haftalik Aktivite</h3>
               </div>
-              <div class="card-body">
-                <div class="chart-bars" id="growthChart"></div>
+              <div class="card-body" style="padding: var(--space-5);">
+                <div id="weeklyActivityChart" style="display: flex; flex-direction: column; gap: 8px;"></div>
               </div>
             </div>
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">En Populer Markalar</h3>
               </div>
-              <div class="card-body" style="padding: var(--space-5);">
-                <div class="metric-comparison">
-                  <span class="metric-label">BMW</span>
-                  <div class="metric-bar-container"><div class="metric-bar primary" style="width: 78%;"></div></div>
-                  <span class="metric-value">324</span>
-                </div>
-                <div class="metric-comparison">
-                  <span class="metric-label">Mercedes</span>
-                  <div class="metric-bar-container"><div class="metric-bar primary" style="width: 65%;"></div></div>
-                  <span class="metric-value">268</span>
-                </div>
-                <div class="metric-comparison">
-                  <span class="metric-label">Audi</span>
-                  <div class="metric-bar-container"><div class="metric-bar primary" style="width: 52%;"></div></div>
-                  <span class="metric-value">215</span>
-                </div>
-                <div class="metric-comparison">
-                  <span class="metric-label">Volkswagen</span>
-                  <div class="metric-bar-container"><div class="metric-bar primary" style="width: 45%;"></div></div>
-                  <span class="metric-value">186</span>
-                </div>
+              <div class="card-body" style="padding: var(--space-5);" id="topBrandsContainer">
+                <div style="color: var(--text-muted); text-align: center; padding: 20px;">Yukleniyor...</div>
               </div>
             </div>
           </div>
-
-          <div class="card" style="margin-top: 24px;">
-            <div class="card-header">
-              <h3 class="card-title">Bilesen Durumlari (Component States)</h3>
+          <div class="grid-2" style="margin-top: 24px;">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">En Populer Sehirler</h3>
+              </div>
+              <div class="card-body" style="padding: var(--space-5);" id="topCitiesContainer">
+                <div style="color: var(--text-muted); text-align: center; padding: 20px;">Yukleniyor...</div>
+              </div>
             </div>
-            <div class="card-body" style="padding: 20px;">
-              <div class="grid-2" style="gap: 24px;">
-                <div>
-                  <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase;">Yukleniyor Durumu</div>
-                  <div class="state-loading" style="background: var(--bg-tertiary); border-radius: var(--radius-md);">
-                    <div class="loading-spinner"></div>
-                    <span class="loading-text">Veriler yukleniyor...</span>
-                  </div>
-                </div>
-                <div>
-                  <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase;">Bos Durum</div>
-                  <div class="state-empty" style="background: var(--bg-tertiary); border-radius: var(--radius-md);">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
-                    <span class="state-empty-title">Veri bulunamadi</span>
-                    <span class="state-empty-desc">Bu kriterlere uyan sonuc yok</span>
-                  </div>
-                </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Gunluk Kayitlar (Son 7 Gun)</h3>
               </div>
-
-              <div style="margin-top: 24px;">
-                <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase;">Hata Durumu</div>
-                <div class="state-error">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                  <span class="state-error-title">Baglanti hatasi</span>
-                  <span class="state-error-desc">Sunucuya baglanilamiyor. Lutfen tekrar deneyin.</span>
-                  <button class="btn btn-secondary btn-sm" style="margin-top: 8px;">Tekrar Dene</button>
-                </div>
-              </div>
-
-              <div style="margin-top: 24px;">
-                <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase;">Tablo Satir Durumlari</div>
-                <table class="data-table">
-                  <thead>
-                    <tr><th>Durum</th><th>Aciklama</th><th>Badge</th></tr>
-                  </thead>
-                  <tbody>
-                    <tr class="row-selected"><td>Secili Satir</td><td>Kullanici tarafindan secilmis</td><td><span class="badge badge-info">Secili</span></td></tr>
-                    <tr class="row-success"><td>Basarili Satir</td><td>Islem tamamlandi</td><td><span class="badge badge-success">Basarili</span></td></tr>
-                    <tr class="row-error"><td>Hata Satiri</td><td>Islem basarisiz</td><td><span class="badge badge-danger">Hata</span></td></tr>
-                    <tr class="row-disabled"><td>Devre Disi</td><td>Erisim yok</td><td><span class="badge">Pasif</span></td></tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="grid-2" style="gap: 24px; margin-top: 24px;">
-                <div>
-                  <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase;">Buton Durumlari</div>
-                  <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                    <button class="btn btn-primary">Normal</button>
-                    <button class="btn btn-primary" disabled>Devre Disi</button>
-                    <button class="btn btn-secondary">Ikincil</button>
-                    <button class="btn btn-danger">Tehlike</button>
-                  </div>
-                </div>
-                <div>
-                  <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase;">Aktivite Durumlari</div>
-                  <div style="display: flex; gap: 24px; align-items: center;">
-                    <div style="display: flex; align-items: center; gap: 8px;"><div class="activity-dot online"></div><span style="font-size: 13px;">Cevrimici</span></div>
-                    <div style="display: flex; align-items: center; gap: 8px;"><div class="activity-dot away"></div><span style="font-size: 13px;">Uzakta</span></div>
-                    <div style="display: flex; align-items: center; gap: 8px;"><div class="activity-dot offline"></div><span style="font-size: 13px;">Cevrimdisi</span></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="grid-2" style="gap: 24px; margin-top: 24px;">
-                <div>
-                  <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase;">Form Dogrulama</div>
-                  <div style="display: flex; flex-direction: column; gap: 16px;">
-                    <div>
-                      <input type="text" class="input-success" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--success); border-radius: var(--radius-md); color: var(--text-primary);" value="Gecerli e-posta">
-                      <div class="field-hint" style="color: var(--success);">E-posta adresi dogrulandi</div>
-                    </div>
-                    <div>
-                      <input type="text" class="input-error" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--danger); border-radius: var(--radius-md); color: var(--text-primary);" value="Gecersiz giris">
-                      <div class="field-error">Bu alan zorunludur</div>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase;">Skeleton Yukleme</div>
-                  <div style="display: flex; flex-direction: column; gap: 12px;">
-                    <div class="skeleton" style="height: 16px; width: 70%;"></div>
-                    <div class="skeleton" style="height: 16px; width: 100%;"></div>
-                    <div class="skeleton" style="height: 16px; width: 85%;"></div>
-                  </div>
-                </div>
+              <div class="card-body" style="padding: var(--space-5);">
+                <div id="dailyStatsTable"></div>
               </div>
             </div>
           </div>
@@ -2442,6 +2347,92 @@
         case 'messages': loadMessages(); break;
         case 'moderation': loadPendingListings(); break;
         case 'applications': loadApplications(); break;
+        case 'analytics': loadAnalytics(); break;
+      }
+    }
+
+    async function loadAnalytics() {
+      try {
+        const data = await apiRequest('/analytics');
+        const fmt = (n) => new Intl.NumberFormat('tr-TR').format(n || 0);
+        
+        document.getElementById('analyticsUsers').textContent = fmt(data.totalUsers);
+        document.getElementById('thisMonthUsers').textContent = fmt(data.thisMonthUsers);
+        document.getElementById('analyticsListings').textContent = fmt(data.totalListings);
+        document.getElementById('thisMonthListings').textContent = fmt(data.thisMonthListings);
+        document.getElementById('matchRate').textContent = data.matchRate + '%';
+        document.getElementById('analyticsMatches').textContent = fmt(data.totalMatches);
+        document.getElementById('userGrowthRate').textContent = (parseFloat(data.userGrowth) >= 0 ? '+' : '') + data.userGrowth + '%';
+        document.getElementById('listingGrowthRate').textContent = 'Ilan buyumesi: ' + (parseFloat(data.listingGrowth) >= 0 ? '+' : '') + data.listingGrowth + '%';
+        
+        // Haftalık aktivite
+        const weeklyChart = document.getElementById('weeklyActivityChart');
+        if (data.dailyData && data.dailyData.length > 0) {
+          const maxUsers = Math.max(...data.dailyData.map(d => d.users), 1);
+          const maxListings = Math.max(...data.dailyData.map(d => d.listings), 1);
+          weeklyChart.innerHTML = data.dailyData.map(d => `
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="width: 30px; font-size: 11px; color: var(--text-muted);">${d.day}</span>
+              <div style="flex: 1; display: flex; gap: 4px; align-items: center;">
+                <div style="height: 8px; background: var(--info); border-radius: 4px; width: ${(d.users / maxUsers) * 100}%;"></div>
+                <span style="font-size: 11px; color: var(--text-muted);">${d.users}</span>
+              </div>
+              <div style="flex: 1; display: flex; gap: 4px; align-items: center;">
+                <div style="height: 8px; background: var(--success); border-radius: 4px; width: ${(d.listings / maxListings) * 100}%;"></div>
+                <span style="font-size: 11px; color: var(--text-muted);">${d.listings}</span>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          weeklyChart.innerHTML = '<div style="color: var(--text-muted); text-align: center;">Veri bulunamadi</div>';
+        }
+        
+        // En popüler markalar
+        const brandsContainer = document.getElementById('topBrandsContainer');
+        if (data.topBrands && data.topBrands.length > 0) {
+          const maxBrand = data.topBrands[0].count;
+          brandsContainer.innerHTML = data.topBrands.map(b => `
+            <div class="metric-comparison">
+              <span class="metric-label">${b.brand}</span>
+              <div class="metric-bar-container"><div class="metric-bar primary" style="width: ${(b.count / maxBrand) * 100}%;"></div></div>
+              <span class="metric-value">${b.count}</span>
+            </div>
+          `).join('');
+        } else {
+          brandsContainer.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 20px;">Henuz ilan yok</div>';
+        }
+        
+        // En popüler şehirler
+        const citiesContainer = document.getElementById('topCitiesContainer');
+        if (data.topCities && data.topCities.length > 0) {
+          const maxCity = data.topCities[0].count;
+          citiesContainer.innerHTML = data.topCities.map(c => `
+            <div class="metric-comparison">
+              <span class="metric-label">${c.city}</span>
+              <div class="metric-bar-container"><div class="metric-bar primary" style="width: ${(c.count / maxCity) * 100}%;"></div></div>
+              <span class="metric-value">${c.count}</span>
+            </div>
+          `).join('');
+        } else {
+          citiesContainer.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 20px;">Henuz ilan yok</div>';
+        }
+        
+        // Günlük kayıtlar tablosu
+        const dailyTable = document.getElementById('dailyStatsTable');
+        if (data.dailyData && data.dailyData.length > 0) {
+          dailyTable.innerHTML = `
+            <table class="data-table">
+              <thead><tr><th>Gun</th><th>Kullanici</th><th>Ilan</th></tr></thead>
+              <tbody>
+                ${data.dailyData.map(d => `<tr><td>${d.day}</td><td>${d.users}</td><td>${d.listings}</td></tr>`).join('')}
+              </tbody>
+            </table>
+          `;
+        } else {
+          dailyTable.innerHTML = '<div style="color: var(--text-muted); text-align: center;">Veri bulunamadi</div>';
+        }
+      } catch (error) {
+        console.log('Analytics data will load from API:', error);
       }
     }
 
