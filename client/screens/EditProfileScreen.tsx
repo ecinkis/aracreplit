@@ -157,17 +157,27 @@ export default function EditProfileScreen() {
         </View>
         
         <View style={styles.field}>
-          <ThemedText style={styles.label}>Ad Soyad</ThemedText>
+          <ThemedText style={styles.label}>Ad Soyad <ThemedText style={{ color: "#EF4444" }}>*</ThemedText></ThemedText>
           <TextInput
             style={[
               styles.input,
-              { backgroundColor: theme.backgroundSecondary, color: theme.text },
+              { 
+                backgroundColor: theme.backgroundSecondary, 
+                color: theme.text,
+                borderWidth: 1,
+                borderColor: !name.trim() ? "#EF4444" : "transparent",
+              },
             ]}
             value={name}
             onChangeText={setName}
-            placeholder="Adınızı girin"
+            placeholder="Adınızı girin (zorunlu)"
             placeholderTextColor={theme.textSecondary}
           />
+          {!name.trim() && (
+            <ThemedText style={{ color: "#EF4444", fontSize: 12, marginTop: 4 }}>
+              Bu alan zorunludur
+            </ThemedText>
+          )}
         </View>
 
         <View style={styles.field}>
