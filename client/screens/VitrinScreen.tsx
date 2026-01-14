@@ -458,14 +458,14 @@ const styles = StyleSheet.create({
   storyRing: {
     width: 64,
     height: 64,
-    borderRadius: 12,
+    borderRadius: 32,
     padding: 3,
     marginBottom: 6,
   },
   storyInnerRing: {
     flex: 1,
     backgroundColor: "#FFFFFF",
-    borderRadius: 10,
+    borderRadius: 30,
     overflow: "hidden",
   },
   storyRingActive: {
@@ -486,7 +486,7 @@ const styles = StyleSheet.create({
   storyAvatar: {
     width: "100%",
     height: "100%",
-    borderRadius: 8,
+    borderRadius: 28,
   },
   storyUsername: {
     fontSize: 10,
@@ -604,7 +604,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginRight: Spacing.sm,
     borderWidth: 2,
-    borderColor: BrandColors.primaryBlue,
+    borderColor: "#000000",
   },
   featuredBadge: {
     position: "absolute",
@@ -613,7 +613,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: BrandColors.primaryBlue,
+    backgroundColor: "#000000",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: BorderRadius.full,
