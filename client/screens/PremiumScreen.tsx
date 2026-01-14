@@ -105,7 +105,7 @@ export default function PremiumScreen() {
 
       <ScrollView 
         style={styles.content} 
-        contentContainerStyle={styles.contentContainer}
+        contentContainerStyle={[styles.contentContainer, { paddingBottom: 150 }]}
         showsVerticalScrollIndicator={false}
       >
         <LinearGradient
