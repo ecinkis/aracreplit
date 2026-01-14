@@ -654,7 +654,7 @@ const styles = StyleSheet.create({
   },
   allListingsHeader: {
     marginTop: Spacing.sm,
-    marginBottom: 4,
+    marginBottom: -6,
   },
   allListingsTitle: {
     fontSize: 16,
