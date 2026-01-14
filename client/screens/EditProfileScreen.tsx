@@ -74,9 +74,14 @@ export default function EditProfileScreen() {
     onSuccess: (data) => {
       updateUser(data);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      Alert.alert("Başarılı", "Profiliniz başarıyla güncellendi.", [
-        { text: "Tamam", onPress: () => navigation.goBack() }
-      ]);
+      if (Platform.OS === 'web') {
+        window.alert("Profiliniz başarıyla güncellendi.");
+        navigation.goBack();
+      } else {
+        Alert.alert("Başarılı", "Profiliniz başarıyla güncellendi.", [
+          { text: "Tamam", onPress: () => navigation.goBack() }
+        ]);
+      }
     },
     onError: (error: any) => {
       console.log("Profile update error:", error);
