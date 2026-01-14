@@ -299,7 +299,7 @@ export default function VitrinScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: 0 }]}>
-      <View style={[styles.searchContainer, { marginHorizontal: Spacing.lg }]}>
+      <View style={[styles.searchContainer, { marginHorizontal: Spacing.lg, marginBottom: Spacing.xs }]}>
         <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
@@ -449,7 +449,6 @@ const styles = StyleSheet.create({
   storiesContainer: {
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.md,
-    marginTop: -3,
     gap: Spacing.sm,
   },
   storyItem: {
