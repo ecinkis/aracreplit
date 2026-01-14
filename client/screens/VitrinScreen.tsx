@@ -287,7 +287,6 @@ export default function VitrinScreen() {
 
       <View style={styles.allListingsHeader}>
         <ThemedText style={styles.allListingsTitle}>Tüm İlanlar</ThemedText>
-        <ThemedText style={styles.allListingsSubtitle}>En güncel araç ilanları</ThemedText>
       </View>
     </View>
   );
