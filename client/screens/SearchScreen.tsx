@@ -205,13 +205,12 @@ export default function SearchScreen() {
                 testID={`card-category-${category.id}`}
               >
                 <View style={styles.categoryIconContainer}>
-                  <Feather name={category.icon} size={28} color="#000000" />
+                  <Feather name={category.icon} size={20} color="#000000" />
                 </View>
                 <View style={styles.categoryContent}>
                   <ThemedText style={styles.categoryName}>{category.name}</ThemedText>
                   <ThemedText style={styles.categoryDescription}>{category.description}</ThemedText>
                 </View>
-                <Feather name="chevron-right" size={24} color="#9CA3AF" />
               </Pressable>
             ))}
           </View>
@@ -243,8 +242,8 @@ const styles = StyleSheet.create({
     borderColor: "#E5E7EB",
     paddingHorizontal: Spacing.md,
     height: 48,
-    marginTop: Spacing.sm,
-    marginBottom: Spacing.lg,
+    marginTop: 13,
+    marginBottom: Spacing.xs,
   },
   searchIcon: {
     marginRight: Spacing.sm,
@@ -290,22 +289,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#FFFFFF",
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    padding: Spacing.md,
-    gap: Spacing.md,
+    paddingVertical: Spacing.sm,
+    gap: Spacing.sm,
   },
   categoryCardPressed: {
     backgroundColor: "#F9FAFB",
   },
   categoryIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: BorderRadius.md,
-    backgroundColor: "#F3F4F6",
+    width: 32,
+    height: 32,
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "flex-start",
   },
   categoryContent: {
     flex: 1,
