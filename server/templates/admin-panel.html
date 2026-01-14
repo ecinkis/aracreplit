@@ -1770,46 +1770,34 @@
         </section>
 
         <section class="section" id="swaps">
-          <div class="tabs">
-            <div class="tab active">Tum Talepler</div>
-            <div class="tab">Bekleyen (5)</div>
-            <div class="tab">Onaylanan</div>
-            <div class="tab">Reddedilen</div>
+          <div class="tabs" style="margin-bottom: 16px;">
+            <div class="tab active" onclick="loadSwapsByStatus('all')" id="tabSwapAll">Tum Eslesmeler (<span id="allSwapsCount">0</span>)</div>
+            <div class="tab" onclick="loadSwapsByStatus('active')" id="tabSwapActive">Aktif (<span id="activeSwapsCount">0</span>)</div>
+            <div class="tab" onclick="loadSwapsByStatus('completed')" id="tabSwapCompleted">Tamamlanan (<span id="completedSwapsCount">0</span>)</div>
           </div>
           <div class="card">
+            <div class="card-header">
+              <h3 class="card-title" id="swapsTitle">Tum Eslesmeler</h3>
+              <button class="btn btn-secondary btn-sm" onclick="loadSwaps()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                Yenile
+              </button>
+            </div>
             <div class="card-body">
               <table class="data-table">
                 <thead>
                   <tr>
-                    <th>Talep ID</th>
-                    <th>Teklif Eden</th>
-                    <th>Teklif Edilen</th>
+                    <th>Eslesme ID</th>
+                    <th>Arac 1</th>
+                    <th>Arac 2</th>
                     <th>Fark</th>
                     <th>Durum</th>
                     <th>Tarih</th>
                     <th>Islemler</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td style="font-family: monospace; font-size: 12px;">#SWP-2847</td>
-                    <td>
-                      <div style="font-size: 13px;">BMW 320i (2020)</div>
-                      <div style="font-size: 11px; color: var(--text-muted);">Ahmet Y.</div>
-                    </td>
-                    <td>
-                      <div style="font-size: 13px;">Mercedes C180 (2019)</div>
-                      <div style="font-size: 11px; color: var(--text-muted);">Mehmet K.</div>
-                    </td>
-                    <td style="color: var(--success); font-weight: 500;">+50.000 TL</td>
-                    <td><span class="badge badge-warning">Bekliyor</span></td>
-                    <td>10 Oca 2026</td>
-                    <td>
-                      <div class="actions-cell">
-                        <button class="btn btn-ghost btn-sm"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button>
-                      </div>
-                    </td>
-                  </tr>
+                <tbody id="swapsTable">
+                  <tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">Yukleniyor...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -2276,6 +2264,7 @@
         case 'stories': loadStories(); break;
         case 'users': loadUsers(); break;
         case 'vehicles': loadListings(); break;
+        case 'swaps': loadSwaps(); break;
         case 'messages': loadMessages(); break;
         case 'moderation': loadPendingListings(); break;
         case 'applications': loadApplications(); break;
@@ -2789,6 +2778,101 @@
         console.error('Error reactivating listing:', error);
         alert('Ilan aktif edilirken hata olustu');
       }
+    }
+
+    let currentSwapStatus = 'all';
+    let allSwaps = { all: [], active: [], completed: [] };
+
+    async function loadSwaps() {
+      try {
+        const data = await apiRequest('/admin/matches');
+        allSwaps = {
+          all: data.all || [],
+          active: data.active || [],
+          completed: data.completed || []
+        };
+        document.getElementById('allSwapsCount').textContent = allSwaps.all.length;
+        document.getElementById('activeSwapsCount').textContent = allSwaps.active.length;
+        document.getElementById('completedSwapsCount').textContent = allSwaps.completed.length;
+        renderSwaps(allSwaps[currentSwapStatus]);
+      } catch (error) {
+        console.error('Error loading swaps:', error);
+        document.getElementById('swapsTable').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--danger);">Eslesmeler yuklenirken hata olustu</td></tr>';
+      }
+    }
+
+    function loadSwapsByStatus(status) {
+      currentSwapStatus = status;
+      document.querySelectorAll('#swaps .tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tabSwap' + status.charAt(0).toUpperCase() + status.slice(1)).classList.add('active');
+      
+      const titles = { all: 'Tum Eslesmeler', active: 'Aktif Eslesmeler', completed: 'Tamamlanan Eslesmeler' };
+      document.getElementById('swapsTitle').textContent = titles[status];
+      
+      renderSwaps(allSwaps[status]);
+    }
+
+    function renderSwaps(swaps) {
+      const tbody = document.getElementById('swapsTable');
+      
+      if (!swaps || swaps.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="48" height="48" style="margin-bottom: 12px; opacity: 0.3;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+          <div>Eslesme bulunamadi</div>
+        </td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = swaps.map(swap => {
+        const createdAt = new Date(swap.createdAt).toLocaleDateString('tr-TR');
+        const listing1 = swap.listing1 || {};
+        const listing2 = swap.listing2 || {};
+        const user1Name = swap.user1Name || 'Bilinmiyor';
+        const user2Name = swap.user2Name || 'Bilinmiyor';
+        
+        const value1 = listing1.estimatedValue || 0;
+        const value2 = listing2.estimatedValue || 0;
+        const diff = value1 - value2;
+        const diffFormatted = diff === 0 ? 'Esit' : (diff > 0 ? '+' : '') + new Intl.NumberFormat('tr-TR').format(diff) + ' TL';
+        const diffColor = diff === 0 ? 'var(--text-muted)' : diff > 0 ? 'var(--success)' : 'var(--danger)';
+        
+        let statusBadge = '';
+        if (swap.status === 'completed') {
+          statusBadge = '<span class="badge badge-success">Tamamlandi</span>';
+        } else if (swap.status === 'cancelled') {
+          statusBadge = '<span class="badge badge-danger">Iptal</span>';
+        } else {
+          statusBadge = '<span class="badge badge-info">Aktif</span>';
+        }
+
+        return `
+          <tr>
+            <td style="font-family: monospace; font-size: 12px;">#${swap.id.substring(0, 8).toUpperCase()}</td>
+            <td>
+              <div style="font-size: 13px;">${listing1.brand || '-'} ${listing1.model || ''} (${listing1.year || '-'})</div>
+              <div style="font-size: 11px; color: var(--text-muted);">${user1Name}</div>
+            </td>
+            <td>
+              <div style="font-size: 13px;">${listing2.brand || '-'} ${listing2.model || ''} (${listing2.year || '-'})</div>
+              <div style="font-size: 11px; color: var(--text-muted);">${user2Name}</div>
+            </td>
+            <td style="color: ${diffColor}; font-weight: 500;">${diffFormatted}</td>
+            <td>${statusBadge}</td>
+            <td style="font-size: 12px; color: var(--text-muted);">${createdAt}</td>
+            <td>
+              <div class="actions-cell">
+                <button class="btn btn-ghost btn-sm" onclick="viewSwap('${swap.id}')">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function viewSwap(id) {
+      alert('Eslesme detayi: ' + id);
     }
 
     async function loadMessages() {

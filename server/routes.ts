@@ -1137,6 +1137,33 @@ Disallow: /api/admin/
     }
   });
 
+  app.get("/api/admin/matches", adminAuth, async (req, res) => {
+    try {
+      const allMatches = await storage.getAllMatches();
+      const allUsers = await storage.getAllUsers();
+      const allListings = await storage.getAllListings();
+      
+      const userMap = new Map(allUsers.map(u => [u.id, u.name || u.phone]));
+      const listingMap = new Map(allListings.map(l => [l.id, l]));
+      
+      const matchesWithDetails = allMatches.map(m => ({
+        ...m,
+        user1Name: userMap.get(m.user1Id) || 'Bilinmiyor',
+        user2Name: userMap.get(m.user2Id) || 'Bilinmiyor',
+        listing1: listingMap.get(m.listing1Id) || null,
+        listing2: listingMap.get(m.listing2Id) || null
+      }));
+      
+      const active = matchesWithDetails.filter(m => m.status === 'active' || !m.status);
+      const completed = matchesWithDetails.filter(m => m.status === 'completed');
+      
+      res.json({ all: matchesWithDetails, active, completed });
+    } catch (error) {
+      console.error("Admin matches error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.get("/api/admin/stories", adminAuth, async (req, res) => {
     try {
       const allStories = await storage.getStories();
