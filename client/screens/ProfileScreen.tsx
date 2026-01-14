@@ -254,13 +254,18 @@ export default function ProfileScreen() {
             </View>
           </View>
           <Pressable
-            style={styles.editButton}
+            style={({ pressed }) => [
+              styles.editButton,
+              pressed && { opacity: 0.7 },
+            ]}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               navigation.navigate("EditProfile");
             }}
           >
-            <Feather name="edit-2" size={18} color={BrandColors.primaryBlue} />
+            {({ pressed }) => (
+              <Feather name="edit-2" size={18} color={pressed ? "#000000" : BrandColors.primaryBlue} />
+            )}
           </Pressable>
         </View>
 
