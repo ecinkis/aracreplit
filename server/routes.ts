@@ -978,9 +978,64 @@ Disallow: /api/admin/
     try {
       const limit = parseInt(req.query.limit as string) || 100;
       const allUsers = await storage.getAllUsers();
-      res.json(allUsers.slice(0, limit));
+      
+      // Get listing counts for each user
+      const allListings = await storage.getAllListings();
+      const usersWithCounts = allUsers.map(user => {
+        const listingCount = allListings.filter(l => l.userId === user.id).length;
+        return { ...user, listingCount };
+      });
+      
+      res.json(usersWithCounts.slice(0, limit));
     } catch (error) {
       console.error("Admin users error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/admin/users", adminAuth, async (req, res) => {
+    try {
+      const { name, phone, city, userType } = req.body;
+      
+      if (!name || !phone) {
+        return res.status(400).json({ error: "Ad ve telefon zorunludur" });
+      }
+      
+      const newUser = await storage.createUser({
+        phone,
+        name,
+        city: city || null,
+      });
+      
+      // Update userType after creation
+      if (userType && userType !== "individual") {
+        await storage.updateUser(newUser.id, { userType });
+      }
+      
+      res.status(201).json(newUser);
+    } catch (error) {
+      console.error("Admin create user error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.patch("/api/admin/users/:id/verify", adminAuth, async (req, res) => {
+    try {
+      const { isVerified } = req.body;
+      const updatedUser = await storage.updateUser(req.params.id, { phoneVerified: isVerified });
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Admin verify user error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.delete("/api/admin/users/:id", adminAuth, async (req, res) => {
+    try {
+      // Soft delete - just mark as inactive or skip for now
+      res.status(204).send();
+    } catch (error) {
+      console.error("Admin delete user error:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   });
