@@ -499,7 +499,8 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
   row: {
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
+    gap: CARD_GAP,
     marginBottom: CARD_GAP,
   },
   vehicleCard: {
