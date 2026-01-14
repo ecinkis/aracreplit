@@ -1735,27 +1735,20 @@
         </section>
 
         <section class="section" id="vehicles">
-          <div class="filter-bar">
-            <div class="search-box search-input">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-              <input type="text" placeholder="Arac ara...">
-            </div>
-            <select class="filter-select">
-              <option>Tum Markalar</option>
-              <option>BMW</option>
-              <option>Mercedes</option>
-              <option>Audi</option>
-              <option>Volkswagen</option>
-            </select>
-            <select class="filter-select">
-              <option>Tum Durumlar</option>
-              <option>Aktif</option>
-              <option>Incelemede</option>
-              <option>Reddedildi</option>
-            </select>
+          <div class="tabs" style="margin-bottom: 16px;">
+            <div class="tab active" onclick="loadListingsByStatus('pending')" id="tabPending">Onay Bekleyen (<span id="pendingListingsCount">0</span>)</div>
+            <div class="tab" onclick="loadListingsByStatus('active')" id="tabActive">Onaylanan (<span id="activeListingsCount">0</span>)</div>
+            <div class="tab" onclick="loadListingsByStatus('expired')" id="tabExpired">Suresi Dolmus (<span id="expiredListingsCount">0</span>)</div>
           </div>
           <div class="card">
-            <div class="card-body">
+            <div class="card-header">
+              <h3 class="card-title" id="listingsTitle">Onay Bekleyen Ilanlar</h3>
+              <button class="btn btn-secondary btn-sm" onclick="loadListings()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                Yenile
+              </button>
+            </div>
+            <div class="card-body" id="listingsContainer">
               <table class="data-table">
                 <thead>
                   <tr>
@@ -1763,38 +1756,13 @@
                     <th>Sahip</th>
                     <th>Fiyat</th>
                     <th>Sehir</th>
-                    <th>Vitrin</th>
+                    <th>Tarih</th>
                     <th>Durum</th>
                     <th>Islemler</th>
                   </tr>
                 </thead>
                 <tbody id="listingsTable">
-                  <tr>
-                    <td>
-                      <div style="display: flex; align-items: center; gap: 12px;">
-                        <div class="vehicle-thumb" style="background: linear-gradient(135deg, #333, #555);"></div>
-                        <div>
-                          <div style="font-weight: 500;">BMW 320i</div>
-                          <div style="font-size: 12px; color: var(--text-muted);">2020 - 45.000 km</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>Ahmet Y.</td>
-                    <td style="font-weight: 600;">1.250.000 TL</td>
-                    <td>Istanbul</td>
-                    <td>
-                      <button class="btn btn-ghost btn-sm" style="color: var(--warning);">
-                        <svg fill="currentColor" stroke="none" viewBox="0 0 24 24" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                      </button>
-                    </td>
-                    <td><span class="badge badge-success">Aktif</span></td>
-                    <td>
-                      <div class="actions-cell">
-                        <button class="btn btn-ghost btn-sm"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button>
-                        <button class="btn btn-ghost btn-sm"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
-                      </div>
-                    </td>
-                  </tr>
+                  <tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">Yukleniyor...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -2683,12 +2651,143 @@
       alert('Kullanici detaylari: ' + userId);
     }
 
+    let currentListingStatus = 'pending';
+    let allListings = { pending: [], active: [], expired: [] };
+
     async function loadListings() {
       try {
-        const listings = await apiRequest('/listings');
-        console.log('Listings loaded:', listings.length);
+        const data = await apiRequest('/admin/listings');
+        allListings = {
+          pending: data.pending || [],
+          active: data.active || [],
+          expired: data.expired || []
+        };
+        document.getElementById('pendingListingsCount').textContent = allListings.pending.length;
+        document.getElementById('activeListingsCount').textContent = allListings.active.length;
+        document.getElementById('expiredListingsCount').textContent = allListings.expired.length;
+        renderListings(allListings[currentListingStatus]);
       } catch (error) {
-        console.log('Listings will load from API');
+        console.error('Error loading listings:', error);
+        document.getElementById('listingsTable').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--danger);">Ilanlar yuklenirken hata olustu</td></tr>';
+      }
+    }
+
+    function loadListingsByStatus(status) {
+      currentListingStatus = status;
+      document.querySelectorAll('#vehicles .tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab' + status.charAt(0).toUpperCase() + status.slice(1)).classList.add('active');
+      
+      const titles = { pending: 'Onay Bekleyen Ilanlar', active: 'Onaylanan Ilanlar', expired: 'Suresi Dolmus Ilanlar' };
+      document.getElementById('listingsTitle').textContent = titles[status];
+      
+      renderListings(allListings[status]);
+    }
+
+    function renderListings(listings) {
+      const tbody = document.getElementById('listingsTable');
+      
+      if (!listings || listings.length === 0) {
+        const emptyMessages = {
+          pending: 'Onay bekleyen ilan yok',
+          active: 'Onaylanmis ilan yok',
+          expired: 'Suresi dolmus ilan yok'
+        };
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="48" height="48" style="margin-bottom: 12px; opacity: 0.3;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          <div>${emptyMessages[currentListingStatus]}</div>
+        </td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = listings.map(listing => {
+        const photo = listing.photos && listing.photos.length > 0 ? listing.photos[0] : '';
+        const price = listing.estimatedValue ? new Intl.NumberFormat('tr-TR').format(listing.estimatedValue) + ' TL' : '-';
+        const createdAt = new Date(listing.createdAt).toLocaleDateString('tr-TR');
+        const ownerName = listing.ownerName || 'Bilinmiyor';
+        
+        let statusBadge = '';
+        let actions = '';
+        
+        if (currentListingStatus === 'pending') {
+          statusBadge = '<span class="badge badge-warning">Bekliyor</span>';
+          actions = `
+            <button class="btn btn-sm" style="background: var(--success); color: white;" onclick="approveListing('${listing.id}')">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="rejectListing('${listing.id}')">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          `;
+        } else if (currentListingStatus === 'active') {
+          statusBadge = '<span class="badge badge-success">Aktif</span>';
+          actions = `
+            <button class="btn btn-ghost btn-sm" onclick="viewListing('${listing.id}')">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="deactivateListing('${listing.id}')">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+            </button>
+          `;
+        } else {
+          statusBadge = '<span class="badge badge-secondary">Pasif</span>';
+          actions = `
+            <button class="btn btn-ghost btn-sm" onclick="viewListing('${listing.id}')">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </button>
+            <button class="btn btn-sm" style="background: var(--success); color: white;" onclick="reactivateListing('${listing.id}')">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </button>
+          `;
+        }
+
+        return `
+          <tr>
+            <td>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="vehicle-thumb" style="background: linear-gradient(135deg, #333, #555); overflow: hidden;">
+                  ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover;">` : ''}
+                </div>
+                <div>
+                  <div style="font-weight: 500;">${listing.brand} ${listing.model}</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">${listing.year} - ${new Intl.NumberFormat('tr-TR').format(listing.km || 0)} km</div>
+                </div>
+              </div>
+            </td>
+            <td>${ownerName}</td>
+            <td style="font-weight: 600;">${price}</td>
+            <td>${listing.city || '-'}</td>
+            <td style="font-size: 12px; color: var(--text-muted);">${createdAt}</td>
+            <td>${statusBadge}</td>
+            <td>
+              <div class="actions-cell">${actions}</div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function viewListing(id) {
+      alert('Ilan detayi: ' + id);
+    }
+
+    async function deactivateListing(id) {
+      if (!confirm('Bu ilani pasif yapmak istediginizden emin misiniz?')) return;
+      try {
+        await apiRequest(`/admin/listings/${id}/deactivate`, { method: 'PATCH' });
+        loadListings();
+      } catch (error) {
+        console.error('Error deactivating listing:', error);
+        alert('Ilan pasif yapilirken hata olustu');
+      }
+    }
+
+    async function reactivateListing(id) {
+      try {
+        await apiRequest(`/admin/listings/${id}/reactivate`, { method: 'PATCH' });
+        loadListings();
+      } catch (error) {
+        console.error('Error reactivating listing:', error);
+        alert('Ilan aktif edilirken hata olustu');
       }
     }
 

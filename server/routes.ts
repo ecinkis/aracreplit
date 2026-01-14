@@ -1042,15 +1042,48 @@ Disallow: /api/admin/
 
   app.get("/api/admin/listings", adminAuth, async (req, res) => {
     try {
-      const { status } = req.query;
       const allListings = await storage.getAllListings();
-      if (status) {
-        const filtered = allListings.filter(l => l.status === status);
-        return res.json(filtered);
-      }
-      res.json(allListings);
+      const allUsers = await storage.getAllUsers();
+      const userMap = new Map(allUsers.map(u => [u.id, u.name || u.phone]));
+      
+      const listingsWithOwner = allListings.map(l => ({
+        ...l,
+        ownerName: userMap.get(l.userId) || 'Bilinmiyor'
+      }));
+      
+      const pending = listingsWithOwner.filter(l => l.status === "pending" || !l.status);
+      const active = listingsWithOwner.filter(l => l.status === "active");
+      const expired = listingsWithOwner.filter(l => l.status === "expired" || l.status === "inactive" || l.status === "rejected");
+      
+      res.json({ pending, active, expired });
     } catch (error) {
       console.error("Admin listings error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.patch("/api/admin/listings/:id/deactivate", adminAuth, async (req, res) => {
+    try {
+      const listing = await storage.updateListing(req.params.id, { status: "inactive" });
+      if (!listing) {
+        return res.status(404).json({ error: "Listing not found" });
+      }
+      res.json(listing);
+    } catch (error) {
+      console.error("Admin deactivate listing error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.patch("/api/admin/listings/:id/reactivate", adminAuth, async (req, res) => {
+    try {
+      const listing = await storage.updateListing(req.params.id, { status: "active" });
+      if (!listing) {
+        return res.status(404).json({ error: "Listing not found" });
+      }
+      res.json(listing);
+    } catch (error) {
+      console.error("Admin reactivate listing error:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   });
