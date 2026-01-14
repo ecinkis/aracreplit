@@ -93,7 +93,7 @@ function ListingCard({ item, index, onPress }: { item: Listing; index: number; o
             <View style={styles.dateBadge}>
               <Feather name="clock" size={8} color="#9CA3AF" />
               <ThemedText style={styles.dateText}>
-                {new Date(item.createdAt).toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}
+                {item.createdAt ? new Date(item.createdAt).toLocaleDateString("tr-TR", { day: "numeric", month: "short" }) : ""}
               </ThemedText>
             </View>
           </View>
@@ -316,10 +316,10 @@ export default function VitrinScreen() {
       {isLoading ? (
         <LoadingState />
       ) : (
-        <FlatList
+        <FlatList<Listing | { id: string }>
           data={hasListings ? listings : mockData}
-          renderItem={hasListings ? renderItem : ({ index }) => renderMockItem({ index })}
-          keyExtractor={(item) => ('id' in item ? item.id : String(item))}
+          renderItem={hasListings ? renderItem as any : ({ index }: { index: number }) => renderMockItem({ index })}
+          keyExtractor={(item) => item.id}
           numColumns={3}
           columnWrapperStyle={styles.row}
           contentContainerStyle={[
