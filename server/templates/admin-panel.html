@@ -63,6 +63,44 @@
       --space-5: 20px;
       --space-6: 24px;
       --space-8: 32px;
+      --login-bg: #f8fafc;
+      --login-card-bg: #ffffff;
+      --login-text: #18181b;
+      --login-text-muted: #64748b;
+      --login-border: #e2e8f0;
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #09090b;
+      --bg-secondary: #18181b;
+      --bg-tertiary: #27272a;
+      --bg-hover: #3f3f46;
+      --bg-elevated: #18181b;
+      --border-color: #27272a;
+      --border-light: #3f3f46;
+      --border-focus: #52525b;
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --text-dim: #52525b;
+      --accent: #fafafa;
+      --accent-hover: #e4e4e7;
+      --accent-light: #27272a;
+      --accent-muted: #18181b;
+      --success-bg: #052e16;
+      --success-border: #166534;
+      --warning-bg: #422006;
+      --warning-border: #854d0e;
+      --danger-bg: #450a0a;
+      --danger-border: #991b1b;
+      --info-bg: #083344;
+      --info-border: #0e7490;
+      --purple-bg: #2e1065;
+      --login-bg: #09090b;
+      --login-card-bg: #18181b;
+      --login-text: #fafafa;
+      --login-text-muted: #a1a1aa;
+      --login-border: #27272a;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -77,94 +115,44 @@
     }
     h1, h2, h3, .heading { font-family: var(--font-display); letter-spacing: -0.02em; }
 
-    .animated-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: 0;
-      background: linear-gradient(135deg, #0a1628 0%, #1a365d 50%, #1C6BF9 100%);
-    }
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.4;
-      animation: float 20s ease-in-out infinite;
-    }
-    .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, #1C6BF9 0%, transparent 70%); top: -200px; left: -200px; }
-    .orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, #60a5fa 0%, transparent 70%); top: 50%; right: -100px; animation-delay: -5s; }
-    .orb-3 { width: 300px; height: 300px; background: radial-gradient(circle, #818cf8 0%, transparent 70%); bottom: -100px; left: 30%; animation-delay: -10s; }
-    @keyframes float {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      25% { transform: translate(50px, -30px) scale(1.1); }
-      50% { transform: translate(-20px, 50px) scale(0.95); }
-      75% { transform: translate(-40px, -20px) scale(1.05); }
-    }
-    .particles { position: absolute; width: 100%; height: 100%; }
-    .particle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: rgba(255,255,255,0.3);
-      border-radius: 50%;
-      animation: rise 15s linear infinite;
-    }
-    @keyframes rise {
-      0% { transform: translateY(100vh) scale(0); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateY(-100vh) scale(1); opacity: 0; }
-    }
-
     .login-container {
-      position: relative;
-      z-index: 1;
       display: flex;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
       padding: 20px;
+      background: var(--login-bg);
     }
     .login-box {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      background: var(--login-card-bg);
       padding: 48px 40px;
-      border-radius: 24px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      border-radius: 16px;
+      border: 1px solid var(--login-border);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
       width: 100%;
-      max-width: 420px;
-      animation: slideUp 0.6s ease-out;
-    }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+      max-width: 400px;
     }
     .login-logo {
-      width: 64px;
-      height: 64px;
-      background: linear-gradient(135deg, #3b82f6, #60a5fa);
-      border-radius: 16px;
+      width: 56px;
+      height: 56px;
+      background: var(--accent);
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 24px;
-      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
     }
-    .login-logo svg { width: 32px; height: 32px; stroke: white; fill: none; }
+    .login-logo svg { width: 28px; height: 28px; stroke: white; fill: none; }
+    [data-theme="dark"] .login-logo svg { stroke: #18181b; }
     .login-box h1 {
-      font-size: 24px;
+      font-size: 22px;
       margin-bottom: 8px;
-      color: white;
+      color: var(--login-text);
       text-align: center;
       font-weight: 600;
     }
     .login-box .subtitle {
-      color: rgba(255,255,255,0.6);
+      color: var(--login-text-muted);
       margin-bottom: 32px;
       text-align: center;
       font-size: 14px;
@@ -174,7 +162,7 @@
       display: block;
       margin-bottom: 8px;
       font-weight: 500;
-      color: rgba(255,255,255,0.8);
+      color: var(--login-text);
       font-size: 13px;
     }
     .input-wrapper { position: relative; }
@@ -185,23 +173,26 @@
       transform: translateY(-50%);
       width: 18px;
       height: 18px;
-      stroke: rgba(255,255,255,0.4);
+      stroke: var(--login-text-muted);
     }
     .form-group input {
       width: 100%;
       padding: 12px 12px 12px 44px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 10px;
+      background: var(--bg-primary);
+      border: 1px solid var(--login-border);
+      border-radius: 8px;
       font-size: 14px;
-      color: white;
+      color: var(--login-text);
       transition: all 0.2s;
     }
-    .form-group input::placeholder { color: rgba(255,255,255,0.35); }
+    .form-group input::placeholder { color: var(--login-text-muted); }
     .form-group input:focus {
       outline: none;
       border-color: var(--accent);
-      background: rgba(255,255,255,0.1);
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+    }
+    [data-theme="dark"] .form-group input:focus {
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
     }
     .login-btn {
       width: 100%;
@@ -209,29 +200,47 @@
       background: var(--accent);
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s;
     }
+    [data-theme="dark"] .login-btn { color: #18181b; }
     .login-btn:hover { background: var(--accent-hover); }
     .error-message {
       background: var(--danger-bg);
-      color: #fca5a5;
+      color: var(--danger);
       padding: 12px;
       border-radius: 8px;
       margin-bottom: 16px;
       display: none;
       font-size: 13px;
-      border: 1px solid rgba(239, 68, 68, 0.2);
+      border: 1px solid var(--danger-border);
     }
     .login-footer {
       margin-top: 24px;
       text-align: center;
-      color: rgba(255,255,255,0.35);
+      color: var(--login-text-muted);
       font-size: 12px;
     }
+    .theme-toggle-login {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      background: var(--login-card-bg);
+      border: 1px solid var(--login-border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .theme-toggle-login:hover { background: var(--bg-hover); }
+    .theme-toggle-login svg { width: 20px; height: 20px; stroke: var(--login-text); }
 
     .admin-layout { display: none; min-height: 100vh; }
     .admin-layout.active { display: flex; }
@@ -1316,14 +1325,10 @@
   </style>
 </head>
 <body>
-  <div class="animated-bg">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-    <div class="particles" id="particles"></div>
-  </div>
-
   <div class="login-container" id="loginContainer">
+    <button class="theme-toggle-login" id="themeToggleLogin" title="Tema Degistir">
+      <svg class="sun-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
     <div class="login-box">
       <div class="login-logo">
         <svg viewBox="0 0 24 24" stroke-width="2">
@@ -1355,20 +1360,6 @@
       <div class="login-footer">Guvenli baglanti ile korunmaktadir</div>
     </div>
   </div>
-
-  <script>
-    (function() {
-      const particles = document.getElementById('particles');
-      for (let i = 0; i < 25; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 15 + 's';
-        particle.style.animationDuration = (10 + Math.random() * 10) + 's';
-        particles.appendChild(particle);
-      }
-    })();
-  </script>
 
   <div class="admin-layout" id="adminLayout">
     <aside class="sidebar">
@@ -1461,6 +1452,9 @@
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             <input type="text" placeholder="Ara...">
           </div>
+          <button class="icon-btn" id="themeToggle" title="Tema Degistir">
+            <svg class="sun-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </button>
           <button class="icon-btn">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
             <span class="dot"></span>
@@ -2357,7 +2351,6 @@
       adminToken = null;
       document.getElementById('loginContainer').style.display = 'flex';
       document.getElementById('adminLayout').classList.remove('active');
-      document.querySelector('.animated-bg').style.display = 'block';
     }
 
     document.getElementById('logoutBtn').addEventListener('click', logout);
@@ -2376,7 +2369,6 @@
 
     async function showAdminPanel() {
       document.getElementById('loginContainer').style.display = 'none';
-      document.querySelector('.animated-bg').style.display = 'none';
       document.getElementById('adminLayout').classList.add('active');
       loadDashboard();
       initCharts();
@@ -2665,6 +2657,34 @@
         else logout();
       }).catch(logout);
     }
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem('adminTheme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      updateThemeIcons(savedTheme);
+    }
+
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('adminTheme', newTheme);
+      updateThemeIcons(newTheme);
+    }
+
+    function updateThemeIcons(theme) {
+      const sunIcon = `<svg class="sun-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>`;
+      const moonIcon = `<svg class="moon-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>`;
+      const icon = theme === 'dark' ? sunIcon : moonIcon;
+      const themeToggle = document.getElementById('themeToggle');
+      const themeToggleLogin = document.getElementById('themeToggleLogin');
+      if (themeToggle) themeToggle.innerHTML = icon;
+      if (themeToggleLogin) themeToggleLogin.innerHTML = icon;
+    }
+
+    document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
+    document.getElementById('themeToggleLogin')?.addEventListener('click', toggleTheme);
+    initTheme();
   </script>
 </body>
 </html>
