@@ -268,58 +268,81 @@
     }
 
     /* Subheader */
-    .subheader {
-      background: var(--gray-50);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 0;
+    .hero-promo {
+      background: var(--black);
+      color: var(--white);
+      padding: 48px 0;
     }
 
-    .subheader-inner {
+    .hero-promo-content {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 40px;
     }
 
-    .subheader-links {
+    .hero-promo-text h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      letter-spacing: -0.5px;
+    }
+
+    .hero-promo-text p {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.7);
+      margin: 0;
+    }
+
+    .hero-promo-stats {
       display: flex;
-      align-items: center;
-      gap: 8px;
+      gap: 40px;
     }
 
-    .subheader-link {
-      padding: 10px 18px;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      border-radius: 50px;
-      transition: all 0.2s ease;
+    .stat-item {
+      text-align: center;
     }
 
-    .subheader-link:hover {
-      background: var(--white);
-      color: var(--black);
-      text-decoration: none;
+    .stat-number {
+      display: block;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -1px;
     }
 
-    .subheader-link.active {
-      background: var(--black);
-      color: var(--white);
-    }
-
-    .subheader-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .subheader-info {
+    .stat-label {
+      display: block;
       font-size: 13px;
-      color: var(--text-muted);
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 4px;
     }
 
-    .subheader-info strong {
-      color: var(--black);
-      font-weight: 600;
+    @media (max-width: 768px) {
+      .hero-promo {
+        padding: 32px 0;
+      }
+
+      .hero-promo-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 24px;
+      }
+
+      .hero-promo-text h1 {
+        font-size: 22px;
+      }
+
+      .hero-promo-text p {
+        font-size: 14px;
+      }
+
+      .hero-promo-stats {
+        gap: 24px;
+      }
+
+      .stat-number {
+        font-size: 24px;
+      }
     }
 
     /* Search Box */
@@ -3326,20 +3349,27 @@
     </div>
   </header>
 
-  <!-- Subheader -->
-  <div class="subheader">
+  <!-- Hero Promo Banner -->
+  <div class="hero-promo">
     <div class="container">
-      <div class="subheader-inner">
-        <div class="subheader-links">
-          <a href="#" class="subheader-link active" onclick="navigateTo('home')">Ana Sayfa</a>
-          <a href="#" class="subheader-link" onclick="navigateTo('match')">Takas Bul</a>
-          <a href="#" class="subheader-link" onclick="navigateTo('messages')">Mesajlar</a>
-          <a href="#" class="subheader-link" onclick="filterByCategory('Otomobil')">Otomobil</a>
-          <a href="#" class="subheader-link" onclick="filterByCategory('SUV')">SUV / Arazi</a>
-          <a href="#" class="subheader-link" onclick="filterByCategory('Ticari')">Ticari</a>
+      <div class="hero-promo-content">
+        <div class="hero-promo-text">
+          <h1>Türkiye'nin İlk Araç Takas Platformu</h1>
+          <p>Aracınızı kolayca takas edin, hayalinizdeki araca kavuşun</p>
         </div>
-        <div class="subheader-right">
-          <span class="subheader-info"><strong id="totalListingCount">0</strong> aktif ilan</span>
+        <div class="hero-promo-stats">
+          <div class="stat-item">
+            <span class="stat-number" id="totalListingCount">0</span>
+            <span class="stat-label">Aktif İlan</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">1.2K+</span>
+            <span class="stat-label">Başarılı Takas</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">5K+</span>
+            <span class="stat-label">Mutlu Kullanıcı</span>
+          </div>
         </div>
       </div>
     </div>
