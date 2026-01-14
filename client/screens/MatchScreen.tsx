@@ -428,19 +428,6 @@ export default function MatchScreen() {
             </Pressable>
           </View>
 
-          <View style={styles.ownerSection}>
-            <View style={styles.ownerAvatar}>
-              <Feather name="user" size={18} color="#6B7280" />
-            </View>
-            <View style={styles.ownerInfo}>
-              <ThemedText style={styles.ownerName}>Ilan Sahibi</ThemedText>
-              <View style={styles.ratingRow}>
-                <Feather name="star" size={12} color="#F59E0B" />
-                <ThemedText style={styles.ratingText}>4.8</ThemedText>
-                <ThemedText style={styles.reviewCount}>(24 degerlendirme)</ThemedText>
-              </View>
-            </View>
-          </View>
         </View>
       )}
     </View>
@@ -617,6 +604,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: BorderRadius.lg,
     gap: 6,
+    opacity: 0.7,
   },
   detailButtonPressed: {
     opacity: 0.8,
