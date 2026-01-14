@@ -20,7 +20,7 @@ import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { useAuth } from "@/contexts/AuthContext";
 import { Spacing, BorderRadius } from "@/constants/theme";
-import appIcon from "../assets/images/icon.png";
+import { TakasLogo } from "@/components/TakasLogo";
 import googleLogo from "../assets/images/google-logo.png";
 import appleLogo from "../assets/images/apple-logo.png";
 
@@ -361,7 +361,7 @@ export default function AuthScreen() {
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             <View style={styles.logoContainer}>
-              <Image source={appIcon} style={styles.logo} resizeMode="contain" />
+              <TakasLogo size={80} color="#000000" />
             </View>
 
             <ThemedText style={styles.title}>Doğrulama Kodunu Giriniz</ThemedText>
@@ -435,7 +435,7 @@ export default function AuthScreen() {
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             <View style={styles.logoContainer}>
-              <Image source={appIcon} style={styles.logo} resizeMode="contain" />
+              <TakasLogo size={80} color="#000000" />
             </View>
 
             <ThemedText style={styles.title}>Profilinizi Tamamlayın</ThemedText>
@@ -501,7 +501,7 @@ export default function AuthScreen() {
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             <View style={styles.logoContainer}>
-              <Image source={appIcon} style={styles.logo} resizeMode="contain" />
+              <TakasLogo size={80} color="#000000" />
             </View>
 
             <ThemedText style={styles.title}>Şifremi Unuttum</ThemedText>
@@ -607,7 +607,7 @@ export default function AuthScreen() {
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             <View style={styles.logoContainer}>
-              <Image source={appIcon} style={styles.logo} resizeMode="contain" />
+              <TakasLogo size={80} color="#000000" />
             </View>
 
             <ThemedText style={styles.title}>Doğrulama Kodunu Giriniz</ThemedText>
@@ -688,7 +688,7 @@ export default function AuthScreen() {
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             <View style={styles.logoContainer}>
-              <Image source={appIcon} style={styles.logo} resizeMode="contain" />
+              <TakasLogo size={80} color="#000000" />
             </View>
 
             <ThemedText style={styles.title}>Kayıt Ol</ThemedText>
@@ -758,7 +758,7 @@ export default function AuthScreen() {
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
           <View style={styles.logoContainer}>
-            <Image source={appIcon} style={styles.logo} resizeMode="contain" />
+            <TakasLogo size={80} color="#000000" />
           </View>
 
           <View style={styles.tabContainer}>

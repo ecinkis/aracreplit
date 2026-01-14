@@ -15,7 +15,7 @@ import { Feather } from "@expo/vector-icons";
 
 import { ThemedText } from "@/components/ThemedText";
 import { Spacing, BorderRadius } from "@/constants/theme";
-import appIcon from "../assets/images/icon.png";
+import { TakasLogo } from "@/components/TakasLogo";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_GAP = 8;
@@ -89,7 +89,7 @@ export default function HomeScreen() {
   const ListHeader = () => (
     <View style={styles.headerContent}>
       <View style={styles.logoContainer}>
-        <Image source={appIcon} style={styles.logo} resizeMode="contain" />
+        <TakasLogo size={50} color="#000000" />
       </View>
 
       <View style={styles.searchContainer}>
