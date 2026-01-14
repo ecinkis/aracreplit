@@ -135,7 +135,7 @@ export default function EditProfileScreen() {
           { paddingBottom: insets.bottom + Spacing.xl },
         ]}
       >
-        <View style={{ height: Spacing.xl }} />
+        <View style={{ height: Spacing.xl * 2 }} />
         
         <View style={styles.avatarSection}>
           <Pressable onPress={handlePickImage} style={styles.avatarContainer}>
@@ -201,22 +201,24 @@ export default function EditProfileScreen() {
           </View>
         )}
 
-        {!hasPhone && (
-          <View style={styles.field}>
-            <ThemedText style={styles.label}>Telefon</ThemedText>
-            <TextInput
-              style={[
-                styles.input,
-                { backgroundColor: theme.backgroundSecondary, color: theme.text },
-              ]}
-              value={phone}
-              onChangeText={setPhone}
-              placeholder="Telefon numaranızı girin"
-              placeholderTextColor={theme.textSecondary}
-              keyboardType="phone-pad"
-            />
-          </View>
-        )}
+        <View style={styles.field}>
+          <ThemedText style={styles.label}>Telefon</ThemedText>
+          <TextInput
+            style={[
+              styles.input,
+              { backgroundColor: theme.backgroundSecondary, color: hasPhone ? "#9CA3AF" : theme.text },
+            ]}
+            value={phone}
+            onChangeText={hasPhone ? undefined : setPhone}
+            placeholder="Telefon numaranızı girin"
+            placeholderTextColor={theme.textSecondary}
+            keyboardType="phone-pad"
+            editable={!hasPhone}
+          />
+          {hasPhone && (
+            <ThemedText style={styles.fieldHint}>Telefon numarası değiştirilemez</ThemedText>
+          )}
+        </View>
 
         <Pressable
           style={({ pressed }) => [
@@ -332,6 +334,11 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
     paddingHorizontal: Spacing.md,
     fontSize: 16,
+  },
+  fieldHint: {
+    ...Typography.small,
+    color: "#9CA3AF",
+    marginTop: Spacing.xs,
   },
   dropdownButton: {
     height: 48,
