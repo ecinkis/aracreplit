@@ -17,6 +17,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
@@ -102,11 +103,38 @@ export default function EditProfileScreen() {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 0.8,
+      quality: 0.5,
     });
 
     if (!result.canceled && result.assets[0]) {
-      setAvatarUri(result.assets[0].uri);
+      const uri = result.assets[0].uri;
+      
+      if (Platform.OS === 'web') {
+        try {
+          const response = await fetch(uri);
+          const blob = await response.blob();
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64 = reader.result as string;
+            setAvatarUri(base64);
+          };
+          reader.readAsDataURL(blob);
+        } catch (err) {
+          console.log("Error converting image:", err);
+          setAvatarUri(uri);
+        }
+      } else {
+        try {
+          const base64 = await FileSystem.readAsStringAsync(uri, {
+            encoding: 'base64',
+          });
+          const mimeType = uri.includes('.png') ? 'image/png' : 'image/jpeg';
+          setAvatarUri(`data:${mimeType};base64,${base64}`);
+        } catch (err) {
+          console.log("Error reading file:", err);
+          setAvatarUri(uri);
+        }
+      }
     }
   };
 
@@ -131,9 +159,8 @@ export default function EditProfileScreen() {
       updateData.phone = phone.trim();
     }
 
-    // TODO: Avatar upload needs file upload implementation
-    // For now, skip blob URLs as they don't work with API
-    if (avatarUri && !avatarUri.startsWith('blob:') && avatarUri !== (user as any)?.avatarUrl) {
+    // Send avatar as base64 data URL
+    if (avatarUri && avatarUri.startsWith('data:') && avatarUri !== (user as any)?.avatarUrl) {
       updateData.avatarUrl = avatarUri;
     }
 

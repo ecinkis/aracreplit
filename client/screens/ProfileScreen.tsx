@@ -239,7 +239,10 @@ export default function ProfileScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.profileCard}>
-          <Image source={defaultAvatarImage} style={styles.avatar} />
+          <Image 
+            source={(user as any)?.avatarUrl ? { uri: (user as any).avatarUrl } : defaultAvatarImage} 
+            style={styles.avatar} 
+          />
           <View style={styles.profileInfo}>
             <ThemedText style={styles.profileName}>
               {user?.name || "İsim belirtilmedi"}
