@@ -304,7 +304,7 @@ export default function ChatScreen() {
                 });
               }}
             >
-              <Feather name="star" size={22} color={BrandColors.primaryBlue} />
+              <Feather name="star" size={22} color="#333333" />
             </HeaderButton>
           </View>
         ),

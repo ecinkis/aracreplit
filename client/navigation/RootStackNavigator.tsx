@@ -88,7 +88,7 @@ export default function RootStackNavigator() {
             component={ChatScreen}
             options={({ route }) => ({
               headerTitle: route.params.otherUserName,
-              headerTintColor: BrandColors.primaryBlue,
+              headerTintColor: "#333333",
             })}
           />
           <Stack.Screen
