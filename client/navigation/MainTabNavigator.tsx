@@ -191,13 +191,17 @@ export default function MainTabNavigator() {
           component={VitrinScreen}
           options={{
             title: "Vitrin",
-            headerTitle: "Vitrin",
+            headerTitle: () => (
+              <ThemedText style={{ color: "#FFFFFF", fontSize: 20, fontWeight: "600", marginLeft: Spacing.lg }}>
+                Vitrin
+              </ThemedText>
+            ),
             tabBarLabel: "vitrin",
             tabBarIcon: ({ color, size }) => (
               <Feather name="home" size={size} color={color} />
             ),
             headerRight: () => (
-              <ThemedText style={{ color: "#FFFFFF", fontSize: 11, marginRight: 16, fontStyle: "italic" }}>
+              <ThemedText style={{ color: "#FFFFFF", fontSize: 11, marginRight: Spacing.lg, fontStyle: "italic" }}>
                 "Yeni nesil ilan sistemi"
               </ThemedText>
             ),
