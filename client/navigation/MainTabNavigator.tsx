@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
 import { Platform, StyleSheet, View, Pressable, Modal } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -152,23 +151,12 @@ export default function MainTabNavigator() {
           tabBarInactiveTintColor: "#9CA3AF",
           tabBarStyle: {
             position: "absolute",
-            backgroundColor: Platform.select({
-              ios: "transparent",
-              android: theme.backgroundRoot,
-            }),
+            backgroundColor: isDark ? "#1C1C1E" : "#FFFFFF",
             borderTopWidth: 0,
             elevation: 0,
-            height: Platform.OS === "ios" ? 88 : 60,
-            paddingBottom: Platform.OS === "ios" ? 28 : 8,
+            height: Platform.OS === "ios" ? 100 : 72,
+            paddingBottom: Platform.OS === "ios" ? 32 : 12,
           },
-          tabBarBackground: () =>
-            Platform.OS === "ios" ? (
-              <BlurView
-                intensity={100}
-                tint={isDark ? "dark" : "light"}
-                style={StyleSheet.absoluteFill}
-              />
-            ) : null,
           headerShown: true,
           headerStyle: {
             backgroundColor: "#000000",
