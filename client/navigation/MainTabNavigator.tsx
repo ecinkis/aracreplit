@@ -212,7 +212,11 @@ export default function MainTabNavigator() {
           component={SearchScreen}
           options={{
             title: "Ara",
-            headerTitle: "Ara",
+            headerTitle: () => (
+              <ThemedText style={{ color: "#FFFFFF", fontSize: 20, fontWeight: "600", marginLeft: Spacing.lg }}>
+                Ara
+              </ThemedText>
+            ),
             tabBarLabel: "arama",
             tabBarIcon: ({ color, size }) => (
               <Feather name="search" size={size} color={color} />
