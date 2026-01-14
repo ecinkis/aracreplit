@@ -174,7 +174,7 @@ export default function MainTabNavigator() {
             fontWeight: "500",
           },
           tabBarIconStyle: {
-            marginTop: 3,
+            marginTop: 5,
           },
         }}
       >
