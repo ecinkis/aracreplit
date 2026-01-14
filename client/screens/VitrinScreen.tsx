@@ -447,6 +447,7 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   storiesContainer: {
+    paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.md,
     gap: Spacing.sm,
   },
