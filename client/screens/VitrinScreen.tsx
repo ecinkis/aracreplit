@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
   storiesContainer: {
     marginHorizontal: -Spacing.lg,
     paddingHorizontal: Spacing.lg,
-    paddingTop: 2,
+    paddingTop: 5,
     paddingBottom: Spacing.md,
     gap: Spacing.sm,
   },
