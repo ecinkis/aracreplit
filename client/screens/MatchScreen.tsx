@@ -714,9 +714,9 @@ const styles = StyleSheet.create({
     borderColor: "#F59E0B",
   },
   undoButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     borderColor: BrandColors.primaryBlue,
   },
   buttonDisabled: {
