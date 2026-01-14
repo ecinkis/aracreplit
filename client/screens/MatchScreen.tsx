@@ -331,14 +331,6 @@ export default function MatchScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <View style={styles.locationRow}>
-            <Feather name="map-pin" size={12} color="#6B7280" />
-            <ThemedText style={styles.headerLocation}>Istanbul, TR</ThemedText>
-          </View>
-        </View>
-      </View>
 
       {isLoading ? (
         <View style={styles.loadingContainer}>
