@@ -391,7 +391,7 @@ export default function MatchScreen() {
               onPress={handleUndo}
               disabled={!canGoBack}
             >
-              <Feather name="rotate-ccw" size={20} color={canGoBack ? "#6B7280" : "#D1D5DB"} />
+              <Feather name="rotate-ccw" size={20} color={canGoBack ? BrandColors.primaryBlue : "#D1D5DB"} />
             </Pressable>
 
             <Pressable
@@ -717,7 +717,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    borderColor: "#9CA3AF",
+    borderColor: BrandColors.primaryBlue,
   },
   buttonDisabled: {
     opacity: 0.5,
