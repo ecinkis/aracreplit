@@ -262,10 +262,19 @@ export default function MainTabNavigator() {
           component={MatchScreen}
           options={{
             title: "Eşleş",
-            headerTitle: "Eşleş",
+            headerTitle: () => (
+              <ThemedText style={{ color: "#FFFFFF", fontSize: 20, fontWeight: "600", marginLeft: 9 }}>
+                Eşleş
+              </ThemedText>
+            ),
             tabBarLabel: "eşleş",
             tabBarIcon: ({ color, size }) => (
               <Feather name="layers" size={size} color={color} />
+            ),
+            headerRight: () => (
+              <View style={{ flexDirection: "row", alignItems: "center", marginRight: Spacing.lg }}>
+                <TakasLogo size={28} />
+              </View>
             ),
           }}
         />
