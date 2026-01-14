@@ -391,7 +391,7 @@ export default function MatchScreen() {
               onPress={handleUndo}
               disabled={!canGoBack}
             >
-              <Feather name="rotate-ccw" size={20} color={canGoBack ? BrandColors.primaryBlue : "#D1D5DB"} />
+              <Feather name="rotate-ccw" size={20} color={BrandColors.primaryBlue} />
             </Pressable>
 
             <Pressable
