@@ -296,7 +296,7 @@ export default function VitrinScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: 0 }]}>
-      <View style={[styles.searchContainer, { marginHorizontal: Spacing.lg, marginBottom: Spacing.xs, marginTop: 3 }]}>
+      <View style={[styles.searchContainer, { marginHorizontal: Spacing.lg, marginBottom: Spacing.xs, marginTop: 13 }]}>
         <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
