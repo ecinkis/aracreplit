@@ -173,6 +173,9 @@ export default function MainTabNavigator() {
             fontSize: 11,
             fontWeight: "500",
           },
+          tabBarIconStyle: {
+            marginTop: 3,
+          },
         }}
       >
         <Tab.Screen
