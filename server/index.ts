@@ -201,6 +201,7 @@ function configureExpoAndLanding(app: express.Application) {
 
   app.use("/assets", express.static(path.resolve(process.cwd(), "assets")));
   app.use("/uploads", express.static(path.resolve(process.cwd(), "server", "uploads")));
+  app.use("/vehicles", express.static(path.resolve(process.cwd(), "server", "public", "vehicles")));
   app.use(express.static(path.resolve(process.cwd(), "static-build")));
 
   log("Expo routing: Checking expo-platform header on / and /manifest");
