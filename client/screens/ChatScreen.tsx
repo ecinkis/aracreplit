@@ -9,6 +9,7 @@ import {
   Platform,
   Alert,
   Linking,
+  KeyboardAvoidingView,
 } from "react-native";
 import * as FileSystem from "expo-file-system";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -291,19 +292,21 @@ export default function ChatScreen() {
     if (!reviewCheck?.hasReviewed && otherUserId) {
       navigation.setOptions({
         headerRight: () => (
-          <HeaderButton
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              navigation.navigate("Review", {
-                matchId,
-                reviewerId: user?.id || "",
-                reviewedUserId: otherUserId,
-                reviewedUserName: otherUserName,
-              });
-            }}
-          >
-            <Feather name="star" size={22} color={BrandColors.primaryBlue} />
-          </HeaderButton>
+          <View style={{ marginRight: 15 }}>
+            <HeaderButton
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                navigation.navigate("Review", {
+                  matchId,
+                  reviewerId: user?.id || "",
+                  reviewedUserId: otherUserId,
+                  reviewedUserName: otherUserName,
+                });
+              }}
+            >
+              <Feather name="star" size={22} color={BrandColors.primaryBlue} />
+            </HeaderButton>
+          </View>
         ),
       });
     }
@@ -467,87 +470,93 @@ export default function ChatScreen() {
   );
 
   return (
-    <ThemedView style={styles.container}>
-      {isLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={BrandColors.primaryBlue} />
-        </View>
-      ) : (
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          renderItem={renderMessage}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={[
-            styles.messagesList,
-            { paddingBottom: Spacing.md },
-          ]}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={
-            <View style={styles.emptyChat}>
-              <Feather name="message-circle" size={48} color={theme.textSecondary} />
-              <ThemedText style={[styles.emptyChatText, { color: theme.textSecondary }]}>
-                Henüz mesaj yok. Sohbete başlayın!
-              </ThemedText>
-            </View>
-          }
-        />
-      )}
+    <KeyboardAvoidingView 
+      style={styles.container} 
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+    >
+      <ThemedView style={styles.container}>
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={BrandColors.primaryBlue} />
+          </View>
+        ) : (
+          <FlatList
+            ref={flatListRef}
+            data={messages}
+            renderItem={renderMessage}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={[
+              styles.messagesList,
+              { paddingBottom: Spacing.md },
+            ]}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={
+              <View style={styles.emptyChat}>
+                <Feather name="message-circle" size={48} color={theme.textSecondary} />
+                <ThemedText style={[styles.emptyChatText, { color: theme.textSecondary }]}>
+                  Henüz mesaj yok. Sohbete başlayın!
+                </ThemedText>
+              </View>
+            }
+          />
+        )}
 
-      {isRecording ? (
-        <RecordingIndicator duration={recordingDuration} />
-      ) : null}
+        {isRecording ? (
+          <RecordingIndicator duration={recordingDuration} />
+        ) : null}
 
-      <View
-        style={[
-          styles.inputContainer,
-          {
-            backgroundColor: theme.cardBackground,
-            paddingBottom: insets.bottom + Spacing.sm,
-          },
-        ]}
-      >
-        <Pressable
-          onPressIn={startRecording}
-          onPressOut={stopRecording}
-          style={({ pressed }) => [
-            styles.micButton,
-            pressed && { backgroundColor: "#EF4444" },
-            isRecording && { backgroundColor: "#EF4444" },
-          ]}
-        >
-          <Feather name="mic" size={20} color="#FFFFFF" />
-        </Pressable>
-
-        <TextInput
+        <View
           style={[
-            styles.input,
-            { backgroundColor: theme.backgroundSecondary, color: theme.text },
+            styles.inputContainer,
+            {
+              backgroundColor: theme.cardBackground,
+              paddingBottom: insets.bottom + Spacing.sm,
+            },
           ]}
-          value={messageText}
-          onChangeText={setMessageText}
-          placeholder="Mesajınızı yazın..."
-          placeholderTextColor={theme.textSecondary}
-          multiline
-          maxLength={500}
-        />
-        <Pressable
-          style={({ pressed }) => [
-            styles.sendButton,
-            !messageText.trim() && styles.sendButtonDisabled,
-            pressed && messageText.trim() && { opacity: 0.8 },
-          ]}
-          onPress={handleSend}
-          disabled={!messageText.trim() || sendMutation.isPending}
         >
-          {sendMutation.isPending ? (
-            <ActivityIndicator size="small" color="#FFFFFF" />
-          ) : (
-            <Feather name="send" size={20} color="#FFFFFF" />
-          )}
-        </Pressable>
-      </View>
-    </ThemedView>
+          <Pressable
+            onPressIn={startRecording}
+            onPressOut={stopRecording}
+            style={({ pressed }) => [
+              styles.micButton,
+              pressed && { backgroundColor: "#EF4444" },
+              isRecording && { backgroundColor: "#EF4444" },
+            ]}
+          >
+            <Feather name="mic" size={20} color="#FFFFFF" />
+          </Pressable>
+
+          <TextInput
+            style={[
+              styles.input,
+              { backgroundColor: theme.backgroundSecondary, color: theme.text },
+            ]}
+            value={messageText}
+            onChangeText={setMessageText}
+            placeholder="Mesajınızı yazın..."
+            placeholderTextColor={theme.textSecondary}
+            multiline
+            maxLength={500}
+          />
+          <Pressable
+            style={({ pressed }) => [
+              styles.sendButton,
+              !messageText.trim() && styles.sendButtonDisabled,
+              pressed && messageText.trim() && { opacity: 0.8 },
+            ]}
+            onPress={handleSend}
+            disabled={!messageText.trim() || sendMutation.isPending}
+          >
+            {sendMutation.isPending ? (
+              <ActivityIndicator size="small" color="#FFFFFF" />
+            ) : (
+              <Feather name="send" size={20} color="#FFFFFF" />
+            )}
+          </Pressable>
+        </View>
+      </ThemedView>
+    </KeyboardAvoidingView>
   );
 }
 
