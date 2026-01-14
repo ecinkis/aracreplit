@@ -342,7 +342,7 @@ export default function MatchScreen() {
   const showEmptyState = remainingListings.length === 0;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
 
       {isLoading ? (
         <View style={styles.loadingContainer}>
