@@ -205,7 +205,7 @@ export default function MainTabNavigator() {
           options={{
             title: "Ara",
             headerTitle: () => (
-              <ThemedText style={{ color: "#FFFFFF", fontSize: 20, fontWeight: "600", marginLeft: Spacing.lg }}>
+              <ThemedText style={{ color: "#FFFFFF", fontSize: 20, fontWeight: "600", marginLeft: Spacing.lg - 3 }}>
                 Ara
               </ThemedText>
             ),
