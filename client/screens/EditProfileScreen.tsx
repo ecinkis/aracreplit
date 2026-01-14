@@ -126,7 +126,9 @@ export default function EditProfileScreen() {
       updateData.phone = phone.trim();
     }
 
-    if (avatarUri && avatarUri !== (user as any)?.avatarUrl) {
+    // TODO: Avatar upload needs file upload implementation
+    // For now, skip blob URLs as they don't work with API
+    if (avatarUri && !avatarUri.startsWith('blob:') && avatarUri !== (user as any)?.avatarUrl) {
       updateData.avatarUrl = avatarUri;
     }
 
