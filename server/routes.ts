@@ -380,7 +380,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/matches/:userId", async (req, res) => {
     try {
       const matches = await storage.getMatchesByUser(req.params.userId);
-      res.json(matches);
+      
+      // Add message count to each match
+      const matchesWithMessageCount = await Promise.all(
+        matches.map(async (match: any) => {
+          const messages = await storage.getMessagesByMatch(match.id);
+          return {
+            ...match,
+            messageCount: messages.length,
+            lastMessage: messages.length > 0 ? messages[messages.length - 1] : null,
+          };
+        })
+      );
+      
+      res.json(matchesWithMessageCount);
     } catch (error) {
       console.error("Get matches error:", error);
       res.status(500).json({ error: "Internal server error" });

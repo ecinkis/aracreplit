@@ -418,12 +418,12 @@ export default function ProfileScreen() {
           <View style={styles.sectionHeader}>
             <ThemedText style={styles.sectionTitle}>Mesajlarım</ThemedText>
             <ThemedText style={styles.sectionCount}>
-              {matches?.length || 0}
+              {matches?.filter((m: any) => m.messageCount > 0).length || 0}
             </ThemedText>
           </View>
-          {matches && matches.length > 0 ? (
+          {matches && matches.filter((m: any) => m.messageCount > 0).length > 0 ? (
             <View style={styles.messagesContainer}>
-              {matches.slice(0, 3).map((match) => (
+              {matches.filter((m: any) => m.messageCount > 0).slice(0, 3).map((match: any) => (
                 <Pressable
                   key={match.id}
                   style={({ pressed }) => [
@@ -443,14 +443,14 @@ export default function ProfileScreen() {
                   </View>
                   <View style={styles.messageContent}>
                     <ThemedText style={styles.messageTitle}>Takas Görüşmesi</ThemedText>
-                    <ThemedText style={styles.messageSubtitle}>
-                      Mesajlaşmak için tıklayın
+                    <ThemedText style={styles.messageSubtitle} numberOfLines={1}>
+                      {match.lastMessage?.content || "Mesajlaşmak için tıklayın"}
                     </ThemedText>
                   </View>
                   <Feather name="chevron-right" size={20} color="#9CA3AF" />
                 </Pressable>
               ))}
-              {matches.length > 3 && (
+              {matches.filter((m: any) => m.messageCount > 0).length > 3 && (
                 <Pressable
                   style={styles.seeAllButton}
                   onPress={() => {
@@ -459,7 +459,7 @@ export default function ProfileScreen() {
                   }}
                 >
                   <ThemedText style={styles.seeAllText}>
-                    Tüm mesajları gör ({matches.length})
+                    Tüm mesajları gör ({matches.filter((m: any) => m.messageCount > 0).length})
                   </ThemedText>
                 </Pressable>
               )}
