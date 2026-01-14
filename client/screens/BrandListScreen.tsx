@@ -13,6 +13,7 @@ import type { RouteProp } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
+import { TakasLogo } from "@/components/TakasLogo";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 
@@ -105,6 +106,9 @@ export default function BrandListScreen() {
             <Feather name="arrow-left" size={24} color="#FFFFFF" />
           </Pressable>
           <ThemedText style={styles.headerTitle}>{categoryName}</ThemedText>
+          <View style={styles.headerRight}>
+            <TakasLogo size={24} color="#FFFFFF" />
+          </View>
         </View>
       </View>
 
@@ -177,9 +181,13 @@ const styles = StyleSheet.create({
     marginRight: Spacing.md,
   },
   headerTitle: {
+    flex: 1,
     fontSize: 20,
     fontWeight: "600",
     color: "#FFFFFF",
+  },
+  headerRight: {
+    marginRight: Spacing.sm,
   },
   content: {
     flex: 1,
