@@ -20,6 +20,7 @@ import { Spacing, BorderRadius, Typography, BrandColors } from "@/constants/them
 import { apiRequest } from "@/lib/query-client";
 
 const PREMIUM_FEATURES = [
+  { icon: "file-text", title: "3 İlan Hakkı", description: "Bireysel üye olarak 3 adet ilan yayınlayabilirsiniz" },
   { icon: "heart", title: "Sınırsız Beğeni", description: "Günlük beğeni limiti olmadan istediğiniz kadar kaydırın" },
   { icon: "star", title: "Öne Çıkan İlanlar", description: "İlanlarınız arama sonuçlarında üstte görünsün" },
   { icon: "zap", title: "Öncelikli Eşleşme", description: "Eşleşmeleriniz daha hızlı gerçekleşsin" },
@@ -28,11 +29,7 @@ const PREMIUM_FEATURES = [
   { icon: "shield", title: "Öncelikli Destek", description: "7/24 öncelikli müşteri desteği" },
 ];
 
-const PLANS = [
-  { id: "monthly", title: "Aylık", price: "149", period: "ay", popular: false },
-  { id: "quarterly", title: "3 Aylık", price: "349", period: "3 ay", popular: true, save: "22%" },
-  { id: "yearly", title: "Yıllık", price: "999", period: "yıl", popular: false, save: "44%" },
-];
+const PLAN = { id: "monthly", title: "Aylık Premium", price: "149", period: "ay" };
 
 function FeatureItem({ icon, title, description }: { icon: string; title: string; description: string }) {
   const { theme } = useTheme();
@@ -51,50 +48,6 @@ function FeatureItem({ icon, title, description }: { icon: string; title: string
   );
 }
 
-function PlanCard({
-  plan,
-  selected,
-  onSelect,
-}: {
-  plan: typeof PLANS[0];
-  selected: boolean;
-  onSelect: () => void;
-}) {
-  const { theme } = useTheme();
-  return (
-    <Pressable
-      style={[
-        styles.planCard,
-        { backgroundColor: theme.backgroundSecondary },
-        selected && styles.planCardSelected,
-      ]}
-      onPress={() => {
-        Haptics.selectionAsync();
-        onSelect();
-      }}
-    >
-      {plan.popular && (
-        <View style={styles.popularBadge}>
-          <ThemedText style={styles.popularBadgeText}>Popüler</ThemedText>
-        </View>
-      )}
-      <ThemedText style={styles.planTitle}>{plan.title}</ThemedText>
-      <View style={styles.priceRow}>
-        <ThemedText style={styles.planPrice}>{plan.price}</ThemedText>
-        <ThemedText style={[styles.planCurrency, { color: theme.textSecondary }]}>TL</ThemedText>
-      </View>
-      <ThemedText style={[styles.planPeriod, { color: theme.textSecondary }]}>/{plan.period}</ThemedText>
-      {plan.save && (
-        <View style={styles.saveBadge}>
-          <ThemedText style={styles.saveBadgeText}>{plan.save} tasarruf</ThemedText>
-        </View>
-      )}
-      <View style={[styles.radioOuter, selected && styles.radioOuterSelected]}>
-        {selected && <View style={styles.radioInner} />}
-      </View>
-    </Pressable>
-  );
-}
 
 export default function PremiumScreen() {
   const insets = useSafeAreaInsets();
@@ -102,14 +55,12 @@ export default function PremiumScreen() {
   const { theme } = useTheme();
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [selectedPlan, setSelectedPlan] = React.useState("quarterly");
 
   const subscribeMutation = useMutation({
-    mutationFn: async (planId: string) => {
-      const days = planId === "monthly" ? 30 : planId === "quarterly" ? 90 : 365;
+    mutationFn: async () => {
       return apiRequest(`/api/users/${user?.id}/premium`, {
         method: "POST",
-        body: JSON.stringify({ days }),
+        body: JSON.stringify({ days: 30 }),
       });
     },
     onSuccess: () => {
@@ -133,7 +84,7 @@ export default function PremiumScreen() {
       "Bu bir demo uygulamasıdır. Gerçek ödeme sistemi entegre edilmemiştir. Premium üyelik simüle edilsin mi?",
       [
         { text: "İptal", style: "cancel" },
-        { text: "Evet, Aktif Et", onPress: () => subscribeMutation.mutate(selectedPlan) },
+        { text: "Evet, Aktif Et", onPress: () => subscribeMutation.mutate() },
       ]
     );
   };
@@ -180,19 +131,13 @@ export default function PremiumScreen() {
         </View>
 
         {!isPremium && (
-          <>
-            <ThemedText style={styles.sectionTitle}>Plan Seçin</ThemedText>
-            <View style={styles.plansContainer}>
-              {PLANS.map((plan) => (
-                <PlanCard
-                  key={plan.id}
-                  plan={plan}
-                  selected={selectedPlan === plan.id}
-                  onSelect={() => setSelectedPlan(plan.id)}
-                />
-              ))}
+          <View style={[styles.priceCard, { backgroundColor: theme.backgroundSecondary }]}>
+            <ThemedText style={styles.priceLabel}>Aylık Üyelik</ThemedText>
+            <View style={styles.priceRow}>
+              <ThemedText style={styles.priceAmount}>149</ThemedText>
+              <ThemedText style={[styles.priceCurrency, { color: theme.textSecondary }]}>TL/ay</ThemedText>
             </View>
-          </>
+          </View>
         )}
       </ScrollView>
 
@@ -291,84 +236,28 @@ const styles = StyleSheet.create({
   featureDescription: {
     ...Typography.small,
   },
-  plansContainer: {
-    flexDirection: "row",
-    gap: Spacing.sm,
-  },
-  planCard: {
-    flex: 1,
-    padding: Spacing.md,
+  priceCard: {
+    padding: Spacing.lg,
     borderRadius: BorderRadius.md,
     alignItems: "center",
-    borderWidth: 2,
-    borderColor: "transparent",
+    marginBottom: Spacing.lg,
   },
-  planCardSelected: {
-    borderColor: BrandColors.primaryBlue,
-  },
-  popularBadge: {
-    position: "absolute",
-    top: -10,
-    backgroundColor: BrandColors.successGreen,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 2,
-    borderRadius: BorderRadius.full,
-  },
-  popularBadgeText: {
-    ...Typography.caption,
-    color: "#FFFFFF",
+  priceLabel: {
+    ...Typography.body,
     fontWeight: "600",
-  },
-  planTitle: {
-    ...Typography.small,
-    fontWeight: "600",
-    marginBottom: Spacing.xs,
+    marginBottom: Spacing.sm,
   },
   priceRow: {
     flexDirection: "row",
     alignItems: "baseline",
   },
-  planPrice: {
-    ...Typography.h2,
+  priceAmount: {
+    fontSize: 48,
     fontWeight: "700",
   },
-  planCurrency: {
+  priceCurrency: {
     ...Typography.body,
-    marginLeft: 2,
-  },
-  planPeriod: {
-    ...Typography.caption,
-  },
-  saveBadge: {
-    backgroundColor: "#E8F5E9",
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 2,
-    borderRadius: BorderRadius.full,
-    marginTop: Spacing.xs,
-  },
-  saveBadgeText: {
-    ...Typography.caption,
-    color: BrandColors.successGreen,
-    fontWeight: "600",
-  },
-  radioOuter: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: "#E5E8EB",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: Spacing.sm,
-  },
-  radioOuterSelected: {
-    borderColor: BrandColors.primaryBlue,
-  },
-  radioInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: BrandColors.primaryBlue,
+    marginLeft: Spacing.xs,
   },
   footer: {
     paddingHorizontal: Spacing.md,
