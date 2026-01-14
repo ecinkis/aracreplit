@@ -20,6 +20,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { LinearGradient } from "expo-linear-gradient";
 import { ThemedText } from "@/components/ThemedText";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
@@ -32,6 +33,15 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_GAP = 8;
 const CARD_WIDTH = (SCREEN_WIDTH - Spacing.lg * 2 - CARD_GAP * 2) / 3;
+
+const BRAND_COLORS = [
+  ["#FF6B6B", "#FF8E53"],
+  ["#4ECDC4", "#44A08D"],
+  ["#667eea", "#764ba2"],
+  ["#f093fb", "#f5576c"],
+  ["#4facfe", "#00f2fe"],
+  ["#43e97b", "#38f9d7"],
+];
 
 const DEMO_STORIES = [
   { id: "1", brandName: "BMW Turkiye", title: "Yeni BMW M5", imageUrl: "https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=800", isActive: true, viewCount: 0, expiresAt: new Date(Date.now() + 86400000).toISOString(), createdAt: new Date().toISOString() },
@@ -194,30 +204,37 @@ export default function VitrinScreen() {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.storiesContainer}
       >
-        {displayStories.map((story) => (
-          <Pressable 
-            key={story.id} 
-            style={styles.storyItem}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              setSelectedStory(story);
-            }}
-          >
-            <View style={[
-              styles.storyRing,
-              story.isActive ? styles.storyRingActive : styles.storyRingInactive,
-            ]}>
-              <Image 
-                source={{ uri: story.imageUrl }} 
-                style={styles.storyAvatar}
-                resizeMode="cover"
-              />
-            </View>
-            <ThemedText style={styles.storyUsername} numberOfLines={1}>
-              {story.brandName}
-            </ThemedText>
-          </Pressable>
-        ))}
+        {displayStories.map((story, index) => {
+          const colors = BRAND_COLORS[index % BRAND_COLORS.length];
+          return (
+            <Pressable 
+              key={story.id} 
+              style={styles.storyItem}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setSelectedStory(story);
+              }}
+            >
+              <LinearGradient
+                colors={colors as [string, string]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.storyRing}
+              >
+                <View style={styles.storyInnerRing}>
+                  <Image 
+                    source={{ uri: story.imageUrl }} 
+                    style={styles.storyAvatar}
+                    resizeMode="cover"
+                  />
+                </View>
+              </LinearGradient>
+              <ThemedText style={styles.storyUsername} numberOfLines={1}>
+                {story.brandName}
+              </ThemedText>
+            </Pressable>
+          );
+        })}
       </ScrollView>
 
       {featuredListings && featuredListings.length > 0 ? (
@@ -244,7 +261,7 @@ export default function VitrinScreen() {
                 }}
               >
                 <View style={styles.featuredBadge}>
-                  <Feather name="star" size={10} color="#FFFFFF" />
+                  <Feather name="star" size={10} color="#FFFFFF" fill="#FFFFFF" />
                   <ThemedText style={styles.featuredBadgeText}>VİTRİN</ThemedText>
                 </View>
                 <Image
@@ -439,12 +456,17 @@ const styles = StyleSheet.create({
     marginRight: Spacing.xs,
   },
   storyRing: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 4,
+    width: 64,
+    height: 64,
+    borderRadius: 12,
+    padding: 3,
+    marginBottom: 6,
+  },
+  storyInnerRing: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    overflow: "hidden",
   },
   storyRingActive: {
     borderWidth: 2,
@@ -462,9 +484,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   storyAvatar: {
-    width: 62,
-    height: 62,
-    borderRadius: 31,
+    width: "100%",
+    height: "100%",
+    borderRadius: 8,
   },
   storyUsername: {
     fontSize: 10,
@@ -582,7 +604,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginRight: Spacing.sm,
     borderWidth: 2,
-    borderColor: "#000000",
+    borderColor: BrandColors.primaryBlue,
   },
   featuredBadge: {
     position: "absolute",
@@ -591,7 +613,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: "#000000",
+    backgroundColor: BrandColors.primaryBlue,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: BorderRadius.full,

@@ -201,9 +201,21 @@ export default function MainTabNavigator() {
               <Feather name="home" size={size} color={color} />
             ),
             headerRight: () => (
-              <ThemedText style={{ color: "#FFFFFF", fontSize: 11, marginRight: Spacing.lg, fontStyle: "italic" }}>
-                "Yeni nesil ilan sistemi"
-              </ThemedText>
+              <View style={{ flexDirection: "row", alignItems: "center", marginRight: Spacing.lg, gap: 8 }}>
+                <View style={{ 
+                  width: 28, 
+                  height: 28, 
+                  borderRadius: 6, 
+                  backgroundColor: BrandColors.primaryBlue, 
+                  justifyContent: "center", 
+                  alignItems: "center" 
+                }}>
+                  <Feather name="repeat" size={16} color="#FFFFFF" />
+                </View>
+                <ThemedText style={{ color: "rgba(255,255,255,0.7)", fontSize: 11 }}>
+                  v.10
+                </ThemedText>
+              </View>
             ),
           }}
         />
