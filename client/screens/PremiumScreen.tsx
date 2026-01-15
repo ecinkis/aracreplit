@@ -105,7 +105,7 @@ export default function PremiumScreen() {
 
       <ScrollView 
         style={styles.content} 
-        contentContainerStyle={[styles.contentContainer, { paddingBottom: 150 }]}
+        contentContainerStyle={[styles.contentContainer, { paddingBottom: isPremium ? insets.bottom + Spacing.xl : Spacing.md }]}
         showsVerticalScrollIndicator={false}
       >
         <LinearGradient
@@ -143,12 +143,11 @@ export default function PremiumScreen() {
         )}
       </ScrollView>
 
-      {!isPremium && (
-        <View style={[styles.footer, { paddingBottom: insets.bottom + Spacing.md }]}>
+      {!isPremium ? (
+        <View style={[styles.footer, { paddingBottom: insets.bottom > 0 ? insets.bottom : Spacing.lg }]}>
           <Pressable
             style={({ pressed }) => [
               styles.subscribeButton,
-              { backgroundColor: "#000000" },
               pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
             ]}
             onPress={handleSubscribe}
@@ -165,7 +164,7 @@ export default function PremiumScreen() {
             İstediğiniz zaman iptal edebilirsiniz
           </ThemedText>
         </View>
-      )}
+      ) : null}
     </ThemedView>
   );
 }
@@ -262,10 +261,6 @@ const styles = StyleSheet.create({
     marginLeft: Spacing.xs,
   },
   footer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
     backgroundColor: "#FFFFFF",
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.md,
@@ -273,6 +268,7 @@ const styles = StyleSheet.create({
     borderTopColor: "#E5E7EB",
   },
   subscribeButton: {
+    backgroundColor: "#000000",
     borderRadius: BorderRadius.sm,
     overflow: "hidden",
   },
