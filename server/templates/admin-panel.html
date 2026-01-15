@@ -1609,37 +1609,8 @@
                 <h3 class="card-title">Son Uyarilar</h3>
                 <button class="btn btn-ghost btn-sm">Tumunu Gor</button>
               </div>
-              <div class="card-body">
-                <div class="alert-item">
-                  <div class="alert-icon warning">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                  </div>
-                  <div class="alert-content">
-                    <div class="alert-title">Supheli ilan tespit edildi</div>
-                    <div class="alert-desc">BMW 320i - Dusuk fiyat uyarisi</div>
-                  </div>
-                  <span class="alert-time">5 dk once</span>
-                </div>
-                <div class="alert-item">
-                  <div class="alert-icon danger">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
-                  </div>
-                  <div class="alert-content">
-                    <div class="alert-title">Kullanici sikayet edildi</div>
-                    <div class="alert-desc">3 farkli kullanicidan sikayet</div>
-                  </div>
-                  <span class="alert-time">1 saat once</span>
-                </div>
-                <div class="alert-item">
-                  <div class="alert-icon info">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                  </div>
-                  <div class="alert-content">
-                    <div class="alert-title">Yeni bayi basvurusu</div>
-                    <div class="alert-desc">Istanbul Oto Center onay bekliyor</div>
-                  </div>
-                  <span class="alert-time">3 saat once</span>
-                </div>
+              <div class="card-body" id="alertsContainer">
+                <div style="padding: 20px; text-align: center; color: var(--text-muted);">Yukleniyor...</div>
               </div>
             </div>
           </div>
@@ -1666,75 +1637,7 @@
                   </tr>
                 </thead>
                 <tbody id="recentUsersTable">
-                  <tr>
-                    <td>
-                      <div class="user-cell">
-                        <div class="avatar">AY</div>
-                        <div class="info">
-                          <div class="name">Ahmet Yilmaz</div>
-                          <div class="email">ahmet@gmail.com</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>+90 532 XXX XX XX</td>
-                    <td>Istanbul</td>
-                    <td><span class="badge badge-info">Bireysel</span></td>
-                    <td><span class="badge badge-success">Dogrulanmis</span></td>
-                    <td>10 Oca 2026</td>
-                    <td>
-                      <div class="actions-cell">
-                        <button class="btn btn-ghost btn-sm">
-                          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="user-cell">
-                        <div class="avatar">MK</div>
-                        <div class="info">
-                          <div class="name">Mehmet Kaya</div>
-                          <div class="email">mehmet.k@outlook.com</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>+90 533 XXX XX XX</td>
-                    <td>Ankara</td>
-                    <td><span class="badge badge-warning">Bayi</span></td>
-                    <td><span class="badge badge-success">Dogrulanmis</span></td>
-                    <td>9 Oca 2026</td>
-                    <td>
-                      <div class="actions-cell">
-                        <button class="btn btn-ghost btn-sm">
-                          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="user-cell">
-                        <div class="avatar">FO</div>
-                        <div class="info">
-                          <div class="name">Fatma Ozturk</div>
-                          <div class="email">fatma.o@gmail.com</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>+90 535 XXX XX XX</td>
-                    <td>Izmir</td>
-                    <td><span class="badge badge-info">Bireysel</span></td>
-                    <td><span class="badge badge-warning">Bekliyor</span></td>
-                    <td>9 Oca 2026</td>
-                    <td>
-                      <div class="actions-cell">
-                        <button class="btn btn-ghost btn-sm">
-                          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                  <tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--text-muted);">Yukleniyor...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -2286,9 +2189,7 @@
     }
 
     function initCharts() {
-      const usersData = [65, 45, 78, 52, 89, 67, 94];
-      const listingsData = [48, 62, 55, 70, 65, 80, 72];
-      const days = ['Pzt', 'Sal', 'Car', 'Per', 'Cum', 'Cmt', 'Paz'];
+      // Grafikler loadDashboard'da gercek verilerle guncellenir
       const activityChart = document.getElementById('activityChart');
       activityChart.innerHTML = '';
       
@@ -2298,55 +2199,45 @@
         
         const bar1 = document.createElement('div');
         bar1.className = 'chart-bar series-primary';
-        bar1.style.height = usersData[i] + '%';
-        bar1.innerHTML = `<span class="chart-tooltip">Kullanicilar: ${usersData[i]}</span>`;
+        bar1.style.height = '0%';
         
         const bar2 = document.createElement('div');
         bar2.className = 'chart-bar series-secondary';
-        bar2.style.height = listingsData[i] + '%';
-        bar2.innerHTML = `<span class="chart-tooltip">Ilanlar: ${listingsData[i]}</span>`;
+        bar2.style.height = '0%';
         
         group.appendChild(bar1);
         group.appendChild(bar2);
         activityChart.appendChild(group);
       }
 
-      const growthData = [40, 55, 48, 62, 75, 68, 82, 78, 90, 85, 95, 88];
+      // Growth chart - bos baslat
       const growthChart = document.getElementById('growthChart');
       if (growthChart) {
         growthChart.innerHTML = '';
-        growthData.forEach((val, i) => {
+        for (let i = 0; i < 12; i++) {
           const bar = document.createElement('div');
           bar.className = 'chart-bar';
-          bar.style.height = val + '%';
-          bar.style.animationDelay = (i * 0.05) + 's';
+          bar.style.height = '0%';
           growthChart.appendChild(bar);
-        });
+        }
       }
 
       initSparklines();
     }
 
     function initSparklines() {
-      const sparklineData = {
-        sparkline1: [30, 45, 38, 52, 48, 60, 72],
-        sparkline2: [20, 35, 42, 38, 55, 48, 65],
-        sparkline3: [15, 28, 35, 42, 55, 68, 80],
-        sparkline4: [45, 38, 32, 28, 25, 22, 18]
-      };
-
-      Object.entries(sparklineData).forEach(([id, data]) => {
+      // Sparkline'lar bos baslat - gercek veri geldiginde guncellenecek
+      ['sparkline1', 'sparkline2', 'sparkline3', 'sparkline4'].forEach(id => {
         const container = document.getElementById(id);
         if (container) {
           container.innerHTML = '';
-          const maxVal = Math.max(...data);
-          data.forEach((val, i) => {
+          for (let i = 0; i < 7; i++) {
             const bar = document.createElement('div');
             bar.className = 'sparkline-bar';
-            bar.style.height = ((val / maxVal) * 100) + '%';
+            bar.style.height = '0%';
             bar.style.flex = '1';
             container.appendChild(bar);
-          });
+          }
         }
       });
     }
@@ -2470,8 +2361,121 @@
         document.getElementById('pendingListings').textContent = fmt(stats.pendingListings);
         document.getElementById('totalListings').textContent = 'Toplam ilan: ' + fmt(stats.listings);
         document.getElementById('totalStories').textContent = 'Hikaye: ' + fmt(stats.stories);
+        
+        // Son Uyarıları yükle (bekleyen ilanlar)
+        loadDashboardAlerts(stats.pendingListings || 0);
+        
+        // Son Kullanıcıları yükle
+        loadRecentUsers();
+        
+        // Grafikleri güncelle
+        updateActivityChart(stats);
       } catch (error) {
         console.log('Dashboard data will load from API');
+      }
+    }
+
+    async function loadDashboardAlerts(pendingCount) {
+      const container = document.getElementById('alertsContainer');
+      try {
+        const listings = await apiRequest('/listings');
+        const pending = listings.pending || [];
+        
+        if (pending.length === 0) {
+          container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">Bekleyen uyari yok</div>';
+          return;
+        }
+        
+        container.innerHTML = pending.slice(0, 5).map(l => `
+          <div class="alert-item">
+            <div class="alert-icon warning">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <div class="alert-content">
+              <div class="alert-title">Onay bekleyen ilan</div>
+              <div class="alert-desc">${l.brand} ${l.model} - ${l.ownerName || 'Bilinmeyen'}</div>
+            </div>
+            <span class="alert-time">${l.city || ''}</span>
+          </div>
+        `).join('');
+      } catch (error) {
+        container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">Uyarilar yuklenemedi</div>';
+      }
+    }
+
+    async function loadRecentUsers() {
+      const tbody = document.getElementById('recentUsersTable');
+      try {
+        const users = await apiRequest('/users');
+        
+        if (users.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--text-muted);">Henuz kullanici yok</td></tr>';
+          return;
+        }
+        
+        const recentUsers = users.slice(0, 5);
+        tbody.innerHTML = recentUsers.map(user => {
+          const initials = (user.name || 'U').substring(0, 2).toUpperCase();
+          const userType = user.userType || 'individual';
+          const typeLabel = userType === 'corporate' ? 'Kurumsal' : userType === 'premium' ? 'Premium' : 'Bireysel';
+          const typeBadge = userType === 'corporate' ? 'badge-warning' : userType === 'premium' ? 'badge-purple' : 'badge-info';
+          const isVerified = user.phoneVerified;
+          const statusBadge = isVerified ? 'badge-success' : 'badge-warning';
+          const statusLabel = isVerified ? 'Dogrulanmis' : 'Bekliyor';
+          const date = user.createdAt ? new Date(user.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
+          
+          return `
+            <tr>
+              <td>
+                <div class="user-cell">
+                  <div class="avatar">${initials}</div>
+                  <div class="info">
+                    <div class="name">${user.name || 'Isimsiz'}</div>
+                    <div class="email">${user.phone || '-'}</div>
+                  </div>
+                </div>
+              </td>
+              <td>${user.phone || '-'}</td>
+              <td>${user.city || '-'}</td>
+              <td><span class="badge ${typeBadge}">${typeLabel}</span></td>
+              <td><span class="badge ${statusBadge}">${statusLabel}</span></td>
+              <td>${date}</td>
+              <td>
+                <div class="actions-cell">
+                  <button class="btn btn-ghost btn-sm" onclick="viewUser('${user.id}')">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } catch (error) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--danger);">Kullanicilar yuklenemedi</td></tr>';
+      }
+    }
+
+    function updateActivityChart(stats) {
+      const activityChart = document.getElementById('activityChart');
+      // Gerçek veri yoksa boş bırak
+      activityChart.innerHTML = '';
+      const days = ['Pzt', 'Sal', 'Car', 'Per', 'Cum', 'Cmt', 'Paz'];
+      
+      for (let i = 0; i < 7; i++) {
+        const group = document.createElement('div');
+        group.className = 'chart-bar-group';
+        
+        const bar1 = document.createElement('div');
+        bar1.className = 'chart-bar series-primary';
+        bar1.style.height = '0%';
+        
+        const bar2 = document.createElement('div');
+        bar2.className = 'chart-bar series-secondary';
+        bar2.style.height = '0%';
+        
+        group.appendChild(bar1);
+        group.appendChild(bar2);
+        activityChart.appendChild(group);
       }
     }
 
