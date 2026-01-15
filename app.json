@@ -11,13 +11,15 @@
     "backgroundColor": "#000000",
     "ios": {
       "supportsTablet": true,
-      "backgroundColor": "#000000"
+      "backgroundColor": "#000000",
+      "bundleIdentifier": "com.takasapp.mobile"
     },
     "androidStatusBar": {
       "barStyle": "light-content",
       "backgroundColor": "#000000"
     },
     "android": {
+      "package": "com.takasapp.mobile",
       "adaptiveIcon": {
         "backgroundColor": "#000000",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
