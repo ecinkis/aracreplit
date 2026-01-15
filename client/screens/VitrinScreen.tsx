@@ -24,9 +24,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import { ThemedText } from "@/components/ThemedText";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
-import { Listing, Story } from "@shared/schema";
+import { Listing, Story, User } from "@shared/schema";
 import defaultVehicleImage from "../assets/images/default-vehicle.png";
 import { getApiUrl } from "@/lib/query-client";
+import { useAuth } from "@/contexts/AuthContext";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -149,9 +150,12 @@ export default function VitrinScreen() {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
   const navigation = useNavigation<NavigationProp>();
+  const { user } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStory, setSelectedStory] = useState<StoryItem | null>(null);
+
+  const canCreateStory = user?.isPremium && user?.userType === "bireysel" && (user?.storyCredits || 0) > 0;
 
   const { data: listings, isLoading, refetch } = useQuery<Listing[]>({
     queryKey: ["/api/listings"],
@@ -204,6 +208,24 @@ export default function VitrinScreen() {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.storiesContainer}
       >
+        {canCreateStory ? (
+          <Pressable 
+            style={styles.storyItem}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              navigation.navigate("StoryCreation");
+            }}
+          >
+            <View style={styles.addStoryRing}>
+              <View style={styles.addStoryInner}>
+                <Feather name="plus" size={24} color={BrandColors.primaryBlue} />
+              </View>
+            </View>
+            <ThemedText style={styles.storyUsername} numberOfLines={1}>
+              Hikaye Ekle
+            </ThemedText>
+          </Pressable>
+        ) : null}
         {displayStories.map((story, index) => {
           const colors = BRAND_COLORS[index % BRAND_COLORS.length];
           return (
@@ -461,6 +483,25 @@ const styles = StyleSheet.create({
     borderRadius: 32,
     padding: 3,
     marginBottom: 6,
+  },
+  addStoryRing: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: 2,
+    borderColor: BrandColors.primaryBlue,
+    borderStyle: "dashed",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+  addStoryInner: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "#F0F9FF",
+    justifyContent: "center",
+    alignItems: "center",
   },
   storyInnerRing: {
     flex: 1,

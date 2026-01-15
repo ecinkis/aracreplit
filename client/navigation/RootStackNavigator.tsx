@@ -19,6 +19,7 @@ import BrandListScreen from "@/screens/BrandListScreen";
 import ModelListScreen from "@/screens/ModelListScreen";
 import SearchResultsScreen from "@/screens/SearchResultsScreen";
 import VerificationScreen from "@/screens/VerificationScreen";
+import StoryCreationScreen from "@/screens/StoryCreationScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { useAuth } from "@/contexts/AuthContext";
 import { BrandColors } from "@/constants/theme";
@@ -44,6 +45,7 @@ export type RootStackParamList = {
     reviewedUserName: string;
   };
   Premium: undefined;
+  StoryCreation: undefined;
   BrandList: { categoryId: string; categoryName: string };
   ModelList: { categoryId?: string; categoryName?: string; brandId: string; brandName: string };
   SearchResults: { categoryId?: string; categoryName?: string; brandId?: string; brandName?: string; modelId?: string; modelName?: string; brand?: string; model?: string; query?: string };
@@ -171,6 +173,14 @@ export default function RootStackNavigator() {
           <Stack.Screen
             name="Premium"
             component={PremiumScreen}
+            options={{
+              headerShown: false,
+              presentation: "modal",
+            }}
+          />
+          <Stack.Screen
+            name="StoryCreation"
+            component={StoryCreationScreen}
             options={{
               headerShown: false,
               presentation: "modal",
