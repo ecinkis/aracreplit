@@ -6,14 +6,12 @@ import {
   Pressable,
   TextInput,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
-import { TakasLogo } from "@/components/TakasLogo";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 
@@ -75,10 +73,7 @@ const BRANDS_BY_CATEGORY: Record<string, Array<{ id: string; name: string }>> = 
   ],
 };
 
-const HEADER_HEIGHT = 110;
-
 export default function BrandListScreen() {
-  const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<BrandListRouteProp>();
   const { categoryId, categoryName } = route.params;
@@ -96,69 +91,49 @@ export default function BrandListScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, { height: HEADER_HEIGHT + insets.top, paddingTop: insets.top }]}>
-        <View style={styles.headerContent}>
-          <Pressable 
-            onPress={() => navigation.goBack()} 
-            style={styles.backButton}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          >
-            <Feather name="arrow-left" size={24} color="#FFFFFF" />
+      <View style={styles.searchContainer}>
+        <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchInput}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder="Marka ara..."
+          placeholderTextColor="#9CA3AF"
+          testID="input-brand-search"
+        />
+        {searchQuery.length > 0 ? (
+          <Pressable onPress={() => setSearchQuery("")} testID="button-clear-brand-search">
+            <Feather name="x" size={18} color="#9CA3AF" />
           </Pressable>
-          <ThemedText style={styles.headerTitle}>{categoryName}</ThemedText>
-          <View style={styles.headerRight}>
-            <TakasLogo size={24} color="#FFFFFF" />
-          </View>
-        </View>
+        ) : null}
       </View>
 
-      <View style={styles.content}>
-        <View style={styles.searchRow}>
-          <View style={styles.searchContainer}>
-            <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
-            <TextInput
-              style={styles.searchInput}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholder="Marka ara..."
-              placeholderTextColor="#9CA3AF"
-              testID="input-brand-search"
-            />
-            {searchQuery.length > 0 ? (
-              <Pressable onPress={() => setSearchQuery("")} testID="button-clear-brand-search">
-                <Feather name="x" size={18} color="#9CA3AF" />
-              </Pressable>
-            ) : null}
+      <ScrollView
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {filteredBrands.map((brand) => (
+          <Pressable
+            key={brand.id}
+            style={({ pressed }) => [
+              styles.brandRow,
+              pressed && styles.brandRowPressed,
+            ]}
+            onPress={() => handleBrandPress(brand.id, brand.name)}
+            testID={`row-brand-${brand.id}`}
+          >
+            <ThemedText style={styles.brandName}>{brand.name}</ThemedText>
+            <Feather name="chevron-right" size={20} color="#9CA3AF" />
+          </Pressable>
+        ))}
+
+        {filteredBrands.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Feather name="inbox" size={48} color="#9CA3AF" />
+            <ThemedText style={styles.emptyText}>Marka bulunamadı</ThemedText>
           </View>
-        </View>
-
-        <ScrollView
-          contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + Spacing.xl }]}
-          showsVerticalScrollIndicator={false}
-        >
-          {filteredBrands.map((brand) => (
-            <Pressable
-              key={brand.id}
-              style={({ pressed }) => [
-                styles.brandRow,
-                pressed && styles.brandRowPressed,
-              ]}
-              onPress={() => handleBrandPress(brand.id, brand.name)}
-              testID={`row-brand-${brand.id}`}
-            >
-              <ThemedText style={styles.brandName}>{brand.name}</ThemedText>
-              <Feather name="chevron-right" size={20} color="#9CA3AF" />
-            </Pressable>
-          ))}
-
-          {filteredBrands.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Feather name="inbox" size={48} color="#9CA3AF" />
-              <ThemedText style={styles.emptyText}>Marka bulunamadı</ThemedText>
-            </View>
-          ) : null}
-        </ScrollView>
-      </View>
+        ) : null}
+      </ScrollView>
     </View>
   );
 }
@@ -167,41 +142,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
-  },
-  header: {
-    backgroundColor: "#000000",
-  },
-  headerContent: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
     paddingHorizontal: Spacing.lg,
-  },
-  backButton: {
-    marginRight: Spacing.md,
-  },
-  headerTitle: {
-    flex: 1,
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#FFFFFF",
-  },
-  headerRight: {
-    marginRight: Spacing.sm,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: Spacing.lg,
-  },
-  searchRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-    marginTop: Spacing.sm,
-    marginBottom: Spacing.md,
   },
   searchContainer: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#F9FAFB",
@@ -210,6 +153,8 @@ const styles = StyleSheet.create({
     borderColor: "#E5E7EB",
     paddingHorizontal: Spacing.md,
     height: 48,
+    marginTop: 13,
+    marginBottom: Spacing.xs,
   },
   searchIcon: {
     marginRight: Spacing.sm,
@@ -221,6 +166,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     flexGrow: 1,
+    paddingBottom: Spacing.xl,
   },
   brandRow: {
     flexDirection: "row",

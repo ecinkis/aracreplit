@@ -7,7 +7,6 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
@@ -22,10 +21,7 @@ import type { Listing } from "@shared/schema";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type SearchResultsRouteProp = RouteProp<RootStackParamList, "SearchResults">;
 
-const HEADER_HEIGHT = 110;
-
 export default function SearchResultsScreen() {
-  const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<SearchResultsRouteProp>();
   const { brandName, modelName, brand, model, query } = route.params;
@@ -59,8 +55,6 @@ export default function SearchResultsScreen() {
     return true;
   }) || [];
 
-  const headerText = searchQuery || (searchBrand && searchModel ? `${searchBrand} ${searchModel}` : searchBrand) || "Arama Sonuçları";
-
   const handleListingPress = (listingId: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate("ListingDetail", { listingId });
@@ -69,18 +63,6 @@ export default function SearchResultsScreen() {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <View style={[styles.header, { height: HEADER_HEIGHT + insets.top, paddingTop: insets.top }]}>
-          <View style={styles.headerContent}>
-            <Pressable 
-              onPress={() => navigation.goBack()} 
-              style={styles.backButton}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Feather name="arrow-left" size={24} color="#FFFFFF" />
-            </Pressable>
-            <ThemedText style={styles.headerTitle}>{headerText}</ThemedText>
-          </View>
-        </View>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={BrandColors.primaryBlue} />
         </View>
@@ -90,85 +72,67 @@ export default function SearchResultsScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, { height: HEADER_HEIGHT + insets.top, paddingTop: insets.top }]}>
-        <View style={styles.headerContent}>
-          <Pressable 
-            onPress={() => navigation.goBack()} 
-            style={styles.backButton}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          >
-            <Feather name="arrow-left" size={24} color="#FFFFFF" />
-          </Pressable>
-          <ThemedText style={styles.headerTitle}>{headerText}</ThemedText>
-        </View>
+      <View style={styles.resultInfo}>
+        <ThemedText style={styles.resultCount}>
+          {filteredListings.length} ilan bulundu
+        </ThemedText>
       </View>
 
-      <View style={styles.content}>
-        <View style={styles.resultInfo}>
-          <ThemedText style={styles.resultCount}>
-            {filteredListings.length} ilan bulundu
-          </ThemedText>
-        </View>
-
-        <FlatList
-          data={filteredListings}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={[
-            styles.listContent,
-            { paddingBottom: insets.bottom + Spacing.xl },
-          ]}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <Pressable
-              style={({ pressed }) => [
-                styles.listingCard,
-                pressed && styles.listingCardPressed,
-              ]}
-              onPress={() => handleListingPress(item.id)}
-              testID={`card-listing-${item.id}`}
-            >
-              <View style={styles.listingImageContainer}>
-                {item.photos && item.photos.length > 0 ? (
-                  <Image
-                    source={{ uri: item.photos[0] }}
-                    style={styles.listingImage}
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <View style={styles.listingImagePlaceholder}>
-                    <Feather name="image" size={24} color="#9CA3AF" />
-                  </View>
-                )}
-              </View>
-              <View style={styles.listingContent}>
-                <ThemedText style={styles.listingTitle} numberOfLines={1}>
-                  {item.brand} {item.model}
+      <FlatList
+        data={filteredListings}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <Pressable
+            style={({ pressed }) => [
+              styles.listingCard,
+              pressed && styles.listingCardPressed,
+            ]}
+            onPress={() => handleListingPress(item.id)}
+            testID={`card-listing-${item.id}`}
+          >
+            <View style={styles.listingImageContainer}>
+              {item.photos && item.photos.length > 0 ? (
+                <Image
+                  source={{ uri: item.photos[0] }}
+                  style={styles.listingImage}
+                  resizeMode="cover"
+                />
+              ) : (
+                <View style={styles.listingImagePlaceholder}>
+                  <Feather name="image" size={24} color="#9CA3AF" />
+                </View>
+              )}
+            </View>
+            <View style={styles.listingContent}>
+              <ThemedText style={styles.listingTitle} numberOfLines={1}>
+                {item.brand} {item.model}
+              </ThemedText>
+              <ThemedText style={styles.listingDetails}>
+                {item.year} - {item.km.toLocaleString("tr-TR")} km
+              </ThemedText>
+              <View style={styles.listingFooter}>
+                <ThemedText style={styles.listingPrice}>
+                  {item.estimatedValue?.toLocaleString("tr-TR")} TL
                 </ThemedText>
-                <ThemedText style={styles.listingDetails}>
-                  {item.year} - {item.km.toLocaleString("tr-TR")} km
-                </ThemedText>
-                <View style={styles.listingFooter}>
-                  <ThemedText style={styles.listingPrice}>
-                    {item.estimatedValue?.toLocaleString("tr-TR")} TL
-                  </ThemedText>
-                  <View style={styles.locationBadge}>
-                    <Feather name="map-pin" size={10} color={BrandColors.primaryBlue} />
-                    <ThemedText style={styles.locationText}>{item.city}</ThemedText>
-                  </View>
+                <View style={styles.locationBadge}>
+                  <Feather name="map-pin" size={10} color={BrandColors.primaryBlue} />
+                  <ThemedText style={styles.locationText}>{item.city}</ThemedText>
                 </View>
               </View>
-            </Pressable>
-          )}
-          ListEmptyComponent={
-            <View style={styles.emptyState}>
-              <Feather name="inbox" size={48} color="#9CA3AF" />
-              <ThemedText style={styles.emptyText}>
-                Bu arama kriterlerine uygun ilan bulunamadı
-              </ThemedText>
             </View>
-          }
-        />
-      </View>
+          </Pressable>
+        )}
+        ListEmptyComponent={
+          <View style={styles.emptyState}>
+            <Feather name="inbox" size={48} color="#9CA3AF" />
+            <ThemedText style={styles.emptyText}>
+              Bu arama kriterlerine uygun ilan bulunamadı
+            </ThemedText>
+          </View>
+        }
+      />
     </View>
   );
 }
@@ -177,27 +141,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
-  },
-  header: {
-    backgroundColor: "#000000",
-  },
-  headerContent: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "flex-end",
-    paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.md,
-  },
-  backButton: {
-    marginRight: Spacing.md,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#FFFFFF",
-  },
-  content: {
-    flex: 1,
     paddingHorizontal: Spacing.lg,
   },
   loadingContainer: {
@@ -206,7 +149,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   resultInfo: {
-    marginTop: Spacing.sm,
+    marginTop: 13,
     marginBottom: Spacing.sm,
   },
   resultCount: {
@@ -216,6 +159,7 @@ const styles = StyleSheet.create({
   listContent: {
     flexGrow: 1,
     gap: Spacing.md,
+    paddingBottom: Spacing.xl,
   },
   listingCard: {
     flexDirection: "row",

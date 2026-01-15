@@ -179,17 +179,26 @@ export default function RootStackNavigator() {
           <Stack.Screen
             name="BrandList"
             component={BrandListScreen}
-            options={{ headerShown: false }}
+            options={({ route }) => ({
+              headerTitle: route.params?.categoryName || "Markalar",
+              headerBackTitle: "Geri",
+            })}
           />
           <Stack.Screen
             name="ModelList"
             component={ModelListScreen}
-            options={{ headerShown: false }}
+            options={({ route }) => ({
+              headerTitle: route.params?.brandName || "Modeller",
+              headerBackTitle: "Geri",
+            })}
           />
           <Stack.Screen
             name="SearchResults"
             component={SearchResultsScreen}
-            options={{ headerShown: false }}
+            options={{
+              headerTitle: "Arama Sonuçları",
+              headerBackTitle: "Geri",
+            }}
           />
           <Stack.Screen
             name="Verification"
