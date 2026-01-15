@@ -2439,7 +2439,7 @@
 
     async function loadStories() {
       try {
-        const stories = await apiRequest('/admin/stories');
+        const stories = await apiRequest('/stories');
         const tbody = document.getElementById('storiesTable');
         
         const activeStories = stories.filter(s => new Date(s.expiresAt) > new Date());
@@ -2517,7 +2517,7 @@
       expiresAt.setHours(expiresAt.getHours() + 24);
       
       try {
-        await apiRequest('/admin/stories', {
+        await apiRequest('/stories', {
           method: 'POST',
           body: JSON.stringify({ brandName, title, imageUrl, linkUrl, expiresAt: expiresAt.toISOString() })
         });
@@ -2533,7 +2533,7 @@
     async function deleteStory(id) {
       if (!confirm('Bu hikayeyi silmek istediginizden emin misiniz?')) return;
       try {
-        await apiRequest(`/admin/stories/${id}`, { method: 'DELETE' });
+        await apiRequest(`/stories/${id}`, { method: 'DELETE' });
         loadStories();
       } catch (error) {
         console.error('Error deleting story:', error);
@@ -2795,7 +2795,7 @@
 
     async function loadListings() {
       try {
-        const data = await apiRequest('/admin/listings');
+        const data = await apiRequest('/listings');
         allListings = {
           pending: data.pending || [],
           active: data.active || [],
@@ -2912,7 +2912,7 @@
     async function deactivateListing(id) {
       if (!confirm('Bu ilani pasif yapmak istediginizden emin misiniz?')) return;
       try {
-        await apiRequest(`/admin/listings/${id}/deactivate`, { method: 'PATCH' });
+        await apiRequest(`/listings/${id}/deactivate`, { method: 'PATCH' });
         loadListings();
       } catch (error) {
         console.error('Error deactivating listing:', error);
@@ -2922,7 +2922,7 @@
 
     async function reactivateListing(id) {
       try {
-        await apiRequest(`/admin/listings/${id}/reactivate`, { method: 'PATCH' });
+        await apiRequest(`/listings/${id}/reactivate`, { method: 'PATCH' });
         loadListings();
       } catch (error) {
         console.error('Error reactivating listing:', error);
@@ -2935,7 +2935,7 @@
 
     async function loadSwaps() {
       try {
-        const data = await apiRequest('/admin/matches');
+        const data = await apiRequest('/matches');
         allSwaps = {
           all: data.all || [],
           active: data.active || [],
