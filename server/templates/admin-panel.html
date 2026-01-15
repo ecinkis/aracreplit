@@ -1164,6 +1164,24 @@
     .nav-item:active { transform: scale(0.98); }
     .nav-item.active .badge { background: rgba(255,255,255,0.25); }
 
+    .nav-dropdown { position: relative; }
+    .nav-dropdown-toggle { cursor: pointer; }
+    .nav-dropdown-toggle .dropdown-arrow { 
+      transition: transform 0.2s ease;
+    }
+    .nav-dropdown.open .dropdown-arrow { transform: rotate(180deg); }
+    .nav-dropdown-menu {
+      display: none;
+      padding-left: 12px;
+    }
+    .nav-dropdown.open .nav-dropdown-menu { display: block; }
+    .nav-subitem {
+      padding: 8px 12px 8px 20px !important;
+      font-size: 13px !important;
+      gap: 10px !important;
+    }
+    .nav-subitem svg { width: 16px; height: 16px; }
+
     .progress-ring {
       width: 48px;
       height: 48px;
@@ -1419,10 +1437,23 @@
             Kullanicilar
             <span class="badge">12</span>
           </a>
-          <a class="nav-item" data-section="vehicles">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-            Araclar
-          </a>
+          <div class="nav-dropdown">
+            <a class="nav-item nav-dropdown-toggle" onclick="toggleNavDropdown(this)">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+              Araclar
+              <svg class="dropdown-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14" style="margin-left: auto;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </a>
+            <div class="nav-dropdown-menu">
+              <a class="nav-item nav-subitem" data-section="vehicles-individual">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                Bireysel Ilanlar
+              </a>
+              <a class="nav-item nav-subitem" data-section="vehicles-corporate">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                Kurumsal Ilanlar
+              </a>
+            </div>
+          </div>
           <a class="nav-item" data-section="swaps">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
             Takas Talepleri
@@ -2222,15 +2253,28 @@
 
     document.getElementById('logoutBtn').addEventListener('click', logout);
 
+    function toggleNavDropdown(el) {
+      const dropdown = el.closest('.nav-dropdown');
+      dropdown.classList.toggle('open');
+    }
+
     document.querySelectorAll('.nav-item[data-section]').forEach(item => {
       item.addEventListener('click', () => {
         const section = item.dataset.section;
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         item.classList.add('active');
-        document.getElementById(section).classList.add('active');
-        document.getElementById('pageTitle').textContent = item.textContent.trim();
-        loadSectionData(section);
+        
+        // Handle vehicles sub-sections
+        if (section === 'vehicles-individual' || section === 'vehicles-corporate') {
+          document.getElementById('vehicles').classList.add('active');
+          document.getElementById('pageTitle').textContent = item.textContent.trim();
+          loadListingsByUserType(section === 'vehicles-individual' ? 'individual' : 'corporate');
+        } else {
+          document.getElementById(section).classList.add('active');
+          document.getElementById('pageTitle').textContent = item.textContent.trim();
+          loadSectionData(section);
+        }
       });
     });
 
@@ -2835,6 +2879,44 @@
       } catch (error) {
         console.error('Error loading listings:', error);
         document.getElementById('listingsTable').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--danger);">Ilanlar yuklenirken hata olustu</td></tr>';
+      }
+    }
+
+    let currentUserTypeFilter = 'all';
+
+    async function loadListingsByUserType(userType) {
+      currentUserTypeFilter = userType;
+      try {
+        const data = await apiRequest('/listings');
+        const allData = [...(data.pending || []), ...(data.active || []), ...(data.expired || [])];
+        
+        // Filter by user type
+        const filtered = allData.filter(l => {
+          const listingUserType = l.userType || 'individual';
+          if (userType === 'individual') {
+            return listingUserType === 'individual';
+          } else {
+            return listingUserType === 'corporate' || listingUserType === 'premium';
+          }
+        });
+        
+        // Group by status
+        allListings = {
+          pending: filtered.filter(l => l.status === 'pending'),
+          active: filtered.filter(l => l.status === 'active'),
+          expired: filtered.filter(l => l.status === 'inactive' || l.status === 'rejected')
+        };
+        
+        document.getElementById('pendingListingsCount').textContent = allListings.pending.length;
+        document.getElementById('activeListingsCount').textContent = allListings.active.length;
+        document.getElementById('expiredListingsCount').textContent = allListings.expired.length;
+        
+        currentListingStatus = 'pending';
+        document.querySelectorAll('#vehicles .tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('tabPending').classList.add('active');
+        renderListings(allListings.pending);
+      } catch (error) {
+        console.error('Error loading listings by user type:', error);
       }
     }
 
