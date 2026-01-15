@@ -262,8 +262,15 @@ const styles = StyleSheet.create({
     marginLeft: Spacing.xs,
   },
   footer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#FFFFFF",
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: "#E5E7EB",
   },
   subscribeButton: {
     borderRadius: BorderRadius.sm,
