@@ -12,7 +12,10 @@
     "ios": {
       "supportsTablet": true,
       "backgroundColor": "#000000",
-      "bundleIdentifier": "com.takasapp.mobile"
+      "bundleIdentifier": "com.takasapp.mobile",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "androidStatusBar": {
       "barStyle": "light-content",
