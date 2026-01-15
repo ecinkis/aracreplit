@@ -95,6 +95,7 @@ export interface IStorage {
   getStories(): Promise<Story[]>;
   getActiveStories(): Promise<Story[]>;
   getStory(id: string): Promise<Story | undefined>;
+  getStoryByListingId(listingId: string): Promise<Story | undefined>;
   createStory(story: InsertStory): Promise<Story>;
   updateStory(id: string, data: Partial<Story>): Promise<Story | undefined>;
   deleteStory(id: string): Promise<void>;
@@ -473,6 +474,11 @@ export class DatabaseStorage implements IStorage {
 
   async getStory(id: string): Promise<Story | undefined> {
     const [story] = await db.select().from(stories).where(eq(stories.id, id));
+    return story || undefined;
+  }
+
+  async getStoryByListingId(listingId: string): Promise<Story | undefined> {
+    const [story] = await db.select().from(stories).where(eq(stories.listingId, listingId));
     return story || undefined;
   }
 

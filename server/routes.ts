@@ -762,6 +762,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User Story Creation (Bireysel Premium only)
+  app.post("/api/user/stories", async (req, res) => {
+    try {
+      const { userId, listingId, title, imageUrl } = req.body;
+
+      if (!userId || !listingId || !title || !imageUrl) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      // Get user and check eligibility
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      // Only bireysel premium users can create stories
+      if (user.userType !== "bireysel") {
+        return res.status(403).json({ error: "Bu özellik sadece bireysel üyeler içindir" });
+      }
+
+      if (!user.isPremium) {
+        return res.status(403).json({ error: "Bu özellik premium üyelere özeldir" });
+      }
+
+      // Check story credits
+      if (!user.storyCredits || user.storyCredits < 1) {
+        return res.status(403).json({ error: "Hikaye oluşturma hakkınız kalmadı" });
+      }
+
+      // Check if listing belongs to user
+      const listing = await storage.getListing(listingId);
+      if (!listing || listing.userId !== userId) {
+        return res.status(403).json({ error: "Bu ilan size ait değil" });
+      }
+
+      // Check if story already exists for this listing
+      const existingStory = await storage.getStoryByListingId(listingId);
+      if (existingStory) {
+        return res.status(400).json({ error: "Bu ilan için zaten bir hikaye oluşturulmuş" });
+      }
+
+      // Create story (24 hours expiry)
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+      const story = await storage.createStory({
+        userId,
+        listingId,
+        title,
+        imageUrl,
+        brandName: user.name || "Kullanıcı",
+        linkUrl: `/listing/${listingId}`,
+        isActive: true,
+        expiresAt,
+      });
+
+      // Decrease story credits
+      await storage.updateUser(userId, {
+        storyCredits: (user.storyCredits || 1) - 1,
+      });
+
+      res.status(201).json(story);
+    } catch (error) {
+      console.error("Create user story error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Get user's story credits
+  app.get("/api/user/:userId/story-credits", async (req, res) => {
+    try {
+      const user = await storage.getUser(req.params.userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      res.json({ 
+        credits: user.storyCredits || 0,
+        canCreateStory: user.isPremium && user.userType === "bireysel" && (user.storyCredits || 0) > 0
+      });
+    } catch (error) {
+      console.error("Get story credits error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   // Robots.txt - block admin paths from search engines
   app.get("/robots.txt", (req, res) => {
     res.type("text/plain");
@@ -1105,6 +1188,15 @@ Disallow: /api/admin/
       if (!listing) {
         return res.status(404).json({ error: "Listing not found" });
       }
+
+      // Add story credit for bireysel premium users (1 listing = 1 story credit)
+      const user = await storage.getUser(listing.userId);
+      if (user && user.userType === "bireysel" && user.isPremium) {
+        await storage.updateUser(user.id, {
+          storyCredits: (user.storyCredits || 0) + 1,
+        });
+      }
+
       res.json(listing);
     } catch (error) {
       console.error("Admin approve listing error:", error);

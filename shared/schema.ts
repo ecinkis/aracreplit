@@ -28,6 +28,7 @@ export const users = pgTable("users", {
   googleId: text("google_id"),
   isPremium: boolean("is_premium").default(false),
   premiumExpiresAt: timestamp("premium_expires_at"),
+  storyCredits: integer("story_credits").default(0),
   dailyLikesUsed: integer("daily_likes_used").default(0),
   lastLikeResetAt: timestamp("last_like_reset_at"),
   createdAt: timestamp("created_at").defaultNow(),
@@ -293,6 +294,8 @@ export const stories = pgTable("stories", {
   id: varchar("id")
     .primaryKey()
     .default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id, { onDelete: "cascade" }),
+  listingId: varchar("listing_id").references(() => listings.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
   imageUrl: text("image_url").notNull(),
   linkUrl: text("link_url"),
@@ -302,6 +305,17 @@ export const stories = pgTable("stories", {
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const storiesRelations = relations(stories, ({ one }) => ({
+  user: one(users, {
+    fields: [stories.userId],
+    references: [users.id],
+  }),
+  listing: one(listings, {
+    fields: [stories.listingId],
+    references: [listings.id],
+  }),
+}));
 
 export const insertStorySchema = createInsertSchema(stories).omit({
   id: true,
