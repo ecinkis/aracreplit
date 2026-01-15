@@ -1711,22 +1711,16 @@
         </section>
 
         <section class="section" id="users">
+          <div class="tabs" style="margin-bottom: 16px;">
+            <div class="tab active" onclick="loadUsersByType('all')" id="tabAllUsers">Tum Kullanicilar (<span id="allUsersCount">0</span>)</div>
+            <div class="tab" onclick="loadUsersByType('individual')" id="tabIndividual">Bireysel (<span id="individualUsersCount">0</span>)</div>
+            <div class="tab" onclick="loadUsersByType('corporate')" id="tabCorporate">Kurumsal (<span id="corporateUsersCount">0</span>)</div>
+          </div>
           <div class="filter-bar">
             <div class="search-box search-input">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-              <input type="text" placeholder="Kullanici ara...">
+              <input type="text" placeholder="Kullanici ara..." id="userSearchInput" oninput="filterUsers()">
             </div>
-            <select class="filter-select">
-              <option>Tum Tipler</option>
-              <option>Bireysel</option>
-              <option>Bayi</option>
-            </select>
-            <select class="filter-select">
-              <option>Tum Durumlar</option>
-              <option>Dogrulanmis</option>
-              <option>Bekliyor</option>
-              <option>Askida</option>
-            </select>
             <button class="btn btn-primary" style="margin-left: auto;" onclick="showAddUserModal()">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
               Kullanici Ekle
@@ -2622,19 +2616,55 @@
       }
     }
 
+    let allUsers = { all: [], individual: [], corporate: [] };
+    let currentUserType = 'all';
+
     async function loadUsers() {
       const tbody = document.getElementById('usersTable');
       tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);"><div class="loading-spinner"></div><div style="margin-top: 12px;">Yukleniyor...</div></td></tr>';
       
       try {
         const users = await apiRequest('/users');
-        
-        if (users.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">Henuz kullanici yok</td></tr>';
-          return;
-        }
-        
-        tbody.innerHTML = users.map(user => {
+        allUsers = {
+          all: users,
+          individual: users.filter(u => u.userType === 'individual' || !u.userType),
+          corporate: users.filter(u => u.userType === 'corporate' || u.userType === 'premium')
+        };
+        document.getElementById('allUsersCount').textContent = allUsers.all.length;
+        document.getElementById('individualUsersCount').textContent = allUsers.individual.length;
+        document.getElementById('corporateUsersCount').textContent = allUsers.corporate.length;
+        renderUsers(allUsers[currentUserType]);
+      } catch (error) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--danger);">Kullanicilar yuklenemedi</td></tr>';
+      }
+    }
+
+    function loadUsersByType(type) {
+      currentUserType = type;
+      document.querySelectorAll('#users .tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(type === 'all' ? 'tabAllUsers' : type === 'individual' ? 'tabIndividual' : 'tabCorporate').classList.add('active');
+      renderUsers(allUsers[type]);
+    }
+
+    function filterUsers() {
+      const search = document.getElementById('userSearchInput').value.toLowerCase();
+      const filtered = allUsers[currentUserType].filter(u => 
+        (u.name || '').toLowerCase().includes(search) || 
+        (u.phone || '').toLowerCase().includes(search) ||
+        (u.city || '').toLowerCase().includes(search)
+      );
+      renderUsers(filtered);
+    }
+
+    function renderUsers(users) {
+      const tbody = document.getElementById('usersTable');
+      
+      if (users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">Kullanici bulunamadi</td></tr>';
+        return;
+      }
+      
+      tbody.innerHTML = users.map(user => {
           const initials = (user.name || 'U').substring(0, 2).toUpperCase();
           const phone = user.phone || '-';
           const city = user.city || '-';
@@ -2686,14 +2716,11 @@
             </tr>
           `;
         }).join('');
-      } catch (error) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--danger);">Kullanicilar yuklenemedi</td></tr>';
-      }
     }
 
     function showAddUserModal() {
       const modal = document.createElement('div');
-      modal.className = 'modal-overlay';
+      modal.className = 'modal-overlay active';
       modal.id = 'addUserModal';
       modal.innerHTML = `
         <div class="modal" style="max-width: 450px;">
