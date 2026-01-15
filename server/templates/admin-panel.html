@@ -2763,42 +2763,73 @@
     }
 
     function showAddUserModal() {
+      const isCorporate = currentUserType === 'corporate';
       const modal = document.createElement('div');
       modal.className = 'modal-overlay active';
       modal.id = 'addUserModal';
+      
+      const individualForm = `
+        <div class="form-group">
+          <label>Ad Soyad *</label>
+          <input type="text" id="newUserName" class="form-input" placeholder="Kullanici adi">
+        </div>
+        <div class="form-group">
+          <label>Telefon *</label>
+          <input type="text" id="newUserPhone" class="form-input" placeholder="+90 5XX XXX XX XX">
+        </div>
+        <div class="form-group">
+          <label>Sehir</label>
+          <input type="text" id="newUserCity" class="form-input" placeholder="Istanbul">
+        </div>
+        <input type="hidden" id="newUserType" value="individual">
+      `;
+      
+      const corporateForm = `
+        <div class="form-group">
+          <label>Sirket Adi *</label>
+          <input type="text" id="newCompanyName" class="form-input" placeholder="ABC Otomotiv Ltd. Sti.">
+        </div>
+        <div class="form-group">
+          <label>Yetkili Kisi *</label>
+          <input type="text" id="newUserName" class="form-input" placeholder="Ad Soyad">
+        </div>
+        <div class="form-group">
+          <label>Telefon *</label>
+          <input type="text" id="newUserPhone" class="form-input" placeholder="+90 5XX XXX XX XX">
+        </div>
+        <div class="form-group">
+          <label>E-posta</label>
+          <input type="email" id="newUserEmail" class="form-input" placeholder="info@sirket.com">
+        </div>
+        <div class="form-group">
+          <label>Vergi Numarasi</label>
+          <input type="text" id="newTaxNumber" class="form-input" placeholder="1234567890">
+        </div>
+        <div class="form-group">
+          <label>Sehir *</label>
+          <input type="text" id="newUserCity" class="form-input" placeholder="Istanbul">
+        </div>
+        <div class="form-group">
+          <label>Adres</label>
+          <textarea id="newUserAddress" class="form-input" rows="2" placeholder="Acik adres"></textarea>
+        </div>
+        <input type="hidden" id="newUserType" value="corporate">
+      `;
+      
       modal.innerHTML = `
-        <div class="modal" style="max-width: 450px;">
+        <div class="modal" style="max-width: 500px;">
           <div class="modal-header">
-            <h3>Yeni Kullanici Ekle</h3>
+            <h3>${isCorporate ? 'Yeni Kurumsal Kullanici' : 'Yeni Bireysel Kullanici'}</h3>
             <button class="btn btn-ghost btn-sm" onclick="closeModal('addUserModal')">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
           </div>
-          <div class="modal-body">
-            <div class="form-group">
-              <label>Ad Soyad</label>
-              <input type="text" id="newUserName" class="form-input" placeholder="Kullanici adi">
-            </div>
-            <div class="form-group">
-              <label>Telefon</label>
-              <input type="text" id="newUserPhone" class="form-input" placeholder="+90 5XX XXX XX XX">
-            </div>
-            <div class="form-group">
-              <label>Sehir</label>
-              <input type="text" id="newUserCity" class="form-input" placeholder="Istanbul">
-            </div>
-            <div class="form-group">
-              <label>Kullanici Tipi</label>
-              <select id="newUserType" class="form-input">
-                <option value="individual">Bireysel</option>
-                <option value="corporate">Kurumsal</option>
-                <option value="premium">Premium</option>
-              </select>
-            </div>
+          <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+            ${isCorporate ? corporateForm : individualForm}
           </div>
           <div class="modal-footer">
             <button class="btn btn-secondary" onclick="closeModal('addUserModal')">Iptal</button>
-            <button class="btn btn-primary" onclick="addUser()">Kullanici Ekle</button>
+            <button class="btn btn-primary" onclick="addUser()">${isCorporate ? 'Kurumsal Ekle' : 'Kullanici Ekle'}</button>
           </div>
         </div>
       `;
@@ -2813,21 +2844,47 @@
     async function addUser() {
       const name = document.getElementById('newUserName').value.trim();
       const phone = document.getElementById('newUserPhone').value.trim();
-      const city = document.getElementById('newUserCity').value.trim();
+      const city = document.getElementById('newUserCity')?.value.trim() || '';
       const userType = document.getElementById('newUserType').value;
       
-      if (!name || !phone) {
-        alert('Ad ve telefon zorunludur');
-        return;
+      // Kurumsal için ek alanlar
+      const companyName = document.getElementById('newCompanyName')?.value.trim() || '';
+      const email = document.getElementById('newUserEmail')?.value.trim() || '';
+      const taxNumber = document.getElementById('newTaxNumber')?.value.trim() || '';
+      const address = document.getElementById('newUserAddress')?.value.trim() || '';
+      
+      if (userType === 'corporate') {
+        if (!companyName || !name || !phone || !city) {
+          alert('Sirket adi, yetkili kisi, telefon ve sehir zorunludur');
+          return;
+        }
+      } else {
+        if (!name || !phone) {
+          alert('Ad ve telefon zorunludur');
+          return;
+        }
       }
       
       try {
+        const userData = { 
+          name: userType === 'corporate' ? companyName : name,
+          phone, 
+          city, 
+          userType,
+          ...(userType === 'corporate' && {
+            contactPerson: name,
+            email,
+            taxNumber,
+            address
+          })
+        };
+        
         await apiRequest('/users', {
           method: 'POST',
-          body: JSON.stringify({ name, phone, city, userType })
+          body: JSON.stringify(userData)
         });
         closeModal('addUserModal');
-        alert('Kullanici eklendi!');
+        alert(userType === 'corporate' ? 'Kurumsal kullanici eklendi!' : 'Kullanici eklendi!');
         loadUsers();
       } catch (error) {
         alert('Hata: ' + error.message);
