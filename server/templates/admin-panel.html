@@ -939,6 +939,27 @@
       transition: all 0.2s ease;
     }
     .modal.active { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 250;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-overlay .modal {
+      position: relative;
+      top: auto;
+      left: auto;
+      transform: none;
+      opacity: 1;
+      visibility: visible;
+    }
     .modal-header {
       display: flex;
       align-items: center;
