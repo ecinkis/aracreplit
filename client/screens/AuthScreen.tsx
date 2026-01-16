@@ -8,7 +8,6 @@ import {
   Image,
   Alert,
   ScrollView,
-  KeyboardAvoidingView,
   Platform,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -358,7 +357,7 @@ export default function AuthScreen() {
   if (mode === "verify") {
     return (
       <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.keyboardView} keyboardVerticalOffset={0}>
+        <View style={styles.keyboardView}>
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             <View style={styles.logoContainer}>
               <TakasLogo size={80} color="#000000" />
@@ -424,7 +423,7 @@ export default function AuthScreen() {
               </Pressable>
             </View>
           </ScrollView>
-        </KeyboardAvoidingView>
+        </View>
       </View>
     );
   }
@@ -432,7 +431,7 @@ export default function AuthScreen() {
   if (mode === "profile") {
     return (
       <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.keyboardView} keyboardVerticalOffset={0}>
+        <View style={styles.keyboardView}>
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             <View style={styles.logoContainer}>
               <TakasLogo size={80} color="#000000" />
@@ -490,7 +489,7 @@ export default function AuthScreen() {
               </Pressable>
             </View>
           </ScrollView>
-        </KeyboardAvoidingView>
+        </View>
       </View>
     );
   }
@@ -498,7 +497,7 @@ export default function AuthScreen() {
   if (mode === "forgotPassword") {
     return (
       <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.keyboardView} keyboardVerticalOffset={0}>
+        <View style={styles.keyboardView}>
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             <View style={styles.logoContainer}>
               <TakasLogo size={80} color="#000000" />
@@ -596,7 +595,7 @@ export default function AuthScreen() {
               </Pressable>
             </View>
           </ScrollView>
-        </KeyboardAvoidingView>
+        </View>
       </View>
     );
   }
@@ -604,7 +603,7 @@ export default function AuthScreen() {
   if (mode === "forgotVerify") {
     return (
       <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.keyboardView} keyboardVerticalOffset={0}>
+        <View style={styles.keyboardView}>
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             <View style={styles.logoContainer}>
               <TakasLogo size={80} color="#000000" />
@@ -677,7 +676,7 @@ export default function AuthScreen() {
               </Pressable>
             </View>
           </ScrollView>
-        </KeyboardAvoidingView>
+        </View>
       </View>
     );
   }
@@ -685,7 +684,7 @@ export default function AuthScreen() {
   if (mode === "register") {
     return (
       <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.keyboardView} keyboardVerticalOffset={0}>
+        <View style={styles.keyboardView}>
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             <View style={styles.logoContainer}>
               <TakasLogo size={80} color="#000000" />
@@ -748,14 +747,14 @@ export default function AuthScreen() {
               </Pressable>
             </View>
           </ScrollView>
-        </KeyboardAvoidingView>
+        </View>
       </View>
     );
   }
 
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.keyboardView} keyboardVerticalOffset={0}>
+      <View style={styles.keyboardView}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
           <View style={styles.logoContainer}>
             <TakasLogo size={80} color="#000000" />
@@ -872,7 +871,7 @@ export default function AuthScreen() {
             </Pressable>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </View>
     </View>
   );
 }
@@ -888,8 +887,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: Spacing.lg,
-    paddingTop: 60,
-    paddingBottom: 40,
+    justifyContent: "center",
   },
   logoContainer: {
     alignItems: "center",
