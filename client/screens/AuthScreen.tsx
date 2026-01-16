@@ -886,7 +886,8 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: Spacing.lg,
+    paddingLeft: 24,
+    paddingRight: 24,
     paddingTop: 30,
     justifyContent: "center",
   },
