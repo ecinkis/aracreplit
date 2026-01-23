@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -154,7 +154,7 @@ export default function SearchResultsScreen() {
       } else {
         if (searchBrand && searchModel) {
           if (
-            listing.brand.toLowerCase() !== searchBrand.toLowerCase() ||
+            listing.brand.toLowerCase() !== searchBrand.toLowerCase() &&
             listing.model.toLowerCase() !== searchModel.toLowerCase()
           ) {
             return false;
@@ -234,9 +234,8 @@ export default function SearchResultsScreen() {
     <View style={styles.container}>
       <View style={styles.filterSortBar}>
         <Pressable
-          style={({ pressed }) => [
+          style={[
             styles.filterButton,
-            pressed && styles.buttonPressed,
             hasActiveFilters && styles.activeFilterButton,
           ]}
           onPress={openFilterPanel}
@@ -265,9 +264,8 @@ export default function SearchResultsScreen() {
         </Pressable>
 
         <Pressable
-          style={({ pressed }) => [
+          style={[
             styles.sortButton,
-            pressed && styles.buttonPressed,
             sortOption !== "default" && styles.activeSortButton,
           ]}
           onPress={() => {
@@ -305,10 +303,7 @@ export default function SearchResultsScreen() {
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <Pressable
-            style={({ pressed }) => [
-              styles.listingCard,
-              pressed && styles.listingCardPressed,
-            ]}
+            style={[styles.listingCard]}
             onPress={() => handleListingPress(item.id)}
             testID={`card-listing-${item.id}`}
           >
@@ -359,9 +354,7 @@ export default function SearchResultsScreen() {
           <Animated.View
             style={[
               styles.backdrop,
-              {
-                opacity: backdropAnim,
-              },
+              { opacity: backdropAnim },
             ]}
           >
             <Pressable style={StyleSheet.absoluteFill} onPress={closeFilterPanel} />
@@ -384,10 +377,7 @@ export default function SearchResultsScreen() {
               </Pressable>
             </View>
 
-            <ScrollView
-              style={styles.filterContent}
-              showsVerticalScrollIndicator={false}
-            >
+            <ScrollView style={styles.filterContent} showsVerticalScrollIndicator={false}>
               <View style={styles.filterSection}>
                 <ThemedText style={styles.filterSectionTitle}>Fiyat Aralığı</ThemedText>
                 <View style={styles.rangeInputs}>
@@ -470,22 +460,10 @@ export default function SearchResultsScreen() {
             </ScrollView>
 
             <View style={styles.filterActions}>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.clearButton,
-                  pressed && styles.buttonPressed,
-                ]}
-                onPress={clearFilters}
-              >
+              <Pressable style={styles.clearButton} onPress={clearFilters}>
                 <ThemedText style={styles.clearButtonText}>Temizle</ThemedText>
               </Pressable>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.applyButton,
-                  pressed && styles.applyButtonPressed,
-                ]}
-                onPress={applyFilters}
-              >
+              <Pressable style={styles.applyButton} onPress={applyFilters}>
                 <ThemedText style={styles.applyButtonText}>Uygula</ThemedText>
               </Pressable>
             </View>
@@ -499,10 +477,7 @@ export default function SearchResultsScreen() {
         animationType="fade"
         onRequestClose={() => setShowSortModal(false)}
       >
-        <Pressable
-          style={styles.modalBackdrop}
-          onPress={() => setShowSortModal(false)}
-        >
+        <Pressable style={styles.modalBackdrop} onPress={() => setShowSortModal(false)}>
           <View style={styles.sortModal}>
             <View style={styles.sortModalHeader}>
               <ThemedText style={styles.sortModalTitle}>Sıralama</ThemedText>
@@ -510,9 +485,8 @@ export default function SearchResultsScreen() {
             {SORT_OPTIONS.map((option) => (
               <Pressable
                 key={option.value}
-                style={({ pressed }) => [
+                style={[
                   styles.sortOption,
-                  pressed && styles.sortOptionPressed,
                   sortOption === option.value && styles.sortOptionActive,
                 ]}
                 onPress={() => handleSortSelect(option.value)}
@@ -552,6 +526,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: Spacing.sm,
     marginTop: Spacing.md,
+    height: 44,
   },
   filterButton: {
     flex: 1,
@@ -562,6 +537,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F3F4F6",
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
+    height: 44,
   },
   activeFilterButton: {
     backgroundColor: "#000000",
@@ -597,6 +573,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F3F4F6",
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
+    height: 44,
   },
   activeSortButton: {
     backgroundColor: "#000000",
@@ -608,9 +585,6 @@ const styles = StyleSheet.create({
   },
   activeSortButtonText: {
     color: "#FFFFFF",
-  },
-  buttonPressed: {
-    opacity: 0.7,
   },
   resultInfo: {
     marginTop: Spacing.md,
@@ -632,9 +606,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E5E7EB",
     overflow: "hidden",
-  },
-  listingCardPressed: {
-    backgroundColor: "#F9FAFB",
   },
   listingImageContainer: {
     width: 120,
@@ -789,9 +760,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#000000",
     borderRadius: BorderRadius.md,
   },
-  applyButtonPressed: {
-    backgroundColor: "#333333",
-  },
   applyButtonText: {
     fontSize: 14,
     fontWeight: "600",
@@ -829,9 +797,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
-  },
-  sortOptionPressed: {
-    backgroundColor: "#F9FAFB",
   },
   sortOptionActive: {
     backgroundColor: "#F0F9FF",
