@@ -200,7 +200,7 @@ const BRANDS_BY_CATEGORY: Record<string, Array<{ id: string; name: string }>> = 
     { id: "piaggio", name: "Piaggio" },
     { id: "rks", name: "RKS" },
     { id: "royal-enfield", name: "Royal Enfield" },
-    { id: "suzuki", name: "Suzuki" },
+    { id: "suzuki-moto", name: "Suzuki" },
     { id: "sym", name: "SYM" },
     { id: "triumph", name: "Triumph" },
     { id: "tvs", name: "TVS" },
