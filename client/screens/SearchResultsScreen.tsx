@@ -66,7 +66,8 @@ export default function SearchResultsScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<SearchResultsRouteProp>();
   const insets = useSafeAreaInsets();
-  const { brandName, modelName, brand, model, query } = route.params;
+  const params = route.params || {};
+  const { brandName, modelName, brand, model, query } = params as any;
 
   const searchBrand = brand || brandName || "";
   const searchModel = model || modelName || "";
