@@ -220,6 +220,8 @@ export default function SearchResultsScreen() {
     navigation.navigate("ListingDetail", { listingId });
   };
 
+  console.log("SearchResultsScreen rendering, isLoading:", isLoading);
+
   if (isLoading) {
     return (
       <View style={styles.container}>
@@ -229,6 +231,8 @@ export default function SearchResultsScreen() {
       </View>
     );
   }
+
+  console.log("SearchResultsScreen - rendering filterSortBar");
 
   return (
     <View style={styles.container}>
@@ -285,7 +289,7 @@ export default function SearchResultsScreen() {
               sortOption !== "default" && styles.activeSortButtonText,
             ]}
           >
-            Sırala
+            Sirala
           </ThemedText>
         </Pressable>
       </View>
@@ -526,7 +530,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: Spacing.sm,
     marginTop: Spacing.md,
-    height: 44,
+    minHeight: 44,
+    paddingVertical: Spacing.sm,
   },
   filterButton: {
     flex: 1,
@@ -535,9 +540,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: Spacing.xs,
     backgroundColor: "#F3F4F6",
-    paddingVertical: Spacing.sm,
+    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.md,
-    height: 44,
   },
   activeFilterButton: {
     backgroundColor: "#000000",
@@ -571,9 +576,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: Spacing.xs,
     backgroundColor: "#F3F4F6",
-    paddingVertical: Spacing.sm,
+    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.md,
-    height: 44,
   },
   activeSortButton: {
     backgroundColor: "#000000",
