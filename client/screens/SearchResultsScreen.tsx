@@ -276,7 +276,7 @@ export default function SearchResultsScreen() {
           testID="button-sort"
         >
           <Feather
-            name="arrow-up-down"
+            name="bar-chart-2"
             size={16}
             color={sortOption !== "default" ? "#FFFFFF" : "#000000"}
           />
