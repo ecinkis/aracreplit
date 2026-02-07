@@ -43,7 +43,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CITIES = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Adana", "Konya", "Gaziantep", "Şanlıurfa", "Kocaeli", "Mersin", "Diyarbakır", "Hatay", "Manisa", "Kayseri"];
 const CAR_PARTS = ["Ön Tampon", "Arka Tampon", "Ön Kaput", "Ön Çamurluk Sol", "Ön Çamurluk Sağ", "Ön Kapı Sol", "Ön Kapı Sağ", "Arka Kapı Sol", "Arka Kapı Sağ", "Tavan", "Bagaj Kapağı", "Arka Çamurluk Sol", "Arka Çamurluk Sağ"];
 
-const HEADER_HEIGHT = 110;
+const HEADER_HEIGHT = 56;
 
 const STEPS = [
   { id: 1, title: "Fotograflar", icon: "camera" },
@@ -969,9 +969,8 @@ const styles = StyleSheet.create({
   headerContent: {
     flex: 1,
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
     paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.md,
   },
   backButton: {
     marginRight: Spacing.md,

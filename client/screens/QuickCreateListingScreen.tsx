@@ -31,7 +31,7 @@ const CATEGORIES = [
   { id: "motosiklet", name: "Motosiklet", icon: "wind" },
 ];
 
-const HEADER_HEIGHT = 110;
+const HEADER_HEIGHT = 56;
 
 export default function QuickCreateListingScreen() {
   const insets = useSafeAreaInsets();
@@ -335,9 +335,8 @@ const styles = StyleSheet.create({
   headerContent: {
     flex: 1,
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
     paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.md,
   },
   backButton: {
     marginRight: Spacing.md,
