@@ -7,639 +7,639 @@
     <meta name="description" content="Aracınızı takas edin, hayalinizdeki araca kavuşun. Türkiye'nin ilk ve tek araç takas platformu." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: #F5F5F5;
-        color: #111;
-        line-height: 1.5;
-        min-height: 100vh;
-      }
-      
+      *{box-sizing:border-box;margin:0;padding:0}
+      html{scroll-behavior:smooth}
+      body{font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#fff;color:#111;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+      a{text-decoration:none;color:inherit}
+      img{max-width:100%;display:block}
+      .container{max-width:1200px;margin:0 auto;padding:0 20px}
+
       /* Header */
-      .header {
-        background: #000;
-        color: #fff;
-        padding: 16px 20px;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-      }
-      .header-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-      .logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        text-decoration: none;
-        color: #fff;
-      }
-      .logo-icon {
-        width: 36px;
-        height: 36px;
-        background: #fff;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .logo-icon svg {
-        width: 20px;
-        height: 20px;
-      }
-      .logo-text {
-        font-size: 20px;
-        font-weight: 700;
-      }
-      .header-actions {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-      .btn-download {
-        background: #fff;
-        color: #000;
-        padding: 10px 20px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 14px;
-        transition: opacity 0.2s;
-      }
-      .btn-download:hover {
-        opacity: 0.9;
-      }
+      .header{background:#000;color:#fff;padding:0 20px;position:sticky;top:0;z-index:100;height:64px}
+      .header-content{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:100%}
+      .logo{display:flex;align-items:center;gap:10px;color:#fff}
+      .logo-icon{width:36px;height:36px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+      .logo-icon svg{width:20px;height:20px}
+      .logo-text{font-size:18px;font-weight:700;letter-spacing:-0.3px}
+      .nav{display:flex;align-items:center;gap:32px}
+      .nav-links{display:flex;align-items:center;gap:28px;list-style:none}
+      .nav-links a{color:rgba(255,255,255,0.8);font-size:14px;font-weight:500;transition:color 0.2s}
+      .nav-links a:hover{color:#fff}
+      .btn-header-cta{background:#fff;color:#000;padding:10px 20px;border-radius:8px;font-weight:600;font-size:14px;transition:opacity 0.2s;border:none;cursor:pointer}
+      .btn-header-cta:hover{opacity:0.9}
+      .hamburger{display:none;background:none;border:none;cursor:pointer;padding:4px;color:#fff}
+      .hamburger svg{width:24px;height:24px}
+      .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;bottom:0;background:#000;z-index:99;padding:24px 20px;flex-direction:column;gap:0}
+      .mobile-menu.active{display:flex}
+      .mobile-menu a{color:#fff;font-size:18px;font-weight:500;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.1);display:block}
+      .mobile-menu .btn-header-cta{margin-top:24px;text-align:center;display:block;padding:14px 20px;font-size:16px}
 
-      /* Search Section */
-      .search-section {
-        background: #fff;
-        padding: 20px;
-        border-bottom: 1px solid #E5E5E5;
-      }
-      .search-content {
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-      .search-filters {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        align-items: center;
-      }
-      .filter-select {
-        padding: 12px 16px;
-        border: 1px solid #E5E5E5;
-        border-radius: 8px;
-        font-size: 14px;
-        background: #fff;
-        min-width: 150px;
-        cursor: pointer;
-      }
-      .filter-select:focus {
-        outline: none;
-        border-color: #000;
-      }
-      .search-input {
-        flex: 1;
-        min-width: 200px;
-        padding: 12px 16px;
-        border: 1px solid #E5E5E5;
-        border-radius: 8px;
-        font-size: 14px;
-      }
-      .search-input:focus {
-        outline: none;
-        border-color: #000;
-      }
-      .btn-search {
-        background: #000;
-        color: #fff;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: opacity 0.2s;
-      }
-      .btn-search:hover {
-        opacity: 0.9;
-      }
+      /* Hero */
+      .hero{background:linear-gradient(135deg,#000 0%,#1a1a2e 50%,#16213e 100%);color:#fff;padding:100px 20px 80px;position:relative;overflow:hidden}
+      .hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 30% 50%,rgba(255,255,255,0.03) 0%,transparent 70%)}
+      .hero-content{max-width:1200px;margin:0 auto;position:relative;z-index:1}
+      .hero h1{font-size:52px;font-weight:800;line-height:1.1;letter-spacing:-1.5px;margin-bottom:20px;max-width:700px}
+      .hero p{font-size:18px;color:rgba(255,255,255,0.7);max-width:560px;margin-bottom:40px;line-height:1.7}
+      .hero-buttons{display:flex;gap:16px;margin-bottom:60px;flex-wrap:wrap}
+      .btn-primary{background:#fff;color:#000;padding:16px 32px;border-radius:10px;font-weight:600;font-size:16px;transition:transform 0.2s,box-shadow 0.2s;border:none;cursor:pointer;display:inline-block}
+      .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,255,255,0.15)}
+      .btn-secondary{background:transparent;color:#fff;padding:16px 32px;border-radius:10px;font-weight:600;font-size:16px;border:1px solid rgba(255,255,255,0.3);transition:background 0.2s,border-color 0.2s;cursor:pointer;display:inline-block}
+      .btn-secondary:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.5)}
+      .hero-stats{display:flex;gap:48px;flex-wrap:wrap}
+      .stat{text-align:left}
+      .stat-value{font-size:32px;font-weight:800;letter-spacing:-0.5px}
+      .stat-label{font-size:14px;color:rgba(255,255,255,0.5);margin-top:4px}
 
-      /* Listings Section */
-      .listings-section {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 32px 20px;
-      }
-      .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-      }
-      .section-title {
-        font-size: 24px;
-        font-weight: 700;
-      }
-      .listings-count {
-        color: #6B7280;
-        font-size: 14px;
-      }
-      .listings-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 20px;
-      }
-      
+      /* How It Works */
+      .how-it-works{background:#F9FAFB;padding:80px 20px}
+      .section-heading{text-align:center;margin-bottom:56px}
+      .section-heading h2{font-size:36px;font-weight:800;letter-spacing:-1px;margin-bottom:12px}
+      .section-heading p{font-size:16px;color:#6B7280;max-width:500px;margin:0 auto}
+      .steps-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+      .step-card{background:#fff;border:1px solid #E5E7EB;border-radius:16px;padding:32px 24px;text-align:center;transition:transform 0.2s,box-shadow 0.2s}
+      .step-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,0.08)}
+      .step-number{width:48px;height:48px;background:#000;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;margin:0 auto 20px}
+      .step-icon{width:48px;height:48px;margin:0 auto 16px;color:#111}
+      .step-icon svg{width:48px;height:48px}
+      .step-card h3{font-size:18px;font-weight:700;margin-bottom:8px}
+      .step-card p{font-size:14px;color:#6B7280;line-height:1.6}
+
+      /* Search & Filter */
+      .search-section{background:#fff;padding:40px 20px;border-bottom:1px solid #E5E7EB}
+      .search-content{max-width:1200px;margin:0 auto}
+      .search-filters{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+      .filter-select{padding:12px 16px;border:1px solid #E5E7EB;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;min-width:160px;cursor:pointer;color:#111;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+      .filter-select:focus{outline:none;border-color:#000}
+      .search-input{flex:1;min-width:220px;padding:12px 16px;border:1px solid #E5E7EB;border-radius:8px;font-size:14px;font-family:inherit}
+      .search-input:focus{outline:none;border-color:#000}
+      .btn-search{background:#000;color:#fff;padding:12px 28px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:opacity 0.2s;font-family:inherit}
+      .btn-search:hover{opacity:0.85}
+
+      /* Listings */
+      .listings-section{padding:48px 20px;background:#fff}
+      .listings-inner{max-width:1200px;margin:0 auto}
+      .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+      .section-title{font-size:28px;font-weight:800;letter-spacing:-0.5px}
+      .listings-count{color:#6B7280;font-size:14px}
+      .listings-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+
       /* Listing Card */
-      .listing-card {
-        background: #fff;
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid #E5E5E5;
-        transition: transform 0.2s, box-shadow 0.2s;
-        cursor: pointer;
-        text-decoration: none;
-        color: inherit;
-        display: block;
-      }
-      .listing-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 24px rgba(0,0,0,0.1);
-      }
-      .listing-image {
-        width: 100%;
-        height: 180px;
-        object-fit: cover;
-        background: #F5F5F5;
-      }
-      .listing-content {
-        padding: 16px;
-      }
-      .listing-badges {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 12px;
-      }
-      .badge {
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-      }
-      .badge-featured {
-        background: #000;
-        color: #fff;
-      }
-      .badge-swap {
-        background: #10B981;
-        color: #fff;
-      }
-      .badge-new {
-        background: #3B82F6;
-        color: #fff;
-      }
-      .listing-title {
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 4px;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-      .listing-subtitle {
-        font-size: 14px;
-        color: #6B7280;
-        margin-bottom: 12px;
-      }
-      .listing-details {
-        display: flex;
-        gap: 16px;
-        margin-bottom: 12px;
-        font-size: 13px;
-        color: #6B7280;
-      }
-      .listing-detail {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-      }
-      .listing-price {
-        font-size: 18px;
-        font-weight: 700;
-        color: #000;
-      }
-      .listing-swap-text {
-        font-size: 13px;
-        color: #10B981;
-        margin-top: 8px;
-        font-weight: 500;
-      }
-      .listing-location {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 13px;
-        color: #9CA3AF;
-        margin-top: 8px;
-      }
+      .listing-card{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E5E7EB;transition:transform 0.2s,box-shadow 0.2s;cursor:pointer;display:block}
+      .listing-card:hover{transform:translateY(-4px);box-shadow:0 16px 32px rgba(0,0,0,0.1)}
+      .listing-image-wrap{width:100%;height:200px;background:#F3F4F6;position:relative;overflow:hidden}
+      .listing-image-wrap img{width:100%;height:100%;object-fit:cover}
+      .listing-image-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#F3F4F6}
+      .listing-image-placeholder svg{width:48px;height:48px;color:#D1D5DB}
+      .listing-content{padding:16px}
+      .listing-badges{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+      .badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.3px}
+      .badge-featured{background:#000;color:#fff}
+      .badge-swap{background:#111;color:#fff}
+      .badge-new{background:#374151;color:#fff}
+      .listing-title{font-size:15px;font-weight:600;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4}
+      .listing-subtitle{font-size:13px;color:#6B7280;margin-bottom:10px}
+      .listing-details{display:flex;gap:12px;margin-bottom:10px;font-size:12px;color:#6B7280;flex-wrap:wrap}
+      .listing-detail{display:flex;align-items:center;gap:4px}
+      .listing-price{font-size:18px;font-weight:700;color:#000}
+      .listing-swap-text{font-size:13px;color:#374151;margin-top:8px;font-weight:500}
+      .listing-location{display:flex;align-items:center;gap:4px;font-size:12px;color:#9CA3AF;margin-top:6px}
 
-      /* Empty State */
-      .empty-state {
-        text-align: center;
-        padding: 60px 20px;
-        color: #6B7280;
-      }
-      .empty-state svg {
-        width: 64px;
-        height: 64px;
-        margin-bottom: 16px;
-        opacity: 0.5;
-      }
-      .empty-state h3 {
-        font-size: 18px;
-        font-weight: 600;
-        color: #111;
-        margin-bottom: 8px;
-      }
+      /* Featured */
+      .featured-section{padding:48px 20px;background:#F9FAFB}
+      .featured-inner{max-width:1200px;margin:0 auto}
+      .featured-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+      .featured-card{background:#fff;border-radius:16px;overflow:hidden;border:1px solid #E5E7EB;transition:transform 0.2s,box-shadow 0.2s;cursor:pointer}
+      .featured-card:hover{transform:translateY(-4px);box-shadow:0 16px 32px rgba(0,0,0,0.1)}
+      .featured-card .listing-image-wrap{height:240px}
+      .featured-card .listing-content{padding:20px}
+      .featured-card .listing-title{font-size:17px}
+      .featured-card .listing-price{font-size:20px}
 
-      /* Loading State */
-      .loading-state {
-        text-align: center;
-        padding: 60px 20px;
-      }
-      .spinner {
-        border: 3px solid #E5E5E5;
-        border-top-color: #000;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 0.8s linear infinite;
-        margin: 0 auto 16px;
-      }
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
+      /* Empty & Loading States */
+      .empty-state{text-align:center;padding:60px 20px;color:#6B7280}
+      .empty-state svg{width:64px;height:64px;margin-bottom:16px;opacity:0.4}
+      .empty-state h3{font-size:18px;font-weight:600;color:#111;margin-bottom:8px}
+      .loading-state{text-align:center;padding:60px 20px}
+      .spinner{border:3px solid #E5E7EB;border-top-color:#000;border-radius:50%;width:40px;height:40px;animation:spin 0.8s linear infinite;margin:0 auto 16px}
+      @keyframes spin{to{transform:rotate(360deg)}}
 
-      /* App Download Section */
-      .app-section {
-        background: #000;
-        color: #fff;
-        padding: 60px 20px;
-        text-align: center;
-      }
-      .app-content {
-        max-width: 600px;
-        margin: 0 auto;
-      }
-      .app-section h2 {
-        font-size: 28px;
-        font-weight: 700;
-        margin-bottom: 16px;
-      }
-      .app-section p {
-        color: rgba(255,255,255,0.7);
-        margin-bottom: 32px;
-      }
-      .app-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 16px;
-        flex-wrap: wrap;
-      }
-      .app-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        background: #fff;
-        color: #000;
-        padding: 14px 24px;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: opacity 0.2s;
-      }
-      .app-btn:hover {
-        opacity: 0.9;
-      }
-      .app-btn svg {
-        width: 24px;
-        height: 24px;
-      }
+      /* Trust Section */
+      .trust-section{background:#F9FAFB;padding:80px 20px}
+      .trust-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+      .trust-card{background:#fff;border:1px solid #E5E7EB;border-radius:16px;padding:32px 28px;text-align:center;transition:transform 0.2s}
+      .trust-card:hover{transform:translateY(-4px)}
+      .trust-icon{width:56px;height:56px;background:#000;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+      .trust-icon svg{width:28px;height:28px;color:#fff}
+      .trust-card h3{font-size:18px;font-weight:700;margin-bottom:8px}
+      .trust-card p{font-size:14px;color:#6B7280;line-height:1.6}
+
+      /* App Download */
+      .app-section{background:#000;color:#fff;padding:80px 20px;overflow:hidden}
+      .app-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:60px}
+      .app-text{flex:1}
+      .app-text h2{font-size:36px;font-weight:800;letter-spacing:-1px;margin-bottom:16px}
+      .app-text p{color:rgba(255,255,255,0.6);font-size:16px;margin-bottom:32px;line-height:1.7;max-width:480px}
+      .app-buttons{display:flex;gap:16px;flex-wrap:wrap}
+      .app-btn{display:inline-flex;align-items:center;gap:12px;background:#fff;color:#000;padding:14px 24px;border-radius:10px;font-weight:600;font-size:14px;transition:transform 0.2s,opacity 0.2s}
+      .app-btn:hover{opacity:0.9;transform:translateY(-2px)}
+      .app-btn svg{width:24px;height:24px}
+      .app-mockup{flex:0 0 300px;position:relative}
+      .phone-frame{width:240px;height:480px;background:linear-gradient(145deg,#1a1a1a,#333);border-radius:36px;padding:12px;margin:0 auto;position:relative;box-shadow:0 24px 48px rgba(0,0,0,0.4)}
+      .phone-screen{width:100%;height:100%;background:linear-gradient(180deg,#111 0%,#1a1a2e 100%);border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;overflow:hidden}
+      .phone-screen-logo{width:48px;height:48px;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center}
+      .phone-screen-logo svg{width:28px;height:28px}
+      .phone-screen-text{color:rgba(255,255,255,0.5);font-size:12px;font-weight:500}
+      .phone-notch{width:100px;height:24px;background:#000;border-radius:0 0 16px 16px;position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:2}
 
       /* Footer */
-      .footer {
-        background: #111;
-        color: rgba(255,255,255,0.6);
-        padding: 40px 20px;
-        text-align: center;
-      }
-      .footer-content {
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-      .footer-links {
-        display: flex;
-        justify-content: center;
-        gap: 24px;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-      }
-      .footer-link {
-        color: rgba(255,255,255,0.6);
-        text-decoration: none;
-        font-size: 14px;
-        transition: color 0.2s;
-      }
-      .footer-link:hover {
-        color: #fff;
-      }
-      .footer-copyright {
-        font-size: 13px;
-      }
+      .footer{background:#111;color:rgba(255,255,255,0.6);padding:60px 20px 0}
+      .footer-content{max-width:1200px;margin:0 auto}
+      .footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:40px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,0.1)}
+      .footer-col h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:16px;text-transform:uppercase;letter-spacing:0.5px}
+      .footer-col ul{list-style:none}
+      .footer-col li{margin-bottom:10px}
+      .footer-col a{color:rgba(255,255,255,0.5);font-size:14px;transition:color 0.2s}
+      .footer-col a:hover{color:#fff}
+      .footer-col p{font-size:14px;line-height:1.7}
+      .footer-bottom{display:flex;justify-content:space-between;align-items:center;padding:24px 0;flex-wrap:wrap;gap:16px}
+      .footer-copyright{font-size:13px;color:rgba(255,255,255,0.4)}
+      .footer-socials{display:flex;gap:16px}
+      .footer-socials a{color:rgba(255,255,255,0.4);transition:color 0.2s}
+      .footer-socials a:hover{color:#fff}
+      .footer-socials svg{width:20px;height:20px}
 
       /* Modal */
-      .modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.6);
-        z-index: 1000;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-      }
-      .modal-overlay.active {
-        display: flex;
-      }
-      .modal {
-        background: #fff;
-        border-radius: 16px;
-        max-width: 800px;
-        width: 100%;
-        max-height: 90vh;
-        overflow-y: auto;
-      }
-      .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px;
-        border-bottom: 1px solid #E5E5E5;
-      }
-      .modal-title {
-        font-size: 20px;
-        font-weight: 700;
-      }
-      .modal-close {
-        background: none;
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-        color: #6B7280;
-        padding: 4px;
-      }
-      .modal-body {
-        padding: 20px;
-      }
-      .modal-image {
-        width: 100%;
-        height: 300px;
-        object-fit: cover;
-        border-radius: 12px;
-        margin-bottom: 20px;
-      }
-      .modal-info {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-        margin-bottom: 20px;
-      }
-      .info-item {
-        background: #F5F5F5;
-        padding: 12px 16px;
-        border-radius: 8px;
-      }
-      .info-label {
-        font-size: 12px;
-        color: #6B7280;
-        margin-bottom: 4px;
-      }
-      .info-value {
-        font-size: 16px;
-        font-weight: 600;
-      }
-      .modal-description {
-        margin-bottom: 20px;
-      }
-      .modal-description h4 {
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 8px;
-      }
-      .modal-description p {
-        color: #6B7280;
-        font-size: 14px;
-        line-height: 1.6;
-      }
-      .modal-cta {
-        background: #000;
-        color: #fff;
-        width: 100%;
-        padding: 16px;
-        border: none;
-        border-radius: 10px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: opacity 0.2s;
-      }
-      .modal-cta:hover {
-        opacity: 0.9;
-      }
+      .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+      .modal-overlay.active{display:flex}
+      .modal{background:#fff;border-radius:16px;max-width:800px;width:100%;max-height:90vh;overflow-y:auto}
+      .modal-header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid #E5E7EB;position:sticky;top:0;background:#fff;border-radius:16px 16px 0 0;z-index:1}
+      .modal-title{font-size:20px;font-weight:700}
+      .modal-close{background:#F3F4F6;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;color:#6B7280;font-size:20px;display:flex;align-items:center;justify-content:center;transition:background 0.2s}
+      .modal-close:hover{background:#E5E7EB}
+      .modal-body{padding:24px}
+      .modal-image-wrap{width:100%;height:360px;border-radius:12px;overflow:hidden;margin-bottom:24px;background:#F3F4F6}
+      .modal-image-wrap img{width:100%;height:100%;object-fit:cover}
+      .modal-image-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+      .modal-image-placeholder svg{width:64px;height:64px;color:#D1D5DB}
+      .modal-info{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+      .info-item{background:#F9FAFB;padding:14px 16px;border-radius:10px;border:1px solid #F3F4F6}
+      .info-label{font-size:12px;color:#6B7280;margin-bottom:4px;font-weight:500}
+      .info-value{font-size:15px;font-weight:600}
+      .modal-desc-block{margin-bottom:20px}
+      .modal-desc-block h4{font-size:15px;font-weight:700;margin-bottom:8px}
+      .modal-desc-block p{color:#6B7280;font-size:14px;line-height:1.7}
+      .modal-cta{background:#000;color:#fff;width:100%;padding:16px;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity 0.2s;font-family:inherit;margin-top:8px}
+      .modal-cta:hover{opacity:0.85}
 
       /* Responsive */
-      @media (max-width: 768px) {
-        .search-filters {
-          flex-direction: column;
-        }
-        .filter-select, .search-input {
-          width: 100%;
-        }
-        .listings-grid {
-          grid-template-columns: 1fr;
-        }
-        .modal-info {
-          grid-template-columns: 1fr;
-        }
+      @media(max-width:1024px){
+        .listings-grid{grid-template-columns:repeat(2,1fr)}
+        .featured-grid{grid-template-columns:repeat(2,1fr)}
+        .steps-grid{grid-template-columns:repeat(2,1fr)}
+        .hero h1{font-size:40px}
+      }
+      @media(max-width:768px){
+        .nav-links,.btn-header-cta-desktop{display:none}
+        .hamburger{display:block}
+        .hero{padding:60px 20px 50px}
+        .hero h1{font-size:32px}
+        .hero p{font-size:16px}
+        .hero-stats{gap:24px}
+        .stat-value{font-size:24px}
+        .steps-grid{grid-template-columns:1fr}
+        .search-filters{flex-direction:column}
+        .filter-select,.search-input{width:100%;min-width:unset}
+        .listings-grid{grid-template-columns:1fr}
+        .featured-grid{grid-template-columns:1fr}
+        .trust-grid{grid-template-columns:1fr}
+        .app-inner{flex-direction:column;text-align:center}
+        .app-text p{margin-left:auto;margin-right:auto}
+        .app-buttons{justify-content:center}
+        .app-mockup{flex:none}
+        .footer-grid{grid-template-columns:repeat(2,1fr);gap:32px}
+        .modal-info{grid-template-columns:repeat(2,1fr)}
+        .section-heading h2{font-size:28px}
+        .section-title{font-size:24px}
+      }
+      @media(max-width:480px){
+        .hero-buttons{flex-direction:column}
+        .btn-primary,.btn-secondary{width:100%;text-align:center}
+        .hero-stats{flex-direction:column;gap:16px}
+        .footer-grid{grid-template-columns:1fr}
+        .modal-info{grid-template-columns:1fr}
+        .app-text h2{font-size:28px}
       }
     </style>
   </head>
   <body>
+
     <!-- Header -->
     <header class="header">
       <div class="header-content">
         <a href="/" class="logo">
           <div class="logo-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2">
-              <path d="M17 2l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
             </svg>
           </div>
-          <span class="logo-text">Araç Takası</span>
+          <span class="logo-text">Ara&#231; Takas&#305;</span>
         </a>
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="#listings">&#304;lanlar</a></li>
+            <li><a href="#how-it-works">Nas&#305;l &#199;al&#305;&#351;&#305;r?</a></li>
+            <li><a href="#trust">Hakk&#305;m&#305;zda</a></li>
+            <li><a href="#contact">&#304;leti&#351;im</a></li>
+          </ul>
+          <a href="#app-download" class="btn-header-cta btn-header-cta-desktop">Uygulamay&#305; &#304;ndir</a>
+          <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+            <svg id="hamburger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            <svg id="close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </nav>
       </div>
     </header>
 
-    <!-- Search Section -->
-    <section class="search-section">
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="#listings" onclick="closeMobileMenu()">&#304;lanlar</a>
+      <a href="#how-it-works" onclick="closeMobileMenu()">Nas&#305;l &#199;al&#305;&#351;&#305;r?</a>
+      <a href="#trust" onclick="closeMobileMenu()">Hakk&#305;m&#305;zda</a>
+      <a href="#contact" onclick="closeMobileMenu()">&#304;leti&#351;im</a>
+      <a href="#app-download" class="btn-header-cta" onclick="closeMobileMenu()">Uygulamay&#305; &#304;ndir</a>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1>T&#252;rkiye'nin &#304;lk Ara&#231; Takas Platformu</h1>
+        <p>Arac&#305;n&#305;z&#305; satmadan, hayalinizdeki ara&#231;la takas edin. Binlerce ara&#231; sahibiyle g&#252;venle e&#351;le&#351;in.</p>
+        <div class="hero-buttons">
+          <a href="#listings" class="btn-primary">&#304;lanlar&#305; Ke&#351;fet</a>
+          <a href="#app-download" class="btn-secondary">Uygulamay&#305; &#304;ndir</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <div class="stat-value">1000+</div>
+            <div class="stat-label">Aktif &#304;lan</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">5000+</div>
+            <div class="stat-label">Kullan&#305;c&#305;</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">2000+</div>
+            <div class="stat-label">Ba&#351;ar&#305;l&#305; Takas</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+      <div class="section-heading">
+        <h2>Nas&#305;l &#199;al&#305;&#351;&#305;r?</h2>
+        <p>D&#246;rt basit ad&#305;mda arac&#305;n&#305;z&#305; takas edin</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          </div>
+          <h3>&#220;cretsiz Kay&#305;t Ol</h3>
+          <p>Telefon numaran&#305;zla h&#305;zl&#305;ca kay&#305;t olun ve profilinizi olu&#351;turun.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          </div>
+          <h3>&#304;lan&#305;n&#305;z&#305; Verin</h3>
+          <p>Arac&#305;n&#305;z&#305;n foto&#287;raflar&#305;n&#305; &#231;ekin, bilgilerini girin ve takas tercihlerinizi belirleyin.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <h3>E&#351;le&#351;in</h3>
+          <p>Sa&#287;a kayd&#305;rarak be&#287;enin, kar&#351;&#305;l&#305;kl&#305; be&#287;enilerde e&#351;le&#351;in ve mesajla&#351;maya ba&#351;lay&#305;n.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          </div>
+          <h3>Takas Yap&#305;n</h3>
+          <p>G&#252;venli bir &#351;ekilde bulu&#351;un, ara&#231;lar&#305; kontrol edin ve takas&#305;n&#305;z&#305; tamamlay&#305;n.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Search & Filter -->
+    <section class="search-section" id="search">
       <div class="search-content">
         <div class="search-filters">
-          <select class="filter-select" id="filter-brand">
-            <option value="">Tüm Markalar</option>
+          <select class="filter-select" id="filter-brand" onchange="searchListings()">
+            <option value="">T&#252;m Markalar</option>
           </select>
-          <select class="filter-select" id="filter-year">
-            <option value="">Tüm Yıllar</option>
+          <select class="filter-select" id="filter-year" onchange="searchListings()">
+            <option value="">T&#252;m Y&#305;llar</option>
           </select>
-          <select class="filter-select" id="filter-fuel">
-            <option value="">Yakıt Tipi</option>
+          <select class="filter-select" id="filter-fuel" onchange="searchListings()">
+            <option value="">Yak&#305;t Tipi</option>
             <option value="benzin">Benzin</option>
             <option value="dizel">Dizel</option>
             <option value="lpg">LPG</option>
             <option value="elektrik">Elektrik</option>
             <option value="hibrit">Hibrit</option>
           </select>
-          <input type="text" class="search-input" id="search-input" placeholder="Marka, model veya anahtar kelime...">
+          <select class="filter-select" id="filter-city" onchange="searchListings()">
+            <option value="">&#350;ehir</option>
+          </select>
+          <input type="text" class="search-input" id="search-input" placeholder="Marka, model veya anahtar kelime ara..." onkeydown="if(event.key==='Enter')searchListings()">
           <button class="btn-search" onclick="searchListings()">Ara</button>
         </div>
       </div>
     </section>
 
-    <!-- Listings Section -->
-    <section class="listings-section">
-      <div class="section-header">
-        <h2 class="section-title">Takas İlanları</h2>
-        <span class="listings-count" id="listings-count"></span>
+    <!-- Listings -->
+    <section class="listings-section" id="listings">
+      <div class="listings-inner">
+        <div class="section-header">
+          <h2 class="section-title">Takas &#304;lanlar&#305;</h2>
+          <span class="listings-count" id="listings-count"></span>
+        </div>
+        <div id="listings-container">
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>&#304;lanlar y&#252;kleniyor...</p>
+          </div>
+        </div>
       </div>
-      
-      <div id="listings-container">
-        <div class="loading-state">
-          <div class="spinner"></div>
-          <p>İlanlar yükleniyor...</p>
+    </section>
+
+    <!-- Featured -->
+    <section class="featured-section" id="featured">
+      <div class="featured-inner">
+        <div class="section-header">
+          <h2 class="section-title">Vitrin &#304;lanlar&#305;</h2>
+          <span class="listings-count" id="featured-count"></span>
+        </div>
+        <div id="featured-container">
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Vitrin ilanlar&#305; y&#252;kleniyor...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trust & Security -->
+    <section class="trust-section" id="trust">
+      <div class="section-heading">
+        <h2>G&#252;venli Takas Deneyimi</h2>
+        <p>G&#252;venli&#287;iniz bizim &#246;nceli&#287;imiz</p>
+      </div>
+      <div class="trust-grid">
+        <div class="trust-card">
+          <div class="trust-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <h3>Telefon Do&#287;rulamas&#305;</h3>
+          <p>T&#252;m kullan&#305;c&#305;lar telefon numaras&#305; ile do&#287;rulan&#305;r.</p>
+        </div>
+        <div class="trust-card">
+          <div class="trust-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>G&#252;ven Puan&#305;</h3>
+          <p>Her kullan&#305;c&#305;n&#305;n i&#351;lem ge&#231;mi&#351;ine dayal&#305; g&#252;ven puan&#305; hesaplan&#305;r.</p>
+        </div>
+        <div class="trust-card">
+          <div class="trust-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3>G&#252;venli Mesajla&#351;ma</h3>
+          <p>E&#351;le&#351;en kullan&#305;c&#305;lar platform i&#231;i g&#252;venli mesajla&#351;ma ile ileti&#351;im kurar.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- App Download -->
+    <section class="app-section" id="app-download">
+      <div class="app-inner">
+        <div class="app-text">
+          <h2>Uygulamay&#305; &#304;ndirin</h2>
+          <p>Ara&#231; Takas&#305; uygulamas&#305;n&#305; indirerek binlerce ara&#231; aras&#305;nda takas f&#305;rsatlar&#305;n&#305; ke&#351;fetmeye ba&#351;lay&#305;n. H&#305;zl&#305;, g&#252;venli ve &#252;cretsiz.</p>
+          <div class="app-buttons">
+            <a href="#" class="app-btn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+              App Store
+            </a>
+            <a href="#" class="app-btn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-1.04l2.651 1.535a1 1 0 0 1 0 1.73l-2.651 1.535-2.535-2.535 2.535-2.265zM5.864 3.467L16.8 9.8l-2.302 2.302-8.634-8.635z"/></svg>
+              Google Play
+            </a>
+          </div>
+        </div>
+        <div class="app-mockup">
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-screen-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+                </svg>
+              </div>
+              <div class="phone-screen-text">Ara&#231; Takas&#305;</div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" id="contact">
       <div class="footer-content">
-        <div class="footer-links">
-          <a href="#" class="footer-link">Hakkımızda</a>
-          <a href="#" class="footer-link">Nasıl Çalışır?</a>
-          <a href="#" class="footer-link">Sıkça Sorulan Sorular</a>
-          <a href="#" class="footer-link">İletişim</a>
-          <a href="#" class="footer-link">Gizlilik Politikası</a>
-          <a href="#" class="footer-link">Kullanım Koşulları</a>
+        <div class="footer-grid">
+          <div class="footer-col">
+            <h4>Platform</h4>
+            <ul>
+              <li><a href="#listings">&#304;lanlar</a></li>
+              <li><a href="#how-it-works">Nas&#305;l &#199;al&#305;&#351;&#305;r</a></li>
+              <li><a href="#trust">G&#252;venli Takas</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Kurumsal</h4>
+            <ul>
+              <li><a href="#">Hakk&#305;m&#305;zda</a></li>
+              <li><a href="#">Kariyer</a></li>
+              <li><a href="#">Blog</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Destek</h4>
+            <ul>
+              <li><a href="#">S&#305;k&#231;a Sorulan Sorular</a></li>
+              <li><a href="#">&#304;leti&#351;im</a></li>
+              <li><a href="#">Yard&#305;m Merkezi</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>&#304;leti&#351;im</h4>
+            <p>info@aractakasi.com</p>
+            <p>&#304;stanbul, T&#252;rkiye</p>
+          </div>
         </div>
-        <p class="footer-copyright">&copy; 2025 Araç Takası. Tüm hakları saklıdır.</p>
+        <div class="footer-bottom">
+          <span class="footer-copyright">&copy; 2025 Ara&#231; Takas&#305;. T&#252;m haklar&#305; sakl&#305;d&#305;r.</span>
+          <div class="footer-socials">
+            <a href="#" aria-label="X">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="#" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <a href="#" aria-label="YouTube">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+          </div>
+        </div>
       </div>
     </footer>
 
     <!-- Listing Detail Modal -->
-    <div class="modal-overlay" id="listing-modal">
+    <div class="modal-overlay" id="listing-modal" onclick="if(event.target===this)closeModal()">
       <div class="modal">
         <div class="modal-header">
           <h3 class="modal-title" id="modal-title"></h3>
-          <button class="modal-close" onclick="closeModal()">&times;</button>
+          <button class="modal-close" onclick="closeModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
         <div class="modal-body">
-          <img src="" alt="" class="modal-image" id="modal-image">
+          <div class="modal-image-wrap" id="modal-image-wrap"></div>
           <div class="modal-info" id="modal-info"></div>
-          <div class="modal-description">
-            <h4>Açıklama</h4>
+          <div class="modal-desc-block">
+            <h4>A&#231;&#305;klama</h4>
             <p id="modal-description"></p>
           </div>
-          <div class="modal-description">
+          <div class="modal-desc-block">
             <h4>Takas Tercihi</h4>
             <p id="modal-swap-preference"></p>
           </div>
-          <button class="modal-cta" onclick="openApp()">Uygulamada Görüntüle</button>
+          <a href="exps://EXPS_URL_PLACEHOLDER" class="modal-cta" style="display:block;text-align:center" onclick="openApp()">Uygulamada G&#246;r&#252;nt&#252;le</a>
         </div>
       </div>
     </div>
 
     <script>
-      let allListings = [];
+      var allListings = [];
+      var featuredListings = [];
 
-      // Load listings
+      document.addEventListener('DOMContentLoaded', function() {
+        loadListings();
+        loadFeaturedListings();
+      });
+
       async function loadListings() {
         try {
-          const response = await fetch('/api/listings?status=approved');
+          var response = await fetch('/api/listings?status=approved');
           if (response.ok) {
             allListings = await response.json();
             renderListings(allListings);
             populateFilters();
           } else {
-            showEmptyState();
+            showEmptyState('listings-container');
           }
         } catch (error) {
           console.error('Error loading listings:', error);
-          showEmptyState();
+          showEmptyState('listings-container');
         }
       }
 
-      // Populate filter options
+      async function loadFeaturedListings() {
+        try {
+          var response = await fetch('/api/listings/featured');
+          if (response.ok) {
+            featuredListings = await response.json();
+            renderFeaturedListings(featuredListings);
+          } else {
+            showEmptyState('featured-container', 'Vitrin ilan\u0131 bulunamad\u0131');
+          }
+        } catch (error) {
+          console.error('Error loading featured listings:', error);
+          showEmptyState('featured-container', 'Vitrin ilan\u0131 bulunamad\u0131');
+        }
+      }
+
       function populateFilters() {
-        const brands = [...new Set(allListings.map(l => l.brand).filter(Boolean))].sort();
-        const years = [...new Set(allListings.map(l => l.year).filter(Boolean))].sort((a, b) => b - a);
-        
-        const brandSelect = document.getElementById('filter-brand');
-        brands.forEach(brand => {
-          const option = document.createElement('option');
+        var brands = [];
+        var years = [];
+        var cities = [];
+        var brandSet = {};
+        var yearSet = {};
+        var citySet = {};
+
+        allListings.forEach(function(l) {
+          if (l.brand && !brandSet[l.brand]) { brandSet[l.brand] = true; brands.push(l.brand); }
+          if (l.year && !yearSet[l.year]) { yearSet[l.year] = true; years.push(l.year); }
+          var city = l.location || l.city;
+          if (city && !citySet[city]) { citySet[city] = true; cities.push(city); }
+        });
+
+        brands.sort();
+        years.sort(function(a, b) { return b - a; });
+        cities.sort();
+
+        var brandSelect = document.getElementById('filter-brand');
+        brands.forEach(function(brand) {
+          var option = document.createElement('option');
           option.value = brand;
           option.textContent = brand;
           brandSelect.appendChild(option);
         });
 
-        const yearSelect = document.getElementById('filter-year');
-        years.forEach(year => {
-          const option = document.createElement('option');
+        var yearSelect = document.getElementById('filter-year');
+        years.forEach(function(year) {
+          var option = document.createElement('option');
           option.value = year;
           option.textContent = year;
           yearSelect.appendChild(option);
         });
+
+        var citySelect = document.getElementById('filter-city');
+        cities.forEach(function(city) {
+          var option = document.createElement('option');
+          option.value = city;
+          option.textContent = city;
+          citySelect.appendChild(option);
+        });
       }
 
-      // Search and filter listings
       function searchListings() {
-        const brand = document.getElementById('filter-brand').value.toLowerCase();
-        const year = document.getElementById('filter-year').value;
-        const fuel = document.getElementById('filter-fuel').value.toLowerCase();
-        const search = document.getElementById('search-input').value.toLowerCase();
+        var brand = document.getElementById('filter-brand').value.toLowerCase();
+        var year = document.getElementById('filter-year').value;
+        var fuel = document.getElementById('filter-fuel').value.toLowerCase();
+        var city = document.getElementById('filter-city').value.toLowerCase();
+        var search = document.getElementById('search-input').value.toLowerCase();
 
-        const filtered = allListings.filter(listing => {
-          if (brand && listing.brand?.toLowerCase() !== brand) return false;
-          if (year && listing.year?.toString() !== year) return false;
-          if (fuel && listing.fuelType?.toLowerCase() !== fuel) return false;
+        var filtered = allListings.filter(function(listing) {
+          if (brand && (listing.brand || '').toLowerCase() !== brand) return false;
+          if (year && (listing.year || '').toString() !== year) return false;
+          if (fuel && (listing.fuelType || '').toLowerCase() !== fuel) return false;
+          if (city) {
+            var listingCity = (listing.location || listing.city || '').toLowerCase();
+            if (listingCity !== city) return false;
+          }
           if (search) {
-            const searchText = `${listing.brand} ${listing.model} ${listing.title} ${listing.description}`.toLowerCase();
-            if (!searchText.includes(search)) return false;
+            var searchText = ((listing.brand || '') + ' ' + (listing.model || '') + ' ' + (listing.title || '') + ' ' + (listing.description || '')).toLowerCase();
+            if (searchText.indexOf(search) === -1) return false;
           }
           return true;
         });
@@ -647,144 +647,176 @@
         renderListings(filtered);
       }
 
-      // Render listings
       function renderListings(listings) {
-        const container = document.getElementById('listings-container');
-        const countEl = document.getElementById('listings-count');
-        
-        countEl.textContent = `${listings.length} ilan bulundu`;
+        var container = document.getElementById('listings-container');
+        var countEl = document.getElementById('listings-count');
+        countEl.textContent = listings.length + ' ilan bulundu';
 
         if (listings.length === 0) {
-          showEmptyState();
+          showEmptyState('listings-container');
           return;
         }
 
-        container.innerHTML = `<div class="listings-grid">${listings.map(listing => createListingCard(listing)).join('')}</div>`;
+        var html = '<div class="listings-grid">';
+        listings.forEach(function(listing) {
+          html += createListingCard(listing, false);
+        });
+        html += '</div>';
+        container.innerHTML = html;
       }
 
-      // Create listing card HTML
-      function createListingCard(listing) {
-        const imageUrl = listing.photos?.[0] || 'https://via.placeholder.com/300x180?text=Foto%C4%9Fraf+Yok';
-        const title = listing.title || `${listing.brand} ${listing.model}`;
-        const subtitle = `${listing.year || ''} ${listing.fuelType || ''} ${listing.transmission || ''}`.trim();
-        const price = listing.estimatedValue ? `${Number(listing.estimatedValue).toLocaleString('tr-TR')} TL` : 'Fiyat belirtilmemiş';
-        const location = listing.location || '';
-        const isNew = new Date(listing.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-        
-        return `
-          <a class="listing-card" onclick="openListingModal(${listing.id})">
-            <img src="${imageUrl}" alt="${title}" class="listing-image" onerror="this.src='https://via.placeholder.com/300x180?text=Foto%C4%9Fraf+Yok'">
-            <div class="listing-content">
-              <div class="listing-badges">
-                ${listing.isFeatured ? '<span class="badge badge-featured">Vitrin</span>' : ''}
-                <span class="badge badge-swap">Takas</span>
-                ${isNew ? '<span class="badge badge-new">Yeni</span>' : ''}
-              </div>
-              <h3 class="listing-title">${title}</h3>
-              <p class="listing-subtitle">${subtitle}</p>
-              <div class="listing-details">
-                ${listing.mileage ? `<span class="listing-detail">${Number(listing.mileage).toLocaleString('tr-TR')} km</span>` : ''}
-                ${listing.engineSize ? `<span class="listing-detail">${listing.engineSize}</span>` : ''}
-              </div>
-              <div class="listing-price">${price}</div>
-              ${listing.swapPreference ? `<div class="listing-swap-text">Takas: ${listing.swapPreference}</div>` : ''}
-              ${location ? `<div class="listing-location"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${location}</div>` : ''}
-            </div>
-          </a>
-        `;
+      function renderFeaturedListings(listings) {
+        var container = document.getElementById('featured-container');
+        var countEl = document.getElementById('featured-count');
+
+        if (listings.length === 0) {
+          showEmptyState('featured-container', 'Vitrin ilan\u0131 bulunamad\u0131');
+          return;
+        }
+
+        countEl.textContent = listings.length + ' vitrin ilan\u0131';
+
+        var html = '<div class="featured-grid">';
+        listings.forEach(function(listing) {
+          html += createListingCard(listing, true);
+        });
+        html += '</div>';
+        container.innerHTML = html;
       }
 
-      // Show empty state
-      function showEmptyState() {
-        const container = document.getElementById('listings-container');
-        container.innerHTML = `
-          <div class="empty-state">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <path d="M3 9h18M9 21V9"/>
-            </svg>
-            <h3>Henüz ilan bulunamadı</h3>
-            <p>Aradığınız kriterlere uygun ilan bulunmuyor. Filtreleri değiştirmeyi deneyin.</p>
-          </div>
-        `;
+      function createListingCard(listing, isFeaturedCard) {
+        var hasPhoto = listing.photos && listing.photos.length > 0 && listing.photos[0];
+        var title = listing.title || ((listing.brand || '') + ' ' + (listing.model || ''));
+        var subtitle = ((listing.year || '') + ' ' + (listing.fuelType || '') + ' ' + (listing.transmission || '')).trim();
+        var price = listing.estimatedValue ? Number(listing.estimatedValue).toLocaleString('tr-TR') + ' TL' : 'Fiyat belirtilmemi\u015f';
+        var location = listing.location || listing.city || '';
+        var isNew = listing.createdAt && (new Date(listing.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+        var cardClass = isFeaturedCard ? 'featured-card' : 'listing-card';
+        var escapedId = (listing.id || '').toString().replace(/'/g, "\\'");
+
+        var imageHtml = '';
+        if (hasPhoto) {
+          imageHtml = '<img src="' + escapeHtml(listing.photos[0]) + '" alt="' + escapeHtml(title) + '" onerror="this.parentElement.innerHTML=getPlaceholderSvg()">';
+        } else {
+          imageHtml = '<div class="listing-image-placeholder">' + getPlaceholderSvgStatic() + '</div>';
+        }
+
+        return '<div class="' + cardClass + '" onclick="openListingModal(\'' + escapedId + '\')">' +
+          '<div class="listing-image-wrap">' + imageHtml + '</div>' +
+          '<div class="listing-content">' +
+            '<div class="listing-badges">' +
+              (listing.isFeatured ? '<span class="badge badge-featured">Vitrin</span>' : '') +
+              '<span class="badge badge-swap">Takas</span>' +
+              (isNew ? '<span class="badge badge-new">Yeni</span>' : '') +
+            '</div>' +
+            '<h3 class="listing-title">' + escapeHtml(title) + '</h3>' +
+            '<p class="listing-subtitle">' + escapeHtml(subtitle) + '</p>' +
+            '<div class="listing-details">' +
+              (listing.mileage ? '<span class="listing-detail">' + Number(listing.mileage).toLocaleString('tr-TR') + ' km</span>' : '') +
+              (listing.engineSize ? '<span class="listing-detail">' + escapeHtml(listing.engineSize) + '</span>' : '') +
+            '</div>' +
+            '<div class="listing-price">' + price + '</div>' +
+            (listing.swapPreference ? '<div class="listing-swap-text">Takas: ' + escapeHtml(listing.swapPreference) + '</div>' : '') +
+            (location ? '<div class="listing-location"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ' + escapeHtml(location) + '</div>' : '') +
+          '</div>' +
+        '</div>';
       }
 
-      // Open listing modal
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      }
+
+      function getPlaceholderSvgStatic() {
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>';
+      }
+
+      function getPlaceholderSvg() {
+        return '<div class="listing-image-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" stroke-width="1.5" width="48" height="48"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>';
+      }
+
+      function showEmptyState(containerId, message) {
+        var container = document.getElementById(containerId);
+        container.innerHTML = '<div class="empty-state">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>' +
+          '<h3>' + (message || 'Hen\u00fcz ilan bulunamad\u0131') + '</h3>' +
+          '<p>Arad\u0131\u011f\u0131n\u0131z kriterlere uygun ilan bulunmuyor. Filtreleri de\u011fi\u015ftirmeyi deneyin.</p>' +
+        '</div>';
+      }
+
       function openListingModal(id) {
-        const listing = allListings.find(l => l.id === id);
+        var listing = null;
+        var idStr = String(id);
+        for (var i = 0; i < allListings.length; i++) {
+          if (String(allListings[i].id) === idStr) { listing = allListings[i]; break; }
+        }
+        if (!listing) {
+          for (var j = 0; j < featuredListings.length; j++) {
+            if (String(featuredListings[j].id) === idStr) { listing = featuredListings[j]; break; }
+          }
+        }
         if (!listing) return;
 
-        const modal = document.getElementById('listing-modal');
-        const imageUrl = listing.photos?.[0] || 'https://via.placeholder.com/800x400?text=Foto%C4%9Fraf+Yok';
-        
-        document.getElementById('modal-title').textContent = listing.title || `${listing.brand} ${listing.model}`;
-        document.getElementById('modal-image').src = imageUrl;
-        document.getElementById('modal-description').textContent = listing.description || 'Açıklama eklenmemiş.';
-        document.getElementById('modal-swap-preference').textContent = listing.swapPreference || 'Takas tercihi belirtilmemiş.';
-        
-        const infoHtml = `
-          <div class="info-item">
-            <div class="info-label">Marka / Model</div>
-            <div class="info-value">${listing.brand} ${listing.model}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Yıl</div>
-            <div class="info-value">${listing.year || '-'}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Kilometre</div>
-            <div class="info-value">${listing.mileage ? Number(listing.mileage).toLocaleString('tr-TR') + ' km' : '-'}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Yakıt Tipi</div>
-            <div class="info-value">${listing.fuelType || '-'}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Vites</div>
-            <div class="info-value">${listing.transmission || '-'}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Tahmini Değer</div>
-            <div class="info-value">${listing.estimatedValue ? Number(listing.estimatedValue).toLocaleString('tr-TR') + ' TL' : '-'}</div>
-          </div>
-        `;
+        var modal = document.getElementById('listing-modal');
+        var title = listing.title || ((listing.brand || '') + ' ' + (listing.model || ''));
+        document.getElementById('modal-title').textContent = title;
+
+        var imageWrap = document.getElementById('modal-image-wrap');
+        var hasPhoto = listing.photos && listing.photos.length > 0 && listing.photos[0];
+        if (hasPhoto) {
+          imageWrap.innerHTML = '<img src="' + escapeHtml(listing.photos[0]) + '" alt="' + escapeHtml(title) + '" onerror="this.parentElement.innerHTML=\'<div class=modal-image-placeholder>' + getPlaceholderSvgStatic().replace(/'/g, "\\'") + '</div>\'">';
+        } else {
+          imageWrap.innerHTML = '<div class="modal-image-placeholder">' + getPlaceholderSvgStatic() + '</div>';
+        }
+
+        document.getElementById('modal-description').textContent = listing.description || 'A\u00e7\u0131klama eklenmemi\u015f.';
+        document.getElementById('modal-swap-preference').textContent = listing.swapPreference || 'Takas tercihi belirtilmemi\u015f.';
+
+        var price = listing.estimatedValue ? Number(listing.estimatedValue).toLocaleString('tr-TR') + ' TL' : '-';
+
+        var infoHtml =
+          '<div class="info-item"><div class="info-label">Marka / Model</div><div class="info-value">' + escapeHtml(listing.brand || '-') + ' ' + escapeHtml(listing.model || '') + '</div></div>' +
+          '<div class="info-item"><div class="info-label">Y\u0131l</div><div class="info-value">' + (listing.year || '-') + '</div></div>' +
+          '<div class="info-item"><div class="info-label">Kilometre</div><div class="info-value">' + (listing.mileage ? Number(listing.mileage).toLocaleString('tr-TR') + ' km' : '-') + '</div></div>' +
+          '<div class="info-item"><div class="info-label">Yak\u0131t Tipi</div><div class="info-value">' + escapeHtml(listing.fuelType || '-') + '</div></div>' +
+          '<div class="info-item"><div class="info-label">Vites</div><div class="info-value">' + escapeHtml(listing.transmission || '-') + '</div></div>' +
+          '<div class="info-item"><div class="info-label">Tahmini De\u011fer</div><div class="info-value">' + price + '</div></div>';
+
         document.getElementById('modal-info').innerHTML = infoHtml;
-        
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
       }
 
-      // Close modal
       function closeModal() {
         document.getElementById('listing-modal').classList.remove('active');
         document.body.style.overflow = '';
       }
 
-      // Open app
       function openApp() {
         window.location.href = 'exps://EXPS_URL_PLACEHOLDER';
       }
 
-      // Close modal on overlay click
-      document.getElementById('listing-modal').addEventListener('click', function(e) {
-        if (e.target === this) closeModal();
-      });
-
-      // Close modal on escape key
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') closeModal();
       });
 
-      // Add event listeners to filters
-      document.getElementById('filter-brand').addEventListener('change', searchListings);
-      document.getElementById('filter-year').addEventListener('change', searchListings);
-      document.getElementById('filter-fuel').addEventListener('change', searchListings);
-      document.getElementById('search-input').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') searchListings();
-      });
+      function toggleMobileMenu() {
+        var menu = document.getElementById('mobile-menu');
+        var hamburgerIcon = document.getElementById('hamburger-icon');
+        var closeIcon = document.getElementById('close-icon');
+        var isActive = menu.classList.toggle('active');
+        hamburgerIcon.style.display = isActive ? 'none' : 'block';
+        closeIcon.style.display = isActive ? 'block' : 'none';
+        document.body.style.overflow = isActive ? 'hidden' : '';
+      }
 
-      // Initialize
-      loadListings();
+      function closeMobileMenu() {
+        var menu = document.getElementById('mobile-menu');
+        menu.classList.remove('active');
+        document.getElementById('hamburger-icon').style.display = 'block';
+        document.getElementById('close-icon').style.display = 'none';
+        document.body.style.overflow = '';
+      }
     </script>
   </body>
 </html>
