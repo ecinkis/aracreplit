@@ -15,6 +15,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
@@ -68,11 +69,21 @@ export default function StoryCreationScreen() {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [9, 16],
-      quality: 0.8,
+      quality: 1,
     });
 
     if (!result.canceled && result.assets[0]) {
-      setStoryImage(result.assets[0].uri);
+      const asset = result.assets[0];
+      try {
+        const manipulated = await ImageManipulator.manipulateAsync(
+          asset.uri,
+          [{ resize: { width: 1080, height: 1920 } }],
+          { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG }
+        );
+        setStoryImage(manipulated.uri);
+      } catch {
+        setStoryImage(asset.uri);
+      }
     }
   }, []);
 

@@ -752,14 +752,10 @@ const styles = StyleSheet.create({
   },
   storyModalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.95)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#000",
   },
   storyModalContent: {
-    width: "100%",
-    height: "100%",
-    justifyContent: "center",
+    flex: 1,
   },
   storyModalHeader: {
     position: "absolute",
@@ -812,8 +808,13 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   storyModalImage: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     width: "100%",
-    height: "70%",
+    height: "100%",
   },
   storyModalFooter: {
     position: "absolute",
