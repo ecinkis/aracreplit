@@ -223,6 +223,7 @@ const styles = StyleSheet.create({
   },
   contentArea: {
     paddingHorizontal: Spacing.xl,
+    marginBottom: 30,
   },
   title: {
     fontSize: 32,
