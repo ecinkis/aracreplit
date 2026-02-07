@@ -34,7 +34,7 @@ const RESEND_TIMER = 60;
 
 export default function AuthScreen() {
   const insets = useSafeAreaInsets();
-  const { login, loginWithApple, loginWithGoogle } = useAuth();
+  const { login, loginWithApple, loginWithGoogle, sendCode, verifyAndLogin } = useAuth();
   const [mode, setMode] = useState<AuthMode>("login");
   const [loginTab, setLoginTab] = useState<LoginTab>("phone");
   const [forgotTab, setForgotTab] = useState<ForgotTab>("email");
@@ -45,6 +45,7 @@ export default function AuthScreen() {
   const [verificationCode, setVerificationCode] = useState("");
   const [fullName, setFullName] = useState("");
   
+  const [verifiedUser, setVerifiedUser] = useState<any>(null);
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -104,7 +105,7 @@ export default function AuthScreen() {
   const handleSendCode = async () => {
     const cleanedPhone = phone.replace(/\D/g, "");
     if (cleanedPhone.length !== 10) {
-      Alert.alert("Hata", "Lütfen geçerli bir telefon numarası girin");
+      Alert.alert("Hata", "Lutfen gecerli bir telefon numarasi girin");
       return;
     }
 
@@ -112,15 +113,15 @@ export default function AuthScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await sendCode(`+90${cleanedPhone}`);
       setMode("verify");
       setTimer(RESEND_TIMER);
       setCodeDigits(Array(CODE_LENGTH).fill(""));
       setVerificationCode("");
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (error) {
+    } catch (error: any) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert("Hata", "Kod gönderilirken bir hata oluştu");
+      Alert.alert("Hata", error.message || "Kod gonderilirken bir hata olustu");
     } finally {
       setIsLoading(false);
     }
@@ -131,14 +132,15 @@ export default function AuthScreen() {
     setIsLoading(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const cleanedPhone = phone.replace(/\D/g, "");
+      await sendCode(`+90${cleanedPhone}`);
       setTimer(RESEND_TIMER);
       setCodeDigits(Array(CODE_LENGTH).fill(""));
       setVerificationCode("");
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (error) {
+    } catch (error: any) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert("Hata", "Kod gönderilirken bir hata oluştu");
+      Alert.alert("Hata", error.message || "Kod gonderilirken bir hata olustu");
     } finally {
       setIsLoading(false);
     }
@@ -146,7 +148,7 @@ export default function AuthScreen() {
 
   const handleVerifyCode = async () => {
     if (verificationCode.length !== 6) {
-      Alert.alert("Hata", "Lütfen 6 haneli doğrulama kodunu girin");
+      Alert.alert("Hata", "Lutfen 6 haneli dogrulama kodunu girin");
       return;
     }
 
@@ -154,14 +156,31 @@ export default function AuthScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const cleanedPhone = phone.replace(/\D/g, "");
+      const phoneWithCode = `+90${cleanedPhone}`;
+      
+      const { getApiUrl } = await import("@/lib/query-client");
+      const response = await fetch(new URL("/api/auth/verify-code", getApiUrl()).toString(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: phoneWithCode, code: verificationCode }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Dogrulama hatasi");
+      }
+
+      const { user: returnedUser } = await response.json();
+      setVerifiedUser(returnedUser);
+
       if (mode === "verify") {
         setMode("profile");
       }
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (error) {
+    } catch (error: any) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert("Hata", "Kod doğrulanırken bir hata oluştu");
+      Alert.alert("Hata", error.message || "Kod dogrulanirken bir hata olustu");
     } finally {
       setIsLoading(false);
     }
@@ -169,7 +188,7 @@ export default function AuthScreen() {
 
   const handleCompleteProfile = async () => {
     if (!fullName.trim()) {
-      Alert.alert("Hata", "Lütfen adınızı ve soyadınızı girin");
+      Alert.alert("Hata", "Lutfen adinizi ve soyadinizi girin");
       return;
     }
 
@@ -177,11 +196,20 @@ export default function AuthScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     try {
-      await login(`+90${phone.replace(/\D/g, "")}`);
+      const cleanedPhone = phone.replace(/\D/g, "");
+      if (verifiedUser) {
+        const { getApiUrl } = await import("@/lib/query-client");
+        await fetch(new URL(`/api/users/${verifiedUser.id}`, getApiUrl()).toString(), {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: fullName.trim() }),
+        });
+      }
+      await login(`+90${cleanedPhone}`);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (error) {
+    } catch (error: any) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert("Hata", "Kayıt tamamlanırken bir hata oluştu");
+      Alert.alert("Hata", error.message || "Kayit tamamlanirken bir hata olustu");
     } finally {
       setIsLoading(false);
     }

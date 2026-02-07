@@ -7,6 +7,8 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (phone: string) => Promise<void>;
+  sendCode: (phone: string) => Promise<void>;
+  verifyAndLogin: (phone: string, code: string, name?: string) => Promise<void>;
   loginWithApple: (appleId: string, email?: string, fullName?: string) => Promise<void>;
   loginWithGoogle: (googleId: string, email?: string, name?: string, photo?: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -64,6 +66,63 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(loggedInUser));
     } catch (error) {
       console.error("Login error:", error);
+      throw error;
+    }
+  };
+
+  const sendCode = async (phone: string) => {
+    try {
+      const { getApiUrl } = await import("@/lib/query-client");
+      const response = await fetch(new URL("/api/auth/send-code", getApiUrl()).toString(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "SMS gonderilemedi");
+      }
+    } catch (error) {
+      console.error("Send code error:", error);
+      throw error;
+    }
+  };
+
+  const verifyAndLogin = async (phone: string, code: string, name?: string) => {
+    try {
+      const { getApiUrl } = await import("@/lib/query-client");
+      const response = await fetch(new URL("/api/auth/verify-code", getApiUrl()).toString(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, code }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Dogrulama hatasi");
+      }
+
+      const { user: loggedInUser } = await response.json();
+      
+      if (name) {
+        const updateResponse = await fetch(new URL(`/api/users/${loggedInUser.id}`, getApiUrl()).toString(), {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name }),
+        });
+        if (updateResponse.ok) {
+          const updatedUser = await updateResponse.json();
+          setUser(updatedUser);
+          await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser));
+          return;
+        }
+      }
+      
+      setUser(loggedInUser);
+      await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(loggedInUser));
+    } catch (error) {
+      console.error("Verify and login error:", error);
       throw error;
     }
   };
@@ -147,6 +206,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         isAuthenticated: !!user,
         login,
+        sendCode,
+        verifyAndLogin,
         loginWithApple,
         loginWithGoogle,
         logout,

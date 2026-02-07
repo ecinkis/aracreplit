@@ -6,6 +6,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import { sendVerificationCode, verifyCode } from "./twilio";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -59,6 +60,50 @@ function adminAuth(req: Request, res: Response, next: NextFunction) {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // User routes
+  app.post("/api/auth/send-code", async (req, res) => {
+    try {
+      const { phone } = req.body;
+      if (!phone) {
+        return res.status(400).json({ error: "Phone number is required" });
+      }
+      
+      const result = await sendVerificationCode(phone);
+      if (!result.success) {
+        return res.status(500).json({ error: result.error || "SMS gonderilemedi" });
+      }
+      
+      res.json({ success: true, message: "Dogrulama kodu gonderildi" });
+    } catch (error) {
+      console.error("Send code error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/auth/verify-code", async (req, res) => {
+    try {
+      const { phone, code } = req.body;
+      if (!phone || !code) {
+        return res.status(400).json({ error: "Phone and code are required" });
+      }
+
+      const result = verifyCode(phone, code);
+      if (!result.valid) {
+        return res.status(400).json({ error: result.error });
+      }
+
+      let user = await storage.getUserByPhone(phone);
+      if (!user) {
+        user = await storage.createUser({ phone, name: null, city: null });
+      }
+
+      await storage.updateUser(user.id, { phoneVerified: true });
+      res.json({ user: { ...user, phoneVerified: true } });
+    } catch (error) {
+      console.error("Verify code error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.post("/api/auth/login", async (req, res) => {
     try {
       const { phone } = req.body;
