@@ -29,7 +29,6 @@ import { BrandColors } from "@/constants/theme";
 const ONBOARDING_KEY = "@takas_onboarding_seen";
 
 export type RootStackParamList = {
-  Onboarding: undefined;
   Login: undefined;
   Main: undefined;
   ListingDetail: { listingId: string };
@@ -59,11 +58,11 @@ export type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-function OnboardingWrapper({ navigation }: any) {
+function OnboardingWrapper({ onDone }: { onDone: () => void }) {
   const handleComplete = useCallback(async () => {
     await AsyncStorage.setItem(ONBOARDING_KEY, "true");
-    navigation.replace("Login");
-  }, [navigation]);
+    onDone();
+  }, [onDone]);
 
   return <OnboardingScreen onComplete={handleComplete} />;
 }
@@ -79,27 +78,26 @@ export default function RootStackNavigator() {
     });
   }, []);
 
+  const handleOnboardingDone = useCallback(() => {
+    setHasSeenOnboarding(true);
+  }, []);
+
   if (isLoading || hasSeenOnboarding === null) {
     return null;
+  }
+
+  if (!hasSeenOnboarding && !isAuthenticated) {
+    return <OnboardingWrapper onDone={handleOnboardingDone} />;
   }
 
   return (
     <Stack.Navigator screenOptions={screenOptions}>
       {!isAuthenticated ? (
-        <>
-          {!hasSeenOnboarding ? (
-            <Stack.Screen
-              name="Onboarding"
-              component={OnboardingWrapper}
-              options={{ headerShown: false, animationTypeForReplace: "push" }}
-            />
-          ) : null}
-          <Stack.Screen
-            name="Login"
-            component={AuthScreen}
-            options={{ headerShown: false }}
-          />
-        </>
+        <Stack.Screen
+          name="Login"
+          component={AuthScreen}
+          options={{ headerShown: false }}
+        />
       ) : (
         <>
           <Stack.Screen
