@@ -13,6 +13,7 @@
       "supportsTablet": true,
       "backgroundColor": "#000000",
       "bundleIdentifier": "com.takasapp.mobile",
+      "usesAppleSignIn": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }

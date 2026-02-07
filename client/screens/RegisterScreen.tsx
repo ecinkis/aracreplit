@@ -101,7 +101,7 @@ export default function RegisterScreen({ onNavigateToLogin }: RegisterScreenProp
     
     try {
       const redirectUri = AuthSession.makeRedirectUri({
-        scheme: "com.takasapp.app",
+        scheme: "takasapp",
         path: "auth",
       });
       

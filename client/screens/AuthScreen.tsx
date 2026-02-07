@@ -287,7 +287,7 @@ export default function AuthScreen() {
     
     try {
       const redirectUri = AuthSession.makeRedirectUri({
-        scheme: "com.takasapp.app",
+        scheme: "takasapp",
         path: "auth",
       });
       
