@@ -8,10 +8,10 @@
     "scheme": "takasapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "backgroundColor": "#000000",
+    "backgroundColor": "#FFFFFF",
     "ios": {
       "supportsTablet": true,
-      "backgroundColor": "#000000",
+      "backgroundColor": "#FFFFFF",
       "bundleIdentifier": "com.takasapp.mobile",
       "usesAppleSignIn": true,
       "infoPlist": {
@@ -44,9 +44,9 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#000000",
+          "backgroundColor": "#FFFFFF",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#FFFFFF"
           }
         }
       ],
