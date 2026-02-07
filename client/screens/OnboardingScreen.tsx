@@ -205,9 +205,11 @@ const styles = StyleSheet.create({
   slide: {
     width,
     flex: 1,
+    justifyContent: "center",
+    paddingBottom: Spacing.xl,
   },
   imageContainer: {
-    flex: 0.55,
+    height: 300,
     marginHorizontal: Spacing.xl,
     borderRadius: BorderRadius.lg,
     overflow: "hidden",
@@ -218,7 +220,6 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   contentContainer: {
-    flex: 0.45,
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.xl,
   },
