@@ -5,7 +5,7 @@ import {
   Dimensions,
   FlatList,
   Pressable,
-  Image,
+  ImageBackground,
   ViewToken,
   ImageSourcePropType,
 } from "react-native";
@@ -107,64 +107,64 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
   const renderSlide = ({ item }: { item: OnboardingSlide }) => {
     return (
       <View style={styles.slide}>
-        <Image
+        <ImageBackground
           source={item.image}
-          style={StyleSheet.absoluteFill}
+          style={styles.backgroundImage}
           resizeMode="cover"
-        />
-        <LinearGradient
-          colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.35)", "rgba(0,0,0,0.85)"]}
-          locations={[0, 0.45, 1]}
-          style={StyleSheet.absoluteFill}
-        />
-        <View style={styles.overlay}>
-          <View style={[styles.header, { paddingTop: insets.top + Spacing.sm }]}>
-            <TakasLogo size={28} color="#FFFFFF" />
-            {!isLastSlide ? (
-              <Pressable onPress={handleSkip} hitSlop={12}>
-                <ThemedText style={styles.skipText}>Atla</ThemedText>
-              </Pressable>
-            ) : (
-              <View style={{ width: 40 }} />
-            )}
-          </View>
-
-          <View style={styles.contentArea}>
-            <ThemedText style={styles.title}>{item.title}</ThemedText>
-            <ThemedText style={styles.description}>{item.description}</ThemedText>
-
-            <View style={styles.dotsContainer}>
-              {slides.map((_, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.dot,
-                    index === currentIndex ? styles.dotActive : styles.dotInactive,
-                  ]}
-                />
-              ))}
+        >
+          <LinearGradient
+            colors={["rgba(0,0,0,0.15)", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.85)"]}
+            locations={[0, 0.5, 1]}
+            style={styles.gradient}
+          >
+            <View style={[styles.header, { paddingTop: insets.top + Spacing.sm }]}>
+              <TakasLogo size={28} color="#FFFFFF" />
+              {!isLastSlide ? (
+                <Pressable onPress={handleSkip} hitSlop={12}>
+                  <ThemedText style={styles.skipText}>Atla</ThemedText>
+                </Pressable>
+              ) : (
+                <View style={{ width: 40 }} />
+              )}
             </View>
 
-            <Pressable
-              style={({ pressed }) => [
-                styles.button,
-                pressed && styles.buttonPressed,
-              ]}
-              onPress={handleNext}
-            >
-              {isLastSlide ? (
-                <ThemedText style={styles.buttonText}>Basla</ThemedText>
-              ) : (
-                <View style={styles.buttonContent}>
-                  <ThemedText style={styles.buttonText}>Devam</ThemedText>
-                  <Feather name="arrow-right" size={20} color="#000000" />
-                </View>
-              )}
-            </Pressable>
+            <View style={styles.contentArea}>
+              <ThemedText style={styles.title}>{item.title}</ThemedText>
+              <ThemedText style={styles.description}>{item.description}</ThemedText>
 
-            <View style={{ height: insets.bottom + Spacing.md }} />
-          </View>
-        </View>
+              <View style={styles.dotsContainer}>
+                {slides.map((_, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.dot,
+                      index === currentIndex ? styles.dotActive : styles.dotInactive,
+                    ]}
+                  />
+                ))}
+              </View>
+
+              <Pressable
+                style={({ pressed }) => [
+                  styles.button,
+                  pressed && styles.buttonPressed,
+                ]}
+                onPress={handleNext}
+              >
+                {isLastSlide ? (
+                  <ThemedText style={styles.buttonText}>Basla</ThemedText>
+                ) : (
+                  <View style={styles.buttonContent}>
+                    <ThemedText style={styles.buttonText}>Devam</ThemedText>
+                    <Feather name="arrow-right" size={20} color="#000000" />
+                  </View>
+                )}
+              </Pressable>
+
+              <View style={{ height: insets.bottom + Spacing.md }} />
+            </View>
+          </LinearGradient>
+        </ImageBackground>
       </View>
     );
   };
@@ -200,10 +200,14 @@ const styles = StyleSheet.create({
   slide: {
     width,
     height,
-    overflow: "hidden",
   },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
+  backgroundImage: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
+  gradient: {
+    flex: 1,
     justifyContent: "space-between",
   },
   header: {
