@@ -718,10 +718,13 @@ export default function AuthScreen() {
               <TakasLogo size={80} color="#000000" />
             </View>
 
-            <ThemedText style={styles.title}>Kayıt Ol</ThemedText>
-            <ThemedText style={styles.subtitle}>
-              Telefon numaranızla güvenli bir hesap oluşturun
-            </ThemedText>
+            <View style={styles.tabContainer}>
+              <View style={[styles.tab, styles.tabActive]}>
+                <ThemedText style={[styles.tabText, styles.tabTextActive]}>
+                  Kayıt Ol
+                </ThemedText>
+              </View>
+            </View>
 
             <View style={styles.formContainer}>
               <View style={styles.inputContainer}>
@@ -758,6 +761,11 @@ export default function AuthScreen() {
                   <ThemedText style={styles.submitButtonText}>Kod Gönder</ThemedText>
                 )}
               </Pressable>
+
+              <View style={styles.optionsRow}>
+                <View />
+                <View />
+              </View>
 
               <View style={styles.socialContainer}>
                 <Pressable style={styles.socialButton} onPress={() => handleGoogleLogin()}>
@@ -916,8 +924,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingLeft: 24,
     paddingRight: 24,
-    paddingTop: 30,
-    justifyContent: "center",
+    paddingTop: 60,
+    paddingBottom: 30,
   },
   logoContainer: {
     alignItems: "center",
