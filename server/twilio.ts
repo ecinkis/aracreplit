@@ -47,32 +47,22 @@ export async function getTwilioClient() {
   return twilio(apiKey, apiKeySecret, { accountSid });
 }
 
-export async function getTwilioFromPhoneNumber() {
-  const { phoneNumber } = await getCredentials();
-  return phoneNumber;
-}
-
-const verificationCodes = new Map<string, { code: string; expiresAt: number; attempts: number }>();
-
-function generateCode(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
 export async function sendVerificationCode(phone: string): Promise<{ success: boolean; error?: string }> {
   try {
-    const code = generateCode();
-    const expiresAt = Date.now() + 5 * 60 * 1000;
-
-    verificationCodes.set(phone, { code, expiresAt, attempts: 0 });
+    const serviceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
+    if (!serviceSid) {
+      throw new Error('TWILIO_VERIFY_SERVICE_SID is not configured');
+    }
 
     const client = await getTwilioClient();
-    const fromNumber = await getTwilioFromPhoneNumber();
 
-    await client.messages.create({
-      body: `TakasApp dogrulama kodunuz: ${code}. Bu kod 5 dakika gecerlidir.`,
-      from: fromNumber,
-      to: phone,
-    });
+    await client.verify.v2
+      .services(serviceSid)
+      .verifications.create({
+        to: phone,
+        channel: 'sms',
+        locale: 'tr',
+      });
 
     console.log(`Verification code sent to ${phone}`);
     return { success: true };
@@ -82,28 +72,32 @@ export async function sendVerificationCode(phone: string): Promise<{ success: bo
   }
 }
 
-export function verifyCode(phone: string, code: string): { valid: boolean; error?: string } {
-  const stored = verificationCodes.get(phone);
+export async function verifyCode(phone: string, code: string): Promise<{ valid: boolean; error?: string }> {
+  try {
+    const serviceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
+    if (!serviceSid) {
+      throw new Error('TWILIO_VERIFY_SERVICE_SID is not configured');
+    }
 
-  if (!stored) {
-    return { valid: false, error: 'Dogrulama kodu bulunamadi. Lutfen yeni kod isteyin.' };
-  }
+    const client = await getTwilioClient();
 
-  if (Date.now() > stored.expiresAt) {
-    verificationCodes.delete(phone);
-    return { valid: false, error: 'Dogrulama kodu suresi doldu. Lutfen yeni kod isteyin.' };
-  }
+    const verificationCheck = await client.verify.v2
+      .services(serviceSid)
+      .verificationChecks.create({
+        to: phone,
+        code: code,
+      });
 
-  stored.attempts += 1;
-  if (stored.attempts > 5) {
-    verificationCodes.delete(phone);
-    return { valid: false, error: 'Cok fazla deneme yapildi. Lutfen yeni kod isteyin.' };
-  }
+    if (verificationCheck.status === 'approved') {
+      return { valid: true };
+    }
 
-  if (stored.code !== code) {
     return { valid: false, error: 'Dogrulama kodu hatali.' };
+  } catch (error: any) {
+    console.error('Verification check error:', error);
+    if (error.code === 20404) {
+      return { valid: false, error: 'Dogrulama kodu bulunamadi veya suresi doldu. Lutfen yeni kod isteyin.' };
+    }
+    return { valid: false, error: error.message || 'Dogrulama hatasi' };
   }
-
-  verificationCodes.delete(phone);
-  return { valid: true };
 }

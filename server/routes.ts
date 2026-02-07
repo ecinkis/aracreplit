@@ -86,7 +86,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Phone and code are required" });
       }
 
-      const result = verifyCode(phone, code);
+      const result = await verifyCode(phone, code);
       if (!result.valid) {
         return res.status(400).json({ error: result.error });
       }

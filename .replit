@@ -78,3 +78,4 @@ ensurePreviewReachable = "/status"
 
 [userenv.shared]
 EXPO_PUBLIC_GOOGLE_CLIENT_ID = "360159178570-hrbubqqs9ihul2tdv0l55cuue5kvoimf.apps.googleusercontent.com"
+TWILIO_VERIFY_SERVICE_SID = "VA4825aeef5595f7f1ed8ada061cd9b759"
