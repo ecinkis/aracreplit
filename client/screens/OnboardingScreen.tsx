@@ -146,6 +146,11 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
         viewabilityConfig={viewabilityConfig}
         scrollEventThrottle={16}
         style={styles.flatList}
+        getItemLayout={(_, index) => ({
+          length: width,
+          offset: width * index,
+          index,
+        })}
       />
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + Spacing.lg }]}>
