@@ -9,8 +9,8 @@ interface AuthContextType {
   login: (phone: string) => Promise<void>;
   sendCode: (phone: string) => Promise<void>;
   verifyAndLogin: (phone: string, code: string, name?: string) => Promise<void>;
-  loginWithApple: (appleId: string, email?: string, fullName?: string) => Promise<void>;
-  loginWithGoogle: (googleId: string, email?: string, name?: string, photo?: string) => Promise<void>;
+  loginWithApple: (appleId: string, email?: string, fullName?: string, identityToken?: string) => Promise<void>;
+  loginWithGoogle: (googleId: string, email?: string, name?: string, photo?: string, accessToken?: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (data: Partial<User>) => void;
   selectedListingId: string | null;
@@ -127,13 +127,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const loginWithApple = async (appleId: string, email?: string, fullName?: string) => {
+  const loginWithApple = async (appleId: string, email?: string, fullName?: string, identityToken?: string) => {
     try {
       const { getApiUrl } = await import("@/lib/query-client");
       const response = await fetch(new URL("/api/auth/apple", getApiUrl()).toString(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ appleId, email, fullName }),
+        body: JSON.stringify({ appleId, email, fullName, identityToken }),
       });
 
       if (!response.ok) {
@@ -149,13 +149,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const loginWithGoogle = async (googleId: string, email?: string, name?: string, photo?: string) => {
+  const loginWithGoogle = async (googleId: string, email?: string, name?: string, photo?: string, accessToken?: string) => {
     try {
       const { getApiUrl } = await import("@/lib/query-client");
       const response = await fetch(new URL("/api/auth/google", getApiUrl()).toString(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ googleId, email, name, photo }),
+        body: JSON.stringify({ accessToken, googleId, email, name, photo }),
       });
 
       if (!response.ok) {

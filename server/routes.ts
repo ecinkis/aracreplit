@@ -126,9 +126,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/auth/apple", async (req, res) => {
     try {
-      const { appleId, email, fullName } = req.body;
+      const { appleId, email, fullName, identityToken } = req.body;
       if (!appleId) {
         return res.status(400).json({ error: "Apple ID is required" });
+      }
+
+      if (identityToken) {
+        try {
+          const parts = identityToken.split(".");
+          if (parts.length !== 3) {
+            return res.status(401).json({ error: "Invalid Apple identity token format" });
+          }
+          const payload = JSON.parse(Buffer.from(parts[1], "base64").toString());
+          if (payload.iss !== "https://appleid.apple.com") {
+            return res.status(401).json({ error: "Invalid Apple token issuer" });
+          }
+          if (payload.exp && payload.exp * 1000 < Date.now()) {
+            return res.status(401).json({ error: "Apple token expired" });
+          }
+          if (payload.sub !== appleId) {
+            return res.status(401).json({ error: "Apple ID mismatch" });
+          }
+        } catch (tokenErr) {
+          console.error("Apple token verification error:", tokenErr);
+          return res.status(401).json({ error: "Apple token verification failed" });
+        }
       }
 
       let user = await storage.getUserByAppleId(appleId);
@@ -160,28 +182,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/auth/google", async (req, res) => {
     try {
-      const { googleId, email, name, photo } = req.body;
-      if (!googleId) {
+      const { accessToken, googleId, email, name, photo } = req.body;
+
+      let verifiedGoogleId = googleId;
+      let verifiedEmail = email;
+      let verifiedName = name;
+      let verifiedPhoto = photo;
+
+      if (accessToken) {
+        try {
+          const googleResponse = await fetch(
+            "https://www.googleapis.com/oauth2/v3/userinfo",
+            { headers: { Authorization: `Bearer ${accessToken}` } }
+          );
+          if (!googleResponse.ok) {
+            return res.status(401).json({ error: "Invalid Google access token" });
+          }
+          const googleUser = await googleResponse.json();
+          verifiedGoogleId = googleUser.sub;
+          verifiedEmail = googleUser.email || email;
+          verifiedName = googleUser.name || name;
+          verifiedPhoto = googleUser.picture || photo;
+        } catch (googleErr) {
+          console.error("Google token verification error:", googleErr);
+          return res.status(401).json({ error: "Google token verification failed" });
+        }
+      }
+
+      if (!verifiedGoogleId) {
         return res.status(400).json({ error: "Google ID is required" });
       }
 
-      let user = await storage.getUserByGoogleId(googleId);
+      let user = await storage.getUserByGoogleId(verifiedGoogleId);
       
-      if (!user && email) {
-        user = await storage.getUserByEmail(email);
+      if (!user && verifiedEmail) {
+        user = await storage.getUserByEmail(verifiedEmail);
         if (user) {
-          await storage.updateUser(user.id, { googleId });
+          await storage.updateUser(user.id, { googleId: verifiedGoogleId });
         }
       }
 
       if (!user) {
-        const tempPhone = `google_${googleId.substring(0, 14)}`;
+        const tempPhone = `google_${verifiedGoogleId.substring(0, 14)}`;
         user = await storage.createUser({ 
           phone: tempPhone, 
-          name: name || null, 
-          email: email || null,
-          googleId,
-          avatarUrl: photo || null,
+          name: verifiedName || null, 
+          email: verifiedEmail || null,
+          googleId: verifiedGoogleId,
+          avatarUrl: verifiedPhoto || null,
           city: null 
         });
       }

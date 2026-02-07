@@ -99,7 +99,7 @@ export default function LoginScreen() {
         ? `${credential.fullName.givenName || ""} ${credential.fullName.familyName || ""}`.trim()
         : undefined;
       
-      await loginWithApple(credential.user, credential.email || undefined, fullName || undefined);
+      await loginWithApple(credential.user, credential.email || undefined, fullName || undefined, credential.identityToken || undefined);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error: any) {
       if (error.code === "ERR_REQUEST_CANCELED") {
@@ -151,7 +151,7 @@ export default function LoginScreen() {
         );
         const userInfo = await userInfoResponse.json();
         
-        await loginWithGoogle(userInfo.sub, userInfo.email, userInfo.name, userInfo.picture);
+        await loginWithGoogle(userInfo.sub, userInfo.email, userInfo.name, userInfo.picture, result.authentication.accessToken);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
     } catch (error) {
