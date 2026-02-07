@@ -19,8 +19,8 @@
       }
     },
     "androidStatusBar": {
-      "barStyle": "light-content",
-      "backgroundColor": "#000000"
+      "barStyle": "dark-content",
+      "backgroundColor": "#FFFFFF"
     },
     "android": {
       "package": "com.takasapp.mobile",

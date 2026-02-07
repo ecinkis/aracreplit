@@ -137,7 +137,7 @@ async function startMetro(expoPublicDomain) {
     });
   }
 
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 180; i++) {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const healthy = await checkMetroHealth();
@@ -147,13 +147,13 @@ async function startMetro(expoPublicDomain) {
     }
   }
 
-  console.error("Metro timeout");
+  console.error("Metro timeout after 3 minutes");
   process.exit(1);
 }
 
 async function downloadFile(url, outputPath) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 120_000);
+  const timeoutId = setTimeout(() => controller.abort(), 300_000);
 
   try {
     console.log(`Downloading: ${url}`);
@@ -508,7 +508,7 @@ async function main() {
 
   await startMetro(domain);
 
-  const downloadTimeout = 300000;
+  const downloadTimeout = 600000;
   const downloadPromise = downloadBundlesAndManifests(timestamp);
   const timeoutPromise = new Promise((_, reject) => {
     setTimeout(() => {
