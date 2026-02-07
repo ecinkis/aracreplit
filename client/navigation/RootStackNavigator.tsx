@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import MainTabNavigator from "@/navigation/MainTabNavigator";
 import AuthScreen from "@/screens/AuthScreen";
+import OnboardingScreen from "@/screens/OnboardingScreen";
 import ListingDetailScreen from "@/screens/ListingDetailScreen";
 import ChatScreen from "@/screens/ChatScreen";
 import SettingsScreen from "@/screens/SettingsScreen";
@@ -24,7 +26,10 @@ import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { useAuth } from "@/contexts/AuthContext";
 import { BrandColors } from "@/constants/theme";
 
+const ONBOARDING_KEY = "@takas_onboarding_seen";
+
 export type RootStackParamList = {
+  Onboarding: undefined;
   Login: undefined;
   Main: undefined;
   ListingDetail: { listingId: string };
@@ -54,22 +59,47 @@ export type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+function OnboardingWrapper({ navigation }: any) {
+  const handleComplete = useCallback(async () => {
+    await AsyncStorage.setItem(ONBOARDING_KEY, "true");
+    navigation.replace("Login");
+  }, [navigation]);
+
+  return <OnboardingScreen onComplete={handleComplete} />;
+}
+
 export default function RootStackNavigator() {
   const screenOptions = useScreenOptions();
   const { isAuthenticated, isLoading } = useAuth();
+  const [hasSeenOnboarding, setHasSeenOnboarding] = useState<boolean | null>(null);
 
-  if (isLoading) {
+  useEffect(() => {
+    AsyncStorage.getItem(ONBOARDING_KEY).then((value) => {
+      setHasSeenOnboarding(value === "true");
+    });
+  }, []);
+
+  if (isLoading || hasSeenOnboarding === null) {
     return null;
   }
 
   return (
     <Stack.Navigator screenOptions={screenOptions}>
       {!isAuthenticated ? (
-        <Stack.Screen
-          name="Login"
-          component={AuthScreen}
-          options={{ headerShown: false }}
-        />
+        <>
+          {!hasSeenOnboarding ? (
+            <Stack.Screen
+              name="Onboarding"
+              component={OnboardingWrapper}
+              options={{ headerShown: false, animationTypeForReplace: "push" }}
+            />
+          ) : null}
+          <Stack.Screen
+            name="Login"
+            component={AuthScreen}
+            options={{ headerShown: false }}
+          />
+        </>
       ) : (
         <>
           <Stack.Screen
@@ -81,7 +111,7 @@ export default function RootStackNavigator() {
             name="ListingDetail"
             component={ListingDetailScreen}
             options={{
-              headerTitle: "İlan Detayı",
+              headerTitle: "Ilan Detayi",
               headerTintColor: "#000000",
             }}
           />
@@ -106,7 +136,7 @@ export default function RootStackNavigator() {
             name="EditProfile"
             component={EditProfileScreen}
             options={{
-              headerTitle: "Profil Düzenle",
+              headerTitle: "Profil Duzenle",
               headerTintColor: "#000000",
               presentation: "modal",
             }}
@@ -206,7 +236,7 @@ export default function RootStackNavigator() {
             name="SearchResults"
             component={SearchResultsScreen}
             options={{
-              headerTitle: "Arama Sonuçları",
+              headerTitle: "Arama Sonuclari",
               headerBackTitle: "Geri",
             }}
           />
@@ -214,7 +244,7 @@ export default function RootStackNavigator() {
             name="Verification"
             component={VerificationScreen}
             options={{
-              headerTitle: "Belge Doğrulama",
+              headerTitle: "Belge Dogrulama",
               headerTintColor: "#000000",
             }}
           />
