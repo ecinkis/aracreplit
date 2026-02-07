@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -20,6 +20,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { Animated as RNAnimated } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { ThemedText } from "@/components/ThemedText";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
@@ -154,6 +155,42 @@ export default function VitrinScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStory, setSelectedStory] = useState<StoryItem | null>(null);
+  const storyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const progressAnim = useRef(new RNAnimated.Value(0)).current;
+
+  const STORY_DURATION = 25000;
+
+  const closeStory = useCallback(() => {
+    if (storyTimerRef.current) {
+      clearTimeout(storyTimerRef.current);
+      storyTimerRef.current = null;
+    }
+    progressAnim.stopAnimation();
+    progressAnim.setValue(0);
+    setSelectedStory(null);
+  }, [progressAnim]);
+
+  const openStory = useCallback((story: StoryItem) => {
+    setSelectedStory(story);
+    progressAnim.setValue(0);
+    RNAnimated.timing(progressAnim, {
+      toValue: 1,
+      duration: STORY_DURATION,
+      useNativeDriver: false,
+    }).start();
+    storyTimerRef.current = setTimeout(() => {
+      setSelectedStory(null);
+      progressAnim.setValue(0);
+    }, STORY_DURATION);
+  }, [progressAnim]);
+
+  useEffect(() => {
+    return () => {
+      if (storyTimerRef.current) {
+        clearTimeout(storyTimerRef.current);
+      }
+    };
+  }, []);
 
   const canCreateStory = user?.isPremium && user?.userType === "bireysel" && (user?.storyCredits || 0) > 0;
 
@@ -234,7 +271,7 @@ export default function VitrinScreen() {
               style={styles.storyItem}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                setSelectedStory(story);
+                openStory(story);
               }}
             >
               <LinearGradient
@@ -364,11 +401,11 @@ export default function VitrinScreen() {
         visible={selectedStory !== null}
         transparent
         animationType="fade"
-        onRequestClose={() => setSelectedStory(null)}
+        onRequestClose={closeStory}
       >
         <Pressable
           style={styles.storyModalOverlay}
-          onPress={() => setSelectedStory(null)}
+          onPress={closeStory}
         >
           <View style={styles.storyModalContent}>
             <View style={styles.storyModalHeader}>
@@ -388,14 +425,19 @@ export default function VitrinScreen() {
                 </View>
               </View>
               <Pressable
-                onPress={() => setSelectedStory(null)}
+                onPress={closeStory}
                 style={styles.storyModalClose}
               >
                 <Feather name="x" size={24} color="#FFFFFF" />
               </Pressable>
             </View>
             <View style={styles.storyProgressContainer}>
-              <View style={styles.storyProgressBar} />
+              <RNAnimated.View style={[styles.storyProgressBar, {
+                width: progressAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ['0%', '100%'],
+                }),
+              }]} />
             </View>
             <Image
               source={{ uri: selectedStory?.imageUrl }}
@@ -765,7 +807,6 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   storyProgressBar: {
-    width: "100%",
     height: "100%",
     backgroundColor: "#FFFFFF",
     borderRadius: 2,
