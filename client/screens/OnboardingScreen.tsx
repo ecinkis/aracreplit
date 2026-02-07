@@ -117,7 +117,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
             locations={[0, 0.5, 1]}
             style={styles.gradient}
           >
-            <View style={[styles.header, { paddingTop: insets.top + Spacing.sm }]}>
+            <View style={[styles.header, { paddingTop: insets.top + 20 + Spacing.sm }]}>
               <TakasLogo size={28} color="#FFFFFF" />
               {!isLastSlide ? (
                 <Pressable onPress={handleSkip} hitSlop={12}>
