@@ -1,0 +1,73 @@
+e10@E10-MacBook-Pro Arac-Takasi % eas build --platform all --profile preview
+Resolved "preview" environment for the build. Learn more: https://docs.expo.dev/eas/environment-variables/#setting-the-environment-for-your-builds
+Environment variables with visibility "Plain text" and "Sensitive" loaded from the "preview" environment on EAS: EXPO_PUBLIC_DOMAIN, EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID, EXPO_PUBLIC_GOOGLE_CLIENT_ID.
+
+
+
+🤖 Android build
+✔ Using remote Android credentials (Expo server)
+✔ Using Keystore from configuration: Build Credentials yoCFv6OyhP (default)
+
+Compressing project files and uploading to EAS Build. Learn more: https://expo.fyi/eas-build-archive
+✔ Compressed project files 4s (109 MB)
+✔ Uploaded to EAS 20s
+✔ Computed project fingerprint
+Resolved "preview" environment for the build. Learn more: https://docs.expo.dev/eas/environment-variables/#setting-the-environment-for-your-builds
+Environment variables with visibility "Plain text" and "Sensitive" loaded from the "preview" environment on EAS: EXPO_PUBLIC_DOMAIN, EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID, EXPO_PUBLIC_GOOGLE_CLIENT_ID.
+
+
+🍏 iOS build
+✔ Using remote iOS credentials (Expo server)
+
+If you provide your Apple account credentials we will be able to generate all necessary build credentials and fully validate them.
+This is optional, but without Apple account access you will need to provide all the missing values manually and we can only run minimal validation on them.
+✔ Do you want to log in to your Apple account? … yes
+
+› Log in to your Apple Developer account to continue
+✔ Apple ID: … ecinkis@gmail.com
+› Restoring session /Users/e10/.app-store/auth/ecinkis@gmail.com/cookie
+› Team Erdal Cinkis (TZ63HLT39Q)
+› Provider Erdal Cinkis (127529473)
+✔ Logged in Local session
+✔ Bundle identifier registered com.takasapp.mobile
+✔ Synced capabilities: No updates
+✔ Synced capability identifiers: No updates
+✔ Fetched Apple distribution certificates
+✔ Fetched Apple provisioning profiles
+✔ All your registered devices are present in the Provisioning Profile. Would you like to reuse the profile? › Yes
+
+Project Credentials Configuration
+
+Project                   @erdal10/takas-app
+Bundle Identifier         com.takasapp.mobile
+                          
+Ad Hoc Configuration      
+                          
+Distribution Certificate  
+Serial Number             3DA8E2DA5C28526D7E63280D7F43A6F
+Expiration Date           Fri, 15 Jan 2027 17:06:47 GMT
+Apple Team                TZ63HLT39Q (Erdal Cinkis (Individual))
+Updated                   24 days ago
+                          
+Provisioning Profile      
+Developer Portal ID       G3HM8PUJ98
+Status                    active
+Expiration                Fri, 15 Jan 2027 17:06:47 GMT
+Apple Team                TZ63HLT39Q (Erdal Cinkis (Individual))
+Provisioned devices       - iPhone (UDID: 00008140-00126D483C29801C)
+Updated                   24 days ago
+                          
+All credentials are ready to build @erdal10/takas-app (com.takasapp.mobile)
+
+
+Compressing project files and uploading to EAS Build. Learn more: https://expo.fyi/eas-build-archive
+✔ Compressed project files 4s (109 MB)
+✔ Uploaded to EAS 20s
+✔ Computed project fingerprint
+
+See 🤖 Android logs: https://expo.dev/accounts/erdal10/projects/takas-app/builds/6eba75cb-17c2-4b63-9938-c9c5c5b16743
+See 🍏 iOS logs: https://expo.dev/accounts/erdal10/projects/takas-app/builds/ab6c2c60-fc7c-4bd4-9c8c-fe0c042ad37c
+
+⠴ Waiting for builds to complete. You can press Ctrl+C to exit.
+  🤖 Android build - status: in progress
+  🍏 iOS build - status: waiting to enter the queue (concurrency limit reached)
