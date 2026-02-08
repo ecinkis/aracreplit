@@ -715,7 +715,10 @@ export class DatabaseStorage implements IStorage {
       );
 
       const favResult = await db.delete(favorites).where(
-        sql`${favorites.userId} = ANY(${userIds})`
+        or(
+          sql`${favorites.userId} = ANY(${userIds})`,
+          sql`${favorites.listingId} LIKE 'demo-%'`
+        )!
       );
 
       deletedFavorites = favResult.rowCount || 0;
