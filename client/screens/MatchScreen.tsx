@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import {
   View,
   StyleSheet,
@@ -11,7 +11,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import Animated, {
@@ -28,20 +28,12 @@ import { ThemedText } from "@/components/ThemedText";
 import { useAuth } from "@/contexts/AuthContext";
 import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
 import { Listing } from "@shared/schema";
-import { apiRequest } from "@/lib/query-client";
+import { apiRequest, getApiUrl } from "@/lib/query-client";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import emptyMatchesImage from "../assets/images/empty-states/empty-matches.png";
 import defaultVehicleImage from "../assets/images/default-vehicle.png";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
-const DEMO_LISTINGS = [
-  { id: "demo1", brand: "BMW", model: "320i", year: 2021, km: 45000, city: "Kadikoy", estimatedValue: 1850000, photos: ["https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&q=80"] },
-  { id: "demo2", brand: "Mercedes", model: "C180", year: 2020, km: 62000, city: "Besiktas", estimatedValue: 2100000, photos: ["https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80"] },
-  { id: "demo3", brand: "Audi", model: "A4", year: 2019, km: 78000, city: "Sisli", estimatedValue: 1650000, photos: ["https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80"] },
-  { id: "demo4", brand: "Volkswagen", model: "Passat", year: 2022, km: 25000, city: "Uskudar", estimatedValue: 1450000, photos: ["https://images.unsplash.com/photo-1632245889029-e406faaa34cd?w=800&q=80"] },
-  { id: "demo5", brand: "Toyota", model: "Corolla", year: 2021, km: 38000, city: "Bakirkoy", estimatedValue: 1250000, photos: ["https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&q=80"] },
-] as Listing[];
 
 function SwipeCard({
   listing,
@@ -254,6 +246,7 @@ export default function MatchScreen() {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
   const navigation = useNavigation<NavigationProp>();
+  const queryClient = useQueryClient();
   const { user, selectedListingId } = useAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [canGoBack, setCanGoBack] = useState(false);
@@ -261,21 +254,32 @@ export default function MatchScreen() {
   const cardWidth = screenWidth - Spacing.xl * 2;
   const cardHeight = screenHeight * 0.52;
 
+  const { data: allListings, isLoading } = useQuery<Listing[]>({
+    queryKey: ["/api/listings/shuffled"],
+    queryFn: async () => {
+      const url = new URL("/api/listings/shuffled", getApiUrl());
+      const response = await fetch(url.toString());
+      return response.json();
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+
   const { data: userListings } = useQuery<Listing[]>({
     queryKey: ["/api/users", user?.id, "listings"],
     queryFn: async () => {
-      const response = await fetch(`/api/users/${user?.id}/listings`);
+      const url = new URL(`/api/users/${user?.id}/listings`, getApiUrl());
+      const response = await fetch(url.toString());
       return response.json();
     },
     enabled: !!user?.id,
   });
 
-  const activeListingId = selectedListingId || (userListings && userListings[0]?.id);
+  const activeListingId = selectedListingId || (userListings && userListings.length > 0 ? userListings[0]?.id : undefined);
 
-  const { data: swipeableListings, isLoading } = useQuery<Listing[]>({
-    queryKey: ["/api/swipe", user?.id, activeListingId],
-    enabled: !!user?.id && !!activeListingId,
-  });
+  const displayListings = useMemo(() => {
+    if (!allListings || allListings.length === 0) return [];
+    return allListings;
+  }, [allListings]);
 
   const swipeMutation = useMutation({
     mutationFn: async (data: {
@@ -298,10 +302,9 @@ export default function MatchScreen() {
   });
 
   const handleSwipe = useCallback(async (direction: "left" | "right" | "up") => {
-    const allListings = swipeableListings && swipeableListings.length > 0 ? swipeableListings : DEMO_LISTINGS;
-    if (currentIndex >= allListings.length) return;
-    
-    const listing = allListings[currentIndex];
+    if (displayListings.length === 0) return;
+    const idx = currentIndex % displayListings.length;
+    const listing = displayListings[idx];
     const liked = direction === "right" || direction === "up";
 
     if (user?.id && activeListingId && listing.userId) {
@@ -314,9 +317,16 @@ export default function MatchScreen() {
       });
     }
 
-    setCurrentIndex((prev) => prev + 1);
-    setCanGoBack(true);
-  }, [swipeableListings, currentIndex, user?.id, activeListingId, swipeMutation]);
+    const nextIndex = currentIndex + 1;
+    if (nextIndex >= displayListings.length) {
+      setCurrentIndex(0);
+      setCanGoBack(false);
+      queryClient.invalidateQueries({ queryKey: ["/api/listings/shuffled"] });
+    } else {
+      setCurrentIndex(nextIndex);
+      setCanGoBack(true);
+    }
+  }, [displayListings, currentIndex, user?.id, activeListingId, swipeMutation, queryClient]);
 
   const handleButtonSwipe = (direction: "left" | "right" | "up") => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -337,9 +347,10 @@ export default function MatchScreen() {
     navigation.navigate("ListingDetail", { listingId });
   };
 
-  const apiListings = swipeableListings?.slice(currentIndex) || [];
-  const remainingListings = apiListings.length > 0 ? apiListings : DEMO_LISTINGS.slice(currentIndex);
-  const showEmptyState = remainingListings.length === 0;
+  const remainingListings = displayListings.length > 0
+    ? displayListings.slice(currentIndex % displayListings.length)
+    : [];
+  const hasCards = remainingListings.length > 0;
 
   return (
     <View style={styles.container}>
@@ -348,7 +359,7 @@ export default function MatchScreen() {
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#000000" />
         </View>
-      ) : showEmptyState ? (
+      ) : !hasCards ? (
         <EmptyState />
       ) : (
         <View style={[styles.contentArea, { paddingBottom: tabBarHeight + Spacing.sm }]}>
@@ -357,7 +368,7 @@ export default function MatchScreen() {
               const stackIndex = remainingListings.slice(0, 3).length - 1 - index;
               return (
                 <SwipeCard
-                  key={listing.id}
+                  key={`${listing.id}-${currentIndex}`}
                   listing={listing}
                   isFirst={stackIndex === 0}
                   onSwipeLeft={() => handleSwipe("left")}
@@ -534,7 +545,6 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: BorderRadius.full,
     gap: 4,
-    backdropFilter: "blur(10px)",
   },
   distanceText: {
     fontSize: 12,

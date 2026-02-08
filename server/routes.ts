@@ -336,6 +336,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/listings/shuffled", async (req, res) => {
+    try {
+      const allListings = await storage.getListings();
+      for (let i = allListings.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allListings[i], allListings[j]] = [allListings[j], allListings[i]];
+      }
+      res.json(allListings);
+    } catch (error) {
+      console.error("Get shuffled listings error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.get("/api/listings", async (req, res) => {
     try {
       const { city, brand, swapActive } = req.query;
