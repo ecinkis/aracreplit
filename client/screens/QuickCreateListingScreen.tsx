@@ -229,7 +229,9 @@ export default function QuickCreateListingScreen() {
               <ThemedText style={styles.quotaUpgradeButtonText}>Premium'a Yükselt</ThemedText>
             </Pressable>
           </View>
-        ) : (
+        ) : null}
+
+        {!quotaData || quotaData.remainingListings > 0 ? (
         <>
         <View style={styles.heroSection}>
           <ThemedText style={styles.heroTitle}>30 saniyede ilan ver</ThemedText>
@@ -376,7 +378,7 @@ export default function QuickCreateListingScreen() {
           <Feather name="arrow-right" size={16} color="#6B7280" />
         </Pressable>
         </>
-        )}
+        ) : null}
       </KeyboardAwareScrollViewCompat>
     </View>
   );
