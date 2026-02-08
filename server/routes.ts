@@ -577,9 +577,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  const DAILY_SWIPE_LIMIT = 20;
+
+  app.get("/api/users/:userId/swipe-quota", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ error: "Kullanıcı bulunamadı" });
+      }
+
+      const isPremiumActive = user.isPremium && user.premiumExpiresAt && new Date(user.premiumExpiresAt) > new Date();
+      const dailySwipes = await storage.getDailySwipeCount(userId);
+
+      res.json({
+        isPremium: !!isPremiumActive,
+        dailyLimit: isPremiumActive ? -1 : DAILY_SWIPE_LIMIT,
+        usedToday: dailySwipes,
+        remainingToday: isPremiumActive ? -1 : Math.max(0, DAILY_SWIPE_LIMIT - dailySwipes),
+      });
+    } catch (error) {
+      console.error("Get swipe quota error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.post("/api/swipe", async (req, res) => {
     try {
       const { fromUserId, toUserId, fromListingId, toListingId, liked } = req.body;
+
+      const user = await storage.getUser(fromUserId);
+      if (user) {
+        const isPremiumActive = user.isPremium && user.premiumExpiresAt && new Date(user.premiumExpiresAt) > new Date();
+        if (!isPremiumActive) {
+          const dailySwipes = await storage.getDailySwipeCount(fromUserId);
+          if (dailySwipes >= DAILY_SWIPE_LIMIT) {
+            return res.status(429).json({
+              error: "Günlük kaydırma limitinize ulaştınız",
+              message: `Günlük ${DAILY_SWIPE_LIMIT} kaydırma hakkınız doldu. Premium üyelikle sınırsız kaydırma yapabilirsiniz.`,
+              remainingToday: 0,
+            });
+          }
+        }
+      }
       
       const like = await storage.createLike(fromUserId, toUserId, fromListingId, toListingId, liked);
       
@@ -590,8 +630,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           match = await storage.createMatch(fromUserId, toUserId, fromListingId, toListingId);
         }
       }
+
+      const remainingSwipes = user ? await storage.getDailySwipeCount(fromUserId) : 0;
+      const isPremiumActive = user?.isPremium && user?.premiumExpiresAt && new Date(user.premiumExpiresAt) > new Date();
       
-      res.json({ like, match, isMatch: !!match });
+      res.json({ 
+        like, 
+        match, 
+        isMatch: !!match,
+        remainingToday: isPremiumActive ? -1 : Math.max(0, DAILY_SWIPE_LIMIT - remainingSwipes),
+      });
     } catch (error) {
       console.error("Swipe error:", error);
       res.status(500).json({ error: "Internal server error" });

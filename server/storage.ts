@@ -58,6 +58,7 @@ export interface IStorage {
   incrementViewCount(id: string): Promise<void>;
 
   getSwipeableListings(userId: string, userListingId: string): Promise<Listing[]>;
+  getDailySwipeCount(userId: string): Promise<number>;
   createLike(fromUserId: string, toUserId: string, fromListingId: string, toListingId: string, liked: boolean): Promise<Like>;
   checkMutualLike(fromUserId: string, toUserId: string, fromListingId: string, toListingId: string): Promise<boolean>;
 
@@ -256,6 +257,21 @@ export class DatabaseStorage implements IStorage {
       )
       .orderBy(desc(listings.createdAt))
       .limit(20);
+  }
+
+  async getDailySwipeCount(userId: string): Promise<number> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const result = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(likes)
+      .where(
+        and(
+          eq(likes.fromUserId, userId),
+          sql`${likes.createdAt} >= ${today}`
+        )
+      );
+    return result[0]?.count ?? 0;
   }
 
   async createLike(fromUserId: string, toUserId: string, fromListingId: string, toListingId: string, liked: boolean): Promise<Like> {
