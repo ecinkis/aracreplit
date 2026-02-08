@@ -1,0 +1,119 @@
+{
+  "id": "c8201d71-d64e-49a4-8a38-dfa9011754ca",
+  "createdAt": "2026-02-08T15:28:36.209Z",
+  "runtimeVersion": "exposdk:54.0.0",
+  "launchAsset": {
+    "key": "bundle-1770564516209-5140",
+    "contentType": "application/javascript",
+    "url": "https://e524dc69-547f-4a8a-9f66-ced14cfe60ca-00-1at2iy1pbyd5s.spock.replit.dev/1770564516209-5140/_expo/static/js/ios/bundle.js"
+  },
+  "assets": [],
+  "metadata": {},
+  "extra": {
+    "eas": {
+      "projectId": "19376afd-bb8a-486f-a490-59f498d338dc"
+    },
+    "expoClient": {
+      "name": "TakasApp",
+      "slug": "takas-app",
+      "version": "1.0.0",
+      "orientation": "portrait",
+      "icon": "./assets/images/icon.png",
+      "scheme": "takasapp",
+      "userInterfaceStyle": "automatic",
+      "newArchEnabled": true,
+      "backgroundColor": "#FFFFFF",
+      "ios": {
+        "supportsTablet": true,
+        "backgroundColor": "#FFFFFF",
+        "bundleIdentifier": "com.takasapp.mobile",
+        "usesAppleSignIn": true,
+        "infoPlist": {
+          "ITSAppUsesNonExemptEncryption": false
+        }
+      },
+      "androidStatusBar": {
+        "barStyle": "dark-content",
+        "backgroundColor": "#FFFFFF"
+      },
+      "android": {
+        "package": "com.takasapp.mobile",
+        "adaptiveIcon": {
+          "backgroundColor": "#000000",
+          "foregroundImage": "./assets/images/android-icon-foreground.png",
+          "backgroundImage": "./assets/images/android-icon-background.png",
+          "monochromeImage": "./assets/images/android-icon-monochrome.png",
+          "foregroundImageUrl": "https://e524dc69-547f-4a8a-9f66-ced14cfe60ca-00-1at2iy1pbyd5s.spock.replit.dev/assets/./assets/images/android-icon-foreground.png",
+          "monochromeImageUrl": "https://e524dc69-547f-4a8a-9f66-ced14cfe60ca-00-1at2iy1pbyd5s.spock.replit.dev/assets/./assets/images/android-icon-monochrome.png",
+          "backgroundImageUrl": "https://e524dc69-547f-4a8a-9f66-ced14cfe60ca-00-1at2iy1pbyd5s.spock.replit.dev/assets/./assets/images/android-icon-background.png"
+        },
+        "edgeToEdgeEnabled": true,
+        "predictiveBackGestureEnabled": false
+      },
+      "web": {
+        "output": "single",
+        "favicon": "./assets/images/favicon.png"
+      },
+      "plugins": [
+        [
+          "expo-splash-screen",
+          {
+            "image": "./assets/images/splash-icon.png",
+            "imageWidth": 200,
+            "resizeMode": "contain",
+            "backgroundColor": "#FFFFFF",
+            "dark": {
+              "backgroundColor": "#FFFFFF"
+            }
+          }
+        ],
+        "expo-web-browser"
+      ],
+      "experiments": {
+        "reactCompiler": true
+      },
+      "extra": {
+        "eas": {
+          "projectId": "19376afd-bb8a-486f-a490-59f498d338dc"
+        }
+      },
+      "_internal": {
+        "isDebug": false,
+        "projectRoot": "/home/runner/workspace",
+        "dynamicConfigPath": {},
+        "staticConfigPath": "/home/runner/workspace/app.json",
+        "packageJsonPath": "/home/runner/workspace/package.json",
+        "pluginHistory": {
+          "expo-splash-screen": {
+            "name": "expo-splash-screen",
+            "version": "31.0.13"
+          },
+          "expo-web-browser": {
+            "name": "expo-web-browser",
+            "version": "15.0.10"
+          }
+        }
+      },
+      "sdkVersion": "54.0.0",
+      "platforms": [
+        "ios",
+        "android",
+        "web"
+      ],
+      "iconUrl": "https://e524dc69-547f-4a8a-9f66-ced14cfe60ca-00-1at2iy1pbyd5s.spock.replit.dev/assets/./assets/images/icon.png",
+      "hostUri": "e524dc69-547f-4a8a-9f66-ced14cfe60ca-00-1at2iy1pbyd5s.spock.replit.dev/ios"
+    },
+    "expoGo": {
+      "debuggerHost": "e524dc69-547f-4a8a-9f66-ced14cfe60ca-00-1at2iy1pbyd5s.spock.replit.dev/ios",
+      "developer": {
+        "tool": "expo-cli",
+        "projectRoot": "/home/runner/workspace"
+      },
+      "packagerOpts": {
+        "dev": false
+      },
+      "mainModuleName": "client/index"
+    },
+    "scopeKey": "@anonymous/takas-app-ad27c715-aa05-41b6-b8ff-159d96a5086d"
+  }
+}
