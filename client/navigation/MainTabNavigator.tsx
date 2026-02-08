@@ -5,7 +5,6 @@ import { Platform, StyleSheet, View, Pressable, Modal } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -49,13 +48,11 @@ function CreateMenuModal({
   if (!visible) return null;
 
   return (
-    <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
+    <Modal transparent visible={visible} animationType="slide" onRequestClose={onClose}>
       <View style={styles.modalOverlay}>
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
 
-        <Animated.View
-          entering={SlideInDown.springify().damping(18).stiffness(140)}
-          exiting={SlideOutDown.duration(250)}
+        <View
           style={[
             styles.bottomSheet,
             { paddingBottom: insets.bottom + Spacing.xl }
@@ -142,7 +139,7 @@ function CreateMenuModal({
               </View>
             </Pressable>
           </View>
-        </Animated.View>
+        </View>
       </View>
     </Modal>
   );
