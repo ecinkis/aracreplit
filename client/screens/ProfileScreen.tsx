@@ -216,7 +216,7 @@ export default function ProfileScreen() {
     enabled: !!user?.id,
   });
 
-  const { data: favorites } = useQuery<Favorite[]>({
+  const { data: favorites } = useQuery<(Favorite & { listing: Listing | null })[]>({
     queryKey: ["/api/favorites", user?.id],
     enabled: !!user?.id,
   });
@@ -486,37 +486,57 @@ export default function ProfileScreen() {
           </View>
           {favorites && favorites.length > 0 ? (
             <FlatList
-              data={favorites.slice(0, 5)}
+              data={favorites.slice(0, 10)}
               horizontal
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <Pressable
-                  style={({ pressed }) => [
-                    styles.favoriteCard,
-                    pressed && { opacity: 0.8 },
-                  ]}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    handleListingPress(item.listingId);
-                  }}
-                >
-                  <View style={styles.favoriteIconContainer}>
-                    <Feather name="heart" size={20} color="#EF4444" />
-                  </View>
-                  <ThemedText style={styles.favoriteText}>Favori İlan</ThemedText>
-                </Pressable>
-              )}
+              renderItem={({ item }) => {
+                const listing = item.listing;
+                if (!listing) return null;
+                const photoUrl = listing.photos && listing.photos.length > 0 ? listing.photos[0] : null;
+                return (
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.favoriteListingCard,
+                      pressed && { opacity: 0.8, transform: [{ scale: 0.97 }] },
+                    ]}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      handleListingPress(item.listingId);
+                    }}
+                  >
+                    <Image
+                      source={photoUrl ? { uri: photoUrl } : defaultVehicleImage}
+                      style={styles.favoriteListingImage}
+                      resizeMode="cover"
+                    />
+                    <View style={styles.favoriteListingBadge}>
+                      <Feather name="star" size={12} color="#F59E0B" />
+                    </View>
+                    <View style={styles.favoriteListingInfo}>
+                      <ThemedText style={styles.favoriteListingTitle} numberOfLines={1}>
+                        {listing.brand} {listing.model}
+                      </ThemedText>
+                      <ThemedText style={styles.favoriteListingMeta} numberOfLines={1}>
+                        {listing.year} - {listing.km?.toLocaleString("tr-TR")} km
+                      </ThemedText>
+                      <ThemedText style={styles.favoriteListingPrice} numberOfLines={1}>
+                        {listing.estimatedValue?.toLocaleString("tr-TR")} TL
+                      </ThemedText>
+                    </View>
+                  </Pressable>
+                );
+              }}
               contentContainerStyle={styles.horizontalList}
             />
           ) : (
             <View style={styles.emptySection}>
-              <Feather name="heart" size={32} color="#D1D5DB" />
+              <Feather name="star" size={32} color="#D1D5DB" />
               <ThemedText style={styles.emptySectionText}>
-                Henüz favoriniz yok
+                Henuz favoriniz yok
               </ThemedText>
               <ThemedText style={styles.emptySectionSubtext}>
-                Beğendiğiniz ilanları favorilere ekleyin
+                Esles sayfasinda yildiz butonuna basarak favorilere ekleyin
               </ThemedText>
             </View>
           )}
@@ -993,6 +1013,49 @@ const styles = StyleSheet.create({
   favoriteText: {
     fontSize: 12,
     color: "#6B7280",
+  },
+  favoriteListingCard: {
+    width: 160,
+    borderRadius: BorderRadius.md,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    overflow: "hidden",
+    marginRight: Spacing.sm,
+  },
+  favoriteListingImage: {
+    width: "100%",
+    height: 100,
+  },
+  favoriteListingBadge: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  favoriteListingInfo: {
+    padding: Spacing.sm,
+  },
+  favoriteListingTitle: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#000000",
+  },
+  favoriteListingMeta: {
+    fontSize: 11,
+    color: "#6B7280",
+    marginTop: 2,
+  },
+  favoriteListingPrice: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#000000",
+    marginTop: 4,
   },
   premiumCard: {
     flexDirection: "row",

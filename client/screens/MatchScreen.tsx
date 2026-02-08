@@ -301,13 +301,29 @@ export default function MatchScreen() {
     },
   });
 
+  const favoriteMutation = useMutation({
+    mutationFn: async (data: { userId: string; listingId: string }) => {
+      return apiRequest("/api/favorites", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/favorites"] });
+    },
+  });
+
   const handleSwipe = useCallback(async (direction: "left" | "right" | "up") => {
     if (displayListings.length === 0) return;
     const idx = currentIndex % displayListings.length;
     const listing = displayListings[idx];
-    const liked = direction === "right" || direction === "up";
+    const liked = direction === "right";
 
-    if (user?.id && activeListingId && listing.userId) {
+    if (direction === "up" && user?.id) {
+      favoriteMutation.mutate({ userId: user.id, listingId: listing.id });
+    }
+
+    if (direction !== "up" && user?.id && activeListingId && listing.userId) {
       swipeMutation.mutate({
         fromUserId: user.id,
         toUserId: listing.userId,
@@ -326,7 +342,7 @@ export default function MatchScreen() {
       setCurrentIndex(nextIndex);
       setCanGoBack(true);
     }
-  }, [displayListings, currentIndex, user?.id, activeListingId, swipeMutation, queryClient]);
+  }, [displayListings, currentIndex, user?.id, activeListingId, swipeMutation, favoriteMutation, queryClient]);
 
   const handleButtonSwipe = (direction: "left" | "right" | "up") => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);

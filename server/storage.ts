@@ -334,6 +334,17 @@ export class DatabaseStorage implements IStorage {
     return db.select().from(favorites).where(eq(favorites.userId, userId)).orderBy(desc(favorites.createdAt));
   }
 
+  async getFavoritesWithListings(userId: string): Promise<(Favorite & { listing: Listing | null })[]> {
+    const userFavorites = await db.select().from(favorites).where(eq(favorites.userId, userId)).orderBy(desc(favorites.createdAt));
+    const results = await Promise.all(
+      userFavorites.map(async (fav) => {
+        const [listing] = await db.select().from(listings).where(eq(listings.id, fav.listingId));
+        return { ...fav, listing: listing || null };
+      })
+    );
+    return results;
+  }
+
   async addFavorite(userId: string, listingId: string): Promise<Favorite> {
     const [favorite] = await db.insert(favorites).values({ userId, listingId }).returning();
     return favorite;

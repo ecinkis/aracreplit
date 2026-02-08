@@ -636,8 +636,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Favorites routes
   app.get("/api/favorites/:userId", async (req, res) => {
     try {
-      const favorites = await storage.getFavoritesByUser(req.params.userId);
-      res.json(favorites);
+      const favoritesWithListings = await storage.getFavoritesWithListings(req.params.userId);
+      res.json(favoritesWithListings);
     } catch (error) {
       console.error("Get favorites error:", error);
       res.status(500).json({ error: "Internal server error" });
@@ -647,6 +647,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/favorites", async (req, res) => {
     try {
       const { userId, listingId } = req.body;
+      const alreadyFavorite = await storage.isFavorite(userId, listingId);
+      if (alreadyFavorite) {
+        return res.status(200).json({ message: "Already in favorites" });
+      }
       const favorite = await storage.addFavorite(userId, listingId);
       res.status(201).json(favorite);
     } catch (error) {
