@@ -312,9 +312,11 @@ export default function AuthScreen() {
         tokenEndpoint: "https://oauth2.googleapis.com/token",
       };
       
-      const googleClientId = Platform.OS === "ios"
-        ? (process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || "")
-        : (process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || "");
+      const googleClientId = Platform.select({
+        ios: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || "",
+        android: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID || process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || "",
+        default: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || "",
+      });
 
       const request = new AuthSession.AuthRequest({
         clientId: googleClientId,
