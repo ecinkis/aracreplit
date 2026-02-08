@@ -11,14 +11,14 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
 import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
 import { useAuth } from "@/contexts/AuthContext";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { Spacing, BorderRadius, Typography, BrandColors } from "@/constants/theme";
 import { apiRequest } from "@/lib/query-client";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
@@ -38,6 +38,19 @@ export default function QuickCreateListingScreen() {
   const navigation = useNavigation<NavigationProp>();
   const { user } = useAuth();
   const queryClient = useQueryClient();
+
+  const { data: quotaData } = useQuery<{
+    maxListings: number;
+    currentListings: number;
+    remainingListings: number;
+    quotaLabel: string;
+    phoneVerified: boolean;
+    emailVerified: boolean;
+    isPremium: boolean;
+  }>({
+    queryKey: ["/api/users", user?.id, "listing-quota"],
+    enabled: !!user?.id,
+  });
 
   const [photo, setPhoto] = useState<string | null>(null);
   const [title, setTitle] = useState("");
@@ -68,9 +81,10 @@ export default function QuickCreateListingScreen() {
         ]
       );
     },
-    onError: () => {
+    onError: (error: any) => {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert("Hata", "Ilan olusturulurken bir hata olustu.");
+      const message = error?.message || "İlan oluşturulurken bir hata oluştu.";
+      Alert.alert("Hata", message);
     },
   });
 
@@ -175,6 +189,48 @@ export default function QuickCreateListingScreen() {
           { paddingBottom: insets.bottom + Spacing.xl },
         ]}
       >
+        {quotaData ? (
+          <View style={[styles.quotaCard, { 
+            backgroundColor: quotaData.remainingListings > 0 ? `${BrandColors.successGreen}10` : `${BrandColors.alertRed}10`,
+            borderColor: quotaData.remainingListings > 0 ? `${BrandColors.successGreen}30` : `${BrandColors.alertRed}30`,
+          }]}>
+            <View style={styles.quotaRow}>
+              <Feather 
+                name={quotaData.remainingListings > 0 ? "check-circle" : "alert-circle"} 
+                size={18} 
+                color={quotaData.remainingListings > 0 ? BrandColors.successGreen : BrandColors.alertRed} 
+              />
+              <View style={{ flex: 1 }}>
+                <ThemedText style={styles.quotaTitle}>
+                  {quotaData.quotaLabel} - {quotaData.remainingListings} ilan hakkınız kaldı
+                </ThemedText>
+                <ThemedText style={styles.quotaSubtitle}>
+                  {quotaData.currentListings}/{quotaData.maxListings} ilan kullanıldı
+                </ThemedText>
+              </View>
+            </View>
+          </View>
+        ) : null}
+
+        {quotaData && quotaData.remainingListings <= 0 ? (
+          <View style={styles.quotaBlockedContainer}>
+            <Feather name="alert-triangle" size={48} color={BrandColors.alertRed} />
+            <ThemedText style={styles.quotaBlockedTitle}>İlan Limitinize Ulaştınız</ThemedText>
+            <ThemedText style={styles.quotaBlockedText}>
+              {!quotaData.phoneVerified || !quotaData.emailVerified
+                ? "Telefon ve e-posta doğrulaması yaparak 2 ilan hakkı kazanabilirsiniz."
+                : "Premium üyelikle aylık 5 ilan hakkı kazanabilirsiniz (199₺/ay)."}
+            </ThemedText>
+            <Pressable
+              style={styles.quotaUpgradeButton}
+              onPress={() => navigation.navigate("Premium")}
+            >
+              <Feather name="zap" size={16} color="#FFFFFF" />
+              <ThemedText style={styles.quotaUpgradeButtonText}>Premium'a Yükselt</ThemedText>
+            </Pressable>
+          </View>
+        ) : (
+        <>
         <View style={styles.heroSection}>
           <ThemedText style={styles.heroTitle}>30 saniyede ilan ver</ThemedText>
           <ThemedText style={styles.heroSubtitle}>
@@ -319,6 +375,8 @@ export default function QuickCreateListingScreen() {
           </ThemedText>
           <Feather name="arrow-right" size={16} color="#6B7280" />
         </Pressable>
+        </>
+        )}
       </KeyboardAwareScrollViewCompat>
     </View>
   );
@@ -524,5 +582,56 @@ const styles = StyleSheet.create({
   detailedButtonText: {
     fontSize: 14,
     color: "#6B7280",
+  },
+  quotaCard: {
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    marginBottom: Spacing.md,
+  },
+  quotaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  quotaTitle: {
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  quotaSubtitle: {
+    fontSize: 11,
+    color: "#6B7280",
+    marginTop: 2,
+  },
+  quotaBlockedContainer: {
+    alignItems: "center",
+    paddingVertical: Spacing.xl * 2,
+    gap: Spacing.md,
+  },
+  quotaBlockedTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  quotaBlockedText: {
+    fontSize: 15,
+    color: "#6B7280",
+    textAlign: "center",
+    paddingHorizontal: Spacing.md,
+  },
+  quotaUpgradeButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    backgroundColor: "#000000",
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.sm,
+    marginTop: Spacing.md,
+  },
+  quotaUpgradeButtonText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#FFFFFF",
   },
 });

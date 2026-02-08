@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as Haptics from "expo-haptics";
@@ -252,6 +252,19 @@ export default function CreateListingScreen() {
   const queryClient = useQueryClient();
   const scrollRef = useRef<ScrollView>(null);
 
+  const { data: quotaData } = useQuery<{
+    maxListings: number;
+    currentListings: number;
+    remainingListings: number;
+    quotaLabel: string;
+    phoneVerified: boolean;
+    emailVerified: boolean;
+    isPremium: boolean;
+  }>({
+    queryKey: ["/api/users", user?.id, "listing-quota"],
+    enabled: !!user?.id,
+  });
+
   const [currentStep, setCurrentStep] = useState(1);
   const [photos, setPhotos] = useState<string[]>([]);
   const [brand, setBrand] = useState("");
@@ -291,9 +304,10 @@ export default function CreateListingScreen() {
         [{ text: "Tamam", onPress: () => navigation.goBack() }]
       );
     },
-    onError: () => {
+    onError: (error: any) => {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert("Hata", "İlan oluşturulurken bir hata oluştu.");
+      const message = error?.message || "İlan oluşturulurken bir hata oluştu.";
+      Alert.alert("Hata", message);
     },
   });
 
@@ -483,6 +497,49 @@ export default function CreateListingScreen() {
       case 1:
         return (
           <Animated.View entering={FadeIn} style={styles.stepContent}>
+            {quotaData ? (
+              <View style={[styles.quotaCard, { 
+                backgroundColor: quotaData.remainingListings > 0 ? `${BrandColors.successGreen}10` : `${BrandColors.alertRed}10`,
+                borderColor: quotaData.remainingListings > 0 ? `${BrandColors.successGreen}30` : `${BrandColors.alertRed}30`,
+              }]}>
+                <View style={styles.quotaRow}>
+                  <Feather 
+                    name={quotaData.remainingListings > 0 ? "check-circle" : "alert-circle"} 
+                    size={18} 
+                    color={quotaData.remainingListings > 0 ? BrandColors.successGreen : BrandColors.alertRed} 
+                  />
+                  <View style={styles.quotaTextContainer}>
+                    <ThemedText style={styles.quotaTitle}>
+                      {quotaData.quotaLabel} - {quotaData.remainingListings} ilan hakkınız kaldı
+                    </ThemedText>
+                    <ThemedText style={[styles.quotaSubtitle, { color: theme.textSecondary }]}>
+                      {quotaData.currentListings}/{quotaData.maxListings} ilan kullanıldı
+                      {!quotaData.isPremium && quotaData.maxListings < 5 ? " | Premium ile aylık 5 ilan (199₺/ay)" : ""}
+                    </ThemedText>
+                  </View>
+                </View>
+              </View>
+            ) : null}
+
+            {quotaData && quotaData.remainingListings <= 0 ? (
+              <View style={styles.quotaBlockedContainer}>
+                <Feather name="alert-triangle" size={48} color={BrandColors.alertRed} />
+                <ThemedText style={styles.quotaBlockedTitle}>İlan Limitinize Ulaştınız</ThemedText>
+                <ThemedText style={[styles.quotaBlockedText, { color: theme.textSecondary }]}>
+                  {!quotaData.phoneVerified || !quotaData.emailVerified
+                    ? "Telefon ve e-posta doğrulaması yaparak 2 ilan hakkı kazanabilirsiniz."
+                    : "Premium üyelikle aylık 5 ilan hakkı kazanabilirsiniz (199₺/ay)."}
+                </ThemedText>
+                <Pressable
+                  style={styles.quotaUpgradeButton}
+                  onPress={() => (navigation as any).navigate("Premium")}
+                >
+                  <Feather name="zap" size={16} color="#FFFFFF" />
+                  <ThemedText style={styles.quotaUpgradeText}>Premium'a Yükselt</ThemedText>
+                </Pressable>
+              </View>
+            ) : (
+            <>
             <View style={styles.stepHeader}>
               <View style={styles.stepIconContainer}>
                 <Feather name="camera" size={24} color="#000000" />
@@ -537,6 +594,8 @@ export default function CreateListingScreen() {
                 <ThemedText style={[styles.tipText, { color: theme.textSecondary }]}>Motor bölümü</ThemedText>
               </View>
             </View>
+            </>
+            )}
           </Animated.View>
         );
 
@@ -1377,5 +1436,55 @@ const styles = StyleSheet.create({
   emptyList: {
     alignItems: "center",
     paddingVertical: Spacing.xl,
+  },
+  quotaCard: {
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    marginBottom: Spacing.md,
+  },
+  quotaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  quotaTextContainer: {
+    flex: 1,
+  },
+  quotaTitle: {
+    ...Typography.small,
+    fontWeight: "600",
+  },
+  quotaSubtitle: {
+    ...Typography.caption,
+    marginTop: 2,
+  },
+  quotaBlockedContainer: {
+    alignItems: "center",
+    paddingVertical: Spacing.xl * 2,
+    gap: Spacing.md,
+  },
+  quotaBlockedTitle: {
+    ...Typography.h3,
+    textAlign: "center",
+  },
+  quotaBlockedText: {
+    ...Typography.body,
+    textAlign: "center",
+    paddingHorizontal: Spacing.md,
+  },
+  quotaUpgradeButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    backgroundColor: "#000000",
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.sm,
+    marginTop: Spacing.md,
+  },
+  quotaUpgradeText: {
+    ...Typography.button,
+    color: "#FFFFFF",
   },
 });
