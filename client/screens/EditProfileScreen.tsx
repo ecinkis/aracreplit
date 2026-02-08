@@ -24,7 +24,7 @@ import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollV
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
 import { Spacing, BorderRadius, Typography, BrandColors } from "@/constants/theme";
-import { apiRequest } from "@/lib/query-client";
+import { apiRequest, getApiUrl } from "@/lib/query-client";
 
 const defaultAvatarImage = require("../assets/images/default-avatar.png");
 
@@ -52,7 +52,11 @@ export default function EditProfileScreen() {
   const [city, setCity] = useState(user?.city || "");
   const [email, setEmail] = useState((user as any)?.email || "");
   const [phone, setPhone] = useState(user?.phone || "");
-  const [avatarUri, setAvatarUri] = useState<string | null>((user as any)?.avatarUrl || null);
+  const existingAvatarUrl = (user as any)?.avatarUrl;
+  const resolvedAvatarUrl = existingAvatarUrl 
+    ? (existingAvatarUrl.startsWith('http') ? existingAvatarUrl : `${getApiUrl().replace(/\/$/, '')}${existingAvatarUrl}`)
+    : null;
+  const [avatarUri, setAvatarUri] = useState<string | null>(resolvedAvatarUrl);
   const [showCityPicker, setShowCityPicker] = useState(false);
 
   const hasEmail = !!(user as any)?.email;

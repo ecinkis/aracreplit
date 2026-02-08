@@ -36,7 +36,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const storedUser = await AsyncStorage.getItem(USER_STORAGE_KEY);
       const storedListingId = await AsyncStorage.getItem(SELECTED_LISTING_KEY);
       if (storedUser) {
-        setUser(JSON.parse(storedUser));
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+
+        try {
+          const { getApiUrl } = await import("@/lib/query-client");
+          const response = await fetch(new URL(`/api/users/${parsedUser.id}`, getApiUrl()).toString());
+          if (response.ok) {
+            const freshUser = await response.json();
+            setUser(freshUser);
+            await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(freshUser));
+          }
+        } catch (refreshError) {
+          // ignore
+        }
       }
       if (storedListingId) {
         setSelectedListingId(storedListingId);

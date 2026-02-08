@@ -260,7 +260,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/users/:id", async (req, res) => {
     try {
-      const user = await storage.updateUser(req.params.id, req.body);
+      const updateData = { ...req.body };
+
+      if (updateData.avatarUrl && updateData.avatarUrl.startsWith('data:image/')) {
+        const matches = updateData.avatarUrl.match(/^data:image\/([a-zA-Z+]+);base64,(.+)$/);
+        if (matches) {
+          const ext = matches[1] === "jpeg" ? "jpg" : matches[1];
+          const data = matches[2];
+          const buffer = Buffer.from(data, "base64");
+          const filename = `avatar_${req.params.id}_${Date.now()}.${ext}`;
+          const uploadDir = path.join(process.cwd(), "server", "uploads");
+          if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+          }
+          const filePath = path.join(uploadDir, filename);
+          fs.writeFileSync(filePath, buffer);
+          updateData.avatarUrl = `/uploads/${filename}`;
+        }
+      }
+
+      const user = await storage.updateUser(req.params.id, updateData);
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }

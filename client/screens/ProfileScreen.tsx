@@ -14,7 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/query-client";
+import { apiRequest, getApiUrl } from "@/lib/query-client";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
@@ -240,7 +240,7 @@ export default function ProfileScreen() {
       >
         <View style={styles.profileCard}>
           <Image 
-            source={(user as any)?.avatarUrl ? { uri: (user as any).avatarUrl } : defaultAvatarImage} 
+            source={(user as any)?.avatarUrl ? { uri: (user as any).avatarUrl.startsWith('http') ? (user as any).avatarUrl : `${getApiUrl().replace(/\/$/, '')}${(user as any).avatarUrl}` } : defaultAvatarImage} 
             style={styles.avatar} 
           />
           <View style={styles.profileInfo}>
