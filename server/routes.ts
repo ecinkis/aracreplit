@@ -449,8 +449,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/users/:id/listing-quota", async (req, res) => {
+    try {
+      const user = await storage.getUser(req.params.id);
+      if (!user) {
+        return res.status(404).json({ error: "Kullanıcı bulunamadı" });
+      }
+
+      const userListings = await storage.getListingsByUser(req.params.id);
+      const activeListingCount = userListings.filter(l => l.status !== "rejected").length;
+
+      let maxListings = 1;
+      let quotaLabel = "Standart Üye";
+
+      if (user.userType === "bireysel") {
+        if (user.isPremium && user.premiumExpiresAt && new Date(user.premiumExpiresAt) > new Date()) {
+          maxListings = 5;
+          quotaLabel = "Premium Üye (Aylık 199₺)";
+        } else if (user.phoneVerified && user.emailVerified) {
+          maxListings = 2;
+          quotaLabel = "Doğrulanmış Üye";
+        } else {
+          maxListings = 1;
+          quotaLabel = "Standart Üye";
+        }
+      } else if (user.userType === "kurumsal") {
+        maxListings = 999;
+        quotaLabel = "Kurumsal Üye";
+      }
+
+      res.json({
+        maxListings,
+        currentListings: activeListingCount,
+        remainingListings: Math.max(0, maxListings - activeListingCount),
+        quotaLabel,
+        phoneVerified: user.phoneVerified || false,
+        emailVerified: user.emailVerified || false,
+        isPremium: user.isPremium || false,
+        premiumExpiresAt: user.premiumExpiresAt,
+      });
+    } catch (error) {
+      console.error("Listing quota error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.post("/api/listings", async (req, res) => {
     try {
+      const { userId } = req.body;
+      if (!userId) {
+        return res.status(400).json({ error: "Kullanıcı bilgisi gerekli" });
+      }
+
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ error: "Kullanıcı bulunamadı" });
+      }
+
+      const userListings = await storage.getListingsByUser(userId);
+      const activeListingCount = userListings.filter(l => l.status !== "rejected").length;
+
+      let maxListings = 1;
+      if (user.userType === "bireysel") {
+        if (user.isPremium && user.premiumExpiresAt && new Date(user.premiumExpiresAt) > new Date()) {
+          maxListings = 5;
+        } else if (user.phoneVerified && user.emailVerified) {
+          maxListings = 2;
+        }
+      } else if (user.userType === "kurumsal") {
+        maxListings = 999;
+      }
+
+      if (activeListingCount >= maxListings) {
+        let message = "İlan limitinize ulaştınız.";
+        if (!user.isPremium && user.userType === "bireysel") {
+          if (!user.phoneVerified || !user.emailVerified) {
+            message = "İlan limitinize ulaştınız. Telefon ve e-posta doğrulaması yaparak 2 ilan hakkı kazanabilirsiniz.";
+          } else {
+            message = "İlan limitinize ulaştınız. Premium üyelikle aylık 5 ilan hakkı kazanabilirsiniz (199₺/ay).";
+          }
+        }
+        return res.status(403).json({ error: message });
+      }
+
       const listing = await storage.createListing(req.body);
       res.status(201).json(listing);
     } catch (error) {

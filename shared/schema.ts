@@ -13,6 +13,7 @@ export const users = pgTable("users", {
   avatarUrl: text("avatar_url"),
   trustScore: integer("trust_score").default(0),
   phoneVerified: boolean("phone_verified").default(false),
+  emailVerified: boolean("email_verified").default(false),
   userType: text("user_type").default("bireysel"),
   email: text("email"),
   tcKimlikNo: text("tc_kimlik_no"),
