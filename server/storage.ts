@@ -689,6 +689,62 @@ export class DatabaseStorage implements IStorage {
 
     return updated || undefined;
   }
+
+  async deleteDemoData(): Promise<{ deletedUsers: number; deletedListings: number; deletedLikes: number; deletedFavorites: number; deletedMatches: number; deletedMessages: number }> {
+    const demoUserIds = await db.select({ id: users.id }).from(users).where(sql`${users.id} LIKE 'demo-%'`);
+    const demoListingIds = await db.select({ id: listings.id }).from(listings).where(sql`${listings.id} LIKE 'demo-%'`);
+    
+    const userIds = demoUserIds.map(u => u.id);
+    const listingIds = demoListingIds.map(l => l.id);
+
+    let deletedMessages = 0;
+    let deletedMatches = 0;
+    let deletedLikes = 0;
+    let deletedFavorites = 0;
+
+    if (userIds.length > 0) {
+      const msgResult = await db.delete(messages).where(
+        sql`${messages.matchId} IN (SELECT id FROM matches WHERE user1_id = ANY(${userIds}) OR user2_id = ANY(${userIds}))`
+      );
+      
+      const matchResult = await db.delete(matches).where(
+        or(
+          sql`${matches.user1Id} = ANY(${userIds})`,
+          sql`${matches.user2Id} = ANY(${userIds})`
+        )!
+      );
+
+      const favResult = await db.delete(favorites).where(
+        sql`${favorites.userId} = ANY(${userIds})`
+      );
+
+      deletedFavorites = favResult.rowCount || 0;
+    }
+
+    if (listingIds.length > 0) {
+      const likeResult = await db.delete(likes).where(
+        or(
+          sql`${likes.listingId} = ANY(${listingIds})`,
+          sql`${likes.targetListingId} = ANY(${listingIds})`
+        )!
+      );
+      deletedLikes = likeResult.rowCount || 0;
+    }
+
+    let deletedListings = 0;
+    if (listingIds.length > 0) {
+      const result = await db.delete(listings).where(sql`${listings.id} LIKE 'demo-%'`);
+      deletedListings = result.rowCount || 0;
+    }
+
+    let deletedUsers = 0;
+    if (userIds.length > 0) {
+      const result = await db.delete(users).where(sql`${users.id} LIKE 'demo-%'`);
+      deletedUsers = result.rowCount || 0;
+    }
+
+    return { deletedUsers, deletedListings, deletedLikes, deletedFavorites, deletedMatches, deletedMessages };
+  }
 }
 
 export const storage = new DatabaseStorage();

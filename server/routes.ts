@@ -1429,6 +1429,16 @@ Disallow: /api/admin/
     }
   });
 
+  app.delete("/api/admin/demo-data", adminAuth, async (req, res) => {
+    try {
+      const result = await storage.deleteDemoData();
+      res.json(result);
+    } catch (error) {
+      console.error("Admin delete demo data error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.get("/api/admin/messages/stats", adminAuth, async (req, res) => {
     try {
       const stats = await storage.getMessageStats();
