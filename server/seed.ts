@@ -20,7 +20,7 @@ const brandPhotos: Record<string, string[]> = {
     "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&h=600&fit=crop&auto=format",
     "https://images.unsplash.com/photo-1556189250-72ba954cfc2b?w=800&h=600&fit=crop&auto=format",
     "https://images.unsplash.com/photo-1590362891991-f776e747a588?w=800&h=600&fit=crop&auto=format",
-    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop&auto=format",
+    "https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=800&h=600&fit=crop&auto=format",
   ],
   "Mercedes-Benz": [
     "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&h=600&fit=crop&auto=format",
@@ -33,7 +33,7 @@ const brandPhotos: Record<string, string[]> = {
     "https://images.unsplash.com/photo-1542362567-b07e54358753?w=800&h=600&fit=crop&auto=format",
   ],
   "Volkswagen": [
-    "https://images.unsplash.com/photo-1533473359331-2f2db3c5d4c6?w=800&h=600&fit=crop&auto=format",
+    "https://images.unsplash.com/photo-1632245889029-e406faaa34cd?w=800&h=600&fit=crop&auto=format",
     "https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?w=800&h=600&fit=crop&auto=format",
   ],
   "Toyota": [
@@ -83,7 +83,7 @@ const brandPhotos: Record<string, string[]> = {
     "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=800&h=600&fit=crop&auto=format",
   ],
   "Opel": [
-    "https://images.unsplash.com/photo-1549317661-bd32c8ce0afe?w=800&h=600&fit=crop&auto=format",
+    "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=800&h=600&fit=crop&auto=format",
   ],
   "Subaru": [
     "https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&h=600&fit=crop&auto=format",
