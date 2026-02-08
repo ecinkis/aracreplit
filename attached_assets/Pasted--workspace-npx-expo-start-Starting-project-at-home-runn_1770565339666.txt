@@ -1,0 +1,67 @@
+~/workspace$ npx expo start
+Starting project at /home/runner/workspace
+› Port 8081 is being used by another process
+✔ Use port 8083 instead? … no
+› Skipping dev server
+~/workspace$ npx expo start
+Starting project at /home/runner/workspace
+› Port 8081 is being used by another process
+✔ Use port 8083 instead? … yes
+React Compiler enabled
+Starting Metro Bundler
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+█ ▄▄▄▄▄ █   █▄ ▀▄██ ▄▄▄▄▄ █
+█ █   █ █ ▀▄ █▀▄█▀█ █   █ █
+█ █▄▄▄█ █▀██▀▀▄▀▄▀█ █▄▄▄█ █
+█▄▄▄▄▄▄▄█▄▀▄█ █ ▀ █▄▄▄▄▄▄▄█
+█  ▀█ ▄▄█▀▀▀▄▀▀▄ ▄██ ▀▄▄ ▄█
+██ ▄ ██▄▄▀█▀ ▄██  ▀ █▄  ▀██
+█▀█▄ █▄▄▄█▀▄█▄█▄▀▄▀▄▀▀▄ ▀██
+███▀█▀█▄▀ █ █▀▄█ ▀▄▀ ▄ ▀███
+█▄▄█▄█▄▄▄▀██▄ █▄▀ ▄▄▄ ▀ ▄▄█
+█ ▄▄▄▄▄ █▀▀ ▄▄██▀ █▄█ ▀▀███
+█ █   █ █▄▀█▀▀▀▄█ ▄ ▄▄▀ ▀▀█
+█ █▄▄▄█ █▀ ▄ ███▀█▀▄▀█▀▀ ██
+█▄▄▄▄▄▄▄█▄▄█▄██▄██▄▄▄▄▄▄▄▄█
+
+› Metro waiting on exp://172.31.109.130:8083
+› Scan the QR code above with Expo Go (Android) or the Camera app (iOS)
+
+› Web is waiting on http://localhost:8083
+
+› Using Expo Go
+› Press s │ switch to development build
+
+› Press a │ open Android
+› Press w │ open web
+
+› Press j │ open debugger
+› Press r │ reload app
+› Press m │ toggle menu
+› shift+m │ more tools
+› Press o │ open project code in your editor
+
+› Press ? │ show all commands
+
+Logs for your project will appear below. Press Ctrl+C to exit.
+/home/runner/workspace/node_modules/expo/node_modules/@expo/cli/build/src/utils/errors.js:130
+    throw error;
+    ^
+
+Error: ENOSPC: System limit for number of file watchers reached, watch '/home/runner/workspace/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/runtime/cxxreactpackage'
+    at FSWatcher.<computed> (node:internal/fs/watchers:254:19)
+    at Object.watch (node:fs:2561:36)
+    at FallbackWatcher._watchdir (/home/runner/workspace/node_modules/@expo/metro/node_modules/metro-file-map/src/watchers/FallbackWatcher.js:119:33)
+    at /home/runner/workspace/node_modules/@expo/metro/node_modules/metro-file-map/src/watchers/FallbackWatcher.js:54:16
+    at Walker.<anonymous> (/home/runner/workspace/node_modules/@expo/metro/node_modules/metro-file-map/src/watchers/FallbackWatcher.js:358:5)
+    at Walker.emit (node:events:519:28)
+    at /home/runner/workspace/node_modules/walker/lib/walker.js:69:16
+    at FSReqCallback.oncomplete (node:fs:186:23) {
+  errno: -28,
+  syscall: 'watch',
+  code: 'ENOSPC',
+  path: '/home/runner/workspace/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/runtime/cxxreactpackage',
+  filename: '/home/runner/workspace/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/runtime/cxxreactpackage'
+}
+
+Node.js v22.22.0
