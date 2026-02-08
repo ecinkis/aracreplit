@@ -91,13 +91,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: result.error });
       }
 
+      let isNewUser = false;
       let user = await storage.getUserByPhone(phone);
       if (!user) {
         user = await storage.createUser({ phone, name: null, city: null });
+        isNewUser = true;
+      } else if (!user.name) {
+        isNewUser = true;
       }
 
       await storage.updateUser(user.id, { phoneVerified: true });
-      res.json({ user: { ...user, phoneVerified: true } });
+      res.json({ user: { ...user, phoneVerified: true }, isNewUser });
     } catch (error) {
       console.error("Verify code error:", error);
       res.status(500).json({ error: "Internal server error" });

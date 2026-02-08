@@ -171,11 +171,13 @@ export default function AuthScreen() {
         throw new Error(data.error || "Dogrulama hatasi");
       }
 
-      const { user: returnedUser } = await response.json();
+      const { user: returnedUser, isNewUser } = await response.json();
       setVerifiedUser(returnedUser);
 
-      if (mode === "verify") {
+      if (isNewUser) {
         setMode("profile");
+      } else {
+        await login(phoneWithCode);
       }
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error: any) {
@@ -222,27 +224,41 @@ export default function AuthScreen() {
         Alert.alert("Hata", "Lütfen geçerli bir telefon numarası girin");
         return;
       }
+
+      setIsLoading(true);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+      try {
+        await sendCode(`+90${cleanedPhone}`);
+        setMode("verify");
+        setTimer(RESEND_TIMER);
+        setCodeDigits(Array(CODE_LENGTH).fill(""));
+        setVerificationCode("");
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      } catch (error: any) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        Alert.alert("Hata", error.message || "Kod gönderilirken bir hata oluştu");
+      } finally {
+        setIsLoading(false);
+      }
     } else {
       if (!email || !password) {
         Alert.alert("Hata", "Lütfen e-posta ve şifrenizi girin");
         return;
       }
-    }
 
-    setIsLoading(true);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      setIsLoading(true);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
-    try {
-      const identifier = loginTab === "phone" 
-        ? `+90${phone.replace(/\D/g, "")}` 
-        : email;
-      await login(identifier);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (error) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert("Hata", "Giriş yapılırken bir hata oluştu");
-    } finally {
-      setIsLoading(false);
+      try {
+        await login(email);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      } catch (error) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        Alert.alert("Hata", "Giriş yapılırken bir hata oluştu");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
