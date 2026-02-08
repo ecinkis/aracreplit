@@ -7,6 +7,8 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "@/hooks/useTheme";
 import { BrandColors, Spacing, BorderRadius } from "@/constants/theme";
 import { ThemedText } from "@/components/ThemedText";
@@ -47,76 +49,100 @@ function CreateMenuModal({
   if (!visible) return null;
 
   return (
-    <Modal transparent visible={visible} animationType="slide" onRequestClose={onClose}>
-      <Pressable style={styles.modalOverlay} onPress={onClose}>
-        <View style={StyleSheet.absoluteFill} />
-      </Pressable>
-      <View 
-        style={[
-          styles.bottomSheet,
-          { paddingBottom: insets.bottom + Spacing.lg }
-        ]}
-      >
-        <View style={styles.sheetHandle} />
-        
-        <View style={styles.sheetHeader}>
-          <ThemedText style={styles.sheetTitle}>İlan Ver</ThemedText>
-          <Pressable 
-            onPress={onClose}
-            style={({ pressed }) => [
-              styles.closeButton,
-              pressed && { opacity: 0.7 }
-            ]}
-          >
-            <Feather name="x" size={24} color="#374151" />
-          </Pressable>
-        </View>
+    <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
+      <View style={styles.modalOverlay}>
+        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
 
-        <View style={styles.optionsContainer}>
-          <Pressable 
-            style={({ pressed }) => [
-              styles.optionCard,
-              pressed && styles.optionCardPressed
-            ]}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              onQuickCreate();
-            }}
-          >
-            <View style={[styles.optionIconContainer, { backgroundColor: "#10B981" }]}>
-              <Feather name="zap" size={24} color="#FFFFFF" />
-            </View>
-            <View style={styles.optionContent}>
-              <ThemedText style={styles.optionTitle}>Hızlı İlan Ver</ThemedText>
-              <ThemedText style={styles.optionDescription}>
-                Çok detaya girmeden kısa sürede ilan ver
-              </ThemedText>
-            </View>
-            <Feather name="chevron-right" size={24} color="#9CA3AF" />
-          </Pressable>
+        <Animated.View
+          entering={SlideInDown.springify().damping(18).stiffness(140)}
+          exiting={SlideOutDown.duration(250)}
+          style={[
+            styles.bottomSheet,
+            { paddingBottom: insets.bottom + Spacing.xl }
+          ]}
+        >
+          <View style={styles.sheetHandle} />
 
-          <Pressable 
-            style={({ pressed }) => [
-              styles.optionCard,
-              pressed && styles.optionCardPressed
-            ]}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              onDetailedCreate();
-            }}
-          >
-            <View style={[styles.optionIconContainer, { backgroundColor: "#1F2937" }]}>
-              <Feather name="file-text" size={24} color="#FFFFFF" />
+          <View style={styles.sheetHeader}>
+            <View style={styles.sheetTitleRow}>
+              <View style={styles.sheetTitleIcon}>
+                <Feather name="plus-circle" size={20} color="#FFFFFF" />
+              </View>
+              <ThemedText style={styles.sheetTitle}>Yeni İlan Oluştur</ThemedText>
             </View>
-            <View style={styles.optionContent}>
-              <ThemedText style={styles.optionTitle}>Detaylı İlan Ver</ThemedText>
-              <ThemedText style={styles.optionDescription}>
-                Tüm özellikleri detaylıca belirterek ilan ver
-              </ThemedText>
-            </View>
-            <Feather name="chevron-right" size={24} color="#9CA3AF" />
-          </Pressable>
-        </View>
+            <Pressable
+              onPress={onClose}
+              style={({ pressed }) => [
+                styles.closeButton,
+                pressed && { opacity: 0.6, transform: [{ scale: 0.9 }] }
+              ]}
+            >
+              <Feather name="x" size={18} color="#999999" />
+            </Pressable>
+          </View>
+
+          <View style={styles.optionsContainer}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.optionCard,
+                pressed && styles.optionCardPressed
+              ]}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                onQuickCreate();
+              }}
+            >
+              <LinearGradient
+                colors={["#10B981", "#059669"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.optionIconContainer}
+              >
+                <Feather name="zap" size={22} color="#FFFFFF" />
+              </LinearGradient>
+              <View style={styles.optionContent}>
+                <ThemedText style={styles.optionTitle}>Hızlı İlan</ThemedText>
+                <ThemedText style={styles.optionDescription}>
+                  Birkaç adımda hızlıca ilan oluştur
+                </ThemedText>
+              </View>
+              <View style={styles.optionArrow}>
+                <Feather name="arrow-right" size={18} color="#666666" />
+              </View>
+            </Pressable>
+
+            <View style={styles.optionDivider} />
+
+            <Pressable
+              style={({ pressed }) => [
+                styles.optionCard,
+                pressed && styles.optionCardPressed
+              ]}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                onDetailedCreate();
+              }}
+            >
+              <LinearGradient
+                colors={["#1F2937", "#111827"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.optionIconContainer}
+              >
+                <Feather name="file-text" size={22} color="#FFFFFF" />
+              </LinearGradient>
+              <View style={styles.optionContent}>
+                <ThemedText style={styles.optionTitle}>Detaylı İlan</ThemedText>
+                <ThemedText style={styles.optionDescription}>
+                  Tüm detayları ekleyerek profesyonel ilan oluştur
+                </ThemedText>
+              </View>
+              <View style={styles.optionArrow}>
+                <Feather name="arrow-right" size={18} color="#666666" />
+              </View>
+            </Pressable>
+          </View>
+        </Animated.View>
       </View>
     </Modal>
   );
@@ -336,59 +362,79 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: "flex-end",
   },
   bottomSheet: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "#FFFFFF",
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingTop: Spacing.sm,
-    paddingHorizontal: Spacing.lg,
+    backgroundColor: "#1A1A1A",
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingTop: 12,
+    paddingHorizontal: 20,
   },
   sheetHandle: {
-    width: 36,
-    height: 4,
-    backgroundColor: "#D1D5DB",
-    borderRadius: 2,
+    width: 40,
+    height: 5,
+    backgroundColor: "#3A3A3A",
+    borderRadius: 3,
     alignSelf: "center",
-    marginBottom: Spacing.md,
+    marginBottom: 20,
   },
   sheetHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: Spacing.lg,
+    marginBottom: 24,
+  },
+  sheetTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  sheetTitleIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    backgroundColor: "#000000",
+    alignItems: "center",
+    justifyContent: "center",
   },
   sheetTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#111827",
+    fontSize: 19,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    letterSpacing: -0.3,
   },
   closeButton: {
-    padding: Spacing.xs,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#2A2A2A",
+    alignItems: "center",
+    justifyContent: "center",
   },
   optionsContainer: {
-    gap: Spacing.md,
+    backgroundColor: "#222222",
+    borderRadius: 16,
+    overflow: "hidden",
   },
   optionCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F9FAFB",
-    borderRadius: 16,
-    padding: Spacing.md,
-    gap: Spacing.md,
+    padding: 16,
+    gap: 14,
   },
   optionCardPressed: {
-    backgroundColor: "#F3F4F6",
-    transform: [{ scale: 0.98 }],
+    backgroundColor: "#2A2A2A",
+  },
+  optionDivider: {
+    height: 1,
+    backgroundColor: "#2E2E2E",
+    marginHorizontal: 16,
   },
   optionIconContainer: {
-    width: 48,
-    height: 48,
+    width: 44,
+    height: 44,
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
@@ -397,14 +443,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   optionTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "600",
-    color: "#111827",
+    color: "#FFFFFF",
     marginBottom: 2,
   },
   optionDescription: {
-    fontSize: 13,
-    color: "#6B7280",
-    lineHeight: 18,
+    fontSize: 12,
+    color: "#888888",
+    lineHeight: 16,
+  },
+  optionArrow: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#2A2A2A",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
