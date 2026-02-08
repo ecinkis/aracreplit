@@ -53,7 +53,7 @@ const brandPhotos: Record<string, string[]> = {
     "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&h=600&fit=crop&auto=format",
   ],
   "Hyundai": [
-    "https://images.unsplash.com/photo-1626668011687-8a114cf5a34c?w=800&h=600&fit=crop&auto=format",
+    "https://images.unsplash.com/photo-1629897048514-3dd7414fe72a?w=800&h=600&fit=crop&auto=format",
   ],
   "Mazda": [
     "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&h=600&fit=crop&auto=format",
