@@ -93,12 +93,12 @@ function CreateMenuModal({
               }}
             >
               <LinearGradient
-                colors={["#10B981", "#059669"]}
+                colors={["#34D399", "#06B6D4"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.optionIconContainer}
               >
-                <Feather name="zap" size={22} color="#FFFFFF" />
+                <Feather name="send" size={20} color="#FFFFFF" />
               </LinearGradient>
               <View style={styles.optionContent}>
                 <ThemedText style={styles.optionTitle}>Hızlı İlan</ThemedText>
@@ -124,12 +124,12 @@ function CreateMenuModal({
               }}
             >
               <LinearGradient
-                colors={["#1F2937", "#111827"]}
+                colors={["#8B5CF6", "#6366F1"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.optionIconContainer}
               >
-                <Feather name="file-text" size={22} color="#FFFFFF" />
+                <Feather name="clipboard" size={20} color="#FFFFFF" />
               </LinearGradient>
               <View style={styles.optionContent}>
                 <ThemedText style={styles.optionTitle}>Detaylı İlan</ThemedText>
