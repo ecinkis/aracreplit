@@ -5,6 +5,7 @@ import {
   Pressable,
   Image,
   ActivityIndicator,
+  Alert,
   useWindowDimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -250,7 +251,23 @@ export default function MatchScreen() {
   const { user, selectedListingId } = useAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [canGoBack, setCanGoBack] = useState(false);
+  const [swipeLimitReached, setSwipeLimitReached] = useState(false);
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+
+  const { data: swipeQuota, refetch: refetchQuota } = useQuery<{
+    isPremium: boolean;
+    dailyLimit: number;
+    usedToday: number;
+    remainingToday: number;
+  }>({
+    queryKey: ["/api/users", user?.id, "swipe-quota"],
+    queryFn: async () => {
+      const url = new URL(`/api/users/${user?.id}/swipe-quota`, getApiUrl());
+      const response = await fetch(url.toString());
+      return response.json();
+    },
+    enabled: !!user?.id,
+  });
   const cardWidth = screenWidth - Spacing.xl * 2;
   const cardHeight = screenHeight * 0.52;
 
@@ -298,6 +315,13 @@ export default function MatchScreen() {
       if (data.isMatch) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
+      refetchQuota();
+    },
+    onError: (error: any) => {
+      if (error?.status === 429 || error?.message?.includes("limit")) {
+        setSwipeLimitReached(true);
+        refetchQuota();
+      }
     },
   });
 
@@ -315,6 +339,12 @@ export default function MatchScreen() {
 
   const handleSwipe = useCallback(async (direction: "left" | "right" | "up") => {
     if (displayListings.length === 0) return;
+
+    if (swipeQuota && swipeQuota.remainingToday === 0 && !swipeQuota.isPremium) {
+      setSwipeLimitReached(true);
+      return;
+    }
+
     const idx = currentIndex % displayListings.length;
     const listing = displayListings[idx];
     const liked = direction === "right";
@@ -342,7 +372,7 @@ export default function MatchScreen() {
       setCurrentIndex(nextIndex);
       setCanGoBack(true);
     }
-  }, [displayListings, currentIndex, user?.id, activeListingId, swipeMutation, favoriteMutation, queryClient]);
+  }, [displayListings, currentIndex, user?.id, activeListingId, swipeMutation, favoriteMutation, queryClient, swipeQuota]);
 
   const handleButtonSwipe = (direction: "left" | "right" | "up") => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -401,6 +431,42 @@ export default function MatchScreen() {
             })}
           </View>
 
+          {swipeQuota && !swipeQuota.isPremium && swipeQuota.remainingToday >= 0 ? (
+            <View style={styles.quotaBadge}>
+              <Feather name="zap" size={12} color={swipeQuota.remainingToday <= 5 ? BrandColors.alertRed : "#6B7280"} />
+              <ThemedText style={[
+                styles.quotaBadgeText,
+                swipeQuota.remainingToday <= 5 ? { color: BrandColors.alertRed } : null,
+              ]}>
+                {swipeQuota.remainingToday} kaydirma hakki
+              </ThemedText>
+            </View>
+          ) : null}
+
+          {swipeLimitReached ? (
+            <View style={styles.limitOverlay}>
+              <View style={styles.limitCard}>
+                <Feather name="alert-circle" size={40} color={BrandColors.alertRed} />
+                <ThemedText style={styles.limitTitle}>Günlük Limitiniz Doldu</ThemedText>
+                <ThemedText style={styles.limitText}>
+                  Bugün 20 kaydirma hakkinizi kullandiniz. Premium üyelikle sinursiz kaydirma yapin.
+                </ThemedText>
+                <Pressable
+                  style={styles.limitPremiumButton}
+                  onPress={() => navigation.navigate("Premium")}
+                >
+                  <Feather name="zap" size={16} color="#FFFFFF" />
+                  <ThemedText style={styles.limitPremiumButtonText}>Premium'a Yükselt</ThemedText>
+                </Pressable>
+                <ThemedText style={styles.limitResetText}>
+                  Yarin gece yarisi sifirlaniyor
+                </ThemedText>
+              </View>
+            </View>
+          ) : null}
+
+          {!swipeLimitReached ? (
+          <>
           <View style={styles.tipSection}>
             <ThemedText style={styles.tipText}>
               Saga kaydir: Begeni | Sola kaydir: Gec | Yukari: Favori
@@ -454,6 +520,8 @@ export default function MatchScreen() {
               <Feather name="star" size={22} color="#F59E0B" />
             </Pressable>
           </View>
+          </>
+          ) : null}
 
         </View>
       )}
@@ -811,5 +879,69 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "#6B7280",
     textAlign: "center",
+  },
+  quotaBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: "#F3F4F6",
+    borderRadius: 16,
+    alignSelf: "center",
+    marginBottom: Spacing.xs,
+  },
+  quotaBadgeText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#6B7280",
+  },
+  limitOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: Spacing.xl,
+  },
+  limitCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.xl,
+    alignItems: "center",
+    gap: Spacing.md,
+    borderWidth: 1,
+    borderColor: "#F3F4F6",
+  },
+  limitTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#000000",
+    textAlign: "center",
+  },
+  limitText: {
+    fontSize: 14,
+    color: "#6B7280",
+    textAlign: "center",
+    lineHeight: 20,
+  },
+  limitPremiumButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    backgroundColor: "#000000",
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.sm,
+    marginTop: Spacing.sm,
+  },
+  limitPremiumButtonText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  limitResetText: {
+    fontSize: 12,
+    color: "#9CA3AF",
+    marginTop: Spacing.xs,
   },
 });
