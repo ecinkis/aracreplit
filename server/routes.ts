@@ -1490,6 +1490,16 @@ Disallow: /api/admin/
     }
   });
 
+  app.get("/api/admin/applications/pending/:type", adminAuth, async (req, res) => {
+    try {
+      const applications = await storage.getPendingApplications(req.params.type);
+      res.json(applications);
+    } catch (error) {
+      console.error("Get pending applications error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.post("/api/applications/:id/approve", adminAuth, async (req, res) => {
     try {
       const application = await storage.approveApplication(req.params.id, (req as any).adminEmail);
@@ -1503,7 +1513,34 @@ Disallow: /api/admin/
     }
   });
 
+  app.post("/api/admin/applications/:id/approve", adminAuth, async (req, res) => {
+    try {
+      const application = await storage.approveApplication(req.params.id, (req as any).adminEmail);
+      if (!application) {
+        return res.status(404).json({ error: "Application not found" });
+      }
+      res.json(application);
+    } catch (error) {
+      console.error("Approve application error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.post("/api/applications/:id/reject", adminAuth, async (req, res) => {
+    try {
+      const { reason } = req.body;
+      const application = await storage.rejectApplication(req.params.id, reason, (req as any).adminEmail);
+      if (!application) {
+        return res.status(404).json({ error: "Application not found" });
+      }
+      res.json(application);
+    } catch (error) {
+      console.error("Reject application error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/admin/applications/:id/reject", adminAuth, async (req, res) => {
     try {
       const { reason } = req.body;
       const application = await storage.rejectApplication(req.params.id, reason, (req as any).adminEmail);

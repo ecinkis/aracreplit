@@ -727,8 +727,8 @@ export class DatabaseStorage implements IStorage {
     if (listingIds.length > 0) {
       const likeResult = await db.delete(likes).where(
         or(
-          sql`${likes.listingId} = ANY(${listingIds})`,
-          sql`${likes.targetListingId} = ANY(${listingIds})`
+          sql`${likes.fromListingId} = ANY(${listingIds})`,
+          sql`${likes.toListingId} = ANY(${listingIds})`
         )!
       );
       deletedLikes = likeResult.rowCount || 0;
