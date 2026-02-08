@@ -312,8 +312,12 @@ export default function AuthScreen() {
         tokenEndpoint: "https://oauth2.googleapis.com/token",
       };
       
+      const googleClientId = Platform.OS === "ios"
+        ? (process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || "")
+        : (process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || "");
+
       const request = new AuthSession.AuthRequest({
-        clientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || "",
+        clientId: googleClientId,
         scopes: ["openid", "profile", "email"],
         redirectUri,
         responseType: AuthSession.ResponseType.Token,
