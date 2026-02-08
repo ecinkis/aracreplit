@@ -158,7 +158,7 @@ export default function VitrinScreen() {
   const storyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const progressAnim = useRef(new RNAnimated.Value(0)).current;
 
-  const STORY_DURATION = 25000;
+  const STORY_DURATION = 15000;
 
   const closeStory = useCallback(() => {
     if (storyTimerRef.current) {
