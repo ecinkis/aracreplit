@@ -88,6 +88,23 @@
       .section-card-link:hover{color:#000}
       .section-card-body{padding:16px 20px}
 
+      /* Ad Slider */
+      .ad-slider-card{background:#fff;border-radius:12px;border:1px solid #e8e8e8;overflow:hidden}
+      .ad-slider-wrap{position:relative;width:100%;height:100px;overflow:hidden;border-radius:12px}
+      .ad-slider-track{display:flex;width:100%;height:100%;transition:transform 0.5s ease-in-out}
+      .ad-slide{flex:0 0 100%;width:100%;height:100%;position:relative}
+      .ad-slide img{width:100%;height:100%;object-fit:cover}
+      .ad-slide-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:13px;color:#999;font-weight:500;letter-spacing:0.5px}
+      .ad-slide-placeholder span{position:relative;z-index:1}
+      .ad-slider-dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:2}
+      .ad-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.4);cursor:pointer;transition:background 0.3s,transform 0.2s;border:none;padding:0}
+      .ad-dot.active{background:#fff;transform:scale(1.2)}
+      .ad-slider-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.3);color:#fff;border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;z-index:2;font-size:14px}
+      .ad-slider-btn:hover{background:rgba(0,0,0,0.5)}
+      .ad-slider-prev{left:10px}
+      .ad-slider-next{right:10px}
+      .ad-label{position:absolute;top:6px;right:8px;background:rgba(0,0,0,0.4);color:rgba(255,255,255,0.6);font-size:9px;font-weight:600;padding:2px 6px;border-radius:3px;z-index:2;text-transform:uppercase;letter-spacing:0.5px}
+
       /* Vitrin Horizontal Scroll */
       .vitrin-scroll{display:flex;gap:14px;overflow-x:auto;padding:16px 20px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
       .vitrin-scroll::-webkit-scrollbar{display:none}
@@ -387,6 +404,47 @@
 
       <!-- Right Content -->
       <main class="content">
+
+        <!-- Reklam Slider -->
+        <div class="ad-slider-card">
+          <div class="ad-slider-wrap" id="ad-slider">
+            <div class="ad-slider-track" id="ad-slider-track">
+              <div class="ad-slide">
+                <div class="ad-slide-placeholder" style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)">
+                  <span style="color:rgba(255,255,255,0.7);font-size:15px;font-weight:700">Reklam Alan&#305; 1 - Buraya reklam g&#246;rseli eklenecek</span>
+                </div>
+                <div class="ad-label">Reklam</div>
+              </div>
+              <div class="ad-slide">
+                <div class="ad-slide-placeholder" style="background:linear-gradient(135deg,#2d1b69 0%,#11998e 100%)">
+                  <span style="color:rgba(255,255,255,0.7);font-size:15px;font-weight:700">Reklam Alan&#305; 2 - Buraya reklam g&#246;rseli eklenecek</span>
+                </div>
+                <div class="ad-label">Reklam</div>
+              </div>
+              <div class="ad-slide">
+                <div class="ad-slide-placeholder" style="background:linear-gradient(135deg,#0c0c0c 0%,#333 50%,#555 100%)">
+                  <span style="color:rgba(255,255,255,0.7);font-size:15px;font-weight:700">Reklam Alan&#305; 3 - Buraya reklam g&#246;rseli eklenecek</span>
+                </div>
+                <div class="ad-label">Reklam</div>
+              </div>
+              <div class="ad-slide">
+                <div class="ad-slide-placeholder" style="background:linear-gradient(135deg,#b91c1c 0%,#dc2626 50%,#ef4444 100%)">
+                  <span style="color:rgba(255,255,255,0.7);font-size:15px;font-weight:700">Reklam Alan&#305; 4 - Buraya reklam g&#246;rseli eklenecek</span>
+                </div>
+                <div class="ad-label">Reklam</div>
+              </div>
+              <div class="ad-slide">
+                <div class="ad-slide-placeholder" style="background:linear-gradient(135deg,#065f46 0%,#059669 50%,#34d399 100%)">
+                  <span style="color:rgba(255,255,255,0.7);font-size:15px;font-weight:700">Reklam Alan&#305; 5 - Buraya reklam g&#246;rseli eklenecek</span>
+                </div>
+                <div class="ad-label">Reklam</div>
+              </div>
+            </div>
+            <button class="ad-slider-btn ad-slider-prev" onclick="slideAd(-1)" aria-label="&#214;nceki">&#8249;</button>
+            <button class="ad-slider-btn ad-slider-next" onclick="slideAd(1)" aria-label="Sonraki">&#8250;</button>
+            <div class="ad-slider-dots" id="ad-slider-dots"></div>
+          </div>
+        </div>
 
         <!-- Vitrin &#304;lanlar&#305; -->
         <div class="section-card" id="featured">
@@ -899,6 +957,51 @@
         document.getElementById('close-icon').style.display = 'none';
         document.body.style.overflow = '';
       }
+
+      /* Ad Slider */
+      var adCurrentSlide = 0;
+      var adTotalSlides = 5;
+      var adAutoPlayInterval = null;
+
+      function initAdSlider() {
+        var dotsContainer = document.getElementById('ad-slider-dots');
+        if (!dotsContainer) return;
+        dotsContainer.innerHTML = '';
+        for (var i = 0; i < adTotalSlides; i++) {
+          var dot = document.createElement('button');
+          dot.className = 'ad-dot' + (i === 0 ? ' active' : '');
+          dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+          dot.onclick = (function(index) { return function() { goToAdSlide(index); }; })(i);
+          dotsContainer.appendChild(dot);
+        }
+        startAdAutoPlay();
+      }
+
+      function slideAd(direction) {
+        goToAdSlide(adCurrentSlide + direction);
+      }
+
+      function goToAdSlide(index) {
+        adCurrentSlide = ((index % adTotalSlides) + adTotalSlides) % adTotalSlides;
+        var track = document.getElementById('ad-slider-track');
+        if (track) track.style.transform = 'translateX(-' + (adCurrentSlide * 100) + '%)';
+        var dots = document.querySelectorAll('.ad-dot');
+        dots.forEach(function(dot, i) {
+          dot.className = 'ad-dot' + (i === adCurrentSlide ? ' active' : '');
+        });
+        resetAdAutoPlay();
+      }
+
+      function startAdAutoPlay() {
+        adAutoPlayInterval = setInterval(function() { slideAd(1); }, 4000);
+      }
+
+      function resetAdAutoPlay() {
+        if (adAutoPlayInterval) clearInterval(adAutoPlayInterval);
+        startAdAutoPlay();
+      }
+
+      document.addEventListener('DOMContentLoaded', function() { initAdSlider(); });
     </script>
   </body>
 </html>
