@@ -25,7 +25,7 @@ import appleLogo from "../assets/images/apple-logo.png";
 
 WebBrowser.maybeCompleteAuthSession();
 
-type AuthMode = "login" | "register" | "verify" | "profile" | "forgotPassword" | "forgotVerify";
+type AuthMode = "login" | "register" | "verify" | "profile" | "forgotPassword";
 type LoginTab = "phone" | "email";
 type ForgotTab = "email" | "phone";
 
@@ -362,6 +362,8 @@ export default function AuthScreen() {
         Alert.alert("Hata", "Lütfen e-posta adresinizi girin");
         return;
       }
+      Alert.alert("Bilgi", "E-posta ile şifre sıfırlama yakında aktif olacaktır. Lütfen telefon numaranızı kullanın.");
+      return;
     } else {
       const cleanedPhone = phone.replace(/\D/g, "");
       if (cleanedPhone.length !== 10) {
@@ -374,15 +376,16 @@ export default function AuthScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setMode("forgotVerify");
+      const cleanedPhone = phone.replace(/\D/g, "");
+      await sendCode(`+90${cleanedPhone}`);
+      setMode("verify");
       setTimer(RESEND_TIMER);
       setCodeDigits(Array(CODE_LENGTH).fill(""));
       setVerificationCode("");
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (error) {
+    } catch (error: any) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert("Hata", "Kod gönderilirken bir hata oluştu");
+      Alert.alert("Hata", error.message || "Kod gönderilirken bir hata oluştu");
     } finally {
       setIsLoading(false);
     }
@@ -409,7 +412,7 @@ export default function AuthScreen() {
 
             <ThemedText style={styles.title}>Doğrulama Kodunu Giriniz</ThemedText>
             <ThemedText style={styles.subtitle}>
-              Sistemde kayıtlı olan E-postanıza / Telefon numaranıza gönderilmiş olan doğrulama kodunu giriniz.
+              +90 {phone} numarasına gönderilen 6 haneli doğrulama kodunu giriniz.
             </ThemedText>
 
             <View style={styles.formContainer}>
@@ -644,86 +647,6 @@ export default function AuthScreen() {
     );
   }
 
-  if (mode === "forgotVerify") {
-    return (
-      <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-        <View style={styles.keyboardView}>
-          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-            <View style={styles.logoContainer}>
-              <TakasLogo size={80} color="#000000" />
-            </View>
-
-            <ThemedText style={styles.title}>Doğrulama Kodunu Giriniz</ThemedText>
-            <ThemedText style={styles.subtitle}>
-              {forgotTab === "email" 
-                ? `${email} adresine gönderilen doğrulama kodunu giriniz.`
-                : `+90 ${phone} numarasına gönderilen doğrulama kodunu giriniz.`
-              }
-            </ThemedText>
-
-            <View style={styles.formContainer}>
-              <View style={styles.timerRow}>
-                <Feather name="clock" size={18} color="#6B7280" />
-                <ThemedText style={styles.timerText}>{formatTimer(timer)}</ThemedText>
-              </View>
-
-              <View style={styles.codeBoxContainer}>
-                {Array(CODE_LENGTH).fill(0).map((_, index) => (
-                  <TextInput
-                    key={index}
-                    ref={(ref) => { inputRefs.current[index] = ref; }}
-                    style={styles.codeBox}
-                    value={codeDigits[index]}
-                    onChangeText={(text) => handleCodeDigitChange(text, index)}
-                    onKeyPress={({ nativeEvent }) => handleCodeKeyPress(nativeEvent.key, index)}
-                    keyboardType="number-pad"
-                    maxLength={1}
-                    selectTextOnFocus
-                  />
-                ))}
-              </View>
-
-              <Pressable
-                style={({ pressed }) => [
-                  styles.submitButton,
-                  verificationCode.length !== 6 && styles.submitButtonDisabled,
-                  pressed && verificationCode.length === 6 && styles.submitButtonPressed,
-                ]}
-                onPress={() => {
-                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                  Alert.alert("Başarılı", "Şifreniz sıfırlandı. Yeni şifreniz SMS/E-posta ile gönderildi.");
-                  resetToLogin();
-                }}
-                disabled={verificationCode.length !== 6 || isLoading}
-              >
-                {isLoading ? (
-                  <ActivityIndicator color="#FFFFFF" />
-                ) : (
-                  <ThemedText style={styles.submitButtonText}>Kodu Onayla</ThemedText>
-                )}
-              </Pressable>
-
-              <Pressable 
-                style={[styles.resendButton, timer > 0 && styles.resendButtonDisabled]} 
-                onPress={handleResendCode}
-                disabled={timer > 0}
-              >
-                <ThemedText style={[styles.resendButtonText, timer > 0 && styles.resendButtonTextDisabled]}>
-                  Yeni Kod Gönder
-                </ThemedText>
-              </Pressable>
-
-              <ThemedText style={styles.orText}>veya</ThemedText>
-
-              <Pressable style={styles.switchContainer} onPress={resetToLogin}>
-                <ThemedText style={styles.switchText}>Giriş Yapın</ThemedText>
-              </Pressable>
-            </View>
-          </ScrollView>
-        </View>
-      </View>
-    );
-  }
 
   if (mode === "register") {
     return (
