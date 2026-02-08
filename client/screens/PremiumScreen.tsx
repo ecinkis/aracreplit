@@ -20,7 +20,7 @@ import { Spacing, BorderRadius, Typography, BrandColors } from "@/constants/them
 import { apiRequest } from "@/lib/query-client";
 
 const PREMIUM_FEATURES = [
-  { icon: "file-text", title: "3 İlan Hakkı", description: "Bireysel üye olarak 3 adet ilan yayınlayabilirsiniz" },
+  { icon: "file-text", title: "Aylık 5 İlan Hakkı", description: "Bireysel üye olarak aylık 5 adet ilan yayınlayabilirsiniz" },
   { icon: "heart", title: "Sınırsız Beğeni", description: "Günlük beğeni limiti olmadan istediğiniz kadar kaydırın" },
   { icon: "star", title: "Öne Çıkan İlanlar", description: "İlanlarınız arama sonuçlarında üstte görünsün" },
   { icon: "zap", title: "Öncelikli Eşleşme", description: "Eşleşmeleriniz daha hızlı gerçekleşsin" },
@@ -29,7 +29,7 @@ const PREMIUM_FEATURES = [
   { icon: "shield", title: "Öncelikli Destek", description: "7/24 öncelikli müşteri desteği" },
 ];
 
-const PLAN = { id: "monthly", title: "Aylık Premium", price: "149", period: "ay" };
+const PLAN = { id: "monthly", title: "Aylık Premium", price: "199", period: "ay" };
 
 function FeatureItem({ icon, title, description }: { icon: string; title: string; description: string }) {
   const { theme } = useTheme();
@@ -83,7 +83,7 @@ export default function PremiumScreen() {
   const handleSubscribe = () => {
     Alert.alert(
       "Premium Başvurusu",
-      "Aylık 149 TL premium üyelik başvurusu yapmak istiyor musunuz? Başvurunuz onaylandığında ödeme bilgileri için sizinle iletişime geçilecektir.",
+      "Aylık 199 TL premium üyelik başvurusu yapmak istiyor musunuz? Başvurunuz onaylandığında ödeme bilgileri için sizinle iletişime geçilecektir.",
       [
         { text: "İptal", style: "cancel" },
         { text: "Başvur", onPress: () => subscribeMutation.mutate() },
@@ -136,7 +136,7 @@ export default function PremiumScreen() {
           <View style={[styles.priceCard, { backgroundColor: theme.backgroundSecondary }]}>
             <ThemedText style={styles.priceLabel}>Aylık Üyelik</ThemedText>
             <View style={styles.priceRow}>
-              <ThemedText style={styles.priceAmount}>149</ThemedText>
+              <ThemedText style={styles.priceAmount}>199</ThemedText>
               <ThemedText style={[styles.priceCurrency, { color: theme.textSecondary }]}>TL/ay</ThemedText>
             </View>
           </View>
