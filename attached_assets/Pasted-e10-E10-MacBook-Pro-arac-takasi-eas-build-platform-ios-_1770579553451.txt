@@ -1,0 +1,101 @@
+e10@E10-MacBook-Pro arac-takasi % eas build --platform ios --profile preview
+Resolved "preview" environment for the build. Learn more: https://docs.expo.dev/eas/environment-variables/#setting-the-environment-for-your-builds
+No environment variables with visibility "Plain text" and "Sensitive" found for the "preview" environment on EAS.
+
+
+
+✔ Using remote iOS credentials (Expo server)
+
+If you provide your Apple account credentials we will be able to generate all necessary build credentials and fully validate them.
+This is optional, but without Apple account access you will need to provide all the missing values manually and we can only run minimal validation on them.
+✔ Do you want to log in to your Apple account? … yes
+
+› Log in to your Apple Developer account to continue
+✔ Apple ID: … ecinkis@gmail.com
+› The password is only used to authenticate with Apple and never stored on EAS
+servers
+  Learn more: https://bit.ly/2VtGWhU
+✔ Password (for ecinkis@gmail.com): … ********************
+› Saving Apple ID password to the local Keychain
+  Learn more: https://docs.expo.dev/distribution/security#keychain
+✔ Logged in, verify your Apple account to continue
+Two-factor Authentication (6 digit code) is enabled for ecinkis@gmail.com. Learn more: https://support.apple.com/en-us/HT204915
+
+✔ How do you want to validate your account? … device / sms
+✔ Please enter the 6 digit code … 544708
+✔ Valid code
+✔ Logged in and verified
+› Team Erdal Cinkis (TZ63HLT39Q)
+› Provider Erdal Cinkis (127529473)
+✔ Bundle identifier registered com.takasapp.mobile
+✔ Synced capabilities: No updates
+✔ Synced capability identifiers: No updates
+✔ Fetched Apple distribution certificates
+✔ Fetched Apple provisioning profiles
+✔ All your registered devices are present in the Provisioning Profile. Would you like to reuse the profile? › Yes
+
+Project Credentials Configuration
+
+Project                   @erdal10/takas-app
+Bundle Identifier         com.takasapp.mobile
+                          
+Ad Hoc Configuration      
+                          
+Distribution Certificate  
+Serial Number             3DA8E2DA5C28526D7E63280D7F43A6F
+Expiration Date           Fri, 15 Jan 2027 17:06:47 GMT
+Apple Team                TZ63HLT39Q (Erdal Cinkis (Individual))
+Updated                   24 days ago
+                          
+Provisioning Profile      
+Developer Portal ID       G3HM8PUJ98
+Status                    active
+Expiration                Fri, 15 Jan 2027 17:06:47 GMT
+Apple Team                TZ63HLT39Q (Erdal Cinkis (Individual))
+Provisioned devices       - iPhone (UDID: 00008140-00126D483C29801C)
+Updated                   24 days ago
+                          
+All credentials are ready to build @erdal10/takas-app (com.takasapp.mobile)
+
+
+Compressing project files and uploading to EAS Build. Learn more: https://expo.fyi/eas-build-archive
+✔ Compressed project files 4s (109 MB)
+✔ Uploaded to EAS 19s
+✔ Computed project fingerprint
+
+See logs: https://expo.dev/accounts/erdal10/projects/takas-app/builds/d34cc97b-9b80-43d0-b5f2-3af04071761f
+
+Waiting for build to complete. You can press Ctrl+C to exit.
+✔ Build finished
+
+  ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+  █ ▄▄▄▄▄ █▄ ▄ █▀▄▀█ █ █▀▀▄▄▀█▄█▀ █▀ ▀  ▀▀▀ █ ▄▄▄▄▄ █
+  █ █   █ █ ▀▄▀▄  ▄█   ▀█▄▀  ▄██▄  ▄▄██  █ ▄█ █   █ █
+  █ █▄▄▄█ █▄▀▄ ▄▀▄▀▀▀▄▄▄▀ ▄▄▄ █▀ ▀▀█▄█ █ ▀███ █▄▄▄█ █
+  █▄▄▄▄▄▄▄█▄▀▄▀▄█▄█▄▀▄█▄▀ █▄█ ▀ █ ▀▄▀▄█ ▀ █ █▄▄▄▄▄▄▄█
+  █ ▄  ▀█▄█▄▄▀ ▄█▀▀█ █ ▄█▄  ▄▄▀▄ ▀▄█▄█▀█▀█▄█ ▀█▄ ▄▀▄█
+  █▄▄▀█▀ ▄▄▀█ ▀▄█▄▀▀██▄▄█ █ ██ █  ▄ ▀▄▄▀█▀█ ▄▄█▀▄ ▄██
+  █ █▀▀▄▄▄▄▄▄█▀▀▀▀ ▀▀▄▀    ▄▄ ▀█▄▄ ▀▀█▄▄   ▄ █ ▀▄ ▄ █
+  ██▀▄█  ▄▄▄▄ ▀▀▄▀█▀▀█ ▀██▄█▀ █ █ █▀▀███▄ █▄  ▀▀ ▄ ▀█
+  █▄█▄  █▄█▀▄▀███ ▀ ▄▀██▀▄▀▀███▀▄▄▄ █ ▀▀▄▄▀ ▄██▄ ▄▀ █
+  █▀█ ▄▀▄▄ ▄▄█▄█▄▄ ▄ ▀█▄▀▄ ▀█ ▄▀ ▀▀█▄▄▀ ▀▄▀  ▀█▄▀██▄█
+  ██▄█ ██▄      █▄ ▄▄  ▄ ▀▄███▄ ▀▀▀▀▄▄ █▄▄▄██ ▀▀ ████
+  █▀▀█▀ ▄▄▄ ▄▄▄ ▀█▄▀▀ ▀▄▀ ▄▄▄  ▄▀▄█▀▀▄█ ▄▀  ▄▄▄ █▀███
+  █▄▄ ▀ █▄█  ▄▄▄▄█ ▄█ ▀   █▄█ ▄▀▄▄█▀██ ▄▀▀▄ █▄█ ▄▄  █
+  █ ▄▀  ▄▄▄ ▀▀▀▀ █ ▄▀▀▀  ▄ ▄    ▀ ▀▀▄▀▄█  █▄▄▄▄▄▄█ ▀█
+  █▄▀▄▀▄█▄█▄▄ ▀▀█▄▀█ █▄█▄ ▄▄▄▄▀█ █▀▄▀ ██▄▄▀  ▀ █▀▄▀ █
+  █  █  █▄▀▄██▀▄▀▀  █▄▀▄█▀██ ██ ▄█ █▄ ▄▀▀  ▀█ ▀▀██▄▄█
+  █▀█▀▀ ▀▄▄█▄ █ ▄▀██▀█ ▄ ██ ▀▀▄▄█  █▄▄▀█ █▀█ ▄ ▄▄██▄█
+  █ ▄▄▄▀ ▄██ ▀ █ ▀▀ █ ▀█▄ ▀ █ ██▀▄▄▀█▄▄▀▄█▀█▄▀   ▀▄▀█
+  ██  ▄  ▄▄██  ▄▄ ██ ██ █████ ▄▀█▄ █▀█  ▀▀▄▀█ ▄ ▀▄  █
+  ██ ▀▀█▄▄██▄▄▄▀▀▄ ▄▀  █ ▄▄▀▀▀▀▀▄ ▄▀▀█ ▄▄▄█ ▀█ ▄ ▄▄██
+  █▄▄▄███▄█▀▀ █▄█ ▄  ▀▄█▄ ▄▄▄  █▄▄▀▄█ ▄█ █▀ ▄▄▄ ▄ █ █
+  █ ▄▄▄▄▄ ██ █▀ ▀▀▀▄█▄█▀█ █▄█  ▀▀█▀█▀▄  ▀▄▀ █▄█  ▄  █
+  █ █   █ █▀ ▀▀█ ██ ▀▀▀▄▄ ▄▄ ▄█ ▀▀▀███ █▀▄   ▄▄  ▀▄██
+  █ █▄▄▄█ █ ▄▀   ▄▀▄ ▀ █ ▄██▀█▀█▀ ▄ █▄█▀▄▀▄▀█▄   ▀▄▄█
+  █▄▄▄▄▄▄▄█▄█▄▄████▄█▄▄▄███▄▄▄▄█▄▄██▄█▄▄▄▄▄▄▄█▄█▄▄▄▄█
+
+
+🍏 Open this link on your iOS devices (or scan the QR code) to install the app:
+https://expo.dev/accounts/erdal10/projects/takas-app/builds/d34cc97b-9b80-43d0-b5f2-3af04071761f
+e10@E10-MacBook-Pro arac-takasi %        
