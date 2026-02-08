@@ -466,61 +466,61 @@ export default function MatchScreen() {
           ) : null}
 
           {!swipeLimitReached ? (
-          <>
-          <View style={styles.tipSection}>
-            <ThemedText style={styles.tipText}>
-              Saga kaydir: Begeni | Sola kaydir: Gec | Yukari: Favori
-            </ThemedText>
-          </View>
+            <View>
+              <View style={styles.tipSection}>
+                <ThemedText style={styles.tipText}>
+                  Saga kaydir: Begeni | Sola kaydir: Gec | Yukari: Favori
+                </ThemedText>
+              </View>
 
-          <View style={styles.buttonsContainer}>
-            <Pressable
-              style={({ pressed }) => [
-                styles.actionButton,
-                styles.undoButton,
-                pressed && styles.buttonPressed,
-                !canGoBack && styles.buttonDisabled,
-              ]}
-              onPress={handleUndo}
-              disabled={!canGoBack}
-            >
-              <Feather name="rotate-ccw" size={20} color={BrandColors.primaryBlue} />
-            </Pressable>
+              <View style={styles.buttonsContainer}>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.actionButton,
+                    styles.undoButton,
+                    pressed && styles.buttonPressed,
+                    !canGoBack && styles.buttonDisabled,
+                  ]}
+                  onPress={handleUndo}
+                  disabled={!canGoBack}
+                >
+                  <Feather name="rotate-ccw" size={20} color={BrandColors.primaryBlue} />
+                </Pressable>
 
-            <Pressable
-              style={({ pressed }) => [
-                styles.actionButton,
-                styles.rejectButton,
-                pressed && styles.buttonPressed,
-              ]}
-              onPress={() => handleButtonSwipe("left")}
-            >
-              <Feather name="x" size={26} color="#EF4444" />
-            </Pressable>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.actionButton,
+                    styles.rejectButton,
+                    pressed && styles.buttonPressed,
+                  ]}
+                  onPress={() => handleButtonSwipe("left")}
+                >
+                  <Feather name="x" size={26} color="#EF4444" />
+                </Pressable>
 
-            <Pressable
-              style={({ pressed }) => [
-                styles.actionButton,
-                styles.likeButton,
-                pressed && styles.buttonPressed,
-              ]}
-              onPress={() => handleButtonSwipe("right")}
-            >
-              <Feather name="heart" size={28} color="#10B981" />
-            </Pressable>
-            
-            <Pressable
-              style={({ pressed }) => [
-                styles.actionButton,
-                styles.superButton,
-                pressed && styles.buttonPressed,
-              ]}
-              onPress={() => handleButtonSwipe("up")}
-            >
-              <Feather name="star" size={22} color="#F59E0B" />
-            </Pressable>
-          </View>
-          </>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.actionButton,
+                    styles.likeButton,
+                    pressed && styles.buttonPressed,
+                  ]}
+                  onPress={() => handleButtonSwipe("right")}
+                >
+                  <Feather name="heart" size={28} color="#10B981" />
+                </Pressable>
+                
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.actionButton,
+                    styles.superButton,
+                    pressed && styles.buttonPressed,
+                  ]}
+                  onPress={() => handleButtonSwipe("up")}
+                >
+                  <Feather name="star" size={22} color="#F59E0B" />
+                </Pressable>
+              </View>
+            </View>
           ) : null}
 
         </View>

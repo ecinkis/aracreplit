@@ -232,7 +232,7 @@ export default function QuickCreateListingScreen() {
         ) : null}
 
         {!quotaData || quotaData.remainingListings > 0 ? (
-        <>
+        <View>
         <View style={styles.heroSection}>
           <ThemedText style={styles.heroTitle}>30 saniyede ilan ver</ThemedText>
           <ThemedText style={styles.heroSubtitle}>
@@ -377,7 +377,7 @@ export default function QuickCreateListingScreen() {
           </ThemedText>
           <Feather name="arrow-right" size={16} color="#6B7280" />
         </Pressable>
-        </>
+        </View>
         ) : null}
       </KeyboardAwareScrollViewCompat>
     </View>

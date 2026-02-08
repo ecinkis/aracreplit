@@ -539,7 +539,7 @@ export default function CreateListingScreen() {
                 </Pressable>
               </View>
             ) : (
-            <>
+            <View>
             <View style={styles.stepHeader}>
               <View style={styles.stepIconContainer}>
                 <Feather name="camera" size={24} color="#000000" />
@@ -594,7 +594,7 @@ export default function CreateListingScreen() {
                 <ThemedText style={[styles.tipText, { color: theme.textSecondary }]}>Motor bölümü</ThemedText>
               </View>
             </View>
-            </>
+            </View>
             )}
           </Animated.View>
         );
