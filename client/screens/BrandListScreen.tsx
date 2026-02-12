@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import {
   View,
   StyleSheet,
-  ScrollView,
   Pressable,
   TextInput,
+  FlatList,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
@@ -32,7 +33,7 @@ const BRANDS_BY_CATEGORY: Record<string, Array<{ id: string; name: string }>> = 
     { id: "chery", name: "Chery" },
     { id: "chevrolet", name: "Chevrolet" },
     { id: "chrysler", name: "Chrysler" },
-    { id: "citroen", name: "Citroën" },
+    { id: "citroen", name: "Citroen" },
     { id: "cupra", name: "Cupra" },
     { id: "dacia", name: "Dacia" },
     { id: "daewoo", name: "Daewoo" },
@@ -103,7 +104,7 @@ const BRANDS_BY_CATEGORY: Record<string, Array<{ id: string; name: string }>> = 
     { id: "cadillac", name: "Cadillac" },
     { id: "chery", name: "Chery" },
     { id: "chevrolet", name: "Chevrolet" },
-    { id: "citroen", name: "Citroën" },
+    { id: "citroen", name: "Citroen" },
     { id: "cupra", name: "Cupra" },
     { id: "dacia", name: "Dacia" },
     { id: "dodge", name: "Dodge" },
@@ -214,6 +215,7 @@ const BRANDS_BY_CATEGORY: Record<string, Array<{ id: string; name: string }>> = 
 export default function BrandListScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<BrandListRouteProp>();
+  const insets = useSafeAreaInsets();
   const { categoryId, categoryName } = route.params;
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -229,49 +231,65 @@ export default function BrandListScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchInput}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholder="Marka ara..."
-          placeholderTextColor="#9CA3AF"
-          testID="input-brand-search"
-        />
-        {searchQuery.length > 0 ? (
-          <Pressable onPress={() => setSearchQuery("")} testID="button-clear-brand-search">
-            <Feather name="x" size={18} color="#9CA3AF" />
+      <View style={[styles.header, { paddingTop: insets.top }]}>
+        <View style={styles.headerRow}>
+          <Pressable
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Feather name="arrow-left" size={24} color="#000000" />
           </Pressable>
-        ) : null}
+          <ThemedText style={styles.headerTitle}>{categoryName}</ThemedText>
+          <View style={{ width: 40 }} />
+        </View>
+
+        <View style={styles.searchContainer}>
+          <Feather name="search" size={18} color="#9CA3AF" />
+          <TextInput
+            style={styles.searchInput}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Marka ara..."
+            placeholderTextColor="#9CA3AF"
+            testID="input-brand-search"
+          />
+          {searchQuery.length > 0 ? (
+            <Pressable onPress={() => setSearchQuery("")} testID="button-clear-brand-search">
+              <Feather name="x-circle" size={18} color="#9CA3AF" />
+            </Pressable>
+          ) : null}
+        </View>
       </View>
 
-      <ScrollView
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {filteredBrands.map((brand) => (
+      <FlatList
+        data={filteredBrands}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
           <Pressable
-            key={brand.id}
             style={({ pressed }) => [
               styles.brandRow,
               pressed && styles.brandRowPressed,
             ]}
-            onPress={() => handleBrandPress(brand.id, brand.name)}
-            testID={`row-brand-${brand.id}`}
+            onPress={() => handleBrandPress(item.id, item.name)}
+            testID={`row-brand-${item.id}`}
           >
-            <ThemedText style={styles.brandName}>{brand.name}</ThemedText>
+            <ThemedText style={styles.brandName}>{item.name}</ThemedText>
             <Feather name="chevron-right" size={20} color="#9CA3AF" />
           </Pressable>
-        ))}
-
-        {filteredBrands.length === 0 ? (
+        )}
+        contentContainerStyle={[
+          styles.listContent,
+          { paddingBottom: insets.bottom + Spacing.xl },
+        ]}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
           <View style={styles.emptyState}>
             <Feather name="inbox" size={48} color="#9CA3AF" />
-            <ThemedText style={styles.emptyText}>Marka bulunamadı</ThemedText>
+            <ThemedText style={styles.emptyText}>Marka bulunamadi</ThemedText>
           </View>
-        ) : null}
-      </ScrollView>
+        }
+      />
     </View>
   );
 }
@@ -280,22 +298,41 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
+  },
+  header: {
+    backgroundColor: "#FFFFFF",
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6",
     paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.sm,
+  },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: 48,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "flex-start",
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#000000",
+    textAlign: "center",
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "#F3F4F6",
     borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
     paddingHorizontal: Spacing.md,
-    height: 48,
-    marginTop: 13,
-    marginBottom: Spacing.xs,
-  },
-  searchIcon: {
-    marginRight: Spacing.sm,
+    height: 44,
+    marginTop: Spacing.xs,
+    gap: Spacing.sm,
   },
   searchInput: {
     flex: 1,
@@ -303,14 +340,13 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   listContent: {
-    flexGrow: 1,
-    paddingBottom: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
   },
   brandRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: Spacing.md,
+    paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: "#F3F4F6",
   },

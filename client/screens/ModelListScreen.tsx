@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import {
   View,
   StyleSheet,
-  ScrollView,
   Pressable,
   TextInput,
+  FlatList,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
@@ -22,6 +23,7 @@ type ModelListRouteProp = RouteProp<RootStackParamList, "ModelList">;
 export default function ModelListScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<ModelListRouteProp>();
+  const insets = useSafeAreaInsets();
   const { categoryId, categoryName, brandId, brandName } = route.params;
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -32,64 +34,80 @@ export default function ModelListScreen() {
 
   const handleModelPress = (modelId: string, modelName: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    navigation.navigate("SearchResults", { 
-      categoryId, 
-      categoryName, 
-      brandId, 
-      brandName, 
-      modelId, 
-      modelName 
+    navigation.navigate("SearchResults", {
+      categoryId,
+      categoryName,
+      brandId,
+      brandName,
+      modelId,
+      modelName,
     });
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <Feather name="search" size={18} color="#9CA3AF" style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchInput}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholder="Model ara..."
-          placeholderTextColor="#9CA3AF"
-          testID="input-model-search"
-        />
-        {searchQuery.length > 0 ? (
-          <Pressable onPress={() => setSearchQuery("")} testID="button-clear-model-search">
-            <Feather name="x" size={18} color="#9CA3AF" />
+      <View style={[styles.header, { paddingTop: insets.top }]}>
+        <View style={styles.headerRow}>
+          <Pressable
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Feather name="arrow-left" size={24} color="#000000" />
           </Pressable>
-        ) : null}
+          <ThemedText style={styles.headerTitle}>{brandName}</ThemedText>
+          <View style={{ width: 40 }} />
+        </View>
+
+        <View style={styles.searchContainer}>
+          <Feather name="search" size={18} color="#9CA3AF" />
+          <TextInput
+            style={styles.searchInput}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Model ara..."
+            placeholderTextColor="#9CA3AF"
+            testID="input-model-search"
+          />
+          {searchQuery.length > 0 ? (
+            <Pressable onPress={() => setSearchQuery("")} testID="button-clear-model-search">
+              <Feather name="x-circle" size={18} color="#9CA3AF" />
+            </Pressable>
+          ) : null}
+        </View>
       </View>
 
-      <ScrollView
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {filteredModels.map((model) => (
+      <FlatList
+        data={filteredModels}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
           <Pressable
-            key={model.id}
             style={({ pressed }) => [
               styles.modelRow,
               pressed && styles.modelRowPressed,
             ]}
-            onPress={() => handleModelPress(model.id, model.name)}
-            testID={`row-model-${model.id}`}
+            onPress={() => handleModelPress(item.id, item.name)}
+            testID={`row-model-${item.id}`}
           >
             <View style={styles.modelInfo}>
-              <ThemedText style={styles.modelName}>{model.name}</ThemedText>
-              <ThemedText style={styles.modelYears}>{model.years}</ThemedText>
+              <ThemedText style={styles.modelName}>{item.name}</ThemedText>
+              <ThemedText style={styles.modelYears}>{item.years}</ThemedText>
             </View>
             <Feather name="chevron-right" size={20} color="#9CA3AF" />
           </Pressable>
-        ))}
-
-        {filteredModels.length === 0 ? (
+        )}
+        contentContainerStyle={[
+          styles.listContent,
+          { paddingBottom: insets.bottom + Spacing.xl },
+        ]}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
           <View style={styles.emptyState}>
             <Feather name="inbox" size={48} color="#9CA3AF" />
-            <ThemedText style={styles.emptyText}>Model bulunamadı</ThemedText>
+            <ThemedText style={styles.emptyText}>Model bulunamadi</ThemedText>
           </View>
-        ) : null}
-      </ScrollView>
+        }
+      />
     </View>
   );
 }
@@ -98,22 +116,41 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
+  },
+  header: {
+    backgroundColor: "#FFFFFF",
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6",
     paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.sm,
+  },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: 48,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "flex-start",
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#000000",
+    textAlign: "center",
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "#F3F4F6",
     borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
     paddingHorizontal: Spacing.md,
-    height: 48,
-    marginTop: 13,
-    marginBottom: Spacing.xs,
-  },
-  searchIcon: {
-    marginRight: Spacing.sm,
+    height: 44,
+    marginTop: Spacing.xs,
+    gap: Spacing.sm,
   },
   searchInput: {
     flex: 1,
@@ -121,14 +158,13 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   listContent: {
-    flexGrow: 1,
-    paddingBottom: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
   },
   modelRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: Spacing.md,
+    paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: "#F3F4F6",
   },

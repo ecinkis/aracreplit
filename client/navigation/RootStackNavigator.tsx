@@ -217,18 +217,12 @@ export default function RootStackNavigator() {
           <Stack.Screen
             name="BrandList"
             component={BrandListScreen}
-            options={({ route }) => ({
-              headerTitle: route.params?.categoryName || "Markalar",
-              headerBackTitle: "Geri",
-            })}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="ModelList"
             component={ModelListScreen}
-            options={({ route }) => ({
-              headerTitle: route.params?.brandName || "Modeller",
-              headerBackTitle: "Geri",
-            })}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="SearchResults"
