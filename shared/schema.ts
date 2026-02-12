@@ -475,3 +475,38 @@ export const appSettings = pgTable("app_settings", {
   value: text("value").notNull(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+export const pushTokens = pgTable("push_tokens", {
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  token: text("token").notNull(),
+  platform: text("platform").default("unknown"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const pushTokensRelations = relations(pushTokens, ({ one }) => ({
+  user: one(users, {
+    fields: [pushTokens.userId],
+    references: [users.id],
+  }),
+}));
+
+export const pushNotificationLogs = pgTable("push_notification_logs", {
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  targetType: text("target_type").notNull().default("all"),
+  targetFilter: text("target_filter"),
+  sentCount: integer("sent_count").default(0),
+  failedCount: integer("failed_count").default(0),
+  sentBy: varchar("sent_by"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export type PushToken = typeof pushTokens.$inferSelect;
+export type PushNotificationLog = typeof pushNotificationLogs.$inferSelect;

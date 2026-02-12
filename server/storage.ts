@@ -22,6 +22,8 @@ import {
   type InsertVerificationDocument,
   type Application,
   type InsertApplication,
+  type PushToken,
+  type PushNotificationLog,
   users,
   listings,
   likes,
@@ -36,6 +38,8 @@ import {
   verificationDocuments,
   applications,
   appSettings,
+  pushTokens,
+  pushNotificationLogs,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, desc, sql, ne, notInArray } from "drizzle-orm";
@@ -128,6 +132,14 @@ export interface IStorage {
   // Settings
   getAppSettings(): Promise<Record<string, string>>;
   saveAppSettings(settings: Record<string, string>): Promise<void>;
+
+  // Push Notifications
+  savePushToken(userId: string, token: string, platform: string): Promise<PushToken>;
+  removePushToken(token: string): Promise<void>;
+  getAllPushTokens(): Promise<PushToken[]>;
+  getPushTokensByUserIds(userIds: string[]): Promise<PushToken[]>;
+  createPushNotificationLog(log: { title: string; message: string; targetType: string; targetFilter?: string; sentCount: number; failedCount: number; sentBy?: string }): Promise<PushNotificationLog>;
+  getPushNotificationLogs(): Promise<PushNotificationLog[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -788,6 +800,41 @@ export class DatabaseStorage implements IStorage {
           set: { value, updatedAt: new Date() }
         });
     }
+  }
+
+  async savePushToken(userId: string, token: string, platform: string): Promise<PushToken> {
+    const existing = await db.select().from(pushTokens).where(eq(pushTokens.token, token));
+    if (existing.length > 0) {
+      const [updated] = await db.update(pushTokens)
+        .set({ userId, platform, updatedAt: new Date() })
+        .where(eq(pushTokens.token, token))
+        .returning();
+      return updated;
+    }
+    const [created] = await db.insert(pushTokens).values({ userId, token, platform }).returning();
+    return created;
+  }
+
+  async removePushToken(token: string): Promise<void> {
+    await db.delete(pushTokens).where(eq(pushTokens.token, token));
+  }
+
+  async getAllPushTokens(): Promise<PushToken[]> {
+    return await db.select().from(pushTokens);
+  }
+
+  async getPushTokensByUserIds(userIds: string[]): Promise<PushToken[]> {
+    if (userIds.length === 0) return [];
+    return await db.select().from(pushTokens).where(sql`${pushTokens.userId} = ANY(${userIds})`);
+  }
+
+  async createPushNotificationLog(log: { title: string; message: string; targetType: string; targetFilter?: string; sentCount: number; failedCount: number; sentBy?: string }): Promise<PushNotificationLog> {
+    const [created] = await db.insert(pushNotificationLogs).values(log).returning();
+    return created;
+  }
+
+  async getPushNotificationLogs(): Promise<PushNotificationLog[]> {
+    return await db.select().from(pushNotificationLogs).orderBy(desc(pushNotificationLogs.createdAt));
   }
 }
 

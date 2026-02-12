@@ -1757,6 +1757,164 @@ Disallow: /api/admin/
     }
   });
 
+  // Push notification token registration
+  app.post("/api/push-token", async (req, res) => {
+    try {
+      const { userId, token, platform } = req.body;
+      if (!userId || !token) {
+        return res.status(400).json({ error: "userId and token are required" });
+      }
+      const saved = await storage.savePushToken(userId, token, platform || "unknown");
+      res.json(saved);
+    } catch (error) {
+      console.error("Save push token error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.delete("/api/push-token", async (req, res) => {
+    try {
+      const { token } = req.body;
+      if (!token) {
+        return res.status(400).json({ error: "token is required" });
+      }
+      await storage.removePushToken(token);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Remove push token error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Admin push notification endpoints
+  app.post("/api/admin/push-notification", adminAuth, async (req, res) => {
+    try {
+      const { title, message, targetType, targetFilter } = req.body;
+      if (!title || !message) {
+        return res.status(400).json({ error: "title and message are required" });
+      }
+
+      let tokens: { token: string }[] = [];
+      
+      if (targetType === "all") {
+        tokens = await storage.getAllPushTokens();
+      } else if (targetType === "premium") {
+        const allUsers = await storage.getAllUsers();
+        const premiumUserIds = allUsers.filter(u => u.isPremium).map(u => u.id);
+        tokens = await storage.getPushTokensByUserIds(premiumUserIds);
+      } else if (targetType === "individual") {
+        const allUsers = await storage.getAllUsers();
+        const individualUserIds = allUsers.filter(u => u.userType === "bireysel").map(u => u.id);
+        tokens = await storage.getPushTokensByUserIds(individualUserIds);
+      } else if (targetType === "corporate") {
+        const allUsers = await storage.getAllUsers();
+        const corporateUserIds = allUsers.filter(u => u.userType === "kurumsal").map(u => u.id);
+        tokens = await storage.getPushTokensByUserIds(corporateUserIds);
+      }
+
+      const pushTokenStrings = tokens.map(t => t.token).filter(t => t.startsWith("ExponentPushToken") || t.startsWith("ExpoPushToken"));
+      
+      let sentCount = 0;
+      let failedCount = 0;
+
+      if (pushTokenStrings.length > 0) {
+        const chunks: string[][] = [];
+        for (let i = 0; i < pushTokenStrings.length; i += 100) {
+          chunks.push(pushTokenStrings.slice(i, i + 100));
+        }
+
+        for (const chunk of chunks) {
+          const messages = chunk.map(token => ({
+            to: token,
+            sound: "default",
+            title,
+            body: message,
+            data: { type: "admin_broadcast" },
+          }));
+
+          try {
+            const response = await fetch("https://exp.host/--/api/v2/push/send", {
+              method: "POST",
+              headers: {
+                "Accept": "application/json",
+                "Accept-Encoding": "gzip, deflate",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(messages),
+            });
+
+            const result = await response.json();
+            if (result.data) {
+              for (const ticket of result.data) {
+                if (ticket.status === "ok") {
+                  sentCount++;
+                } else {
+                  failedCount++;
+                }
+              }
+            }
+          } catch (err) {
+            console.error("Expo push send error:", err);
+            failedCount += chunk.length;
+          }
+        }
+      }
+
+      const adminEmail = (req as any).adminEmail || "unknown";
+      const log = await storage.createPushNotificationLog({
+        title,
+        message,
+        targetType: targetType || "all",
+        targetFilter,
+        sentCount,
+        failedCount,
+        sentBy: adminEmail,
+      });
+
+      res.json({ 
+        success: true, 
+        sentCount, 
+        failedCount, 
+        totalTokens: pushTokenStrings.length,
+        log 
+      });
+    } catch (error) {
+      console.error("Send push notification error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/admin/push-notification/logs", adminAuth, async (req, res) => {
+    try {
+      const logs = await storage.getPushNotificationLogs();
+      res.json(logs);
+    } catch (error) {
+      console.error("Get push notification logs error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/admin/push-notification/stats", adminAuth, async (req, res) => {
+    try {
+      const tokens = await storage.getAllPushTokens();
+      const allUsers = await storage.getAllUsers();
+      const premiumCount = allUsers.filter(u => u.isPremium).length;
+      const individualCount = allUsers.filter(u => u.userType === "bireysel").length;
+      const corporateCount = allUsers.filter(u => u.userType === "kurumsal").length;
+      
+      res.json({
+        totalTokens: tokens.length,
+        totalUsers: allUsers.length,
+        premiumUsers: premiumCount,
+        individualUsers: individualCount,
+        corporateUsers: corporateCount,
+      });
+    } catch (error) {
+      console.error("Get push stats error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   const httpServer = createServer(app);
   
   // Cleanup expired stories every hour
