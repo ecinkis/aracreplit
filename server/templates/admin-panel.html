@@ -977,6 +977,117 @@
       border-top: 1px solid var(--border-color);
     }
 
+    .listing-detail-modal .modal {
+      max-width: 700px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .photo-gallery {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .photo-gallery img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .photo-gallery .photo-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .photo-gallery .photo-nav.prev { left: 8px; }
+    .photo-gallery .photo-nav.next { right: 8px; }
+    .photo-gallery .photo-counter {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+    .photo-thumbnails {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .photo-thumbnails img {
+      width: 60px;
+      height: 45px;
+      object-fit: cover;
+      border-radius: var(--radius-xs);
+      cursor: pointer;
+      border: 2px solid transparent;
+      opacity: 0.6;
+      transition: var(--transition);
+    }
+    .photo-thumbnails img.active {
+      border-color: var(--accent);
+      opacity: 1;
+    }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .detail-item {
+      padding: 10px 12px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-sm);
+    }
+    .detail-item .detail-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .detail-item .detail-value {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    .detail-section {
+      margin-bottom: 16px;
+    }
+    .detail-section h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .detail-description {
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
     .form-group-modal { margin-bottom: 16px; }
     .form-group-modal label {
       display: block;
@@ -1826,6 +1937,22 @@
               <button class="btn btn-secondary" onclick="closeStoryModal()">Iptal</button>
               <button class="btn btn-primary" onclick="createStory()">Hikaye Olustur</button>
             </div>
+          </div>
+        </div>
+
+        <!-- Listing Detail Modal -->
+        <div class="modal-overlay listing-detail-modal" id="listingDetailModal">
+          <div class="modal">
+            <div class="modal-header">
+              <h3 class="modal-title" id="detailModalTitle">Ilan Detayi</h3>
+              <button class="btn btn-ghost btn-sm" onclick="closeListingDetail()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <div class="modal-body" id="detailModalBody">
+              <div style="padding: 40px; text-align: center;"><div class="loading-spinner"></div></div>
+            </div>
+            <div class="modal-footer" id="detailModalFooter"></div>
           </div>
         </div>
 
@@ -3033,6 +3160,9 @@
         if (currentListingStatus === 'pending') {
           statusBadge = '<span class="badge badge-warning">Bekliyor</span>';
           actions = `
+            <button class="btn btn-ghost btn-sm" onclick="viewListing('${listing.id}')">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </button>
             <button class="btn btn-sm" style="background: var(--success); color: white;" onclick="approveListing('${listing.id}')">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
             </button>
@@ -3088,8 +3218,197 @@
       }).join('');
     }
 
-    function viewListing(id) {
-      alert('Ilan detayi: ' + id);
+    let detailCurrentPhoto = 0;
+    let detailPhotos = [];
+
+    async function viewListing(id) {
+      const modal = document.getElementById('listingDetailModal');
+      const body = document.getElementById('detailModalBody');
+      const footer = document.getElementById('detailModalFooter');
+      const title = document.getElementById('detailModalTitle');
+      
+      modal.classList.add('active');
+      body.innerHTML = '<div style="padding: 40px; text-align: center;"><div class="loading-spinner"></div><div style="color: var(--text-muted); margin-top: 12px;">Yukleniyor...</div></div>';
+      footer.innerHTML = '';
+      
+      try {
+        const listing = await apiRequest(`/listings/${id}`);
+        let ownerInfo = null;
+        try {
+          ownerInfo = await apiRequest(`/users/${listing.userId}`);
+        } catch(e) {}
+        
+        title.textContent = `${listing.brand} ${listing.model}`;
+        detailPhotos = listing.photos || [];
+        detailCurrentPhoto = 0;
+        
+        const photoHtml = detailPhotos.length > 0 ? `
+          <div class="photo-gallery">
+            <img id="detailMainPhoto" src="${detailPhotos[0]}" alt="Arac fotografi">
+            ${detailPhotos.length > 1 ? `
+              <button class="photo-nav prev" onclick="detailPrevPhoto()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+              </button>
+              <button class="photo-nav next" onclick="detailNextPhoto()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </button>
+            ` : ''}
+            <div class="photo-counter"><span id="detailPhotoIndex">1</span> / ${detailPhotos.length}</div>
+          </div>
+          ${detailPhotos.length > 1 ? `
+            <div class="photo-thumbnails">
+              ${detailPhotos.map((p, i) => `<img src="${p}" class="${i === 0 ? 'active' : ''}" onclick="detailGoToPhoto(${i})">`).join('')}
+            </div>
+          ` : ''}
+        ` : '<div style="height: 200px; background: var(--bg-tertiary); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: var(--text-muted);">Fotograf yok</div>';
+        
+        const price = listing.estimatedValue ? new Intl.NumberFormat('tr-TR').format(listing.estimatedValue) + ' TL' : 'Belirtilmemis';
+        const createdAt = listing.createdAt ? new Date(listing.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
+        const ownerName = ownerInfo ? (ownerInfo.fullName || ownerInfo.phone || 'Bilinmiyor') : (listing.ownerName || 'Bilinmiyor');
+        
+        const statusMap = { pending: ['Onay Bekliyor', 'badge-warning'], active: ['Aktif', 'badge-success'], rejected: ['Reddedildi', 'badge-danger'], inactive: ['Pasif', 'badge-secondary'] };
+        const [statusText, statusClass] = statusMap[listing.status] || ['Bilinmiyor', 'badge-secondary'];
+        
+        body.innerHTML = `
+          ${photoHtml}
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div>
+              <div style="font-size: 20px; font-weight: 700; color: var(--text-primary);">${listing.brand} ${listing.model}</div>
+              <div style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;">${listing.year} • ${new Intl.NumberFormat('tr-TR').format(listing.km || 0)} km</div>
+            </div>
+            <span class="badge ${statusClass}">${statusText}</span>
+          </div>
+          
+          <div style="font-size: 22px; font-weight: 700; color: var(--success); margin-bottom: 16px;">${price}</div>
+          
+          <div class="detail-section">
+            <h4>Arac Bilgileri</h4>
+            <div class="detail-grid">
+              <div class="detail-item"><div class="detail-label">Marka</div><div class="detail-value">${listing.brand || '-'}</div></div>
+              <div class="detail-item"><div class="detail-label">Model</div><div class="detail-value">${listing.model || '-'}</div></div>
+              <div class="detail-item"><div class="detail-label">Yil</div><div class="detail-value">${listing.year || '-'}</div></div>
+              <div class="detail-item"><div class="detail-label">Kilometre</div><div class="detail-value">${listing.km ? new Intl.NumberFormat('tr-TR').format(listing.km) + ' km' : '-'}</div></div>
+              <div class="detail-item"><div class="detail-label">Yakit</div><div class="detail-value">${listing.fuel || '-'}</div></div>
+              <div class="detail-item"><div class="detail-label">Vites</div><div class="detail-value">${listing.transmission || '-'}</div></div>
+              <div class="detail-item"><div class="detail-label">Renk</div><div class="detail-value">${listing.color || '-'}</div></div>
+              <div class="detail-item"><div class="detail-label">Kasa Tipi</div><div class="detail-value">${listing.bodyType || '-'}</div></div>
+              <div class="detail-item"><div class="detail-label">Motor Hacmi</div><div class="detail-value">${listing.engineSize || '-'}</div></div>
+              <div class="detail-item"><div class="detail-label">Beygir Gucu</div><div class="detail-value">${listing.horsepower ? listing.horsepower + ' HP' : '-'}</div></div>
+            </div>
+          </div>
+          
+          <div class="detail-section">
+            <h4>Ilan Sahibi</h4>
+            <div class="detail-grid">
+              <div class="detail-item"><div class="detail-label">Isim</div><div class="detail-value">${ownerName}</div></div>
+              <div class="detail-item"><div class="detail-label">Telefon</div><div class="detail-value">${ownerInfo?.phone || '-'}</div></div>
+              <div class="detail-item"><div class="detail-label">Sehir</div><div class="detail-value">${listing.city || '-'}</div></div>
+              <div class="detail-item"><div class="detail-label">Ilan Tarihi</div><div class="detail-value">${createdAt}</div></div>
+            </div>
+          </div>
+          
+          ${listing.swapPreferences || listing.swapWith ? `
+            <div class="detail-section">
+              <h4>Takas Tercihleri</h4>
+              <div class="detail-description">${listing.swapPreferences || listing.swapWith || '-'}</div>
+            </div>
+          ` : ''}
+          
+          ${listing.description ? `
+            <div class="detail-section">
+              <h4>Aciklama</h4>
+              <div class="detail-description">${listing.description}</div>
+            </div>
+          ` : ''}
+          
+          ${listing.damageInfo ? `
+            <div class="detail-section">
+              <h4>Hasar Bilgisi</h4>
+              <div class="detail-description">${listing.damageInfo}</div>
+            </div>
+          ` : ''}
+        `;
+        
+        if (listing.status === 'pending') {
+          footer.innerHTML = `
+            <button class="btn btn-secondary" onclick="closeListingDetail()">Kapat</button>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-danger" onclick="rejectListingFromDetail('${listing.id}')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                Reddet
+              </button>
+              <button class="btn" style="background: var(--success); color: white;" onclick="approveListingFromDetail('${listing.id}')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                Onayla
+              </button>
+            </div>
+          `;
+        } else {
+          footer.innerHTML = '<button class="btn btn-secondary" onclick="closeListingDetail()">Kapat</button>';
+        }
+      } catch (error) {
+        console.error('Error loading listing details:', error);
+        body.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--danger);">Ilan detaylari yuklenirken hata olustu</div>';
+        footer.innerHTML = '<button class="btn btn-secondary" onclick="closeListingDetail()">Kapat</button>';
+      }
+    }
+
+    function closeListingDetail() {
+      document.getElementById('listingDetailModal').classList.remove('active');
+    }
+
+    function detailNextPhoto() {
+      if (detailPhotos.length === 0) return;
+      detailCurrentPhoto = (detailCurrentPhoto + 1) % detailPhotos.length;
+      updateDetailPhoto();
+    }
+
+    function detailPrevPhoto() {
+      if (detailPhotos.length === 0) return;
+      detailCurrentPhoto = (detailCurrentPhoto - 1 + detailPhotos.length) % detailPhotos.length;
+      updateDetailPhoto();
+    }
+
+    function detailGoToPhoto(index) {
+      detailCurrentPhoto = index;
+      updateDetailPhoto();
+    }
+
+    function updateDetailPhoto() {
+      const mainImg = document.getElementById('detailMainPhoto');
+      const counter = document.getElementById('detailPhotoIndex');
+      if (mainImg) mainImg.src = detailPhotos[detailCurrentPhoto];
+      if (counter) counter.textContent = detailCurrentPhoto + 1;
+      document.querySelectorAll('.photo-thumbnails img').forEach((img, i) => {
+        img.classList.toggle('active', i === detailCurrentPhoto);
+      });
+    }
+
+    async function approveListingFromDetail(id) {
+      try {
+        await apiRequest(`/listings/${id}/approve`, { method: 'PATCH' });
+        closeListingDetail();
+        loadListings();
+        try { loadPendingListings(); } catch(e) {}
+        try { loadDashboardData(); } catch(e) {}
+      } catch (error) {
+        console.error('Error approving listing:', error);
+        alert('Ilan onaylanirken hata olustu');
+      }
+    }
+
+    async function rejectListingFromDetail(id) {
+      if (!confirm('Bu ilani reddetmek istediginizden emin misiniz?')) return;
+      try {
+        await apiRequest(`/listings/${id}/reject`, { method: 'PATCH' });
+        closeListingDetail();
+        loadListings();
+        try { loadPendingListings(); } catch(e) {}
+        try { loadDashboardData(); } catch(e) {}
+      } catch (error) {
+        console.error('Error rejecting listing:', error);
+        alert('Ilan reddedilirken hata olustu');
+      }
     }
 
     async function deactivateListing(id) {
@@ -3247,6 +3566,9 @@
                   <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Olusturulma: ${createdAt}</div>
                 </div>
                 <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-ghost btn-sm" onclick="viewListing('${listing.id}')" title="Detay">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  </button>
                   <button class="btn btn-sm" style="background: var(--success); color: white;" onclick="approveListing('${listing.id}')">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                     Onayla
@@ -3270,7 +3592,9 @@
     async function approveListing(id) {
       try {
         await apiRequest(`/listings/${id}/approve`, { method: 'PATCH' });
-        loadPendingListings();
+        loadListings();
+        try { loadPendingListings(); } catch(e) {}
+        try { loadDashboardData(); } catch(e) {}
       } catch (error) {
         console.error('Error approving listing:', error);
         alert('Ilan onaylanirken hata olustu');
@@ -3281,7 +3605,9 @@
       if (!confirm('Bu ilani reddetmek istediginizden emin misiniz?')) return;
       try {
         await apiRequest(`/listings/${id}/reject`, { method: 'PATCH' });
-        loadPendingListings();
+        loadListings();
+        try { loadPendingListings(); } catch(e) {}
+        try { loadDashboardData(); } catch(e) {}
       } catch (error) {
         console.error('Error rejecting listing:', error);
         alert('Ilan reddedilirken hata olustu');
