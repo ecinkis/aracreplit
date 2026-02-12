@@ -12,6 +12,7 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { useQuery } from "@tanstack/react-query";
 import { ThemedText } from "@/components/ThemedText";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
@@ -63,6 +64,13 @@ export default function SearchScreen() {
       scrollViewRef.current?.scrollTo({ y: 0, animated: false });
     }, [])
   );
+
+  const isListingCode = /^TKS-\d{4}$/i.test(searchQuery.trim());
+
+  const { data: codeSearchResult } = useQuery<any>({
+    queryKey: ["/api/listings/by-code", searchQuery.trim().toUpperCase()],
+    enabled: isListingCode,
+  });
 
   const searchResults = useMemo(() => {
     if (searchQuery.length < 2) return [];
@@ -163,7 +171,44 @@ export default function SearchScreen() {
         ) : null}
       </View>
 
-      {searchQuery.length >= 2 && searchResults.length > 0 ? (
+      {isListingCode ? (
+        codeSearchResult ? (
+          <View style={{ paddingTop: Spacing.lg }}>
+            <ThemedText style={styles.resultsHeader}>Ilan Bulundu</ThemedText>
+            <Pressable
+              style={({ pressed }) => [
+                styles.searchResultItem,
+                pressed && styles.searchResultItemPressed,
+              ]}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                navigation.navigate("ListingDetail", { listingId: codeSearchResult.id });
+              }}
+            >
+              <View style={styles.searchResultIcon}>
+                <Feather name="hash" size={16} color="#6B7280" />
+              </View>
+              <View style={styles.searchResultContent}>
+                <ThemedText style={styles.searchResultTitle}>
+                  {codeSearchResult.brand} {codeSearchResult.model} ({codeSearchResult.year})
+                </ThemedText>
+                <ThemedText style={styles.searchResultSubtitle}>
+                  {codeSearchResult.listingCode}
+                </ThemedText>
+              </View>
+              <Feather name="chevron-right" size={18} color="#9CA3AF" />
+            </Pressable>
+          </View>
+        ) : (
+          <View style={styles.noResultsContainer}>
+            <Feather name="search" size={48} color="#D1D5DB" />
+            <ThemedText style={styles.noResultsText}>Ilan bulunamadi</ThemedText>
+            <ThemedText style={styles.noResultsSubtext}>
+              Ilan kodunu kontrol edin (ornek: TKS-1234)
+            </ThemedText>
+          </View>
+        )
+      ) : searchQuery.length >= 2 && searchResults.length > 0 ? (
         <FlatList
           data={searchResults}
           keyExtractor={(item, index) => `${item.brand}-${item.model || ""}-${index}`}

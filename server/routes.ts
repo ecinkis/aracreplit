@@ -8,6 +8,9 @@ import * as path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import { sendVerificationCode, verifyCode } from "./twilio";
+import { db } from "./db";
+import { listings } from "@shared/schema";
+import { eq, sql } from "drizzle-orm";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -57,6 +60,11 @@ function adminAuth(req: Request, res: Response, next: NextFunction) {
   }
   (req as any).adminEmail = payload.email;
   next();
+}
+
+function generateListingCode(): string {
+  const num = Math.floor(1000 + Math.random() * 9000);
+  return `TKS-${num}`;
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -387,6 +395,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/listings/by-code/:code", async (req, res) => {
+    try {
+      const code = req.params.code.toUpperCase().trim();
+      const [listing] = await db.select().from(listings).where(eq(listings.listingCode, code)).limit(1);
+      if (!listing) {
+        return res.status(404).json({ error: "Ilan bulunamadi" });
+      }
+      res.json(listing);
+    } catch (error) {
+      console.error("Search by code error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.get("/api/listings/:id", async (req, res) => {
     try {
       const listing = await storage.getListing(req.params.id);
@@ -538,6 +560,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         return res.status(403).json({ error: message });
       }
+
+      let listingCode = generateListingCode();
+      let codeExists = true;
+      let attempts = 0;
+      while (codeExists && attempts < 10) {
+        const existing = await db.select().from(listings).where(eq(listings.listingCode, listingCode)).limit(1);
+        if (existing.length === 0) {
+          codeExists = false;
+        } else {
+          listingCode = generateListingCode();
+          attempts++;
+        }
+      }
+      req.body.listingCode = listingCode;
 
       const listing = await storage.createListing(req.body);
       res.status(201).json(listing);
@@ -2027,6 +2063,26 @@ Disallow: /api/admin/
   // Run cleanup on startup and every hour
   cleanupExpiredStories();
   setInterval(cleanupExpiredStories, 60 * 60 * 1000);
-  
+
+  (async () => {
+    try {
+      const uncoded = await db.select().from(listings).where(sql`listing_code IS NULL`);
+      for (const listing of uncoded) {
+        let code = generateListingCode();
+        let exists = true;
+        let attempts = 0;
+        while (exists && attempts < 10) {
+          const dup = await db.select().from(listings).where(eq(listings.listingCode, code)).limit(1);
+          if (dup.length === 0) exists = false;
+          else { code = generateListingCode(); attempts++; }
+        }
+        await db.update(listings).set({ listingCode: code }).where(eq(listings.id, listing.id));
+      }
+      if (uncoded.length > 0) console.log(`Assigned listing codes to ${uncoded.length} existing listings`);
+    } catch (e) {
+      console.error("Listing code backfill error:", e);
+    }
+  })();
+
   return httpServer;
 }

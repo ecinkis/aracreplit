@@ -301,6 +301,14 @@ export default function ListingDetailScreen() {
               <ThemedText style={[styles.subtitle, { color: theme.textSecondary }]}>
                 {listing.year} - {listing.km.toLocaleString("tr-TR")} km
               </ThemedText>
+              {listing.listingCode ? (
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4 }}>
+                  <Feather name="hash" size={14} color="#9CA3AF" />
+                  <ThemedText style={{ fontSize: 13, color: "#9CA3AF" }}>
+                    Ilan No: {listing.listingCode}
+                  </ThemedText>
+                </View>
+              ) : null}
             </View>
           </View>
 

@@ -76,6 +76,7 @@ export const listings = pgTable("listings", {
   featuredExpiresAt: timestamp("featured_expires_at"),
   estimatedValue: integer("estimated_value"),
   listingType: text("listing_type").default("quick"),
+  listingCode: varchar("listing_code", { length: 10 }).unique(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
