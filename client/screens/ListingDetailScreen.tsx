@@ -11,6 +11,7 @@ import {
   TextInput,
   Modal,
   Linking,
+  Platform,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRoute, useNavigation, RouteProp, NavigationProp } from "@react-navigation/native";
@@ -145,20 +146,27 @@ export default function ListingDetailScreen() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/listings"] });
       queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listing-quota"] });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
     },
   });
 
   const handleDelete = () => {
-    Alert.alert(
-      "İlanı Sil",
-      "Bu ilanı silmek istediğinizden emin misiniz?",
-      [
-        { text: "İptal", style: "cancel" },
-        { text: "Sil", style: "destructive", onPress: () => deleteMutation.mutate() },
-      ]
-    );
+    if (Platform.OS === "web") {
+      if (window.confirm("Bu ilani silmek istediginize emin misiniz?")) {
+        deleteMutation.mutate();
+      }
+    } else {
+      Alert.alert(
+        "Ilani Sil",
+        "Bu ilani silmek istediginize emin misiniz?",
+        [
+          { text: "Iptal", style: "cancel" },
+          { text: "Sil", style: "destructive", onPress: () => deleteMutation.mutate() },
+        ]
+      );
+    }
   };
 
   const isOwner = listing?.userId === user?.id;
@@ -521,7 +529,7 @@ export default function ListingDetailScreen() {
                 style={[styles.actionButton, { backgroundColor: theme.backgroundSecondary }]}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  Alert.alert("Bilgi", "Düzenleme özelliği yakında eklenecek.");
+                  navigation.navigate("CreateListing", { editListingId: listingId });
                 }}
               >
                 <Feather name="edit-2" size={18} color={theme.text} />
