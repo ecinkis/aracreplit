@@ -3724,7 +3724,91 @@
     }
 
     function viewSwap(id) {
-      alert('Eslesme detayi: ' + id);
+      const allSwapsList = [...(allSwaps.all || [])];
+      const swap = allSwapsList.find(s => s.id === id);
+      if (!swap) {
+        showToast('Eşleşme bulunamadı', 'error');
+        return;
+      }
+
+      const listing1 = swap.listing1 || {};
+      const listing2 = swap.listing2 || {};
+      const user1Name = swap.user1Name || 'Bilinmiyor';
+      const user2Name = swap.user2Name || 'Bilinmiyor';
+      const value1 = listing1.estimatedValue || 0;
+      const value2 = listing2.estimatedValue || 0;
+      const diff = value1 - value2;
+      const diffFormatted = diff === 0 ? 'Eşit değer' : (diff > 0 ? '+' : '') + new Intl.NumberFormat('tr-TR').format(diff) + ' TL';
+      const diffColor = diff === 0 ? 'var(--text-muted)' : diff > 0 ? 'var(--success)' : 'var(--danger)';
+      const createdAt = swap.createdAt ? new Date(swap.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+
+      let statusText = 'Aktif';
+      let statusClass = 'badge-info';
+      if (swap.status === 'completed') { statusText = 'Tamamlandı'; statusClass = 'badge-success'; }
+      else if (swap.status === 'cancelled') { statusText = 'İptal Edildi'; statusClass = 'badge-danger'; }
+
+      const photos1 = getValidPhotos(listing1.photos);
+      const photos2 = getValidPhotos(listing2.photos);
+      const rawCount1 = getRawPhotoCount(listing1.photos);
+      const rawCount2 = getRawPhotoCount(listing2.photos);
+
+      function buildCarCard(listing, userName, photos, rawCount) {
+        const photoEl = photos.length > 0
+          ? `<img src="${photos[0]}" style="width: 100%; height: 140px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;">`
+          : rawCount > 0
+            ? `<div style="width: 100%; height: 140px; background: var(--bg-tertiary); border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 12px;">${rawCount} fotoğraf (mobil)</div>`
+            : `<div style="width: 100%; height: 140px; background: var(--bg-tertiary); border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="32" height="32" style="opacity: 0.3;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              </div>`;
+        return `
+          <div style="flex: 1; background: var(--bg-tertiary); border-radius: 12px; padding: 14px;">
+            ${photoEl}
+            <div style="font-weight: 700; font-size: 15px; margin-bottom: 4px;">${listing.brand || '-'} ${listing.model || ''}</div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">${listing.year || '-'} • ${listing.km ? new Intl.NumberFormat('tr-TR').format(listing.km) + ' km' : '-'}</div>
+            <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">${userName}</div>
+            <div style="font-weight: 600; color: var(--success); font-size: 14px;">${listing.estimatedValue ? new Intl.NumberFormat('tr-TR').format(listing.estimatedValue) + ' TL' : '-'}</div>
+            ${listing.fuelType || listing.transmission ? `<div style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">${listing.fuelType || ''} ${listing.fuelType && listing.transmission ? '•' : ''} ${listing.transmission || ''}</div>` : ''}
+            ${listing.city ? `<div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">${listing.city}${listing.district ? ' / ' + listing.district : ''}</div>` : ''}
+          </div>
+        `;
+      }
+
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay active';
+      modal.id = 'viewSwapModal';
+      modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+
+      modal.innerHTML = `
+        <div class="modal" style="max-width: 680px;">
+          <div class="modal-header">
+            <h3 class="modal-title">Eşleşme Detayı <span style="font-size: 12px; font-weight: 400; color: var(--text-muted); margin-left: 8px;">#${swap.id.substring(0, 8).toUpperCase()}</span></h3>
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('viewSwapModal').remove()">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div class="modal-body" style="padding: 20px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+              <span class="badge ${statusClass}">${statusText}</span>
+              <span style="font-size: 12px; color: var(--text-muted);">${createdAt}</span>
+            </div>
+            <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+              ${buildCarCard(listing1, user1Name, photos1, rawCount1)}
+              <div style="display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 40px;">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="28" height="28" style="color: var(--text-muted);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+              </div>
+              ${buildCarCard(listing2, user2Name, photos2, rawCount2)}
+            </div>
+            <div style="background: var(--bg-tertiary); border-radius: 10px; padding: 14px; text-align: center;">
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Değer Farkı</div>
+              <div style="font-size: 20px; font-weight: 700; color: ${diffColor};">${diffFormatted}</div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="document.getElementById('viewSwapModal').remove()">Kapat</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
     }
 
     async function loadMessages() {
