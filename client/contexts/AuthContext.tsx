@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Notifications from "expo-notifications";
 import { User } from "@shared/schema";
 
 interface AuthContextType {
@@ -186,6 +188,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
+      if (Platform.OS !== "web") {
+        try {
+          const tokenData = await Notifications.getExpoPushTokenAsync({ projectId: undefined });
+          if (tokenData?.data) {
+            const { getApiUrl } = await import("@/lib/query-client");
+            await fetch(new URL("/api/push-token", getApiUrl()).toString(), {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ token: tokenData.data }),
+            });
+          }
+        } catch (tokenError) {
+          // ignore
+        }
+      }
       await AsyncStorage.removeItem(USER_STORAGE_KEY);
       await AsyncStorage.removeItem(SELECTED_LISTING_KEY);
       setUser(null);

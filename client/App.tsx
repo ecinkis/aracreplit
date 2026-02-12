@@ -11,9 +11,13 @@ import { queryClient } from "@/lib/query-client";
 
 import RootStackNavigator from "@/navigation/RootStackNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 function AppContent() {
+  const { user } = useAuth();
+  usePushNotifications(user?.id);
+
   return (
     <GestureHandlerRootView style={styles.root}>
       <KeyboardProvider>
