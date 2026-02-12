@@ -1849,13 +1849,13 @@
               <table class="data-table">
                 <thead>
                   <tr>
-                    <th>Gorsel</th>
+                    <th>Görsel</th>
                     <th>Marka</th>
-                    <th>Baslik</th>
-                    <th>Goruntulenme</th>
-                    <th>Kalan Sure</th>
+                    <th>Başlık</th>
+                    <th>Görüntülenme</th>
+                    <th>Kalan Süre</th>
                     <th>Durum</th>
-                    <th>Islemler</th>
+                    <th>İşlemler</th>
                   </tr>
                 </thead>
                 <tbody id="storiesTable">
@@ -1878,16 +1878,29 @@
             <div class="modal-body">
               <form id="storyForm">
                 <div class="form-group">
-                  <label class="form-label">Marka Adi *</label>
-                  <input type="text" class="form-control" id="storyBrandName" placeholder="Ornek: BMW, Mercedes..." required>
+                  <label class="form-label">Marka Adı *</label>
+                  <input type="text" class="form-control" id="storyBrandName" placeholder="Örnek: BMW, Mercedes..." required>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Baslik *</label>
-                  <input type="text" class="form-control" id="storyTitle" placeholder="Hikaye basligi" required>
+                  <label class="form-label">Başlık *</label>
+                  <input type="text" class="form-control" id="storyTitle" placeholder="Hikaye başlığı" required>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Gorsel URL *</label>
-                  <input type="url" class="form-control" id="storyImageUrl" placeholder="https://..." required>
+                  <label class="form-label">Görsel *</label>
+                  <div id="storyImageDropZone" style="border: 2px dashed var(--border); border-radius: var(--radius-md); padding: 32px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--bg-tertiary);" onclick="document.getElementById('storyImageFile').click()">
+                    <div id="storyImagePreviewContainer" style="display: none; position: relative;">
+                      <img id="storyImagePreview" style="max-width: 100%; max-height: 200px; border-radius: var(--radius-sm); object-fit: cover;">
+                      <button type="button" onclick="event.stopPropagation(); removeStoryImage()" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                      </button>
+                    </div>
+                    <div id="storyImagePlaceholder">
+                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="40" height="40" style="color: var(--text-muted); margin-bottom: 8px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                      <div style="color: var(--text-secondary); font-size: 14px; font-weight: 500;">Görsel yüklemek için tıklayın</div>
+                      <div style="color: var(--text-muted); font-size: 12px; margin-top: 4px;">veya sürükleyip bırakın (JPG, PNG, WebP)</div>
+                    </div>
+                  </div>
+                  <input type="file" id="storyImageFile" accept="image/jpeg,image/png,image/webp" style="display: none;" onchange="handleStoryImageSelect(event)">
                 </div>
                 <div class="form-group">
                   <label class="form-label">Link URL (Opsiyonel)</label>
@@ -1897,8 +1910,8 @@
               </form>
             </div>
             <div class="modal-footer">
-              <button class="btn btn-secondary" onclick="closeStoryModal()">Iptal</button>
-              <button class="btn btn-primary" onclick="createStory()">Hikaye Olustur</button>
+              <button class="btn btn-secondary" onclick="closeStoryModal()">İptal</button>
+              <button class="btn btn-primary" id="storySubmitBtn" onclick="createStory()">Hikaye Oluştur</button>
             </div>
           </div>
         </div>
@@ -2637,40 +2650,114 @@
       }
     }
 
+    let storyImageBase64 = null;
+
     function openStoryModal() {
       document.getElementById('storyModal').classList.add('active');
       document.getElementById('storyForm').reset();
+      storyImageBase64 = null;
+      document.getElementById('storyImagePreviewContainer').style.display = 'none';
+      document.getElementById('storyImagePlaceholder').style.display = 'block';
+      document.getElementById('storyImageDropZone').style.borderColor = 'var(--border)';
     }
 
     function closeStoryModal() {
       document.getElementById('storyModal').classList.remove('active');
+      storyImageBase64 = null;
     }
+
+    function handleStoryImageSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        alert('Lütfen geçerli bir görsel dosyası seçin');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        alert('Dosya boyutu 10MB\'dan küçük olmalıdır');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        storyImageBase64 = e.target.result;
+        document.getElementById('storyImagePreview').src = storyImageBase64;
+        document.getElementById('storyImagePreviewContainer').style.display = 'block';
+        document.getElementById('storyImagePlaceholder').style.display = 'none';
+        document.getElementById('storyImageDropZone').style.borderColor = 'var(--accent)';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeStoryImage() {
+      storyImageBase64 = null;
+      document.getElementById('storyImageFile').value = '';
+      document.getElementById('storyImagePreviewContainer').style.display = 'none';
+      document.getElementById('storyImagePlaceholder').style.display = 'block';
+      document.getElementById('storyImageDropZone').style.borderColor = 'var(--border)';
+    }
+
+    // Drag and drop
+    (function() {
+      const dropZone = document.getElementById('storyImageDropZone');
+      if (!dropZone) return;
+      ['dragenter', 'dragover'].forEach(evt => {
+        dropZone.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); dropZone.style.borderColor = 'var(--accent)'; dropZone.style.background = 'var(--bg-hover)'; });
+      });
+      ['dragleave', 'drop'].forEach(evt => {
+        dropZone.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); dropZone.style.background = 'var(--bg-tertiary)'; if (!storyImageBase64) dropZone.style.borderColor = 'var(--border)'; });
+      });
+      dropZone.addEventListener('drop', (e) => {
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+          const input = document.getElementById('storyImageFile');
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          input.files = dt.files;
+          handleStoryImageSelect({ target: input });
+        }
+      });
+    })();
 
     async function createStory() {
       const brandName = document.getElementById('storyBrandName').value.trim();
       const title = document.getElementById('storyTitle').value.trim();
-      const imageUrl = document.getElementById('storyImageUrl').value.trim();
       const linkUrl = document.getElementById('storyLinkUrl').value.trim();
       
-      if (!brandName || !title || !imageUrl) {
-        alert('Lutfen zorunlu alanlari doldurun');
+      if (!brandName || !title) {
+        alert('Lütfen marka adı ve başlık alanlarını doldurun');
         return;
       }
-      
-      const expiresAt = new Date();
-      expiresAt.setHours(expiresAt.getHours() + 24);
+      if (!storyImageBase64) {
+        alert('Lütfen bir görsel yükleyin');
+        return;
+      }
+
+      const submitBtn = document.getElementById('storySubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Yükleniyor...';
       
       try {
+        const uploadRes = await apiRequest('/upload', {
+          method: 'POST',
+          body: JSON.stringify({ image: storyImageBase64 })
+        });
+
+        const expiresAt = new Date();
+        expiresAt.setHours(expiresAt.getHours() + 24);
+        
         await apiRequest('/stories', {
           method: 'POST',
-          body: JSON.stringify({ brandName, title, imageUrl, linkUrl, expiresAt: expiresAt.toISOString() })
+          body: JSON.stringify({ brandName, title, imageUrl: uploadRes.url, linkUrl, expiresAt: expiresAt.toISOString() })
         });
         closeStoryModal();
         loadStories();
-        alert('Hikaye basariyla olusturuldu!');
+        alert('Hikaye başarıyla oluşturuldu!');
       } catch (error) {
         console.error('Error creating story:', error);
-        alert('Hikaye olusturulurken hata olustu');
+        alert('Hikaye oluşturulurken hata oluştu');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Hikaye Oluştur';
       }
     }
 

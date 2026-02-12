@@ -1536,6 +1536,34 @@ Disallow: /api/admin/
     }
   });
 
+  app.post("/api/admin/upload", adminAuth, async (req, res) => {
+    try {
+      const { image } = req.body;
+      if (!image) {
+        return res.status(400).json({ error: "No image provided" });
+      }
+      const matches = image.match(/^data:image\/([a-zA-Z+]+);base64,(.+)$/);
+      if (!matches) {
+        return res.status(400).json({ error: "Invalid image format" });
+      }
+      const ext = matches[1] === "jpeg" ? "jpg" : matches[1];
+      const data = matches[2];
+      const buffer = Buffer.from(data, "base64");
+      const filename = `story_${crypto.randomUUID()}.${ext}`;
+      const uploadDir = path.join(process.cwd(), "server", "uploads");
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+      const filePath = path.join(uploadDir, filename);
+      fs.writeFileSync(filePath, buffer);
+      const url = `/uploads/${filename}`;
+      res.json({ url });
+    } catch (error) {
+      console.error("Admin upload error:", error);
+      res.status(500).json({ error: "Upload failed" });
+    }
+  });
+
   app.post("/api/admin/stories", adminAuth, async (req, res) => {
     try {
       const { brandName, title, imageUrl, linkUrl, expiresAt } = req.body;
