@@ -3149,7 +3149,8 @@
       }
 
       tbody.innerHTML = listings.map(listing => {
-        const photo = listing.photos && listing.photos.length > 0 ? listing.photos[0] : '';
+        const validPhotos = (listing.photos || []).filter(isValidWebPhoto);
+        const photo = validPhotos.length > 0 ? validPhotos[0] : '';
         const price = listing.estimatedValue ? new Intl.NumberFormat('tr-TR').format(listing.estimatedValue) + ' TL' : '-';
         const createdAt = new Date(listing.createdAt).toLocaleDateString('tr-TR');
         const ownerName = listing.ownerName || 'Bilinmiyor';
@@ -3221,6 +3222,15 @@
     let detailCurrentPhoto = 0;
     let detailPhotos = [];
 
+    function isValidWebPhoto(url) {
+      if (!url) return false;
+      if (url.startsWith('blob:')) return false;
+      if (url.startsWith('file:')) return false;
+      if (url.startsWith('data:')) return true;
+      if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('/')) return true;
+      return false;
+    }
+
     async function viewListing(id) {
       const modal = document.getElementById('listingDetailModal');
       const body = document.getElementById('detailModalBody');
@@ -3232,14 +3242,13 @@
       footer.innerHTML = '';
       
       try {
-        const listing = await apiRequest(`/listings/${id}`);
+        const allItems = [...(allListings.pending || []), ...(allListings.active || []), ...(allListings.expired || [])];
+        const listing = allItems.find(l => l.id === id);
+        if (!listing) throw new Error('Ilan bulunamadi');
         let ownerInfo = null;
-        try {
-          ownerInfo = await apiRequest(`/users/${listing.userId}`);
-        } catch(e) {}
         
         title.textContent = `${listing.brand} ${listing.model}`;
-        detailPhotos = listing.photos || [];
+        detailPhotos = (listing.photos || []).filter(isValidWebPhoto);
         detailCurrentPhoto = 0;
         
         const photoHtml = detailPhotos.length > 0 ? `
@@ -3552,7 +3561,8 @@
         
         let html = '';
         for (const listing of listings) {
-          const photo = listing.photos && listing.photos.length > 0 ? listing.photos[0] : '';
+          const validPhotos = (listing.photos || []).filter(isValidWebPhoto);
+          const photo = validPhotos.length > 0 ? validPhotos[0] : '';
           const createdAt = new Date(listing.createdAt).toLocaleDateString('tr-TR');
           html += `
             <div class="alert-item" style="padding: 16px; border-radius: var(--radius-md); background: var(--bg-tertiary); margin-bottom: 12px;">
