@@ -29,6 +29,7 @@ export const users = pgTable("users", {
   googleId: text("google_id"),
   isPremium: boolean("is_premium").default(false),
   premiumExpiresAt: timestamp("premium_expires_at"),
+  unlimitedListings: boolean("unlimited_listings").default(false),
   storyCredits: integer("story_credits").default(0),
   dailyLikesUsed: integer("daily_likes_used").default(0),
   lastLikeResetAt: timestamp("last_like_reset_at"),

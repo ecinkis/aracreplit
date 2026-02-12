@@ -510,7 +510,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const activeListingCount = userListings.filter(l => l.status !== "rejected").length;
 
       let maxListings = 1;
-      if (user.userType === "bireysel") {
+      const hasUnlimited = user.unlimitedListings || false;
+      if (hasUnlimited) {
+        maxListings = 999999;
+      } else if (user.userType === "bireysel") {
         if (user.isPremium && user.premiumExpiresAt && new Date(user.premiumExpiresAt) > new Date()) {
           maxListings = 5;
         } else if (user.phoneVerified && user.emailVerified) {
