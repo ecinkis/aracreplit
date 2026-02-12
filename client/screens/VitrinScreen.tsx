@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQuery } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
@@ -155,10 +155,17 @@ export default function VitrinScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStory, setSelectedStory] = useState<StoryItem | null>(null);
+  const flatListRef = useRef<FlatList>(null);
   const storyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const progressAnim = useRef(new RNAnimated.Value(0)).current;
 
   const STORY_DURATION = 15000;
+
+  useFocusEffect(
+    useCallback(() => {
+      flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
+    }, [])
+  );
 
   const closeStory = useCallback(() => {
     if (storyTimerRef.current) {
@@ -376,6 +383,7 @@ export default function VitrinScreen() {
         <LoadingState />
       ) : (
         <FlatList<Listing | { id: string }>
+          ref={flatListRef}
           data={hasListings ? listings : mockData}
           renderItem={hasListings ? renderItem as any : ({ index }: { index: number }) => renderMockItem({ index })}
           keyExtractor={(item) => item.id}
