@@ -86,34 +86,61 @@ function StatCard({ icon, label, value }: { icon: string; label: string; value: 
   );
 }
 
-function ListingMiniCard({ listing, onPress }: { listing: Listing; onPress: () => void }) {
+function ListingMiniCard({ listing, onPress, onEdit, onDelete }: { listing: Listing; onPress: () => void; onEdit?: () => void; onDelete?: () => void }) {
   const photoUrl = listing.photos && listing.photos.length > 0 ? listing.photos[0] : null;
+  const statusLabel = listing.status === "active" ? "Aktif" : listing.status === "rejected" ? "Reddedildi" : "Onay Bekliyor";
+  const statusColor = listing.status === "active" ? "#10B981" : listing.status === "rejected" ? "#EF4444" : "#F59E0B";
 
   return (
-    <Pressable
-      style={({ pressed }) => [
-        styles.miniCard,
-        pressed && { opacity: 0.8 },
-      ]}
-      onPress={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        onPress();
-      }}
-    >
-      <Image
-        source={photoUrl ? { uri: photoUrl } : defaultVehicleImage}
-        style={styles.miniCardImage}
-        resizeMode="cover"
-      />
-      <View style={styles.miniCardContent}>
-        <ThemedText style={styles.miniCardTitle} numberOfLines={1}>
-          {listing.brand} {listing.model}
-        </ThemedText>
-        <ThemedText style={styles.miniCardSubtitle}>
-          {listing.year}
-        </ThemedText>
+    <View>
+      <Pressable
+        style={({ pressed }) => [
+          styles.miniCard,
+          pressed && { opacity: 0.8 },
+        ]}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          onPress();
+        }}
+      >
+        <Image
+          source={photoUrl ? { uri: photoUrl } : defaultVehicleImage}
+          style={styles.miniCardImage}
+          resizeMode="cover"
+        />
+        <View style={[styles.statusBadge, { backgroundColor: statusColor }]}>
+          <ThemedText style={styles.statusBadgeText}>{statusLabel}</ThemedText>
+        </View>
+        <View style={styles.miniCardContent}>
+          <ThemedText style={styles.miniCardTitle} numberOfLines={1}>
+            {listing.brand} {listing.model}
+          </ThemedText>
+          <ThemedText style={styles.miniCardSubtitle}>
+            {listing.year}
+          </ThemedText>
+        </View>
+      </Pressable>
+      <View style={styles.miniCardActions}>
+        <Pressable
+          style={({ pressed }) => [styles.miniCardActionButton, pressed && { opacity: 0.7 }]}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            onEdit?.();
+          }}
+        >
+          <Feather name="edit-2" size={16} color={BrandColors.primaryBlue} />
+        </Pressable>
+        <Pressable
+          style={({ pressed }) => [styles.miniCardActionButton, pressed && { opacity: 0.7 }]}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            onDelete?.();
+          }}
+        >
+          <Feather name="trash-2" size={16} color="#EF4444" />
+        </Pressable>
       </View>
-    </Pressable>
+    </View>
   );
 }
 
@@ -234,6 +261,17 @@ export default function ProfileScreen() {
   });
 
   const unreadCount = notificationCount?.count || 0;
+
+  const deleteMutation = useMutation({
+    mutationFn: async (listingId: string) => {
+      return apiRequest(`/api/listings/${listingId}`, { method: "DELETE" });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listing-quota"] });
+    },
+  });
 
   const handleListingPress = (listingId: string) => {
     navigation.navigate("ListingDetail", { listingId });
@@ -404,6 +442,22 @@ export default function ProfileScreen() {
                 <ListingMiniCard
                   listing={item}
                   onPress={() => handleListingPress(item.id)}
+                  onEdit={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    navigation.navigate("CreateListing", { editListingId: item.id });
+                  }}
+                  onDelete={() => {
+                    if (Platform.OS === "web") {
+                      if (window.confirm("Bu ilani silmek istediginize emin misiniz?")) {
+                        deleteMutation.mutate(item.id);
+                      }
+                    } else {
+                      Alert.alert("Ilani Sil", "Bu ilani silmek istediginize emin misiniz?", [
+                        { text: "Iptal", style: "cancel" },
+                        { text: "Sil", style: "destructive", onPress: () => deleteMutation.mutate(item.id) },
+                      ]);
+                    }
+                  }}
                 />
               )}
               contentContainerStyle={styles.horizontalList}
@@ -1000,6 +1054,34 @@ const styles = StyleSheet.create({
     color: "#9CA3AF",
     marginTop: Spacing.xs,
     textAlign: "center",
+  },
+  statusBadge: {
+    position: "absolute",
+    top: 8,
+    left: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: BorderRadius.xs,
+    zIndex: 1,
+  },
+  statusBadgeText: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+  miniCardActions: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    marginTop: Spacing.xs,
+  },
+  miniCardActionButton: {
+    width: 32,
+    height: 32,
+    borderRadius: BorderRadius.full,
+    backgroundColor: "#F3F4F6",
+    justifyContent: "center",
+    alignItems: "center",
   },
   favoriteCard: {
     width: 100,

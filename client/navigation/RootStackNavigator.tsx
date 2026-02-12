@@ -36,7 +36,7 @@ export type RootStackParamList = {
   Chat: { matchId: string; otherUserName: string };
   Settings: undefined;
   EditProfile: undefined;
-  CreateListing: undefined;
+  CreateListing: { editListingId?: string } | undefined;
   QuickCreateListing: undefined;
   CorporateApplication: undefined;
   LegalDocument: { documentType: string };
