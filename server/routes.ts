@@ -1,5 +1,6 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "node:http";
+import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import * as crypto from "crypto";
 import * as fs from "fs";
@@ -1915,8 +1916,102 @@ Disallow: /api/admin/
     }
   });
 
+  app.get("/video-call", (req, res) => {
+    const videoCallPath = path.join(__dirname, "templates", "video-call.html");
+    res.sendFile(videoCallPath);
+  });
+
   const httpServer = createServer(app);
-  
+
+  const videoRooms = new Map<string, Set<{ ws: WebSocket; userId: string; userName: string }>>();
+
+  const wss = new WebSocketServer({ server: httpServer, path: "/ws/video-call" });
+
+  wss.on("connection", (ws: WebSocket) => {
+    let currentRoom: string | null = null;
+    let currentUserId: string | null = null;
+    let currentUserName: string | null = null;
+
+    ws.on("message", (raw: string) => {
+      try {
+        const data = JSON.parse(raw.toString());
+
+        switch (data.type) {
+          case "join": {
+            const { roomId, userId, userName } = data;
+            currentRoom = roomId;
+            currentUserId = userId;
+            currentUserName = userName;
+
+            if (!videoRooms.has(roomId)) {
+              videoRooms.set(roomId, new Set());
+            }
+            const room = videoRooms.get(roomId)!;
+
+            if (room.size >= 2) {
+              ws.send(JSON.stringify({ type: "room-full" }));
+              return;
+            }
+
+            room.add({ ws, userId, userName });
+
+            room.forEach((peer) => {
+              if (peer.ws !== ws && peer.ws.readyState === WebSocket.OPEN) {
+                peer.ws.send(JSON.stringify({ type: "user-joined", userId, userName }));
+              }
+            });
+            break;
+          }
+
+          case "offer":
+          case "answer":
+          case "ice-candidate": {
+            const room = videoRooms.get(data.roomId);
+            if (room) {
+              room.forEach((peer) => {
+                if (peer.ws !== ws && peer.ws.readyState === WebSocket.OPEN) {
+                  peer.ws.send(JSON.stringify(data));
+                }
+              });
+            }
+            break;
+          }
+
+          case "leave": {
+            if (currentRoom && videoRooms.has(currentRoom)) {
+              const room = videoRooms.get(currentRoom)!;
+              room.forEach((peer) => {
+                if (peer.ws === ws) {
+                  room.delete(peer);
+                } else if (peer.ws.readyState === WebSocket.OPEN) {
+                  peer.ws.send(JSON.stringify({ type: "user-left", userId: currentUserId }));
+                }
+              });
+              if (room.size === 0) videoRooms.delete(currentRoom);
+            }
+            break;
+          }
+        }
+      } catch (err) {
+        console.error("WebSocket message error:", err);
+      }
+    });
+
+    ws.on("close", () => {
+      if (currentRoom && videoRooms.has(currentRoom)) {
+        const room = videoRooms.get(currentRoom)!;
+        room.forEach((peer) => {
+          if (peer.ws === ws) {
+            room.delete(peer);
+          } else if (peer.ws.readyState === WebSocket.OPEN) {
+            peer.ws.send(JSON.stringify({ type: "user-left", userId: currentUserId }));
+          }
+        });
+        if (room.size === 0) videoRooms.delete(currentRoom);
+      }
+    });
+  });
+
   // Cleanup expired stories every hour
   const cleanupExpiredStories = async () => {
     try {
