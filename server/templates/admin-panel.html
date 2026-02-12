@@ -2207,6 +2207,13 @@
         logout();
         throw new Error('Oturum suresi doldu');
       }
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || 'İşlem başarısız oldu');
+      }
+      if (response.status === 204 || response.headers.get('content-length') === '0') {
+        return {};
+      }
       return response.json();
     }
 
@@ -2522,6 +2529,9 @@
       const tbody = document.getElementById('recentUsersTable');
       try {
         const users = await apiRequest('/users');
+        allUsers.all = users;
+        allUsers.individual = users.filter(u => u.userType === 'individual' || !u.userType);
+        allUsers.corporate = users.filter(u => u.userType === 'corporate' || u.userType === 'premium');
         
         if (users.length === 0) {
           tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--text-muted);">Henuz kullanici yok</td></tr>';
@@ -3090,25 +3100,92 @@
           method: 'PATCH',
           body: JSON.stringify({ isVerified: !currentStatus })
         });
+        showToast(currentStatus ? 'Doğrulama kaldırıldı' : 'Kullanıcı doğrulandı', 'success');
         loadUsers();
+        loadRecentUsers();
       } catch (error) {
-        alert('Hata: ' + error.message);
+        showToast('Hata: ' + error.message, 'error');
       }
     }
 
     async function deleteUser(userId) {
-      if (!confirm('Bu kullaniciyi silmek istediginize emin misiniz?')) return;
+      if (!confirm('Bu kullanıcıyı silmek istediğinize emin misiniz?')) return;
       try {
         await apiRequest(`/users/${userId}`, { method: 'DELETE' });
-        alert('Kullanici silindi!');
+        showToast('Kullanıcı silindi', 'success');
         loadUsers();
+        loadRecentUsers();
       } catch (error) {
-        alert('Hata: ' + error.message);
+        showToast('Hata: ' + error.message, 'error');
       }
     }
 
-    function viewUser(userId) {
-      alert('Kullanici detaylari: ' + userId);
+    async function viewUser(userId) {
+      let user = allUsers.all.find(u => u.id === userId);
+      if (!user) {
+        try {
+          const users = await apiRequest('/users');
+          allUsers.all = users;
+          user = users.find(u => u.id === userId);
+        } catch(e) {}
+      }
+      if (!user) {
+        showToast('Kullanıcı bulunamadı', 'error');
+        return;
+      }
+
+      const initials = (user.name || 'U').substring(0, 2).toUpperCase();
+      const userType = user.userType || 'individual';
+      const typeLabel = userType === 'corporate' ? 'Kurumsal' : userType === 'premium' ? 'Premium' : 'Bireysel';
+      const typeBadge = userType === 'corporate' ? 'badge-warning' : userType === 'premium' ? 'badge-purple' : 'badge-info';
+      const createdAt = user.createdAt ? new Date(user.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
+
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay active';
+      modal.id = 'viewUserModal';
+      modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+
+      modal.innerHTML = `
+        <div class="modal" style="max-width: 500px;">
+          <div class="modal-header">
+            <h3 class="modal-title">Kullanıcı Detayı</h3>
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('viewUserModal').remove()">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div class="modal-body" style="padding: 24px;">
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+              <div class="avatar" style="width: 56px; height: 56px; font-size: 20px;">${initials}</div>
+              <div>
+                <div style="font-size: 18px; font-weight: 700;">${user.name || user.fullName || 'İsimsiz'}</div>
+                <div style="display: flex; gap: 6px; margin-top: 4px;">
+                  <span class="badge ${typeBadge}">${typeLabel}</span>
+                  <span class="badge ${user.phoneVerified ? 'badge-success' : 'badge-warning'}">${user.phoneVerified ? 'Doğrulanmış' : 'Bekliyor'}</span>
+                </div>
+              </div>
+            </div>
+            <div class="detail-section" style="margin-bottom: 16px;">
+              <div class="detail-grid">
+                <div class="detail-item"><div class="detail-label">Telefon</div><div class="detail-value">${user.phone || '-'}</div></div>
+                <div class="detail-item"><div class="detail-label">Şehir</div><div class="detail-value">${user.city || '-'}</div></div>
+                <div class="detail-item"><div class="detail-label">Güven Puanı</div><div class="detail-value">${user.trustScore || 0} / 100</div></div>
+                <div class="detail-item"><div class="detail-label">İlan Sayısı</div><div class="detail-value">${user.listingCount || 0}</div></div>
+                <div class="detail-item"><div class="detail-label">Kayıt Tarihi</div><div class="detail-value">${createdAt}</div></div>
+                <div class="detail-item"><div class="detail-label">Kullanıcı ID</div><div class="detail-value" style="font-size: 11px; word-break: break-all;">${user.id}</div></div>
+                ${user.companyName ? `<div class="detail-item"><div class="detail-label">Firma Adı</div><div class="detail-value">${user.companyName}</div></div>` : ''}
+                ${user.taxNumber ? `<div class="detail-item"><div class="detail-label">Vergi No</div><div class="detail-value">${user.taxNumber}</div></div>` : ''}
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="document.getElementById('viewUserModal').remove()">Kapat</button>
+            <button class="btn ${user.phoneVerified ? 'btn-danger' : 'btn-primary'}" onclick="document.getElementById('viewUserModal').remove(); toggleVerify('${user.id}', ${user.phoneVerified})">
+              ${user.phoneVerified ? 'Doğrulamayı Kaldır' : 'Doğrula'}
+            </button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
     }
 
     let currentListingStatus = 'pending';
