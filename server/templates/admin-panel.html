@@ -3149,7 +3149,7 @@
       }
 
       tbody.innerHTML = listings.map(listing => {
-        const validPhotos = (listing.photos || []).filter(isValidWebPhoto);
+        const validPhotos = getValidPhotos(listing.photos);
         const photo = validPhotos.length > 0 ? validPhotos[0] : '';
         const price = listing.estimatedValue ? new Intl.NumberFormat('tr-TR').format(listing.estimatedValue) + ' TL' : '-';
         const createdAt = new Date(listing.createdAt).toLocaleDateString('tr-TR');
@@ -3231,6 +3231,26 @@
       return false;
     }
 
+    function fixPhotoUrl(url) {
+      if (!url) return url;
+      try {
+        if (url.includes(':5000/uploads/')) {
+          const filename = url.split('/uploads/').pop();
+          return '/uploads/' + filename;
+        }
+        if (url.includes('.replit.dev:5000/')) {
+          const path = url.split(':5000').pop();
+          return path;
+        }
+      } catch(e) {}
+      return url;
+    }
+
+    function getValidPhotos(photos) {
+      if (!photos || !Array.isArray(photos)) return [];
+      return photos.map(fixPhotoUrl).filter(isValidWebPhoto);
+    }
+
     async function viewListing(id) {
       const modal = document.getElementById('listingDetailModal');
       const body = document.getElementById('detailModalBody');
@@ -3246,9 +3266,14 @@
         const listing = allItems.find(l => l.id === id);
         if (!listing) throw new Error('Ilan bulunamadi');
         let ownerInfo = null;
+        if (listing.userId) {
+          try {
+            ownerInfo = await apiRequest(`/users/${listing.userId}`);
+          } catch(e) {}
+        }
         
         title.textContent = `${listing.brand} ${listing.model}`;
-        detailPhotos = (listing.photos || []).filter(isValidWebPhoto);
+        detailPhotos = getValidPhotos(listing.photos);
         detailCurrentPhoto = 0;
         
         const photoHtml = detailPhotos.length > 0 ? `
@@ -3269,9 +3294,9 @@
               ${detailPhotos.map((p, i) => `<img src="${p}" class="${i === 0 ? 'active' : ''}" onclick="detailGoToPhoto(${i})">`).join('')}
             </div>
           ` : ''}
-        ` : '<div style="height: 200px; background: var(--bg-tertiary); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: var(--text-muted);">Fotograf yok</div>';
+        ` : '<div style="height: 200px; background: var(--bg-tertiary); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: var(--text-muted);">Fotoğraf yok</div>';
         
-        const price = listing.estimatedValue ? new Intl.NumberFormat('tr-TR').format(listing.estimatedValue) + ' TL' : 'Belirtilmemis';
+        const price = listing.estimatedValue ? new Intl.NumberFormat('tr-TR').format(listing.estimatedValue) + ' TL' : 'Belirtilmemiş';
         const createdAt = listing.createdAt ? new Date(listing.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
         const ownerName = ownerInfo ? (ownerInfo.fullName || ownerInfo.phone || 'Bilinmiyor') : (listing.ownerName || 'Bilinmiyor');
         
@@ -3291,49 +3316,55 @@
           <div style="font-size: 22px; font-weight: 700; color: var(--success); margin-bottom: 16px;">${price}</div>
           
           <div class="detail-section">
-            <h4>Arac Bilgileri</h4>
+            <h4>Araç Bilgileri</h4>
             <div class="detail-grid">
               <div class="detail-item"><div class="detail-label">Marka</div><div class="detail-value">${listing.brand || '-'}</div></div>
               <div class="detail-item"><div class="detail-label">Model</div><div class="detail-value">${listing.model || '-'}</div></div>
-              <div class="detail-item"><div class="detail-label">Yil</div><div class="detail-value">${listing.year || '-'}</div></div>
+              <div class="detail-item"><div class="detail-label">Yıl</div><div class="detail-value">${listing.year || '-'}</div></div>
               <div class="detail-item"><div class="detail-label">Kilometre</div><div class="detail-value">${listing.km ? new Intl.NumberFormat('tr-TR').format(listing.km) + ' km' : '-'}</div></div>
-              <div class="detail-item"><div class="detail-label">Yakit</div><div class="detail-value">${listing.fuel || '-'}</div></div>
+              <div class="detail-item"><div class="detail-label">Yakıt</div><div class="detail-value">${listing.fuelType || '-'}</div></div>
               <div class="detail-item"><div class="detail-label">Vites</div><div class="detail-value">${listing.transmission || '-'}</div></div>
-              <div class="detail-item"><div class="detail-label">Renk</div><div class="detail-value">${listing.color || '-'}</div></div>
-              <div class="detail-item"><div class="detail-label">Kasa Tipi</div><div class="detail-value">${listing.bodyType || '-'}</div></div>
-              <div class="detail-item"><div class="detail-label">Motor Hacmi</div><div class="detail-value">${listing.engineSize || '-'}</div></div>
-              <div class="detail-item"><div class="detail-label">Beygir Gucu</div><div class="detail-value">${listing.horsepower ? listing.horsepower + ' HP' : '-'}</div></div>
+              <div class="detail-item"><div class="detail-label">Tramer Kaydı</div><div class="detail-value">${listing.tramerRecord ? new Intl.NumberFormat('tr-TR').format(listing.tramerRecord) + ' TL' : 'Yok'}</div></div>
+              <div class="detail-item"><div class="detail-label">Hasarsız</div><div class="detail-value">${listing.accidentFree ? 'Evet' : 'Hayır'}</div></div>
+              <div class="detail-item"><div class="detail-label">Boyalı Parçalar</div><div class="detail-value">${listing.paintedParts && listing.paintedParts.length > 0 ? listing.paintedParts.join(', ') : 'Yok'}</div></div>
+              <div class="detail-item"><div class="detail-label">Değişen Parçalar</div><div class="detail-value">${listing.replacedParts && listing.replacedParts.length > 0 ? listing.replacedParts.join(', ') : 'Yok'}</div></div>
             </div>
           </div>
           
           <div class="detail-section">
-            <h4>Ilan Sahibi</h4>
+            <h4>İlan Sahibi</h4>
             <div class="detail-grid">
-              <div class="detail-item"><div class="detail-label">Isim</div><div class="detail-value">${ownerName}</div></div>
-              <div class="detail-item"><div class="detail-label">Telefon</div><div class="detail-value">${ownerInfo?.phone || '-'}</div></div>
-              <div class="detail-item"><div class="detail-label">Sehir</div><div class="detail-value">${listing.city || '-'}</div></div>
-              <div class="detail-item"><div class="detail-label">Ilan Tarihi</div><div class="detail-value">${createdAt}</div></div>
+              <div class="detail-item"><div class="detail-label">İsim</div><div class="detail-value">${ownerName}</div></div>
+              <div class="detail-item"><div class="detail-label">Telefon</div><div class="detail-value">${ownerInfo?.phone || listing.ownerPhone || '-'}</div></div>
+              <div class="detail-item"><div class="detail-label">Şehir</div><div class="detail-value">${listing.city || '-'}</div></div>
+              <div class="detail-item"><div class="detail-label">İlçe</div><div class="detail-value">${listing.district || '-'}</div></div>
+              <div class="detail-item"><div class="detail-label">İlan Tarihi</div><div class="detail-value">${createdAt}</div></div>
+            </div>
+          </div>
+          
+          <div class="detail-section">
+            <h4>Takas Tercihleri</h4>
+            <div class="detail-grid">
+              <div class="detail-item"><div class="detail-label">Takas Aktif</div><div class="detail-value">${listing.swapActive ? 'Evet' : 'Hayır'}</div></div>
+              <div class="detail-item"><div class="detail-label">Sadece Takas</div><div class="detail-value">${listing.onlySwap ? 'Evet' : 'Hayır'}</div></div>
+              <div class="detail-item"><div class="detail-label">Nakit Fark Kabul</div><div class="detail-value">${listing.acceptsCashDiff ? 'Evet' : 'Hayır'}</div></div>
+              <div class="detail-item"><div class="detail-label">Tercih Edilen Markalar</div><div class="detail-value">${listing.preferredBrands && listing.preferredBrands.length > 0 ? listing.preferredBrands.join(', ') : 'Belirtilmemiş'}</div></div>
+              ${listing.yearRangeMin || listing.yearRangeMax ? `<div class="detail-item"><div class="detail-label">Yıl Aralığı</div><div class="detail-value">${listing.yearRangeMin || '-'} - ${listing.yearRangeMax || '-'}</div></div>` : ''}
+              ${listing.kmMax ? `<div class="detail-item"><div class="detail-label">Maks. KM</div><div class="detail-value">${new Intl.NumberFormat('tr-TR').format(listing.kmMax)} km</div></div>` : ''}
             </div>
           </div>
           
           ${listing.swapPreferences || listing.swapWith ? `
             <div class="detail-section">
-              <h4>Takas Tercihleri</h4>
+              <h4>Takas Notu</h4>
               <div class="detail-description">${listing.swapPreferences || listing.swapWith || '-'}</div>
             </div>
           ` : ''}
           
           ${listing.description ? `
             <div class="detail-section">
-              <h4>Aciklama</h4>
+              <h4>Açıklama</h4>
               <div class="detail-description">${listing.description}</div>
-            </div>
-          ` : ''}
-          
-          ${listing.damageInfo ? `
-            <div class="detail-section">
-              <h4>Hasar Bilgisi</h4>
-              <div class="detail-description">${listing.damageInfo}</div>
             </div>
           ` : ''}
         `;
@@ -3561,7 +3592,7 @@
         
         let html = '';
         for (const listing of listings) {
-          const validPhotos = (listing.photos || []).filter(isValidWebPhoto);
+          const validPhotos = getValidPhotos(listing.photos);
           const photo = validPhotos.length > 0 ? validPhotos[0] : '';
           const createdAt = new Date(listing.createdAt).toLocaleDateString('tr-TR');
           html += `
