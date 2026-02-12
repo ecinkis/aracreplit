@@ -287,6 +287,8 @@ export default function CreateListingScreen() {
   const [description, setDescription] = useState("");
   const [estimatedValue, setEstimatedValue] = useState("");
 
+  const [submitResult, setSubmitResult] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
       return apiRequest("/api/listings", {
@@ -299,22 +301,18 @@ export default function CreateListingScreen() {
       queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listings"] });
       queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listing-quota"] });
       try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } catch(e) {}
-      Alert.alert(
-        "Ilaniniz Onaya Gonderildi", 
-        "Ilaniniz kontrolden sonra aktif edilecektir. Onaylandiginda bildirim alacaksiniz.", 
-        [{ text: "Tamam", onPress: () => { try { navigation.goBack(); } catch(e) {} } }]
-      );
+      setSubmitResult({ type: 'success', message: 'Ilaniniz onaya gonderildi! Kontrolden sonra aktif edilecektir.' });
     },
     onError: (error: any) => {
       try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error); } catch(e) {}
       const message = error?.message || "Ilan olusturulurken bir hata olustu.";
-      Alert.alert("Hata", message);
+      setSubmitResult({ type: 'error', message });
     },
   });
 
   const pickImage = async () => {
     if (photos.length >= 10) {
-      Alert.alert("Uyarı", "En fazla 10 fotoğraf ekleyebilirsiniz.");
+      setSubmitResult({ type: 'error', message: 'En fazla 10 fotograf ekleyebilirsiniz.' });
       return;
     }
 
@@ -365,31 +363,31 @@ export default function CreateListingScreen() {
     switch (step) {
       case 1:
         if (photos.length < 3) {
-          Alert.alert("Uyarı", "En az 3 fotoğraf eklemelisiniz.");
+          setSubmitResult({ type: 'error', message: 'En az 3 fotograf eklemelisiniz.' });
           return false;
         }
         return true;
       case 2:
         if (!year || parseInt(year) < 1980 || parseInt(year) > new Date().getFullYear() + 1) {
-          Alert.alert("Uyarı", "Geçerli bir yıl girin.");
+          setSubmitResult({ type: 'error', message: 'Gecerli bir yil girin.' });
           return false;
         }
         if (!brand || !model) {
-          Alert.alert("Uyarı", "Marka ve model seçmelisiniz.");
+          setSubmitResult({ type: 'error', message: 'Marka ve model secmelisiniz.' });
           return false;
         }
         if (!variant) {
-          Alert.alert("Uyarı", "Varyant bilgisi girin.");
+          setSubmitResult({ type: 'error', message: 'Varyant bilgisi girin.' });
           return false;
         }
         if (!km) {
-          Alert.alert("Uyarı", "Kilometre bilgisi girin.");
+          setSubmitResult({ type: 'error', message: 'Kilometre bilgisi girin.' });
           return false;
         }
         return true;
       case 3:
         if (!bodyType || !fuelType || !transmission || !trimPackage || !city) {
-          Alert.alert("Uyarı", "Kasa tipi, yakıt, vites, donanım ve şehir seçin.");
+          setSubmitResult({ type: 'error', message: 'Kasa tipi, yakit, vites, donanim ve sehir secin.' });
           return false;
         }
         return true;
@@ -487,7 +485,7 @@ export default function CreateListingScreen() {
         estimatedValue: estimatedValue ? parseInt(estimatedValue.replace(/\D/g, "")) : null,
       });
     } catch (error) {
-      Alert.alert("Hata", "Fotoğraflar yüklenirken bir hata oluştu.");
+      setSubmitResult({ type: 'error', message: 'Fotograflar yuklenirken bir hata olustu.' });
     } finally {
       setIsUploading(false);
     }
@@ -1014,6 +1012,41 @@ export default function CreateListingScreen() {
           </Pressable>
         )}
       </View>
+
+      {submitResult ? (
+        <View style={styles.resultOverlay}>
+          <View style={[styles.resultCard, submitResult.type === 'success' ? styles.resultCardSuccess : styles.resultCardError]}>
+            <View style={[styles.resultIconCircle, submitResult.type === 'success' ? styles.resultIconSuccess : styles.resultIconError]}>
+              <Feather
+                name={submitResult.type === 'success' ? 'check' : 'alert-circle'}
+                size={36}
+                color="#FFFFFF"
+              />
+            </View>
+            <ThemedText style={styles.resultTitle}>
+              {submitResult.type === 'success' ? 'Basarili!' : 'Hata'}
+            </ThemedText>
+            <ThemedText style={styles.resultMessage}>
+              {submitResult.message}
+            </ThemedText>
+            <Pressable
+              style={[styles.resultButton, submitResult.type === 'success' ? styles.resultButtonSuccess : styles.resultButtonError]}
+              onPress={() => {
+                if (submitResult.type === 'success') {
+                  setSubmitResult(null);
+                  try { navigation.goBack(); } catch(e) {}
+                } else {
+                  setSubmitResult(null);
+                }
+              }}
+            >
+              <ThemedText style={styles.resultButtonText}>
+                {submitResult.type === 'success' ? 'Tamam' : 'Tekrar Dene'}
+              </ThemedText>
+            </Pressable>
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -1486,6 +1519,75 @@ const styles = StyleSheet.create({
   },
   quotaUpgradeText: {
     ...Typography.button,
+    color: "#FFFFFF",
+  },
+  resultOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,
+    padding: Spacing.xl,
+  },
+  resultCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.xl * 1.5,
+    alignItems: "center",
+    width: "100%",
+    maxWidth: 340,
+  },
+  resultCardSuccess: {
+    borderTopWidth: 4,
+    borderTopColor: BrandColors.successGreen,
+  },
+  resultCardError: {
+    borderTopWidth: 4,
+    borderTopColor: BrandColors.alertRed,
+  },
+  resultIconCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: Spacing.lg,
+  },
+  resultIconSuccess: {
+    backgroundColor: BrandColors.successGreen,
+  },
+  resultIconError: {
+    backgroundColor: BrandColors.alertRed,
+  },
+  resultTitle: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#000000",
+    marginBottom: Spacing.sm,
+  },
+  resultMessage: {
+    fontSize: 15,
+    color: "#6B7280",
+    textAlign: "center",
+    lineHeight: 22,
+    marginBottom: Spacing.xl,
+  },
+  resultButton: {
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: BorderRadius.md,
+    minWidth: 200,
+    alignItems: "center",
+  },
+  resultButtonSuccess: {
+    backgroundColor: "#000000",
+  },
+  resultButtonError: {
+    backgroundColor: BrandColors.alertRed,
+  },
+  resultButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
     color: "#FFFFFF",
   },
 });

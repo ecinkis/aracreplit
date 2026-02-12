@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -10,6 +10,7 @@ import {
   Modal,
   FlatList,
   Platform,
+  Animated as RNAnimated,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -314,6 +315,8 @@ export default function QuickCreateListingScreen() {
     return models.filter(m => m.name.toLowerCase().includes(q));
   }, [selectedBrand, category, modelSearch]);
 
+  const [submitResult, setSubmitResult] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
       return apiRequest("/api/listings", {
@@ -326,24 +329,12 @@ export default function QuickCreateListingScreen() {
       queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listings"] });
       queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listing-quota"] });
       try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } catch(e) {}
-
-      Alert.alert(
-        "Ilaniniz Onaya Gonderildi",
-        "Ilaniniz kontrolden sonra aktif edilecektir. Onaylandiginda bildirim alacaksiniz.",
-        [
-          {
-            text: "Tamam",
-            onPress: () => {
-              try { navigation.navigate("Main" as any); } catch(e) { navigation.goBack(); }
-            },
-          },
-        ]
-      );
+      setSubmitResult({ type: 'success', message: 'Ilaniniz onaya gonderildi! Kontrolden sonra aktif edilecektir.' });
     },
     onError: (error: any) => {
       try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error); } catch(e) {}
       const message = error?.message || "Ilan olusturulurken bir hata olustu.";
-      Alert.alert("Hata", message);
+      setSubmitResult({ type: 'error', message });
     },
   });
 
@@ -407,15 +398,15 @@ export default function QuickCreateListingScreen() {
 
   const handleSubmit = () => {
     if (!category) {
-      Alert.alert("Uyari", "Lutfen kategori secin.");
+      setSubmitResult({ type: 'error', message: 'Lutfen kategori secin.' });
       return;
     }
     if (!selectedBrand) {
-      Alert.alert("Uyari", "Lutfen marka secin.");
+      setSubmitResult({ type: 'error', message: 'Lutfen marka secin.' });
       return;
     }
     if (!selectedModel) {
-      Alert.alert("Uyari", "Lutfen model secin.");
+      setSubmitResult({ type: 'error', message: 'Lutfen model secin.' });
       return;
     }
 
@@ -840,6 +831,41 @@ export default function QuickCreateListingScreen() {
           />
         </View>
       </Modal>
+
+      {submitResult ? (
+        <View style={styles.resultOverlay}>
+          <View style={[styles.resultCard, submitResult.type === 'success' ? styles.resultCardSuccess : styles.resultCardError]}>
+            <View style={[styles.resultIconCircle, submitResult.type === 'success' ? styles.resultIconSuccess : styles.resultIconError]}>
+              <Feather
+                name={submitResult.type === 'success' ? 'check' : 'alert-circle'}
+                size={36}
+                color="#FFFFFF"
+              />
+            </View>
+            <ThemedText style={styles.resultTitle}>
+              {submitResult.type === 'success' ? 'Basarili!' : 'Hata'}
+            </ThemedText>
+            <ThemedText style={styles.resultMessage}>
+              {submitResult.message}
+            </ThemedText>
+            <Pressable
+              style={[styles.resultButton, submitResult.type === 'success' ? styles.resultButtonSuccess : styles.resultButtonError]}
+              onPress={() => {
+                if (submitResult.type === 'success') {
+                  setSubmitResult(null);
+                  try { navigation.navigate("Main" as any); } catch(e) { navigation.goBack(); }
+                } else {
+                  setSubmitResult(null);
+                }
+              }}
+            >
+              <ThemedText style={styles.resultButtonText}>
+                {submitResult.type === 'success' ? 'Ana Sayfaya Don' : 'Tekrar Dene'}
+              </ThemedText>
+            </Pressable>
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -1201,5 +1227,74 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 15,
     color: "#9CA3AF",
+  },
+  resultOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,
+    padding: Spacing.xl,
+  },
+  resultCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.xl * 1.5,
+    alignItems: "center",
+    width: "100%",
+    maxWidth: 340,
+  },
+  resultCardSuccess: {
+    borderTopWidth: 4,
+    borderTopColor: BrandColors.successGreen,
+  },
+  resultCardError: {
+    borderTopWidth: 4,
+    borderTopColor: BrandColors.alertRed,
+  },
+  resultIconCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: Spacing.lg,
+  },
+  resultIconSuccess: {
+    backgroundColor: BrandColors.successGreen,
+  },
+  resultIconError: {
+    backgroundColor: BrandColors.alertRed,
+  },
+  resultTitle: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#000000",
+    marginBottom: Spacing.sm,
+  },
+  resultMessage: {
+    fontSize: 15,
+    color: "#6B7280",
+    textAlign: "center",
+    lineHeight: 22,
+    marginBottom: Spacing.xl,
+  },
+  resultButton: {
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: BorderRadius.md,
+    minWidth: 200,
+    alignItems: "center",
+  },
+  resultButtonSuccess: {
+    backgroundColor: "#000000",
+  },
+  resultButtonError: {
+    backgroundColor: BrandColors.alertRed,
+  },
+  resultButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FFFFFF",
   },
 });
