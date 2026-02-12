@@ -290,10 +290,22 @@ export default function ChatScreen() {
     : null;
 
   useLayoutEffect(() => {
-    if (!reviewCheck?.hasReviewed && otherUserId) {
-      navigation.setOptions({
-        headerRight: () => (
-          <View style={{ marginRight: 15 }}>
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginRight: 8 }}>
+          <HeaderButton
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.navigate("VideoCall", {
+                matchId,
+                userId: user?.id || "",
+                userName: user?.fullName || "Kullanici",
+              });
+            }}
+          >
+            <Feather name="video" size={22} color="#333333" />
+          </HeaderButton>
+          {!reviewCheck?.hasReviewed && otherUserId ? (
             <HeaderButton
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -307,11 +319,11 @@ export default function ChatScreen() {
             >
               <Feather name="star" size={22} color="#333333" />
             </HeaderButton>
-          </View>
-        ),
-      });
-    }
-  }, [navigation, reviewCheck, otherUserId, matchId, user?.id, otherUserName]);
+          ) : null}
+        </View>
+      ),
+    });
+  }, [navigation, reviewCheck, otherUserId, matchId, user?.id, user?.fullName, otherUserName]);
 
   const { data: messages, isLoading } = useQuery<Message[]>({
     queryKey: ["/api/messages", matchId],
