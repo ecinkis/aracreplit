@@ -462,7 +462,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let maxListings = 1;
       let quotaLabel = "Standart Üye";
 
-      if (user.userType === "bireysel") {
+      if (user.unlimitedListings) {
+        maxListings = 999999;
+        quotaLabel = "Sınırsız İlan Hakkı";
+      } else if (user.userType === "bireysel") {
         if (user.isPremium && user.premiumExpiresAt && new Date(user.premiumExpiresAt) > new Date()) {
           maxListings = 5;
           quotaLabel = "Premium Üye (Aylık 199₺)";
