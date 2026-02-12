@@ -483,6 +483,7 @@ export default function CreateListingScreen() {
         replacedParts,
         description,
         estimatedValue: estimatedValue ? parseInt(estimatedValue.replace(/\D/g, "")) : null,
+        listingType: "detailed",
       });
     } catch (error) {
       setSubmitResult({ type: 'error', message: 'Fotograflar yuklenirken bir hata olustu.' });

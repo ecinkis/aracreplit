@@ -431,6 +431,7 @@ export default function QuickCreateListingScreen() {
       title,
       description: description.trim() || null,
       estimatedValue: estimatedValue ? parseInt(estimatedValue.replace(/\D/g, "")) : null,
+      listingType: "quick",
       needsCompletion: true,
     });
   };
