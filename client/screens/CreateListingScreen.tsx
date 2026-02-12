@@ -14,7 +14,7 @@ import {
   Text,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -244,9 +244,14 @@ function ChipSelect({
   );
 }
 
+type CreateListingRouteProp = RouteProp<{ CreateListing: { editListingId?: string } }, 'CreateListing'>;
+
 export default function CreateListingScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const route = useRoute<CreateListingRouteProp>();
+  const editListingId = route.params?.editListingId;
+  const isEditMode = !!editListingId;
   const { theme } = useTheme();
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -289,6 +294,36 @@ export default function CreateListingScreen() {
 
   const [submitResult, setSubmitResult] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
+  const { data: existingListing } = useQuery<any>({
+    queryKey: ["/api/listings", editListingId],
+    enabled: !!editListingId,
+  });
+
+  React.useEffect(() => {
+    if (existingListing) {
+      if (existingListing.photos) setPhotos(existingListing.photos);
+      if (existingListing.brand) setBrand(existingListing.brand);
+      if (existingListing.model) setModel(existingListing.model);
+      if (existingListing.year) setYear(String(existingListing.year));
+      if (existingListing.km) setKm(String(existingListing.km));
+      if (existingListing.bodyType) setBodyType(existingListing.bodyType);
+      if (existingListing.fuelType) setFuelType(existingListing.fuelType);
+      if (existingListing.transmission) setTransmission(existingListing.transmission);
+      if (existingListing.variant) setVariant(existingListing.variant || "");
+      if (existingListing.trimPackage) setTrimPackage(existingListing.trimPackage || "");
+      if (existingListing.city) setCity(existingListing.city);
+      setOnlySwap(existingListing.onlySwap ?? true);
+      if (existingListing.preferredBrands) setPreferredBrands(existingListing.preferredBrands);
+      setSwapActive(existingListing.swapActive ?? true);
+      if (existingListing.tramerRecord != null) setTramerRecord(String(existingListing.tramerRecord));
+      setAccidentFree(existingListing.accidentFree ?? true);
+      if (existingListing.paintedParts) setPaintedParts(existingListing.paintedParts);
+      if (existingListing.replacedParts) setReplacedParts(existingListing.replacedParts);
+      if (existingListing.description) setDescription(existingListing.description);
+      if (existingListing.estimatedValue != null) setEstimatedValue(String(existingListing.estimatedValue));
+    }
+  }, [existingListing]);
+
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
       return apiRequest("/api/listings", {
@@ -306,6 +341,27 @@ export default function CreateListingScreen() {
     onError: (error: any) => {
       try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error); } catch(e) {}
       const message = error?.message || "Ilan olusturulurken bir hata olustu.";
+      setSubmitResult({ type: 'error', message });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async (data: any) => {
+      return apiRequest(`/api/listings/${editListingId}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listing-quota"] });
+      try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } catch(e) {}
+      setSubmitResult({ type: 'success', message: 'Ilaniniz guncellendi ve tekrar onaya gonderildi!' });
+    },
+    onError: (error: any) => {
+      try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error); } catch(e) {}
+      const message = error?.message || "Ilan guncellenirken bir hata olustu.";
       setSubmitResult({ type: 'error', message });
     },
   });
@@ -458,9 +514,12 @@ export default function CreateListingScreen() {
     try {
       setIsUploading(true);
       
-      const uploadedUrls = await Promise.all(photos.map(uploadPhoto));
+      const existingUrls = photos.filter(p => p.startsWith("http"));
+      const newPhotos = photos.filter(p => !p.startsWith("http"));
+      const uploadedNewUrls = newPhotos.length > 0 ? await Promise.all(newPhotos.map(uploadPhoto)) : [];
+      const allPhotoUrls = [...existingUrls, ...uploadedNewUrls];
       
-      createMutation.mutate({
+      const listingData = {
         userId: user?.id,
         brand,
         model,
@@ -472,7 +531,7 @@ export default function CreateListingScreen() {
         variant,
         trimPackage,
         city,
-        photos: uploadedUrls,
+        photos: allPhotoUrls,
         swapActive,
         onlySwap,
         acceptsCashDiff: !onlySwap,
@@ -484,7 +543,13 @@ export default function CreateListingScreen() {
         description,
         estimatedValue: estimatedValue ? parseInt(estimatedValue.replace(/\D/g, "")) : null,
         listingType: "detailed",
-      });
+      };
+      
+      if (isEditMode) {
+        updateMutation.mutate(listingData);
+      } else {
+        createMutation.mutate(listingData);
+      }
     } catch (error) {
       setSubmitResult({ type: 'error', message: 'Fotograflar yuklenirken bir hata olustu.' });
     } finally {
@@ -521,7 +586,7 @@ export default function CreateListingScreen() {
               </View>
             ) : null}
 
-            {quotaData && quotaData.remainingListings <= 0 ? (
+            {!isEditMode && quotaData && quotaData.remainingListings <= 0 ? (
               <View style={styles.quotaBlockedContainer}>
                 <Feather name="alert-triangle" size={48} color={BrandColors.alertRed} />
                 <ThemedText style={styles.quotaBlockedTitle}>İlan Limitinize Ulaştınız</ThemedText>
@@ -967,7 +1032,7 @@ export default function CreateListingScreen() {
           >
             <Feather name="x" size={24} color="#FFFFFF" />
           </Pressable>
-          <Text style={styles.headerTitle}>Detayli Ilan</Text>
+          <Text style={styles.headerTitle}>{isEditMode ? "Ilani Duzenle" : "Detayli Ilan"}</Text>
         </View>
       </View>
 
@@ -998,16 +1063,16 @@ export default function CreateListingScreen() {
           </Pressable>
         ) : (
           <Pressable
-            style={[styles.submitButton, (createMutation.isPending || isUploading) && { opacity: 0.7 }]}
+            style={[styles.submitButton, (createMutation.isPending || updateMutation.isPending || isUploading) && { opacity: 0.7 }]}
             onPress={handleSubmit}
-            disabled={createMutation.isPending || isUploading}
+            disabled={createMutation.isPending || updateMutation.isPending || isUploading}
           >
-            {(createMutation.isPending || isUploading) ? (
+            {(createMutation.isPending || updateMutation.isPending || isUploading) ? (
               <ActivityIndicator color="#FFFFFF" />
             ) : (
               <>
-                <Feather name="zap" size={20} color="#FFFFFF" />
-                <ThemedText style={styles.submitButtonText}>Yayinla</ThemedText>
+                <Feather name={isEditMode ? "save" : "zap"} size={20} color="#FFFFFF" />
+                <ThemedText style={styles.submitButtonText}>{isEditMode ? "Guncelle" : "Yayinla"}</ThemedText>
               </>
             )}
           </Pressable>
