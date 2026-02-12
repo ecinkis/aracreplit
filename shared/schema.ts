@@ -75,6 +75,7 @@ export const listings = pgTable("listings", {
   isFeatured: boolean("is_featured").default(false),
   featuredExpiresAt: timestamp("featured_expires_at"),
   estimatedValue: integer("estimated_value"),
+  listingType: text("listing_type").default("quick"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
