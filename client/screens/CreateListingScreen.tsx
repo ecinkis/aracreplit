@@ -297,16 +297,17 @@ export default function CreateListingScreen() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/listings"] });
       queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listings"] });
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listing-quota"] });
+      try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } catch(e) {}
       Alert.alert(
-        "İlanınız Onaya Gönderildi", 
-        "İlanınız kontrolden sonra aktif edilecektir. Onaylandığında bildirim alacaksınız.", 
-        [{ text: "Tamam", onPress: () => navigation.goBack() }]
+        "Ilaniniz Onaya Gonderildi", 
+        "Ilaniniz kontrolden sonra aktif edilecektir. Onaylandiginda bildirim alacaksiniz.", 
+        [{ text: "Tamam", onPress: () => { try { navigation.goBack(); } catch(e) {} } }]
       );
     },
     onError: (error: any) => {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      const message = error?.message || "İlan oluşturulurken bir hata oluştu.";
+      try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error); } catch(e) {}
+      const message = error?.message || "Ilan olusturulurken bir hata olustu.";
       Alert.alert("Hata", message);
     },
   });

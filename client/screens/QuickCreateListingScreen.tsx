@@ -324,7 +324,8 @@ export default function QuickCreateListingScreen() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/listings"] });
       queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listings"] });
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "listing-quota"] });
+      try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } catch(e) {}
 
       Alert.alert(
         "Ilaniniz Onaya Gonderildi",
@@ -332,13 +333,15 @@ export default function QuickCreateListingScreen() {
         [
           {
             text: "Tamam",
-            onPress: () => navigation.navigate("Main"),
+            onPress: () => {
+              try { navigation.navigate("Main" as any); } catch(e) { navigation.goBack(); }
+            },
           },
         ]
       );
     },
     onError: (error: any) => {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error); } catch(e) {}
       const message = error?.message || "Ilan olusturulurken bir hata olustu.";
       Alert.alert("Hata", message);
     },
