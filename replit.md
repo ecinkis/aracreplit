@@ -11,6 +11,8 @@ TakasApp is Turkey's first vehicle swap-focused mobile marketplace. Unlike tradi
 - Swap compatibility scoring algorithm
 - Trust score system for users
 - Vitrin (showcase) for featured listings
+- Live video calling between matched users (WebRTC via WebView)
+- Push notifications for admin broadcasts
 
 ## User Preferences
 
