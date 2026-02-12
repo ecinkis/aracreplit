@@ -35,6 +35,7 @@ import {
   adminUsers,
   verificationDocuments,
   applications,
+  appSettings,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, desc, sql, ne, notInArray } from "drizzle-orm";
@@ -123,6 +124,10 @@ export interface IStorage {
   getPendingApplications(type: string): Promise<Application[]>;
   approveApplication(id: string, adminEmail: string): Promise<Application | undefined>;
   rejectApplication(id: string, reason: string, adminEmail: string): Promise<Application | undefined>;
+
+  // Settings
+  getAppSettings(): Promise<Record<string, string>>;
+  saveAppSettings(settings: Record<string, string>): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -763,6 +768,26 @@ export class DatabaseStorage implements IStorage {
     }
 
     return { deletedUsers, deletedListings, deletedLikes, deletedFavorites, deletedMatches, deletedMessages };
+  }
+
+  async getAppSettings(): Promise<Record<string, string>> {
+    const rows = await db.select().from(appSettings);
+    const result: Record<string, string> = {};
+    for (const row of rows) {
+      result[row.key] = row.value;
+    }
+    return result;
+  }
+
+  async saveAppSettings(settings: Record<string, string>): Promise<void> {
+    for (const [key, value] of Object.entries(settings)) {
+      await db.insert(appSettings)
+        .values({ key, value, updatedAt: new Date() })
+        .onConflictDoUpdate({
+          target: appSettings.key,
+          set: { value, updatedAt: new Date() }
+        });
+    }
   }
 }
 

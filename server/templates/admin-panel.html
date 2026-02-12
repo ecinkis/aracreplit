@@ -2122,62 +2122,84 @@
         <section class="section" id="settings">
           <div class="card">
             <div class="card-body" style="padding: 24px;">
-              <div class="settings-section">
-                <div class="settings-section-title">Genel Ayarlar</div>
-                <div class="settings-row">
-                  <div class="settings-label">
-                    <div class="title">Bakim Modu</div>
-                    <div class="desc">Aktifken kullanicilar uygulamaya giremez</div>
-                  </div>
-                  <div class="toggle" onclick="this.classList.toggle('active')"></div>
-                </div>
-                <div class="settings-row">
-                  <div class="settings-label">
-                    <div class="title">Yeni Kayitlar</div>
-                    <div class="desc">Yeni kullanici kayitlarini kapat</div>
-                  </div>
-                  <div class="toggle active" onclick="this.classList.toggle('active')"></div>
-                </div>
-                <div class="settings-row">
-                  <div class="settings-label">
-                    <div class="title">E-posta Bildirimleri</div>
-                    <div class="desc">Admin e-postasina onemli bildirimleri gonder</div>
-                  </div>
-                  <div class="toggle active" onclick="this.classList.toggle('active')"></div>
-                </div>
+              <div id="settingsLoadingState" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                <div class="loading-spinner"></div>
+                <div style="margin-top: 12px;">Ayarlar yükleniyor...</div>
               </div>
-              <div class="settings-section">
-                <div class="settings-section-title">Ilan Ayarlari</div>
-                <div class="settings-row">
-                  <div class="settings-label">
-                    <div class="title">Otomatik Onay</div>
-                    <div class="desc">Yeni ilanlari otomatik onayla</div>
+              <div id="settingsContent" style="display: none;">
+                <div class="settings-section">
+                  <div class="settings-section-title">Genel Ayarlar</div>
+                  <div class="settings-row">
+                    <div class="settings-label">
+                      <div class="title">Bakım Modu</div>
+                      <div class="desc">Aktifken kullanıcılar uygulamaya giremez</div>
+                    </div>
+                    <div class="toggle" id="toggle_maintenanceMode" onclick="toggleSetting('maintenanceMode')"></div>
                   </div>
-                  <div class="toggle" onclick="this.classList.toggle('active')"></div>
+                  <div class="settings-row">
+                    <div class="settings-label">
+                      <div class="title">Yeni Kayıtlar</div>
+                      <div class="desc">Yeni kullanıcı kayıtlarına izin ver</div>
+                    </div>
+                    <div class="toggle active" id="toggle_newRegistrations" onclick="toggleSetting('newRegistrations')"></div>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-label">
+                      <div class="title">E-posta Bildirimleri</div>
+                      <div class="desc">Admin e-postasına önemli bildirimleri gönder</div>
+                    </div>
+                    <div class="toggle active" id="toggle_emailNotifications" onclick="toggleSetting('emailNotifications')"></div>
+                  </div>
                 </div>
-                <div class="settings-row">
-                  <div class="settings-label">
-                    <div class="title">Maksimum Ilan Sayisi</div>
-                    <div class="desc">Kullanici basina maksimum ilan limiti</div>
+                <div class="settings-section">
+                  <div class="settings-section-title">İlan Ayarları</div>
+                  <div class="settings-row">
+                    <div class="settings-label">
+                      <div class="title">Otomatik Onay</div>
+                      <div class="desc">Yeni ilanları otomatik onayla</div>
+                    </div>
+                    <div class="toggle" id="toggle_autoApprove" onclick="toggleSetting('autoApprove')"></div>
                   </div>
-                  <select class="filter-select" style="width: 100px;">
-                    <option>3</option>
-                    <option selected>5</option>
-                    <option>10</option>
-                  </select>
+                  <div class="settings-row">
+                    <div class="settings-label">
+                      <div class="title">Maksimum İlan Sayısı</div>
+                      <div class="desc">Kullanıcı başına maksimum ilan limiti</div>
+                    </div>
+                    <select class="filter-select" style="width: 100px;" id="select_maxListings" onchange="saveSetting('maxListings', this.value)">
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="5" selected>5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                    </select>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-label">
+                      <div class="title">Günlük Swipe Limiti</div>
+                      <div class="desc">Standart kullanıcılar için günlük swipe limiti</div>
+                    </div>
+                    <select class="filter-select" style="width: 100px;" id="select_dailySwipeLimit" onchange="saveSetting('dailySwipeLimit', this.value)">
+                      <option value="10">10</option>
+                      <option value="20" selected>20</option>
+                      <option value="30">30</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div class="settings-section">
-                <div class="settings-section-title" style="color: #e74c3c;">Tehlikeli Alan</div>
-                <div class="settings-row" style="border: 1px solid rgba(231,76,60,0.3); border-radius: 12px; padding: 20px; background: rgba(231,76,60,0.05);">
-                  <div class="settings-label">
-                    <div class="title">Demo Verileri Temizle</div>
-                    <div class="desc">Tum demo kullanicilari, ilanlari ve iliskili verileri (begeni, eslestirme, mesaj, favori) kalici olarak siler. Gercek kullanici verileri etkilenmez.</div>
-                    <div id="demoDataStats" style="margin-top: 8px; font-size: 12px; color: var(--text-muted);"></div>
+                <div class="settings-section">
+                  <div class="settings-section-title" style="color: #e74c3c;">Tehlikeli Alan</div>
+                  <div class="settings-row" style="border: 1px solid rgba(231,76,60,0.3); border-radius: 12px; padding: 20px; background: rgba(231,76,60,0.05);">
+                    <div class="settings-label">
+                      <div class="title">Demo Verileri Temizle</div>
+                      <div class="desc">Tüm demo kullanıcıları, ilanları ve ilişkili verileri (beğeni, eşleştirme, mesaj, favori) kalıcı olarak siler.</div>
+                      <div id="demoDataStats" style="margin-top: 8px; font-size: 12px; color: var(--text-muted);"></div>
+                    </div>
+                    <button class="btn btn-danger" onclick="deleteDemoData()" style="background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; white-space: nowrap;">
+                      Demo Verileri Sil
+                    </button>
                   </div>
-                  <button class="btn btn-danger" onclick="deleteDemoData()" style="background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; white-space: nowrap;">
-                    Demo Verileri Sil
-                  </button>
                 </div>
               </div>
             </div>
@@ -2375,6 +2397,7 @@
         case 'moderation': loadPendingListings(); break;
         case 'applications': loadApplications(); break;
         case 'analytics': loadAnalytics(); break;
+        case 'settings': loadSettings(); break;
       }
     }
 
@@ -3928,6 +3951,83 @@
       const themeToggleLogin = document.getElementById('themeToggleLogin');
       if (themeToggle) themeToggle.innerHTML = icon;
       if (themeToggleLogin) themeToggleLogin.innerHTML = icon;
+    }
+
+    let currentSettings = {};
+    const settingsDefaults = {
+      maintenanceMode: 'false',
+      newRegistrations: 'true',
+      emailNotifications: 'true',
+      autoApprove: 'false',
+      maxListings: '5',
+      dailySwipeLimit: '20'
+    };
+
+    async function loadSettings() {
+      try {
+        const data = await apiRequest('/settings');
+        currentSettings = { ...settingsDefaults, ...data };
+        applySettingsToUI();
+        document.getElementById('settingsLoadingState').style.display = 'none';
+        document.getElementById('settingsContent').style.display = 'block';
+      } catch (error) {
+        console.error('Error loading settings:', error);
+        document.getElementById('settingsLoadingState').innerHTML = '<div style="color: var(--danger);">Ayarlar yüklenemedi</div>';
+      }
+    }
+
+    function applySettingsToUI() {
+      const toggleKeys = ['maintenanceMode', 'newRegistrations', 'emailNotifications', 'autoApprove'];
+      toggleKeys.forEach(key => {
+        const el = document.getElementById('toggle_' + key);
+        if (el) {
+          if (currentSettings[key] === 'true') {
+            el.classList.add('active');
+          } else {
+            el.classList.remove('active');
+          }
+        }
+      });
+      
+      const selectKeys = ['maxListings', 'dailySwipeLimit'];
+      selectKeys.forEach(key => {
+        const el = document.getElementById('select_' + key);
+        if (el) {
+          el.value = currentSettings[key] || settingsDefaults[key];
+        }
+      });
+    }
+
+    async function toggleSetting(key) {
+      const el = document.getElementById('toggle_' + key);
+      const newValue = el.classList.contains('active') ? 'false' : 'true';
+      el.classList.toggle('active');
+      
+      try {
+        currentSettings[key] = newValue;
+        await apiRequest('/settings', {
+          method: 'PUT',
+          body: JSON.stringify({ [key]: newValue })
+        });
+        showToast('Ayar güncellendi', 'success');
+      } catch (error) {
+        el.classList.toggle('active');
+        currentSettings[key] = newValue === 'true' ? 'false' : 'true';
+        showToast('Ayar güncellenemedi: ' + error.message, 'error');
+      }
+    }
+
+    async function saveSetting(key, value) {
+      try {
+        currentSettings[key] = value;
+        await apiRequest('/settings', {
+          method: 'PUT',
+          body: JSON.stringify({ [key]: value })
+        });
+        showToast('Ayar güncellendi', 'success');
+      } catch (error) {
+        showToast('Ayar güncellenemedi: ' + error.message, 'error');
+      }
     }
 
     async function deleteDemoData() {

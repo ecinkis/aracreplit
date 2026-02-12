@@ -469,3 +469,9 @@ export type VerificationDocument = typeof verificationDocuments.$inferSelect;
 export type InsertVerificationDocument = z.infer<typeof insertVerificationDocumentSchema>;
 export type Application = typeof applications.$inferSelect;
 export type InsertApplication = z.infer<typeof insertApplicationSchema>;
+
+export const appSettings = pgTable("app_settings", {
+  key: varchar("key", { length: 100 }).primaryKey(),
+  value: text("value").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});

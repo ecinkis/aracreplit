@@ -1736,6 +1736,27 @@ Disallow: /api/admin/
     }
   });
 
+  app.get("/api/admin/settings", adminAuth, async (req, res) => {
+    try {
+      const settings = await storage.getAppSettings();
+      res.json(settings);
+    } catch (error) {
+      console.error("Get settings error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.put("/api/admin/settings", adminAuth, async (req, res) => {
+    try {
+      const settings = req.body;
+      await storage.saveAppSettings(settings);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Save settings error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   const httpServer = createServer(app);
   
   // Cleanup expired stories every hour
