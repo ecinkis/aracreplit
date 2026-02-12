@@ -22,6 +22,7 @@ import ModelListScreen from "@/screens/ModelListScreen";
 import SearchResultsScreen from "@/screens/SearchResultsScreen";
 import VerificationScreen from "@/screens/VerificationScreen";
 import StoryCreationScreen from "@/screens/StoryCreationScreen";
+import VideoCallScreen from "@/screens/VideoCallScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { useAuth } from "@/contexts/AuthContext";
 import { BrandColors } from "@/constants/theme";
@@ -54,6 +55,7 @@ export type RootStackParamList = {
   ModelList: { categoryId?: string; categoryName?: string; brandId: string; brandName: string };
   SearchResults: { categoryId?: string; categoryName?: string; brandId?: string; brandName?: string; modelId?: string; modelName?: string; brand?: string; model?: string; query?: string };
   Verification: { documentType: string };
+  VideoCall: { matchId: string; userId: string; userName: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -238,6 +240,15 @@ export default function RootStackNavigator() {
             options={{
               headerTitle: "Belge Dogrulama",
               headerTintColor: "#000000",
+            }}
+          />
+          <Stack.Screen
+            name="VideoCall"
+            component={VideoCallScreen}
+            options={{
+              headerShown: false,
+              presentation: "fullScreenModal",
+              animation: "slide_from_bottom",
             }}
           />
         </>
