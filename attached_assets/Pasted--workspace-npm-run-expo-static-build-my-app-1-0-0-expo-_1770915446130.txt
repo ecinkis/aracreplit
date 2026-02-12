@@ -1,0 +1,65 @@
+~/workspace$ npm run expo:static:build
+
+> my-app@1.0.0 expo:static:build
+> node scripts/build.js
+
+Building static Expo Go deployment...
+Preparing build directories...
+Build: 1770915431780-3113
+Clearing Metro cache...
+Cache cleared
+Metro already running
+Downloading bundles and manifests...
+This may take several minutes for production builds...
+Fetching ios bundle...
+Downloading: http://localhost:8081/client/index.bundle?platform=ios&dev=false&hot=false&lazy=false&minify=true
+Fetching android bundle...
+Downloading: http://localhost:8081/client/index.bundle?platform=android&dev=false&hot=false&lazy=false&minify=true
+Fetching ios manifest...
+Fetching android manifest...
+ios manifest ready
+android manifest ready
+ios bundle ready
+android bundle ready
+All downloads completed successfully
+Processing assets...
+Found 33 unique asset(s)
+Downloading assets...
+Downloading: http://localhost:8081/assets/node_modules/@react-navigation/elements/lib/module/assets/back-icon.png?platform=ios&hash=c560d7e01660506cdb3be1e07257053e
+Downloading: http://localhost:8081/assets/node_modules/@react-navigation/elements/lib/module/assets/back-icon-mask.png?platform=ios&hash=0a328cd9c1afd0afe8e3b1ec5165b1b4
+Downloading: http://localhost:8081/assets/node_modules/@react-navigation/elements/lib/module/assets/clear-icon.png?platform=ios&hash=61378328a719f21f093de82dd89ecfb0
+Downloading: http://localhost:8081/assets/node_modules/@react-navigation/elements/lib/module/assets/close-icon.png?platform=ios&hash=3162e8a244d8f6fbd259e79043e23ce4
+Downloading: http://localhost:8081/assets/node_modules/@react-navigation/elements/lib/module/assets/search-icon.png?platform=ios&hash=7842eab38ac1ef8af0adf4f8147ed837
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/AntDesign.ttf?platform=ios&hash=3f78af31cca60105799838a1a7a59fbd
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Entypo.ttf?platform=ios&hash=31b5ffea3daddc69dd01a1f3d6cf63c5
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/EvilIcons.ttf?platform=ios&hash=140c53a7643ea949007aa9a282153849
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Feather.ttf?platform=ios&hash=ca4b48e04dc1ce10bfbddb262c8b835f
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Fontisto.ttf?platform=ios&hash=b49ae8ab2dbccb02c4d11caaacf09eab
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome.ttf?platform=ios&hash=b06871f281fee6b241d60582ae9369b9
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf?platform=ios&hash=1f77739ca9ff2188b539c36f30ffa2be
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf?platform=ios&hash=605ed7926cf39a2ad5ec2d1f9d391d3d
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf?platform=ios&hash=3b89dd103490708d19a95adcae52210e
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome6_Regular.ttf?platform=ios&hash=370dd5af19f8364907b6e2c41f45dbbf
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome6_Solid.ttf?platform=ios&hash=adec7d6f310bc577f05e8fe06a5daccf
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome6_Brands.ttf?platform=ios&hash=56c8d80832e37783f12c05db7c8849e2
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Foundation.ttf?platform=ios&hash=e20945d7c929279ef7a6f1db184a4470
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf?platform=ios&hash=b4eb097d35f44ed943676fd56f6bdc51
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf?platform=ios&hash=6e435534bd35da5fef04168860a9b8fa
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialIcons.ttf?platform=ios&hash=4e85bc9ebe07e0340c9c4fc2f6c38908
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Octicons.ttf?platform=ios&hash=871378c6eab492a3e689a9385dc45a12
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/SimpleLineIcons.ttf?platform=ios&hash=d2285965fe34b05465047401b8595dd0
+Downloading: http://localhost:8081/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Zocial.ttf?platform=ios&hash=1681f34aaca71b8dfb70756bca331eb2
+Downloading: http://localhost:8081/assets/client/assets/images/default-vehicle.png?platform=ios&hash=4cf674d15f6b3d7475b2165d2c7de183
+Downloading: http://localhost:8081/assets/client/assets/images/empty-states/empty-matches.png?platform=ios&hash=711b45b2bdb3d7cb811c420f522e035c
+Downloading: http://localhost:8081/assets/client/assets/images/default-avatar.png?platform=ios&hash=cce3a8af0b4e1b2cbb0d72b788dc1db6
+Downloading: http://localhost:8081/assets/client/assets/images/google-logo.png?platform=ios&hash=ca2f7db280e9c773e341589a81c15082
+Downloading: http://localhost:8081/assets/client/assets/images/apple-logo.png?platform=ios&hash=4f658b9a7d067de5238644b78d8d09cc
+Downloading: http://localhost:8081/assets/client/assets/images/onboarding-1.png?platform=ios&hash=5712e45d3e68e390d79d3438e0713999
+Downloading: http://localhost:8081/assets/client/assets/images/onboarding-2.png?platform=ios&hash=94b7ac99cbf3b6275042ae02c66f599e
+Downloading: http://localhost:8081/assets/client/assets/images/onboarding-3.png?platform=ios&hash=e8f95a92dde409f47791d448aed32b53
+Downloading: http://localhost:8081/assets/client/assets/images/onboarding-4.png?platform=ios&hash=6831bb46c019926ce28e3340134fc16e
+Downloaded 33 assets
+Updated bundle URLs
+Updating manifests and creating landing page...
+Manifests updated
+Build complete! Deploy to: https://e524dc69-547f-4a8a-9f66-ced14cfe60ca-00-1at2iy1pbyd5s.spock.replit.dev
