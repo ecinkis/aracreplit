@@ -35,30 +35,30 @@ const slides: OnboardingSlide[] = [
   {
     id: "1",
     image: onboarding1,
-    title: "Aracini Takas Et",
+    title: "Aracını Takas Et",
     description:
-      "Aracini satmadan, istedigin aracla takas yap. Nakit odeme yapmadan hayalindeki araca kavus.",
+      "Aracını satmadan, istediğin araçla takas yap. Nakit ödeme yapmadan hayalindeki araca kavuş.",
   },
   {
     id: "2",
     image: onboarding2,
-    title: "Kaydir ve Esles",
+    title: "Kaydır ve Eşleş",
     description:
-      "Sana uygun araclari kesfet. Saga kaydir, begen ve eslesen arac sahipleriyle iletisime gec!",
+      "Sana uygun araçları keşfet. Sağa kaydır, beğen ve eşleşen araç sahipleriyle iletişime geç!",
   },
   {
     id: "3",
     image: onboarding3,
-    title: "Aninda Mesajlas",
+    title: "Anında Mesajlaş",
     description:
-      "Eslestignin arac sahipleriyle guvenli bir sekilde mesajlas ve takas detaylarini konus.",
+      "Eşleştiğin araç sahipleriyle güvenli bir şekilde mesajlaş ve takas detaylarını konuş.",
   },
   {
     id: "4",
     image: onboarding4,
-    title: "Guvenli Takas",
+    title: "Güvenli Takas",
     description:
-      "Telefon dogrulamasi ve guven puani sistemi ile guvenle takas yap. Turkiye'nin ilk arac takas platformu!",
+      "Telefon doğrulaması ve güven puanı sistemi ile güvenle takas yap. Türkiye'nin ilk araç takas platformu!",
   },
 ];
 
@@ -152,7 +152,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                 onPress={handleNext}
               >
                 {isLastSlide ? (
-                  <ThemedText style={styles.buttonText}>Basla</ThemedText>
+                  <ThemedText style={styles.buttonText}>Başla</ThemedText>
                 ) : (
                   <View style={styles.buttonContent}>
                     <ThemedText style={styles.buttonText}>Devam</ThemedText>
