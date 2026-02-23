@@ -12,7 +12,7 @@
     "ios": {
       "supportsTablet": true,
       "backgroundColor": "#FFFFFF",
-      "bundleIdentifier": "com.takasapp.mobile",
+      "bundleIdentifier": "com.fellasontheway.aracitakasi",
       "usesAppleSignIn": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -23,7 +23,7 @@
       "backgroundColor": "#FFFFFF"
     },
     "android": {
-      "package": "com.takasapp.mobile",
+      "package": "com.fellasontheway.aracitakasi",
       "adaptiveIcon": {
         "backgroundColor": "#000000",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
