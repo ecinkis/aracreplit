@@ -637,8 +637,9 @@ export default function AuthScreen() {
                 )}
               </Pressable>
 
-              <Pressable style={styles.switchContainer} onPress={resetToLogin}>
-                <ThemedText style={styles.switchText}>veya Giriş Yapın</ThemedText>
+              <Pressable style={styles.backToLoginContainer} onPress={resetToLogin}>
+                <Feather name="arrow-left" size={16} color="#6B7280" style={{ marginRight: 6 }} />
+                <ThemedText style={styles.backToLoginText}>Giriş Yapın</ThemedText>
               </Pressable>
             </View>
           </ScrollView>
@@ -1036,6 +1037,18 @@ const styles = StyleSheet.create({
     color: "#9CA3AF",
     textAlign: "center",
     marginVertical: Spacing.lg,
+  },
+  backToLoginContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: Spacing.xl,
+    marginBottom: Spacing.lg,
+  },
+  backToLoginText: {
+    fontSize: 14,
+    color: "#6B7280",
+    fontWeight: "600",
   },
   switchContainer: {
     alignItems: "center",

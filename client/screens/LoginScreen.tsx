@@ -526,7 +526,8 @@ export default function LoginScreen() {
                   style={forgotStyles.loginLink}
                   onPress={() => { setShowForgotModal(false); resetForgotState(); }}
                 >
-                  <ThemedText style={forgotStyles.loginLinkText}>veya Giriş Yapın</ThemedText>
+                  <Feather name="arrow-left" size={16} color="#6B7280" style={{ marginRight: 6 }} />
+                  <ThemedText style={forgotStyles.loginLinkText}>Giriş Yapın</ThemedText>
                 </Pressable>
               </>
             ) : (
@@ -724,13 +725,15 @@ const forgotStyles = StyleSheet.create({
     fontWeight: "500",
   },
   loginLink: {
+    flexDirection: "row",
     alignItems: "center",
-    marginTop: Spacing.lg,
+    justifyContent: "center",
+    marginTop: Spacing.xl + 8,
   },
   loginLinkText: {
     fontSize: 14,
     color: "#6B7280",
-    fontWeight: "500",
+    fontWeight: "600",
   },
 });
 
