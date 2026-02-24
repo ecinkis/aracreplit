@@ -1,11 +1,13 @@
 {
   "expo": {
-    "name": "TakasApp",
-    "slug": "takas-app",
+    "name": "Araç Takası",
+    "slug": "arac-takasi",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "takasapp",
+
+
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "backgroundColor": "#FFFFFF",

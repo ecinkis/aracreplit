@@ -1206,7 +1206,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   photoWrapper: {
-    width: (SCREEN_WIDTH - Spacing.md * 2 - Spacing.sm * 2) / 3,
+    width: (SCREEN_WIDTH - Spacing.lg * 2 - Spacing.sm * 3) / 4,
     aspectRatio: 1,
     borderRadius: BorderRadius.md,
     overflow: "hidden",
@@ -1239,7 +1239,7 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   addPhotoButton: {
-    width: (SCREEN_WIDTH - Spacing.md * 2 - Spacing.sm * 2) / 3,
+    width: (SCREEN_WIDTH - Spacing.lg * 2 - Spacing.sm * 3) / 4,
     aspectRatio: 1,
     borderRadius: BorderRadius.md,
     justifyContent: "center",
@@ -1252,6 +1252,7 @@ const styles = StyleSheet.create({
   addPhotoText: {
     ...Typography.caption,
     marginTop: 4,
+    textAlign: "center",
   },
   photoTips: {
     marginTop: Spacing.lg,
