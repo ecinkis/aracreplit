@@ -521,6 +521,13 @@ export default function LoginScreen() {
                     <ThemedText style={forgotStyles.sendButtonText}>Doğrulama Kodu Gönder</ThemedText>
                   )}
                 </Pressable>
+
+                <Pressable
+                  style={forgotStyles.loginLink}
+                  onPress={() => { setShowForgotModal(false); resetForgotState(); }}
+                >
+                  <ThemedText style={forgotStyles.loginLinkText}>veya Giriş Yapın</ThemedText>
+                </Pressable>
               </>
             ) : (
               <>
@@ -712,6 +719,15 @@ const forgotStyles = StyleSheet.create({
     marginTop: Spacing.lg,
   },
   resendText: {
+    fontSize: 14,
+    color: "#6B7280",
+    fontWeight: "500",
+  },
+  loginLink: {
+    alignItems: "center",
+    marginTop: Spacing.lg,
+  },
+  loginLinkText: {
     fontSize: 14,
     color: "#6B7280",
     fontWeight: "500",
