@@ -117,6 +117,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/auth/reset-password", async (req, res) => {
+    try {
+      const { type, identifier } = req.body;
+      if (!type || !identifier) {
+        return res.status(400).json({ error: "Type and identifier are required" });
+      }
+
+      if (type === "email") {
+        const user = await storage.getUserByEmail(identifier);
+        if (!user) {
+          return res.status(404).json({ error: "Bu e-posta adresiyle kayıtlı kullanıcı bulunamadı" });
+        }
+        const phone = user.phone;
+        if (!phone || phone.startsWith("apple_") || phone.startsWith("google_")) {
+          return res.status(400).json({ error: "Bu hesap sosyal medya ile oluşturulmuş. Lütfen Apple veya Google ile giriş yapın." });
+        }
+        const result = await sendVerificationCode(phone);
+        if (!result.success) {
+          return res.status(500).json({ error: result.error || "Doğrulama kodu gönderilemedi" });
+        }
+        const maskedPhone = phone.replace(/(\+90)(\d{3})(\d{3})(\d{2})(\d{2})/, "$1 $2 *** ** $5");
+        res.json({ success: true, phone: maskedPhone, realPhone: phone, message: "Doğrulama kodu kayıtlı telefon numaranıza gönderildi" });
+      } else if (type === "phone") {
+        const cleanedPhone = identifier.replace(/\s/g, "");
+        const user = await storage.getUserByPhone(cleanedPhone);
+        if (!user) {
+          return res.status(404).json({ error: "Bu telefon numarasıyla kayıtlı kullanıcı bulunamadı" });
+        }
+        const result = await sendVerificationCode(cleanedPhone);
+        if (!result.success) {
+          return res.status(500).json({ error: result.error || "Doğrulama kodu gönderilemedi" });
+        }
+        res.json({ success: true, message: "Doğrulama kodu telefon numaranıza gönderildi" });
+      } else {
+        return res.status(400).json({ error: "Invalid type" });
+      }
+    } catch (error) {
+      console.error("Reset password error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/auth/reset-verify", async (req, res) => {
+    try {
+      const { phone, code } = req.body;
+      if (!phone || !code) {
+        return res.status(400).json({ error: "Phone and code are required" });
+      }
+
+      const result = await verifyCode(phone, code);
+      if (!result.valid) {
+        return res.status(400).json({ error: result.error || "Geçersiz doğrulama kodu" });
+      }
+
+      const user = await storage.getUserByPhone(phone);
+      if (!user) {
+        return res.status(404).json({ error: "Kullanıcı bulunamadı" });
+      }
+
+      await storage.updateUser(user.id, { phoneVerified: true });
+      res.json({ user: { ...user, phoneVerified: true } });
+    } catch (error) {
+      console.error("Reset verify error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.post("/api/auth/login", async (req, res) => {
     try {
       const { phone } = req.body;
