@@ -17,6 +17,7 @@ import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
+import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
 import { useAuth } from "@/contexts/AuthContext";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { TakasLogo } from "@/components/TakasLogo";
@@ -551,7 +552,7 @@ export default function AuthScreen() {
     return (
       <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
         <View style={styles.keyboardView}>
-          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+          <KeyboardAwareScrollViewCompat contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             <View style={styles.logoContainer}>
               <TakasLogo size={80} color="#000000" />
             </View>
@@ -637,17 +638,11 @@ export default function AuthScreen() {
                 )}
               </Pressable>
 
-              <Pressable style={styles.backLinkContainer} onPress={resetToLogin}>
-                <ThemedText style={styles.backLinkText}>Geri Dön</ThemedText>
-              </Pressable>
-
-              <ThemedText style={styles.orText}>veya</ThemedText>
-
               <Pressable style={styles.switchContainer} onPress={resetToLogin}>
-                <ThemedText style={styles.switchText}>Giriş Yapın</ThemedText>
+                <ThemedText style={styles.switchText}>veya Giriş Yapın</ThemedText>
               </Pressable>
             </View>
-          </ScrollView>
+          </KeyboardAwareScrollViewCompat>
         </View>
       </View>
     );
