@@ -552,7 +552,7 @@ export default function AuthScreen() {
     return (
       <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
         <View style={styles.keyboardView}>
-          <KeyboardAwareScrollViewCompat contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             <View style={styles.logoContainer}>
               <TakasLogo size={80} color="#000000" />
             </View>
@@ -642,7 +642,7 @@ export default function AuthScreen() {
                 <ThemedText style={styles.switchText}>veya Giriş Yapın</ThemedText>
               </Pressable>
             </View>
-          </KeyboardAwareScrollViewCompat>
+          </ScrollView>
         </View>
       </View>
     );
