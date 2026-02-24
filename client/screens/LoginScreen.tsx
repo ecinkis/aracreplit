@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -10,6 +10,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Modal,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
@@ -18,8 +19,10 @@ import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
+import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
 import { useAuth } from "@/contexts/AuthContext";
 import { Spacing, BorderRadius } from "@/constants/theme";
+import { apiRequest, getApiUrl } from "@/lib/query-client";
 
 WebBrowser.maybeCompleteAuthSession();
 const appIcon = require("../assets/images/icon.png");
@@ -38,6 +41,16 @@ export default function LoginScreen() {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [forgotTab, setForgotTab] = useState<"email" | "phone">("email");
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotPhone, setForgotPhone] = useState("");
+  const [forgotStep, setForgotStep] = useState<"input" | "verify">("input");
+  const [verifyCode, setVerifyCode] = useState(["", "", "", "", "", ""]);
+  const [resetPhone, setResetPhone] = useState("");
+  const [maskedPhone, setMaskedPhone] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const codeInputRefs = useRef<(TextInput | null)[]>([]);
 
   const formatPhone = (text: string) => {
     const cleaned = text.replace(/\D/g, "");
@@ -163,6 +176,112 @@ export default function LoginScreen() {
     }
   };
 
+  const handleForgotSendCode = async () => {
+    if (forgotTab === "email" && !forgotEmail) {
+      Alert.alert("Hata", "Lütfen e-posta adresinizi girin");
+      return;
+    }
+    if (forgotTab === "phone") {
+      const cleaned = forgotPhone.replace(/\D/g, "");
+      if (cleaned.length !== 10) {
+        Alert.alert("Hata", "Lütfen geçerli bir telefon numarası girin");
+        return;
+      }
+    }
+
+    setForgotLoading(true);
+    try {
+      const identifier = forgotTab === "email" ? forgotEmail : `+90${forgotPhone.replace(/\D/g, "")}`;
+      const url = new URL("/api/auth/reset-password", getApiUrl());
+      const res = await fetch(url.toString(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: forgotTab, identifier }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        Alert.alert("Hata", data.error || "Bir hata oluştu");
+        return;
+      }
+      if (forgotTab === "email") {
+        setResetPhone(data.realPhone);
+        setMaskedPhone(data.phone);
+      } else {
+        setResetPhone(`+90${forgotPhone.replace(/\D/g, "")}`);
+        setMaskedPhone(`+90 ${forgotPhone}`);
+      }
+      setForgotStep("verify");
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (error) {
+      Alert.alert("Hata", "Bir hata oluştu. Lütfen tekrar deneyin.");
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
+  const handleForgotVerify = async () => {
+    const code = verifyCode.join("");
+    if (code.length !== 6) {
+      Alert.alert("Hata", "Lütfen 6 haneli doğrulama kodunu girin");
+      return;
+    }
+
+    setForgotLoading(true);
+    try {
+      const url = new URL("/api/auth/reset-verify", getApiUrl());
+      const res = await fetch(url.toString(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: resetPhone, code }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        Alert.alert("Hata", data.error || "Geçersiz doğrulama kodu");
+        return;
+      }
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      setShowForgotModal(false);
+      resetForgotState();
+      await login(resetPhone);
+    } catch (error) {
+      Alert.alert("Hata", "Bir hata oluştu. Lütfen tekrar deneyin.");
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
+  const handleCodeChange = (text: string, index: number) => {
+    const newCode = [...verifyCode];
+    newCode[index] = text;
+    setVerifyCode(newCode);
+    if (text && index < 5) {
+      codeInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleCodeKeyPress = (key: string, index: number) => {
+    if (key === "Backspace" && !verifyCode[index] && index > 0) {
+      codeInputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const resetForgotState = () => {
+    setForgotEmail("");
+    setForgotPhone("");
+    setForgotStep("input");
+    setVerifyCode(["", "", "", "", "", ""]);
+    setResetPhone("");
+    setMaskedPhone("");
+    setForgotTab("email");
+  };
+
+  const handleForgotPhoneChange = (text: string) => {
+    const cleaned = text.replace(/\D/g, "");
+    if (cleaned.length <= 10) {
+      setForgotPhone(formatPhone(cleaned));
+    }
+  };
+
   const isValid = activeTab === "email" 
     ? email.length > 0 && password.length > 0 
     : phone.replace(/\D/g, "").length === 10;
@@ -279,7 +398,7 @@ export default function LoginScreen() {
                 </View>
                 <ThemedText style={styles.rememberMeText}>Beni hatırla</ThemedText>
               </Pressable>
-              <Pressable>
+              <Pressable onPress={() => { setShowForgotModal(true); resetForgotState(); }}>
                 <ThemedText style={styles.forgotPasswordText}>Şifremi unuttum</ThemedText>
               </Pressable>
             </View>
@@ -307,9 +426,297 @@ export default function LoginScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <Modal
+        visible={showForgotModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowForgotModal(false)}
+      >
+        <View style={[forgotStyles.container, { paddingTop: insets.top }]}>
+          <View style={forgotStyles.header}>
+            <Pressable onPress={() => { setShowForgotModal(false); resetForgotState(); }}>
+              <Feather name="x" size={24} color="#000000" />
+            </Pressable>
+            <ThemedText style={forgotStyles.headerTitle}>Hesap Kurtarma</ThemedText>
+            <View style={{ width: 24 }} />
+          </View>
+
+          <KeyboardAwareScrollViewCompat
+            contentContainerStyle={forgotStyles.content}
+            keyboardShouldPersistTaps="handled"
+          >
+            {forgotStep === "input" ? (
+              <>
+                <View style={forgotStyles.iconContainer}>
+                  <Feather name="shield" size={48} color="#000000" />
+                </View>
+                <ThemedText style={forgotStyles.title}>Hesabınıza Erişin</ThemedText>
+                <ThemedText style={forgotStyles.subtitle}>
+                  Hesabınıza bağlı e-posta veya telefon numaranızı girin. Doğrulama kodu göndereceğiz.
+                </ThemedText>
+
+                <View style={forgotStyles.tabContainer}>
+                  <Pressable
+                    style={[forgotStyles.tab, forgotTab === "email" && forgotStyles.tabActive]}
+                    onPress={() => setForgotTab("email")}
+                  >
+                    <Feather name="mail" size={18} color={forgotTab === "email" ? "#FFFFFF" : "#6B7280"} />
+                    <ThemedText style={[forgotStyles.tabText, forgotTab === "email" && forgotStyles.tabTextActive]}>
+                      E-posta
+                    </ThemedText>
+                  </Pressable>
+                  <Pressable
+                    style={[forgotStyles.tab, forgotTab === "phone" && forgotStyles.tabActive]}
+                    onPress={() => setForgotTab("phone")}
+                  >
+                    <Feather name="phone" size={18} color={forgotTab === "phone" ? "#FFFFFF" : "#6B7280"} />
+                    <ThemedText style={[forgotStyles.tabText, forgotTab === "phone" && forgotStyles.tabTextActive]}>
+                      Telefon
+                    </ThemedText>
+                  </Pressable>
+                </View>
+
+                {forgotTab === "email" ? (
+                  <View style={forgotStyles.inputContainer}>
+                    <Feather name="mail" size={20} color="#9CA3AF" style={forgotStyles.inputIcon} />
+                    <TextInput
+                      style={forgotStyles.input}
+                      value={forgotEmail}
+                      onChangeText={setForgotEmail}
+                      placeholder="E-posta adresiniz"
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      editable={true}
+                    />
+                  </View>
+                ) : (
+                  <View style={forgotStyles.inputContainer}>
+                    <View style={forgotStyles.countryCode}>
+                      <ThemedText style={forgotStyles.countryCodeText}>+90</ThemedText>
+                    </View>
+                    <TextInput
+                      style={[forgotStyles.input, { flex: 1 }]}
+                      value={forgotPhone}
+                      onChangeText={handleForgotPhoneChange}
+                      placeholder="5XX XXX XX XX"
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="phone-pad"
+                      maxLength={13}
+                      editable={true}
+                    />
+                  </View>
+                )}
+
+                <Pressable
+                  style={[forgotStyles.sendButton, forgotLoading && { opacity: 0.6 }]}
+                  onPress={handleForgotSendCode}
+                  disabled={forgotLoading}
+                >
+                  {forgotLoading ? (
+                    <ActivityIndicator color="#FFFFFF" />
+                  ) : (
+                    <ThemedText style={forgotStyles.sendButtonText}>Doğrulama Kodu Gönder</ThemedText>
+                  )}
+                </Pressable>
+              </>
+            ) : (
+              <>
+                <View style={forgotStyles.iconContainer}>
+                  <Feather name="message-square" size={48} color="#000000" />
+                </View>
+                <ThemedText style={forgotStyles.title}>Doğrulama Kodu</ThemedText>
+                <ThemedText style={forgotStyles.subtitle}>
+                  {maskedPhone} numarasına gönderilen 6 haneli kodu girin
+                </ThemedText>
+
+                <View style={forgotStyles.codeContainer}>
+                  {verifyCode.map((digit, index) => (
+                    <TextInput
+                      key={index}
+                      ref={(ref) => { codeInputRefs.current[index] = ref; }}
+                      style={[forgotStyles.codeInput, digit ? forgotStyles.codeInputFilled : null]}
+                      value={digit}
+                      onChangeText={(text) => handleCodeChange(text, index)}
+                      onKeyPress={({ nativeEvent }) => handleCodeKeyPress(nativeEvent.key, index)}
+                      keyboardType="number-pad"
+                      maxLength={1}
+                      editable={true}
+                    />
+                  ))}
+                </View>
+
+                <Pressable
+                  style={[forgotStyles.sendButton, forgotLoading && { opacity: 0.6 }]}
+                  onPress={handleForgotVerify}
+                  disabled={forgotLoading}
+                >
+                  {forgotLoading ? (
+                    <ActivityIndicator color="#FFFFFF" />
+                  ) : (
+                    <ThemedText style={forgotStyles.sendButtonText}>Doğrula ve Giriş Yap</ThemedText>
+                  )}
+                </Pressable>
+
+                <Pressable
+                  style={forgotStyles.resendButton}
+                  onPress={() => { setForgotStep("input"); setVerifyCode(["", "", "", "", "", ""]); }}
+                >
+                  <ThemedText style={forgotStyles.resendText}>Kodu Tekrar Gönder</ThemedText>
+                </Pressable>
+              </>
+            )}
+          </KeyboardAwareScrollViewCompat>
+        </View>
+      </Modal>
     </View>
   );
 }
+
+const forgotStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6",
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#000000",
+  },
+  content: {
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.xl,
+  },
+  iconContainer: {
+    alignItems: "center",
+    marginBottom: Spacing.lg,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#000000",
+    textAlign: "center",
+    marginBottom: Spacing.sm,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: "#6B7280",
+    textAlign: "center",
+    lineHeight: 20,
+    marginBottom: Spacing.xl,
+  },
+  tabContainer: {
+    flexDirection: "row",
+    gap: Spacing.sm,
+    marginBottom: Spacing.xl,
+  },
+  tab: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.xs,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+    backgroundColor: "#F3F4F6",
+  },
+  tabActive: {
+    backgroundColor: "#000000",
+  },
+  tabText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#6B7280",
+  },
+  tabTextActive: {
+    color: "#FFFFFF",
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F9FAFB",
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    marginBottom: Spacing.lg,
+    paddingHorizontal: Spacing.md,
+    height: 56,
+  },
+  inputIcon: {
+    marginRight: Spacing.sm,
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    color: "#000000",
+  },
+  countryCode: {
+    paddingRight: Spacing.sm,
+    borderRightWidth: 1,
+    borderRightColor: "#E5E7EB",
+    marginRight: Spacing.sm,
+  },
+  countryCodeText: {
+    fontSize: 16,
+    color: "#000000",
+    fontWeight: "500",
+  },
+  sendButton: {
+    backgroundColor: "#000000",
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+    alignItems: "center",
+    height: 52,
+    justifyContent: "center",
+  },
+  sendButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  codeContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    marginBottom: Spacing.xl,
+  },
+  codeInput: {
+    width: 48,
+    height: 56,
+    borderRadius: BorderRadius.md,
+    borderWidth: 2,
+    borderColor: "#E5E7EB",
+    textAlign: "center",
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#000000",
+    backgroundColor: "#F9FAFB",
+  },
+  codeInputFilled: {
+    borderColor: "#000000",
+    backgroundColor: "#FFFFFF",
+  },
+  resendButton: {
+    alignItems: "center",
+    marginTop: Spacing.lg,
+  },
+  resendText: {
+    fontSize: 14,
+    color: "#6B7280",
+    fontWeight: "500",
+  },
+});
 
 const styles = StyleSheet.create({
   container: {
