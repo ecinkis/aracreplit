@@ -81,5 +81,7 @@ ensurePreviewReachable = "/status"
 [userenv]
 
 [userenv.shared]
-EXPO_PUBLIC_GOOGLE_CLIENT_ID = "432246633073-14vrlo57gekesubfpvag2aoosfo13dlu.apps.googleusercontent.com"
+EXPO_PUBLIC_GOOGLE_CLIENT_ID = "360159178570-hrbubqqs9ihul2tdv0l55cuue5kvoimf.apps.googleusercontent.com"
 TWILIO_VERIFY_SERVICE_SID = "VA4825aeef5595f7f1ed8ada061cd9b759"
+EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID = "360159178570-usc6n74sv3k96voh03kie0744m9hjmd9.apps.googleusercontent.com"
+EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID = "360159178570-h53ec3dnvjft58v8l5ddu2cd1mb1lbhi.apps.googleusercontent.com"
