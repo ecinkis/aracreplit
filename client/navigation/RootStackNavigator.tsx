@@ -146,7 +146,6 @@ export default function RootStackNavigator() {
             component={CreateListingScreen}
             options={{
               headerShown: false,
-              presentation: "modal",
             }}
           />
           <Stack.Screen
