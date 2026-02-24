@@ -146,7 +146,7 @@ export default function SettingsScreen() {
           <SettingsItem
             icon="mail"
             label="İletişim"
-            onPress={() => Alert.alert("İletişim", "destek@takasapp.com")}
+            onPress={() => Alert.alert("İletişim", "destek@aractakasi.com")}
           />
         </SettingsSection>
 

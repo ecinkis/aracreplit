@@ -303,7 +303,7 @@ export default function AuthScreen() {
     
     try {
       const redirectUri = AuthSession.makeRedirectUri({
-        scheme: "takasapp",
+        scheme: "aracitakasi",
         path: "auth",
       });
       
