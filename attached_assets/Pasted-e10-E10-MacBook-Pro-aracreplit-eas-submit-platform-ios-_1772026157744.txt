@@ -1,0 +1,52 @@
+e10@E10-MacBook-Pro aracreplit % eas submit --platform ios
+★ eas-cli@18.0.5 is now available.
+To upgrade, run:
+npm install -g eas-cli
+Proceeding with outdated version.
+
+
+✔ What would you like to submit? › Select a build from EAS
+✔ Which build would you like to submit? › - ID: de00b406-22e5-436a-a06a-e987577671bf (49 minutes ago)
+Selected build uses "production" build profile but a submit profile with the same name is missing in eas.json. Using default ("production") profile
+Ensuring your app exists on App Store Connect. This step can be skipped by
+providing ascAppId in the submit profile. Learn more:
+https://expo.fyi/asc-app-id
+
+› Log in to your Apple Developer account to continue
+✔ Apple ID: … ecinkis@gmail.com
+› Restoring session /Users/e10/.app-store/auth/ecinkis@gmail.com/cookie
+› Team Erdal Cinkis (TZ63HLT39Q)
+› Provider Erdal Cinkis (127529473)
+✔ Logged in Local session
+
+✔ Bundle identifier registered com.fellasontheway.aracitakasi
+✔ Prepared App Store Connect for Araç Takası com.fellasontheway.aracitakasi
+✔ TestFlight group created: Team (Expo)
+TestFlight access enabled for: ecinkis@gmail.com
+Looking up credentials configuration for com.fellasontheway.aracitakasi...
+✔ App Store Connect API Key already set up.
+Using Api Key ID: V6Z9848LN2 (AracReplit)
+
+ASC App ID:                 6740162796
+Project ID:                 19376afd-bb8a-486f-a490-59f498d338dc
+App Store Connect API Key:  
+    Key Name  :  AracReplit
+    Key ID    :  V6Z9848LN2
+    Key Source:  EAS servers
+Build:                      
+    Build ID    :  de00b406-22e5-436a-a06a-e987577671bf
+    Build Date  :  25.02.2026 14:31:39
+    App Version :  1.0.4
+    Build number:  1
+
+✔ Scheduled iOS submission
+
+Submission details: https://expo.dev/accounts/erdal10/projects/takas-app/submissions/3cd30749-da6e-41c3-9246-2f4020cca243
+
+Waiting for submission to complete. You can press Ctrl+C to exit.
+✖ Something went wrong when submitting your app to Apple App Store Connect.
+
+You've already submitted this version of the app.
+Versions are identified by CFBundleShortVersionString from Info.plist (expo.version in app.json).
+If you're submitting an Expo project built with EAS Build, increment the version (expo.version) in app.json and build the project again.
+e10@E10-MacBook-Pro aracreplit % 

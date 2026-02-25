@@ -1,0 +1,37 @@
+Uygulama imzalama
+
+Uygulama imzalama anahtarı sertifikası
+Bu, Google'ın her bir sürümünüzü imzalamak için kullandığı uygulama imzalama anahtarının ortak sertifikasıdır. Bu sertifikayı, anahtarınızı API sağlayıcılara kaydetmek için kullanın. Uygulama imzalama anahtarının kendisi erişilebilir değildir ve güvenli bir Google sunucusunda tutulur.
+MD5 sertifika parmak izi
+C3:C4:0B:9C:A3:A2:9B:61:E6:0D:AB:65:B1:F7:6C:86
+SHA-1 sertifika parmak izi
+DB:C8:B1:F6:E5:46:48:0D:AA:46:E7:76:28:F2:18:A1:2D:D4:C0:FE
+SHA-256 sertifika parmak izi
+28:49:D8:51:71:6E:2C:BE:BB:1F:EA:E5:03:CD:37:1B:83:24:51:6A:2D:08:BD:4F:9B:C5:B6:B6:2D:19:1C:A3
+Uygulama imzalama anahtarınızı yeni sürüme geçirin
+Mevcut uygulama imzalama anahtarınızın şifreleme gücü, Google Play tarafından önerilen minimum standardı karşılıyor veya aşıyor
+Kullanıcılarınızı yeni bir anahtara taşımak için yılda bir kez uygulama imzalama anahtarınızı yeni sürüme geçirebilirsiniz. Daha fazla bilgi
+
+Yükleme anahtarı sertifikası
+Bu, özel yükleme anahtarınızın ortak sertifikasıdır. Google'ın güncellemelerin sizden geldiğini bilmesi için tüm sürümleri imzalarken yükleme anahtarınızı kullanın. Yükleme anahtarınızı API sağlayıcılara kaydetmek için aşağıdaki sertifikayı kullanın.
+MD5 sertifika parmak izi
+B8:68:DD:93:F1:5F:09:A1:2B:F2:9E:18:B2:4E:8A:88
+SHA-1 sertifika parmak izi
+08:90:33:F5:EB:38:B1:3B:AA:4E:8F:BD:50:7E:0A:97:D5:15:17:5D
+SHA-256 sertifika parmak izi
+58:CE:2F:FD:8B:8D:59:51:DC:89:CC:C8:11:88:10:29:00:FA:E1:AA:71:12:39:3D:4E:B6:F7:A5:1B:D5:EB:A2
+Yükleme anahtarı sıfırlama isteğinde bulunma
+Yeni bir yükleme sertifikası kullanmaya başlamak için yükleme anahtarının sıfırlanmasını isteyin
+Digital Asset Links JSON dosyası
+Uygulamanızı bir web sitesi alan adıyla ilişkilendirmek için bu snippet'i kopyalayarak Digital Asset Links JSON dosyanıza yapıştırın. Boş olmayan bir JSON dosyanız varsa bu snippet'i dokümanlara göre mevcut ifadelerle birleştirin. Mobil web kullanıcılarını uygulamanıza yönlendirmek için Android App Links'i kullanmak istiyorsanız Digital Asset Links JSON dosyası şarttır. Daha fazla bilgi
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.fellasontheway.aracitakasi",
+      "sha256_cert_fingerprints":
+        ["28:49:D8:51:71:6E:2C:BE:BB:1F:EA:E5:03:CD:37:1B:83:24:51:6A:2D:08:BD:4F:9B:C5:B6:B6:2D:19:1C:A3"]
+    }
+  }
+]
