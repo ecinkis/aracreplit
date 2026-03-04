@@ -1,0 +1,84 @@
+e10@E10-MacBook-Pro aracreplit % eas build --platform all
+★ eas-cli@18.1.0 is now available.
+To upgrade, run:
+npm install -g eas-cli
+Proceeding with outdated version.
+
+Resolved "production" environment for the build. Learn more: https://docs.expo.dev/eas/environment-variables/#setting-the-environment-for-your-builds
+Environment variables with visibility "Plain text" and "Sensitive" loaded from the "production" environment on EAS: EXPO_PUBLIC_DOMAIN, EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID, EXPO_PUBLIC_GOOGLE_CLIENT_ID, EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID.
+
+
+
+🤖 Android build
+✔ Using remote Android credentials (Expo server)
+✔ Using Keystore from configuration: original-keystore (default)
+
+Compressing project files and uploading to EAS Build. Learn more: https://expo.fyi/eas-build-archive
+✔ Compressed project files 3s (86.6 MB)
+✔ Uploaded to EAS 1m 3s
+✔ Computed project fingerprint
+Resolved "production" environment for the build. Learn more: https://docs.expo.dev/eas/environment-variables/#setting-the-environment-for-your-builds
+Environment variables with visibility "Plain text" and "Sensitive" loaded from the "production" environment on EAS: EXPO_PUBLIC_DOMAIN, EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID, EXPO_PUBLIC_GOOGLE_CLIENT_ID, EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID.
+
+
+🍏 iOS build
+✔ Using remote iOS credentials (Expo server)
+
+If you provide your Apple account credentials we will be able to generate all necessary build credentials and fully validate them.
+This is optional, but without Apple account access you will need to provide all the missing values manually and we can only run minimal validation on them.
+✔ Do you want to log in to your Apple account? … yes
+
+› Log in to your Apple Developer account to continue
+✔ Apple ID: … ecinkis@gmail.com
+› Restoring session /Users/e10/.app-store/auth/ecinkis@gmail.com/cookie
+› Session expired Local session
+› Using password for ecinkis@gmail.com from your local Keychain
+  Learn more: https://docs.expo.dev/distribution/security#keychain
+✔ Logged in, verify your Apple account to continue
+Two-factor Authentication (6 digit code) is enabled for ecinkis@gmail.com. Learn more: https://support.apple.com/en-us/HT204915
+
+✔ How do you want to validate your account? … device / sms
+✔ Please enter the 6 digit code … 137502
+✔ Valid code
+✔ Logged in and verified
+› Team Erdal Cinkis (TZ63HLT39Q)
+› Provider Erdal Cinkis (127529473)
+✔ Bundle identifier registered com.fellasontheway.aracitakasi
+✔ Synced capabilities: No updates
+✔ Synced capability identifiers: No updates
+✔ Fetched Apple distribution certificates
+✔ Fetched Apple provisioning profiles
+
+Project Credentials Configuration
+
+Project                   @erdal10/takas-app
+Bundle Identifier         com.fellasontheway.aracitakasi
+                          
+App Store Configuration   
+                          
+Distribution Certificate  
+Serial Number             3DA8E2DA5C28526D7E63280D7F43A6F
+Expiration Date           Fri, 15 Jan 2027 17:06:47 GMT
+Apple Team                TZ63HLT39Q (Erdal Cinkis (Individual))
+Updated                   1 month ago
+                          
+Provisioning Profile      
+Developer Portal ID       YB2B87J475
+Status                    active
+Expiration                Fri, 15 Jan 2027 17:06:47 GMT
+Apple Team                TZ63HLT39Q (Erdal Cinkis (Individual))
+Updated                   8 days ago
+                          
+All credentials are ready to build @erdal10/takas-app (com.fellasontheway.aracitakasi)
+
+✔ Push Notifications are set up
+
+Compressing project files and uploading to EAS Build. Learn more: https://expo.fyi/eas-build-archive
+✔ Compressed project files 2s (86.6 MB)
+✔ Uploaded to EAS 37s
+✔ Computed project fingerprint
+
+See 🤖 Android logs: https://expo.dev/accounts/erdal10/projects/takas-app/builds/3159d40f-1c96-4987-b72b-08efa1ec469e
+See 🍏 iOS logs: https://expo.dev/accounts/erdal10/projects/takas-app/builds/483ed90b-af13-4182-bb50-00652ad3f25a
+
+⠋ Wa
