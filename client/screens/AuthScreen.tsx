@@ -864,8 +864,9 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingLeft: 24,
     paddingRight: 24,
-    paddingTop: 60,
+    paddingTop: 20,
     paddingBottom: 30,
+    justifyContent: "center",
   },
   logoContainer: {
     alignItems: "center",
