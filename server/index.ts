@@ -184,23 +184,30 @@ function setupErrorHandler(app: express.Application) {
   setupBodyParsing(app);
   setupRequestLogging(app);
 
+  app.get("/health", (_req, res) => res.status(200).json({ status: "ok" }));
+
   configureExpoAndLanding(app);
 
-  const server = await registerRoutes(app);
+  try {
+    const server = await registerRoutes(app);
 
-  await seedDemoData();
+    await seedDemoData();
 
-  setupErrorHandler(app);
+    setupErrorHandler(app);
 
-  const port = parseInt(process.env.PORT || "5000", 10);
-  server.listen(
-    {
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    },
-    () => {
-      log(`express server serving on port ${port}`);
-    },
-  );
+    const port = parseInt(process.env.PORT || "5000", 10);
+    server.listen(
+      {
+        port,
+        host: "0.0.0.0",
+        reusePort: true,
+      },
+      () => {
+        log(`express server serving on port ${port}`);
+      },
+    );
+  } catch (err) {
+    console.error("Server startup error:", err);
+    process.exit(1);
+  }
 })();
