@@ -140,9 +140,12 @@ function configureExpoAndLanding(app: express.Application) {
     }
 
     if (req.path === "/") {
-      const ua = req.header("user-agent") || "";
-      const isBrowser = ua.includes("Mozilla") || ua.includes("Chrome") || ua.includes("Safari");
-      if (isBrowser) {
+      if (req.method === "HEAD") {
+        return res.status(200).end();
+      }
+      const accept = req.header("accept") || "";
+      const isHtmlRequest = accept.includes("text/html");
+      if (isHtmlRequest && req.method === "GET") {
         return res.redirect(301, "https://aractakasi.com");
       }
       return res.status(200).json({ status: "ok" });
@@ -189,7 +192,7 @@ function setupErrorHandler(app: express.Application) {
 
   setupErrorHandler(app);
 
-  const port = parseInt(process.env.PORT || "5000", 10);
+  const port = parseInt(process.env.PORT || "80", 10);
   server.listen(
     {
       port,
