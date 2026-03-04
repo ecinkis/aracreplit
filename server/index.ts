@@ -188,26 +188,37 @@ function setupErrorHandler(app: express.Application) {
 
   configureExpoAndLanding(app);
 
+  const port = parseInt(process.env.PORT || "5000", 10);
+
+  let routesReady = false;
+
+  const waitMiddleware: express.RequestHandler = (req, res, next) => {
+    if (routesReady || req.path === "/health") return next();
+    res.status(503).json({ status: "starting" });
+  };
+  app.use(waitMiddleware);
+
+  let server: import("http").Server;
+
   try {
-    const server = await registerRoutes(app);
-
-    await seedDemoData();
-
-    setupErrorHandler(app);
-
-    const port = parseInt(process.env.PORT || "5000", 10);
-    server.listen(
-      {
-        port,
-        host: "0.0.0.0",
-        reusePort: true,
-      },
-      () => {
-        log(`express server serving on port ${port}`);
-      },
-    );
+    server = await registerRoutes(app);
   } catch (err) {
-    console.error("Server startup error:", err);
+    console.error("Failed to register routes:", err);
     process.exit(1);
   }
+
+  server.listen({ port, host: "0.0.0.0", reusePort: true }, async () => {
+    log(`express server serving on port ${port}`);
+
+    try {
+      await seedDemoData();
+      log("DB seed complete");
+    } catch (err) {
+      console.error("Seed error (non-fatal):", err);
+    }
+
+    routesReady = true;
+    setupErrorHandler(app);
+    log("All routes and DB ready");
+  });
 })();
