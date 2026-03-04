@@ -140,7 +140,12 @@ function configureExpoAndLanding(app: express.Application) {
     }
 
     if (req.path === "/") {
-      return res.redirect(301, "https://aractakasi.com");
+      const ua = req.header("user-agent") || "";
+      const isBrowser = ua.includes("Mozilla") || ua.includes("Chrome") || ua.includes("Safari");
+      if (isBrowser) {
+        return res.redirect(301, "https://aractakasi.com");
+      }
+      return res.status(200).json({ status: "ok" });
     }
 
     next();
