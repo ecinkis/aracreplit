@@ -33,6 +33,7 @@ export const users = pgTable("users", {
   storyCredits: integer("story_credits").default(0),
   dailyLikesUsed: integer("daily_likes_used").default(0),
   lastLikeResetAt: timestamp("last_like_reset_at"),
+  passwordHash: text("password_hash"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

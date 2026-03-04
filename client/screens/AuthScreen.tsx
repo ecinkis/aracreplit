@@ -27,6 +27,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 type AuthMode = "login" | "register" | "verify" | "profile" | "forgotPassword";
 type LoginTab = "phone" | "email";
+type RegisterTab = "phone" | "email";
 type ForgotTab = "email" | "phone";
 
 const CODE_LENGTH = 6;
@@ -34,9 +35,10 @@ const RESEND_TIMER = 60;
 
 export default function AuthScreen() {
   const insets = useSafeAreaInsets();
-  const { login, loginWithApple, loginWithGoogle, sendCode, verifyAndLogin } = useAuth();
+  const { login, loginWithEmail, loginWithApple, loginWithGoogle, sendCode, verifyAndLogin } = useAuth();
   const [mode, setMode] = useState<AuthMode>("login");
   const [loginTab, setLoginTab] = useState<LoginTab>("phone");
+  const [registerTab, setRegisterTab] = useState<RegisterTab>("phone");
   const [forgotTab, setForgotTab] = useState<ForgotTab>("email");
   
   const [phone, setPhone] = useState("");
@@ -397,6 +399,46 @@ export default function AuthScreen() {
     }
   };
 
+  const handleRegisterWithEmail = async () => {
+    if (!fullName.trim()) {
+      Alert.alert("Hata", "Lütfen adınızı ve soyadınızı girin");
+      return;
+    }
+    if (!email || !email.includes("@")) {
+      Alert.alert("Hata", "Lütfen geçerli bir e-posta adresi girin");
+      return;
+    }
+    if (password.length < 6) {
+      Alert.alert("Hata", "Şifre en az 6 karakter olmalıdır");
+      return;
+    }
+
+    setIsLoading(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    try {
+      const { getApiUrl } = await import("@/lib/query-client");
+      const response = await fetch(new URL("/api/auth/register-email", getApiUrl()).toString(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: fullName.trim(), email, password }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Kayıt sırasında bir hata oluştu");
+      }
+
+      await loginWithEmail(email, password);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (error: any) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert("Hata", error.message || "Kayıt sırasında bir hata oluştu");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const isForgotValid = forgotTab === "email" 
     ? email.length > 0 
     : phone.replace(/\D/g, "").length === 10;
@@ -405,7 +447,9 @@ export default function AuthScreen() {
     ? phone.replace(/\D/g, "").length === 10
     : email.length > 0 && password.length > 0;
 
-  const isRegisterValid = phone.replace(/\D/g, "").length === 10;
+  const isRegisterValid = registerTab === "phone"
+    ? phone.replace(/\D/g, "").length === 10
+    : fullName.trim().length > 0 && email.includes("@") && password.length >= 6;
 
   if (mode === "verify") {
     return (
@@ -659,53 +703,116 @@ export default function AuthScreen() {
             </View>
 
             <View style={styles.tabContainer}>
-              <View style={[styles.tab, styles.tabActive]}>
-                <ThemedText style={[styles.tabText, styles.tabTextActive]}>
-                  Kayıt Ol
+              <Pressable
+                style={[styles.tab, registerTab === "phone" && styles.tabActive]}
+                onPress={() => setRegisterTab("phone")}
+              >
+                <ThemedText style={[styles.tabText, registerTab === "phone" && styles.tabTextActive]}>
+                  Telefon
                 </ThemedText>
-              </View>
+              </Pressable>
+              <Pressable
+                style={[styles.tab, registerTab === "email" && styles.tabActive]}
+                onPress={() => setRegisterTab("email")}
+              >
+                <ThemedText style={[styles.tabText, registerTab === "email" && styles.tabTextActive]}>
+                  E-posta
+                </ThemedText>
+              </Pressable>
             </View>
 
             <View style={styles.formContainer}>
-              <View style={styles.inputContainer}>
-                <View style={styles.countryCode}>
-                  <ThemedText style={styles.countryCodeText}>+90</ThemedText>
-                </View>
-                <TextInput
-                  style={[styles.input, styles.phoneInput]}
-                  value={phone}
-                  onChangeText={handlePhoneChange}
-                  placeholder="5XX XXX XX XX"
-                  placeholderTextColor="#9CA3AF"
-                  keyboardType="phone-pad"
-                  maxLength={13}
-                />
-              </View>
-
-              <ThemedText style={styles.hintText}>
-                Size SMS ile doğrulama kodu göndereceğiz
-              </ThemedText>
-
-              <Pressable
-                style={({ pressed }) => [
-                  styles.submitButton,
-                  !isRegisterValid && styles.submitButtonDisabled,
-                  pressed && isRegisterValid && styles.submitButtonPressed,
-                ]}
-                onPress={handleSendCode}
-                disabled={!isRegisterValid || isLoading}
-              >
-                {isLoading ? (
-                  <ActivityIndicator color="#FFFFFF" />
-                ) : (
-                  <ThemedText style={styles.submitButtonText}>Kod Gönder</ThemedText>
-                )}
-              </Pressable>
-
-              <View style={styles.optionsRow}>
-                <View />
-                <View />
-              </View>
+              {registerTab === "phone" ? (
+                <>
+                  <View style={styles.inputContainer}>
+                    <View style={styles.countryCode}>
+                      <ThemedText style={styles.countryCodeText}>+90</ThemedText>
+                    </View>
+                    <TextInput
+                      style={[styles.input, styles.phoneInput]}
+                      value={phone}
+                      onChangeText={handlePhoneChange}
+                      placeholder="5XX XXX XX XX"
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="phone-pad"
+                      maxLength={13}
+                    />
+                  </View>
+                  <ThemedText style={styles.hintText}>
+                    Size SMS ile doğrulama kodu göndereceğiz
+                  </ThemedText>
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.submitButton,
+                      !isRegisterValid && styles.submitButtonDisabled,
+                      pressed && isRegisterValid && styles.submitButtonPressed,
+                    ]}
+                    onPress={handleSendCode}
+                    disabled={!isRegisterValid || isLoading}
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator color="#FFFFFF" />
+                    ) : (
+                      <ThemedText style={styles.submitButtonText}>Kod Gönder</ThemedText>
+                    )}
+                  </Pressable>
+                </>
+              ) : (
+                <>
+                  <View style={styles.inputContainer}>
+                    <Feather name="user" size={20} color="#9CA3AF" style={styles.inputIcon} />
+                    <TextInput
+                      style={styles.input}
+                      value={fullName}
+                      onChangeText={setFullName}
+                      placeholder="Adınız Soyadınız"
+                      placeholderTextColor="#9CA3AF"
+                      autoCapitalize="words"
+                    />
+                  </View>
+                  <View style={styles.inputContainer}>
+                    <Feather name="mail" size={20} color="#9CA3AF" style={styles.inputIcon} />
+                    <TextInput
+                      style={styles.input}
+                      value={email}
+                      onChangeText={setEmail}
+                      placeholder="E-posta adresiniz"
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                    />
+                  </View>
+                  <View style={styles.inputContainer}>
+                    <Feather name="lock" size={20} color="#9CA3AF" style={styles.inputIcon} />
+                    <TextInput
+                      style={[styles.input, { flex: 1 }]}
+                      value={password}
+                      onChangeText={setPassword}
+                      placeholder="Şifre (en az 6 karakter)"
+                      placeholderTextColor="#9CA3AF"
+                      secureTextEntry={!showPassword}
+                    />
+                    <Pressable onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
+                      <Feather name={showPassword ? "eye-off" : "eye"} size={20} color="#9CA3AF" />
+                    </Pressable>
+                  </View>
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.submitButton,
+                      !isRegisterValid && styles.submitButtonDisabled,
+                      pressed && isRegisterValid && styles.submitButtonPressed,
+                    ]}
+                    onPress={handleRegisterWithEmail}
+                    disabled={!isRegisterValid || isLoading}
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator color="#FFFFFF" />
+                    ) : (
+                      <ThemedText style={styles.submitButtonText}>Kayıt Ol</ThemedText>
+                    )}
+                  </Pressable>
+                </>
+              )}
 
               <View style={styles.socialContainer}>
                 <Pressable style={styles.socialButton} onPress={() => handleGoogleLogin()}>

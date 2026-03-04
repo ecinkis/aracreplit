@@ -9,6 +9,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (phone: string) => Promise<void>;
+  loginWithEmail: (email: string, password: string) => Promise<void>;
   sendCode: (phone: string) => Promise<void>;
   verifyAndLogin: (phone: string, code: string, name?: string) => Promise<void>;
   loginWithApple: (appleId: string, email?: string, fullName?: string, identityToken?: string) => Promise<void>;
@@ -81,6 +82,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(loggedInUser));
     } catch (error) {
       console.error("Login error:", error);
+      throw error;
+    }
+  };
+
+  const loginWithEmail = async (email: string, password: string) => {
+    try {
+      const { getApiUrl } = await import("@/lib/query-client");
+      const response = await fetch(new URL("/api/auth/login-email", getApiUrl()).toString(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Giriş başarısız");
+      }
+
+      const { user: loggedInUser } = await response.json();
+      setUser(loggedInUser);
+      await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(loggedInUser));
+    } catch (error) {
+      console.error("Login email error:", error);
       throw error;
     }
   };
@@ -236,6 +260,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         isAuthenticated: !!user,
         login,
+        loginWithEmail,
         sendCode,
         verifyAndLogin,
         loginWithApple,

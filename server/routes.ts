@@ -222,6 +222,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/auth/register-email", async (req, res) => {
+    try {
+      const { name, email, password } = req.body;
+      if (!name || !email || !password) {
+        return res.status(400).json({ error: "Ad, e-posta ve şifre zorunludur" });
+      }
+      if (password.length < 6) {
+        return res.status(400).json({ error: "Şifre en az 6 karakter olmalıdır" });
+      }
+
+      let user = await storage.getUserByEmail(email);
+      if (user) {
+        return res.status(409).json({ error: "Bu e-posta adresi zaten kayıtlı" });
+      }
+
+      const hashedPassword = crypto.createHash("sha256").update(password).digest("hex");
+      const tempPhone = `email_${crypto.randomBytes(8).toString("hex")}`;
+      user = await storage.createUser({ name, email, phone: tempPhone, city: null });
+      await storage.updateUser(user.id, { emailVerified: true, passwordHash: hashedPassword });
+      res.json({ user, isNewUser: true });
+    } catch (error) {
+      console.error("Register email error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/auth/login-email", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      if (!email || !password) {
+        return res.status(400).json({ error: "E-posta ve şifre zorunludur" });
+      }
+
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(401).json({ error: "E-posta veya şifre hatalı" });
+      }
+
+      const hashedPassword = crypto.createHash("sha256").update(password).digest("hex");
+      if (user.passwordHash !== hashedPassword) {
+        return res.status(401).json({ error: "E-posta veya şifre hatalı" });
+      }
+
+      res.json({ user });
+    } catch (error) {
+      console.error("Login email error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.post("/api/auth/apple", async (req, res) => {
     try {
       const { appleId, email, fullName, identityToken } = req.body;
