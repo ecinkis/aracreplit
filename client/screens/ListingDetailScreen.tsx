@@ -64,6 +64,7 @@ export default function ListingDetailScreen() {
   const [customOfferPrice, setCustomOfferPrice] = useState("");
   const [activeTab, setActiveTab] = useState<"info" | "description">("info");
   const [selectedOfferOption, setSelectedOfferOption] = useState<"10" | "15" | "custom" | null>(null);
+  const [offerSending, setOfferSending] = useState(false);
 
   const { data: listing, isLoading } = useQuery<Listing>({
     queryKey: ["/api/listings", listingId],
@@ -750,7 +751,7 @@ export default function ListingDetailScreen() {
                 { backgroundColor: BrandColors.primaryBlue },
                 !selectedOfferOption && { opacity: 0.5 },
               ]}
-              onPress={() => {
+              onPress={async () => {
                 let offerPrice = 0;
                 if (selectedOfferOption === "10" && listing?.estimatedValue) {
                   offerPrice = Math.round(listing.estimatedValue * 0.90);
@@ -759,22 +760,47 @@ export default function ListingDetailScreen() {
                 } else if (selectedOfferOption === "custom" && customOfferPrice) {
                   offerPrice = parseInt(customOfferPrice.replace(/\D/g, ""), 10);
                 }
-                
-                if (offerPrice > 0) {
+                if (offerPrice <= 0 || !user?.id || !listingUser?.id || !listing?.id) return;
+                try {
+                  setOfferSending(true);
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  Alert.alert(
-                    "Teklif Gönderildi",
-                    `${offerPrice.toLocaleString("tr-TR")} TL teklifiniz satıcıya iletildi.`
+                  const convRes = await fetch(
+                    new URL("/api/conversations/start", getApiUrl()).toString(),
+                    {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ fromUserId: user.id, toUserId: listingUser.id, listingId: listing.id }),
+                    }
+                  );
+                  if (!convRes.ok) throw new Error("Sohbet başlatılamadı");
+                  const { match } = await convRes.json();
+                  const offerText = `Araç için ${offerPrice.toLocaleString("tr-TR")} TL teklif veriyorum. Müsaitseniz görüşelim.`;
+                  await fetch(
+                    new URL("/api/messages", getApiUrl()).toString(),
+                    {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ matchId: match.id, senderId: user.id, content: offerText, messageType: "text" }),
+                    }
                   );
                   setCustomOfferPrice("");
                   setSelectedOfferOption(null);
                   setOfferModalVisible(false);
+                  navigation.navigate("Chat", { matchId: match.id, otherUserName: listingUser.name || "İlan Sahibi" });
+                } catch {
+                  Alert.alert("Hata", "Teklif gönderilemedi. Lütfen tekrar deneyin.");
+                } finally {
+                  setOfferSending(false);
                 }
               }}
-              disabled={!selectedOfferOption}
+              disabled={!selectedOfferOption || offerSending}
             >
-              <Feather name="send" size={18} color="#FFFFFF" />
-              <ThemedText style={styles.sendOfferButtonText}>Teklif Gönder</ThemedText>
+              {offerSending ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              ) : (
+                <Feather name="send" size={18} color="#FFFFFF" />
+              )}
+              <ThemedText style={styles.sendOfferButtonText}>{offerSending ? "Gönderiliyor..." : "Teklif Gönder"}</ThemedText>
             </Pressable>
           </Pressable>
         </Pressable>

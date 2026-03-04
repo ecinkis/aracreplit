@@ -23,6 +23,24 @@ function getAdminSecret(): string {
   return secret;
 }
 
+async function sendPushToUsers(userIds: string[], title: string, body: string, data: object = {}): Promise<void> {
+  try {
+    const tokens = await storage.getPushTokensByUserIds(userIds);
+    const validTokens = tokens
+      .map(t => t.token)
+      .filter(t => t && (t.startsWith("ExponentPushToken") || t.startsWith("ExpoPushToken")));
+    if (validTokens.length === 0) return;
+    const messages = validTokens.map(token => ({ to: token, sound: "default", title, body, data }));
+    await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: { "Accept": "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify(messages),
+    });
+  } catch (err) {
+    console.error("Push notification error:", err);
+  }
+}
+
 function generateToken(email: string): string {
   const payload = { email, exp: Date.now() + 24 * 60 * 60 * 1000 };
   const data = JSON.stringify(payload);
@@ -738,6 +756,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const isMutual = await storage.checkMutualLike(fromUserId, toUserId, fromListingId, toListingId);
         if (isMutual) {
           match = await storage.createMatch(fromUserId, toUserId, fromListingId, toListingId);
+          if (match) {
+            sendPushToUsers(
+              [fromUserId, toUserId],
+              "Eşleşme!",
+              "Birbirinizi beğendiniz! Şimdi mesajlaşabilirsiniz.",
+              { type: "match", matchId: match.id }
+            );
+          }
         }
       }
 
@@ -832,6 +858,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const message = await storage.createMessage(req.body);
       res.status(201).json(message);
+      const match = await storage.getMatch(message.matchId);
+      if (match && message.senderId) {
+        const recipientId = match.user1Id === message.senderId ? match.user2Id : match.user1Id;
+        const msgBody = message.messageType === "audio" ? "Sesli mesaj gönderdi" : (message.content || "Yeni mesaj");
+        sendPushToUsers([recipientId], "Yeni Mesaj", msgBody, { type: "message", matchId: match.id });
+      }
     } catch (error) {
       console.error("Create message error:", error);
       res.status(500).json({ error: "Internal server error" });
