@@ -33,7 +33,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "versionCode": 206
+      "versionCode": 213
     },
     "web": {
       "output": "single",
