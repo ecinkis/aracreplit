@@ -7,7 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "aracitakasi",
 
-
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "backgroundColor": "#FFFFFF",
@@ -34,7 +33,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "versionCode": 201
+      "versionCode": 206
     },
     "web": {
       "output": "single",
